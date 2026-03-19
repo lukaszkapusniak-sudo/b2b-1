@@ -65,6 +65,60 @@ nav{background:var(--surf);border-bottom:1px solid var(--rule);display:flex;alig
 .sc-num{font-family:'IBM Plex Mono',monospace;font-size:18px;font-weight:300;letter-spacing:-1px;line-height:1}
 .sc-lbl{font-family:'IBM Plex Mono',monospace;font-size:8px;text-transform:uppercase;letter-spacing:.08em;color:var(--t3);margin-top:2px}
 
+/* ── SPECIAL BAR ── */
+.special-bar{background:var(--surf);border-bottom:1px solid var(--rule);display:flex;align-items:center;height:32px;padding:0 10px;gap:5px;flex-shrink:0;overflow-x:auto}
+.special-bar::-webkit-scrollbar{height:0}
+.sb-btn{height:22px;padding:0 9px;border:1px solid var(--rule);border-radius:2px;font-family:'IBM Plex Mono',monospace;font-size:8px;font-weight:500;text-transform:uppercase;letter-spacing:.06em;cursor:pointer;background:var(--surf2);color:var(--t2);transition:all .12s;display:inline-flex;align-items:center;gap:4px;white-space:nowrap;flex-shrink:0}
+.sb-btn:hover{background:var(--surf3);color:var(--t1)}
+.sb-btn.fresh{color:var(--cc);background:var(--cb);border-color:var(--cr)}
+.sb-btn.rotten{color:var(--prc);background:var(--prb);border-color:var(--prr)}
+.sb-sep{width:1px;height:14px;background:var(--rule);flex-shrink:0;margin:0 3px}
+
+/* ── DATA OPS BAR ── */
+.data-bar{flex-shrink:0;height:26px;background:var(--surf2);border-top:1px solid var(--rule);display:flex;align-items:center;padding:0 8px;gap:2px;overflow-x:auto}
+.data-bar::-webkit-scrollbar{height:2px}
+.dbl{font-family:'IBM Plex Mono',monospace;font-size:7px;font-weight:500;text-transform:uppercase;letter-spacing:.1em;color:var(--t4);flex-shrink:0;padding-right:3px;white-space:nowrap}
+.db{height:18px;padding:0 6px;border:1px solid var(--rule);border-radius:2px;font-family:'IBM Plex Mono',monospace;font-size:7px;font-weight:500;text-transform:uppercase;letter-spacing:.05em;cursor:pointer;background:var(--surf);color:var(--t3);transition:all .12s;display:inline-flex;align-items:center;gap:3px;flex-shrink:0;white-space:nowrap}
+.db:hover{background:var(--surf3);color:var(--t1)}
+.db.running{color:var(--prc);border-color:var(--prr);background:var(--prb);animation:db-pulse .8s infinite}
+.db.done-ok{color:var(--cc);border-color:var(--cr);background:var(--cb)}
+.db.done-err{color:var(--prc);border-color:var(--prr)}
+@keyframes db-pulse{0%,100%{opacity:1}50%{opacity:.5}}
+.db-sep{width:1px;height:12px;background:var(--rule);flex-shrink:0;margin:0 3px}
+
+/* ── CONSOLE DOCK ── */
+.console-dock{flex-shrink:0;background:var(--surf);border-top:1px solid var(--rule);display:flex;flex-direction:column;position:relative;transition:height .18s ease}
+.console-dock.collapsed{height:26px}
+.console-dock.expanded{height:150px}
+.console-dock.tall{height:260px}
+.con-resize{position:absolute;top:0;left:0;right:0;height:4px;cursor:ns-resize;z-index:10;opacity:0;transition:opacity .15s}
+.con-resize:hover,.con-resize:active{opacity:1;background:var(--g)}
+.con-bar{display:flex;align-items:center;height:26px;padding:0 8px;flex-shrink:0;cursor:pointer;user-select:none;gap:6px;border-bottom:1px solid var(--rule2)}
+.con-bar:hover{background:var(--surf2)}
+.con-dot{width:5px;height:5px;border-radius:50%;background:var(--t4);flex-shrink:0;transition:background .3s}
+.con-dot.active{background:var(--cc)}
+.con-dot.error{background:var(--prc)}
+.con-title{font-family:'IBM Plex Mono',monospace;font-size:7px;font-weight:500;text-transform:uppercase;letter-spacing:.1em;color:var(--t3)}
+.con-count{font-family:'IBM Plex Mono',monospace;font-size:7px;color:var(--t4);background:var(--surf3);border:1px solid var(--rule);border-radius:2px;padding:0 3px;line-height:14px}
+.con-last{font-family:'IBM Plex Mono',monospace;font-size:8px;color:var(--t3);flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.con-chevron{margin-left:auto;font-size:9px;color:var(--t4);transition:transform .18s;flex-shrink:0}
+.console-dock.collapsed .con-chevron{transform:rotate(180deg)}
+.con-btns{display:flex;gap:3px}
+.con-btn{height:16px;padding:0 5px;border:1px solid var(--rule);border-radius:2px;font-family:'IBM Plex Mono',monospace;font-size:7px;cursor:pointer;background:var(--surf2);color:var(--t3);transition:all .12s}
+.con-btn:hover{background:var(--surf3);color:var(--t1)}
+.con-body{flex:1;overflow-y:auto;padding:2px 0;font-family:'IBM Plex Mono',monospace;font-size:9px;line-height:1.5;min-height:0}
+.log-line{display:flex;align-items:baseline;gap:5px;padding:1px 8px;border-bottom:1px solid var(--rule3);cursor:default}
+.log-line:hover{background:var(--surf2)}
+.log-ts{color:var(--t4);font-size:8px;flex-shrink:0;width:50px}
+.log-src{flex-shrink:0;width:14px;text-align:center;font-size:10px;opacity:.8}
+.log-st{flex-shrink:0;width:10px;text-align:center;font-size:8px}
+.log-msg{flex:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.log-line.ok .log-st{color:var(--cc)}.log-line.ok .log-msg{color:var(--t1)}
+.log-line.err .log-st,.log-line.err .log-msg{color:var(--prc)}
+.log-line.warn .log-st,.log-line.warn .log-msg{color:var(--prc);opacity:.85}
+.log-line.info .log-st{color:var(--t4)}.log-line.info .log-msg{color:var(--t2)}
+.log-line.action .log-st,.log-line.action .log-msg{color:var(--pc)}
+
 /* ── PANELS ── */
 .panels{flex:1;display:flex;overflow:hidden}
 .left{width:320px;flex-shrink:0;background:var(--surf);border-right:1px solid var(--rule);display:flex;flex-direction:column;overflow:hidden}
@@ -259,6 +313,18 @@ nav{background:var(--surf);border-bottom:1px solid var(--rule);display:flex;alig
   <div class="sc" id="sc-nogo" onclick="setFilter('nogo',this)"><div class="sc-num" id="cnt-nogo">—</div><div class="sc-lbl">No Outreach</div></div>
 </div>
 
+<!-- SPECIAL BAR -->
+<div class="special-bar">
+  <button class="sb-btn fresh" onclick="openClaude('Show fresh meat: companies added to onAudience database in last 30 days with highest ICP fit — programmatic data buying signals')">🌱 FRESH MEAT</button>
+  <button class="sb-btn rotten" onclick="openClaude('Show rotten tomatoes: companies in our pipeline with no activity in 90+ days that need follow-up or removal from active pipeline')">🍅 ROTTEN TOMATOES</button>
+  <button class="sb-btn" onclick="openClaude('Show fog of war: prospect companies we have no contact or intelligence on yet — need LinkedIn research and decision maker identification')">🌫 FOG OF WAR</button>
+  <div class="sb-sep"></div>
+  <button class="sb-btn" onclick="openClaude('Search our database for companies by industry, region, size, or technology stack — help me find programmatic data buyers')">🔍 DB SEARCH</button>
+  <button class="sb-btn" onclick="openClaude('Run pipeline review for onAudience — summarize current deal status across clients, POC, and top prospects. Stalled accounts and recommended next actions.')">📊 PIPELINE</button>
+  <button class="sb-btn" onclick="openClaude('Find new DSP, SSP, and media agency prospects for onAudience in EMEA — not in our current database, strong programmatic data buying signals, ranked by ICP fit')">🎯 FIND PROSPECTS</button>
+  <button class="sb-btn" onclick="openClaude('I have 253 Havas contacts in CSV. Help me prioritize who to reach out to for onAudience data partnerships — most relevant roles and regions')">📋 HAVAS 253</button>
+</div>
+
 <!-- PANELS -->
 <div class="panels">
 
@@ -391,6 +457,46 @@ nav{background:var(--surf);border-bottom:1px solid var(--rule);display:flex;alig
 
   </div><!-- /.center -->
 </div><!-- /.panels -->
+
+<!-- CONSOLE DOCK -->
+<div class="console-dock collapsed" id="consoleDock">
+  <div class="con-resize" id="conResize"></div>
+  <div class="con-bar" onclick="toggleConsole()">
+    <div class="con-dot" id="conDot"></div>
+    <span class="con-title">CONSOLE</span>
+    <span class="con-count" id="conCount">0</span>
+    <span class="con-last" id="conLast"></span>
+    <div class="con-btns" onclick="event.stopPropagation()">
+      <button class="con-btn" onclick="clearConsole()">CLR</button>
+      <button class="con-btn" onclick="copyConsole()">COPY</button>
+      <button class="con-btn" id="conTallBtn" onclick="tallConsole()">↕</button>
+    </div>
+    <span class="con-chevron">▲</span>
+  </div>
+  <div class="con-body" id="conBody"></div>
+</div>
+
+<!-- DATA OPS BAR -->
+<div class="data-bar">
+  <span class="dbl">FETCH</span>
+  <button class="db" id="db-co" onclick="dbOp('companies')" title="Fetch companies from Supabase">🗄 COMPANIES</button>
+  <button class="db" id="db-ct" onclick="dbOp('contacts')" title="Fetch contacts from Supabase">👥 CONTACTS</button>
+  <button class="db" id="db-all" onclick="dbOp('both')" title="Fetch both in parallel">⚡ ALL</button>
+  <div class="db-sep"></div>
+  <span class="dbl">STORE</span>
+  <button class="db" id="db-sv-co" onclick="dbOp('save-company')" title="Upsert selected company to Supabase">🗄 SAVE CO</button>
+  <button class="db" id="db-sv-loc" onclick="dbOp('save-local')" title="Save to localStorage">💾 SAVE LOCAL</button>
+  <button class="db" id="db-ld-loc" onclick="dbOp('load-local')" title="Load from localStorage">💾 LOAD LOCAL</button>
+  <button class="db" id="db-sv-cache" onclick="dbOp('to-cache')" title="Copy state to window._cache">⚡ TO CACHE</button>
+  <button class="db" id="db-ld-cache" onclick="dbOp('from-cache')" title="Restore from window._cache">⚡ FROM CACHE</button>
+  <div class="db-sep"></div>
+  <span class="dbl">DEV</span>
+  <button class="db" id="db-ping" onclick="dbOp('ping')" title="Ping Supabase and measure latency">🌐 PING</button>
+  <button class="db" id="db-clr-loc" onclick="dbOp('clear-local')" title="Remove localStorage key">💾 CLR LOCAL</button>
+  <button class="db" id="db-clr-cache" onclick="dbOp('clear-cache')" title="Clear window._cache">⚡ CLR CACHE</button>
+  <button class="db" id="db-seed" onclick="dbOp('reset-seed')" title="Reset to hardcoded seed">🌱 RESET SEED</button>
+</div>
+
 </div><!-- /.app -->
 
 <!-- CONTEXT MENU -->
@@ -483,29 +589,43 @@ document.getElementById('themeBtn').textContent=theme==='dark'?'☀️':'🌙';
 // ── DATA LOAD ────────────────────────────────────────────────────────────────
 async function loadData(){
   setStatus('loading');
+  clog('─── DATA CONNECTION ───','info','system');
+  clog(`Supabase: ${SB_URL.slice(-30)}`,'info','database');
+  const t0=performance.now();
   try{
     const [cRes,ctRes]=await Promise.all([
       fetch(`${SB_URL}/rest/v1/companies?select=*&order=name.asc`,{headers:H,signal:AbortSignal.timeout(8000)}),
       fetch(`${SB_URL}/rest/v1/contacts?select=*&order=full_name.asc`,{headers:H,signal:AbortSignal.timeout(8000)})
     ]);
+    const ms=Math.round(performance.now()-t0);
+    clog(`HTTP ${cRes.status} · ${ms}ms`,cRes.ok?'ok':'err','http');
     if(!cRes.ok)throw new Error('HTTP '+cRes.status);
     companies=await cRes.json();
     contacts=ctRes.ok?await ctRes.json():[];
+    const byType={client:0,poc:0,partner:0,prospect:0,nogo:0};
+    companies.forEach(c=>{if(byType[c.type]!==undefined)byType[c.type]++;});
+    clog(`Companies: ${companies.length} · client:${byType.client} poc:${byType.poc} partner:${byType.partner} prospect:${byType.prospect} nogo:${byType.nogo}`,'ok','database');
+    if(contacts.length){
+      const we=contacts.filter(c=>c.email).length,wl=contacts.filter(c=>c.linkedin_url).length;
+      clog(`Contacts: ${contacts.length} · email:${we} linkedin:${wl}`,'ok','contacts');
+    } else clog('Contacts: none loaded','warn','contacts');
     isLive=true;
-    setStatus('live',companies.length,contacts.length);
+    setStatus('live',companies.length);
   }catch(e){
     companies=SEED;contacts=[];isLive=false;
+    clog(`Error: ${e.message} — seed fallback`,'err','database');
     setStatus('seed',companies.length);
   }
+  clog(`─── DONE · ${Math.round(performance.now()-t0)}ms ───`,isLive?'ok':'warn','system');
   updateStats();renderList();renderContacts();
   document.getElementById('tab-co-cnt').textContent=companies.length;
   document.getElementById('tab-ct-cnt').textContent=contacts.length;
 }
 
-function setStatus(s,n,ct){
+function setStatus(s,n){
   const dot=document.getElementById('statusDot'),txt=document.getElementById('statusText');
   dot.className='';
-  if(s==='live'){dot.classList.add('live');txt.textContent=`● Live · ${n}co · ${ct||0}ct`;}
+  if(s==='live'){dot.classList.add('live');txt.textContent=`● Live · ${n}co`;}
   else if(s==='seed'){dot.classList.add('seed');txt.textContent=`○ Seed · ${n}co`;}
   else txt.textContent='Connecting…';
 }
@@ -537,6 +657,7 @@ function setFilter(f,el){
   document.querySelectorAll('.fb').forEach(b=>{
     b.classList.toggle('active',b.textContent.toLowerCase().replace(' ','')===f||(f==='all'&&b.textContent==='All'));
   });
+  clog(`Filter: ${f.toUpperCase()}`,'info','filter');
   renderList();
 }
 
@@ -583,16 +704,6 @@ function renderContacts(){
   }).join('');
 }
 
-// ── SELECT COMPANY ───────────────────────────────────────────────────────────
-function selectCompany(enc){
-  const id=decodeURIComponent(enc);
-  const c=companies.find(x=>x.id===id)||companies.find(x=>x.name===id);
-  if(!c)return;
-  selectedCo=c;
-  renderList();
-  showPanel(c);
-}
-
 function showPanel(c){
   document.getElementById('centerEmpty').style.display='none';
   document.getElementById('companyPanel').style.display='flex';
@@ -627,9 +738,9 @@ function showPanel(c){
   ];
   document.getElementById('cpGrid').innerHTML=fields.map(f=>`<div class="dg-item"><div class="dg-label">${f.l}</div><div class="dg-val">${f.v}</div></div>`).join('');
 
-  // Outreach angle — try live intelligence from Supabase first
-  document.getElementById('psAngleBody').innerHTML=buildAngle(c);
-  loadIntelligence(c);
+  // Outreach angle
+  const angle=buildAngle(c);
+  document.getElementById('psAngleBody').innerHTML=angle;
 
   // Actions
   const name=c.name||'';
@@ -657,27 +768,6 @@ function showPanel(c){
       </div>`;
     }).join('');
   }
-}
-
-async function loadIntelligence(c){
-  if(!isLive)return;
-  try{
-    const res=await fetch(`${SB_URL}/rest/v1/intelligence?company_id=eq.${c.id}&order=created_at.desc&limit=1`,{headers:H,signal:AbortSignal.timeout(4000)});
-    if(!res.ok)return;
-    const data=await res.json();
-    if(!data.length)return;
-    const intel=data[0].content;
-    const el=document.getElementById('psAngleBody');
-    if(!el)return;
-    const angle=intel.outreach_angle||intel.summary||'';
-    const signal=intel.key_signal||'';
-    const icp=intel.icp_score;
-    let html=`<div class="angle-box">${angle}</div>`;
-    if(signal)html+=`<div class="angle-hook" style="margin-top:8px"><span class="angle-lbl">Signal</span><span>${signal}</span></div>`;
-    if(intel.dsps&&intel.dsps.length)html+=`<div class="angle-hook" style="margin-top:6px"><span class="angle-lbl">DSPs</span><span>${intel.dsps.join(', ')}</span></div>`;
-    if(icp)html+=`<div class="angle-hook" style="margin-top:6px"><span class="angle-lbl">ICP</span><span>${'★'.repeat(Math.min(icp,5))} ${icp}/10</span></div>`;
-    el.innerHTML=html;
-  }catch{}
 }
 
 function buildAngle(c){
@@ -783,7 +873,19 @@ function showCtx(e,enc,type){
 document.addEventListener('click',()=>document.getElementById('ctxMenu').style.display='none');
 
 // ── HELPERS ───────────────────────────────────────────────────────────────────
-function openClaude(p){window.open('https://claude.ai/new?q='+encodeURIComponent(p),'_blank');}
+function openClaude(p){
+  const prev=p.length>90?p.slice(0,90)+'…':p;
+  clog(`→ Claude: ${prev}`,'action','claude');
+  window.open('https://claude.ai/new?q='+encodeURIComponent(p),'_blank');
+}
+function selectCompany(enc){
+  const id=decodeURIComponent(enc);
+  const c=companies.find(x=>x.id===id)||companies.find(x=>x.name===id);
+  if(!c)return;
+  selectedCo=c;
+  clog(`Selected: ${c.name} [${c.type}]`,'info','select');
+  renderList();showPanel(c);
+}
 function doResearch(){
   const q=document.getElementById('searchInput').value.trim();
   if(q)openClaude(`Research ${q} — full contact report with decision makers, outreach angle, and ICP fit score`);
@@ -820,17 +922,185 @@ window.oaDB={
     const r=await fetch(`${SB_URL}/rest/v1/contacts`,{method:'POST',headers:{...H,'Prefer':'resolution=merge-duplicates,return=minimal'},body:JSON.stringify(record)});
     if(r.ok)await loadData();return r.ok;
   },
-  async saveIntelligence(company_id,type,content){
-    const r=await fetch(`${SB_URL}/rest/v1/intelligence`,{method:'POST',headers:{...H,'Prefer':'return=minimal'},body:JSON.stringify({company_id,type,content})});
-    return r.ok;
-  },
-  async getContacts(company_id){
-    const r=await fetch(`${SB_URL}/rest/v1/contacts?company_id=eq.${company_id}&select=*`,{headers:H});
-    return r.ok?await r.json():[];
-  },
-  reload:loadData,
-  url:SB_URL
+  reload:loadData
 };
+
+// ── CONSOLE ──────────────────────────────────────────────────────────────────
+const SRC_ICON={system:'⚙',seed:'🌱',local:'💾',cache:'⚡',database:'🗄',contacts:'👥',http:'🌐',claude:'◈',filter:'▼',select:'▸'};
+const ST_ICON={ok:'✓',err:'✗',warn:'⚠',info:'·',action:'→'};
+let _logs=[];
+
+function clog(msg,type='info',src=''){
+  const ts=new Date().toTimeString().slice(0,8);
+  _logs.push({ts,msg,type,src});
+  const body=document.getElementById('conBody');
+  const dot=document.getElementById('conDot');
+  const cnt=document.getElementById('conCount');
+  const last=document.getElementById('conLast');
+  if(!body)return;
+  const line=document.createElement('div');
+  line.className=`log-line ${type}`;
+  const si=src&&SRC_ICON[src]?`<span class="log-src">${SRC_ICON[src]}</span>`:`<span class="log-src"></span>`;
+  line.innerHTML=`<span class="log-ts">${ts}</span>${si}<span class="log-st">${ST_ICON[type]||'·'}</span><span class="log-msg">${msg}</span>`;
+  body.appendChild(line);body.scrollTop=body.scrollHeight;
+  cnt.textContent=_logs.length;
+  last.textContent=(SRC_ICON[src]?SRC_ICON[src]+' ':'')+msg;
+  dot.className='con-dot active';
+  clearTimeout(dot._t);dot._t=setTimeout(()=>{dot.className='con-dot active';},1800);
+  if(type==='err'){
+    const dock=document.getElementById('consoleDock');
+    dock.classList.remove('collapsed');if(!dock.classList.contains('tall'))dock.classList.add('expanded');
+    dot.className='con-dot error';
+  }
+}
+
+function toggleConsole(){
+  const d=document.getElementById('consoleDock');
+  if(d.classList.contains('collapsed')){d.classList.remove('collapsed','tall');d.classList.add('expanded');}
+  else{d.classList.remove('expanded','tall');d.classList.add('collapsed');}
+}
+function tallConsole(){
+  const d=document.getElementById('consoleDock');
+  if(d.classList.contains('tall')){d.classList.remove('tall');d.classList.add('expanded');document.getElementById('conTallBtn').textContent='↕';}
+  else{d.classList.remove('collapsed','expanded');d.classList.add('tall');document.getElementById('conTallBtn').textContent='↓';}
+}
+function clearConsole(){
+  _logs=[];document.getElementById('conBody').innerHTML='';
+  document.getElementById('conCount').textContent='0';document.getElementById('conLast').textContent='';
+  document.getElementById('conDot').className='con-dot';
+  clog('Console cleared','info','system');
+}
+function copyConsole(){
+  const txt=_logs.map(l=>`[${l.ts}] [${(l.src||'—').padEnd(8)}] [${l.type.toUpperCase().padEnd(6)}] ${l.msg}`).join('\n');
+  navigator.clipboard.writeText(txt).then(()=>clog('Copied to clipboard','ok','local')).catch(()=>clog('Copy failed','warn','system'));
+}
+
+// ── DATA OPS ─────────────────────────────────────────────────────────────────
+const LS_KEY='oaHocrux-v1';
+function dbBtn(id){return document.getElementById('db-'+id);}
+function dbState(id,s){
+  const b=dbBtn(id);if(!b)return;
+  b.classList.remove('running','done-ok','done-err');b.disabled=false;
+  if(s==='run'){b.classList.add('running');b.disabled=true;}
+  if(s==='ok'){b.classList.add('done-ok');setTimeout(()=>b.classList.remove('done-ok'),2200);}
+  if(s==='err'){b.classList.add('done-err');setTimeout(()=>b.classList.remove('done-err'),3000);}
+}
+
+async function dbOp(op){
+  const t0=performance.now();const ms=()=>Math.round(performance.now()-t0);
+
+  if(op==='companies'||op==='both'){
+    dbState('co','run');clog('Fetching companies from Supabase…','info','database');
+    try{
+      const r=await fetch(`${SB_URL}/rest/v1/companies?select=*&order=name.asc`,{headers:H,signal:AbortSignal.timeout(8000)});
+      clog(`HTTP ${r.status} · ${ms()}ms`,r.ok?'ok':'err','http');
+      if(r.ok){
+        companies=await r.json();
+        const byType={client:0,poc:0,partner:0,prospect:0,nogo:0};
+        companies.forEach(c=>{if(byType[c.type]!==undefined)byType[c.type]++;});
+        clog(`Companies: ${companies.length} · client:${byType.client} poc:${byType.poc} partner:${byType.partner} prospect:${byType.prospect} nogo:${byType.nogo}`,'ok','database');
+        isLive=true;setStatus('live',companies.length);updateStats();renderList();
+        document.getElementById('tab-co-cnt').textContent=companies.length;
+        dbState('co','ok');
+      } else{clog('Companies fetch failed','err','database');dbState('co','err');}
+    }catch(e){clog(`Companies: ${e.name==='TimeoutError'?'TIMEOUT':e.message}`,'err','database');dbState('co','err');}
+  }
+
+  if(op==='contacts'||op==='both'){
+    dbState('ct','run');clog('Fetching contacts from Supabase…','info','contacts');
+    try{
+      const r=await fetch(`${SB_URL}/rest/v1/contacts?select=*&order=full_name.asc`,{headers:H,signal:AbortSignal.timeout(8000)});
+      clog(`HTTP ${r.status} · ${ms()}ms`,r.ok?'ok':'err','http');
+      if(r.ok){
+        contacts=await r.json();
+        const we=contacts.filter(c=>c.email).length,wl=contacts.filter(c=>c.linkedin_url).length;
+        clog(`Contacts: ${contacts.length} · email:${we} linkedin:${wl}`,'ok','contacts');
+        renderContacts();document.getElementById('tab-ct-cnt').textContent=contacts.length;
+        dbState('ct','ok');
+      } else{clog('Contacts fetch failed','err','contacts');dbState('ct','err');}
+    }catch(e){clog(`Contacts: ${e.name==='TimeoutError'?'TIMEOUT':e.message}`,'err','contacts');dbState('ct','err');}
+    if(op==='both')dbState('all','ok');
+  }
+
+  if(op==='save-company'){
+    dbState('sv-co','run');
+    if(!selectedCo){clog('No company selected','warn','database');dbState('sv-co','err');return;}
+    clog(`Saving ${selectedCo.name} → Supabase…`,'info','database');
+    try{
+      const r=await fetch(`${SB_URL}/rest/v1/companies`,{method:'POST',headers:{...H,'Prefer':'resolution=merge-duplicates,return=minimal'},body:JSON.stringify(selectedCo)});
+      clog(`HTTP ${r.status} · ${ms()}ms`,r.ok?'ok':'err','http');
+      if(r.ok){clog(`Saved: ${selectedCo.name}`,'ok','database');dbState('sv-co','ok');}
+      else{clog('Save failed','err','database');dbState('sv-co','err');}
+    }catch(e){clog(`Save error: ${e.message}`,'err','database');dbState('sv-co','err');}
+  }
+
+  if(op==='save-local'){
+    try{
+      const p=JSON.stringify({companies,contacts,savedAt:new Date().toISOString()});
+      localStorage.setItem(LS_KEY,p);
+      clog(`localStorage: saved ${companies.length} co + ${contacts.length} ct (${(p.length/1024).toFixed(1)}KB)`,'ok','local');
+      dbState('sv-loc','ok');
+    }catch(e){clog(`localStorage write: ${e.message}`,'err','local');dbState('sv-loc','err');}
+  }
+
+  if(op==='load-local'){
+    dbState('ld-loc','run');
+    try{
+      const raw=localStorage.getItem(LS_KEY);
+      if(!raw){clog(`localStorage: key "${LS_KEY}" not found`,'warn','local');dbState('ld-loc','err');return;}
+      const p=JSON.parse(raw);
+      companies=p.companies||[];contacts=p.contacts||[];
+      clog(`localStorage: loaded ${companies.length} co + ${contacts.length} ct · saved ${(p.savedAt||'?').slice(0,16)}`,'ok','local');
+      isLive=false;setStatus('seed',companies.length);updateStats();renderList();renderContacts();
+      document.getElementById('tab-co-cnt').textContent=companies.length;
+      document.getElementById('tab-ct-cnt').textContent=contacts.length;
+      dbState('ld-loc','ok');
+    }catch(e){clog(`localStorage read: ${e.message}`,'err','local');dbState('ld-loc','err');}
+  }
+
+  if(op==='to-cache'){
+    window._cache={companies:JSON.parse(JSON.stringify(companies)),contacts:JSON.parse(JSON.stringify(contacts)),savedAt:new Date().toISOString()};
+    clog(`Cache: wrote ${companies.length} co + ${contacts.length} ct to window._cache`,'ok','cache');
+    dbState('sv-cache','ok');
+  }
+
+  if(op==='from-cache'){
+    dbState('ld-cache','run');
+    if(!window._cache?.companies?.length){clog('window._cache is empty','warn','cache');dbState('ld-cache','err');return;}
+    companies=JSON.parse(JSON.stringify(window._cache.companies));
+    contacts=JSON.parse(JSON.stringify(window._cache.contacts||[]));
+    clog(`Cache: restored ${companies.length} co + ${contacts.length} ct · cached ${(window._cache.savedAt||'?').slice(0,16)}`,'ok','cache');
+    updateStats();renderList();renderContacts();dbState('ld-cache','ok');
+  }
+
+  if(op==='ping'){
+    dbState('ping','run');clog('Pinging Supabase…','info','http');
+    try{
+      const r=await fetch(`${SB_URL}/rest/v1/companies?select=id&limit=1`,{headers:H,signal:AbortSignal.timeout(5000)});
+      clog(`Supabase: HTTP ${r.status} · ${ms()}ms`,r.ok?'ok':'warn','http');
+      dbState('ping','ok');
+    }catch(e){clog(`Ping: ${e.name==='TimeoutError'?'TIMEOUT (5s)':e.message}`,'err','http');dbState('ping','err');}
+  }
+
+  if(op==='clear-local'){
+    try{localStorage.removeItem(LS_KEY);clog(`localStorage: "${LS_KEY}" removed`,'ok','local');dbState('clr-loc','ok');}
+    catch(e){clog(`localStorage clear: ${e.message}`,'err','local');dbState('clr-loc','err');}
+  }
+
+  if(op==='clear-cache'){
+    window._cache={};clog('window._cache cleared','ok','cache');dbState('clr-cache','ok');
+  }
+
+  if(op==='reset-seed'){
+    companies=SEED.map(c=>({...c}));contacts=[];
+    isLive=false;setStatus('seed',companies.length);
+    clog(`Seed reset: ${companies.length} hardcoded companies`,'ok','seed');
+    updateStats();renderList();renderContacts();
+    document.getElementById('tab-co-cnt').textContent=companies.length;
+    document.getElementById('tab-ct-cnt').textContent=0;
+    dbState('seed','ok');
+  }
+}
 
 // ── INIT ──────────────────────────────────────────────────────────────────────
 document.addEventListener('DOMContentLoaded',()=>{
@@ -840,7 +1110,23 @@ document.addEventListener('DOMContentLoaded',()=>{
   document.addEventListener('keydown',e=>{
     if(e.key==='Escape'){closePanel();closeDrawer();closeModal();}
   });
+  // resize handle wiring (needs DOM)
+  const handle=document.getElementById('conResize'),dock=document.getElementById('consoleDock');
+  let drag=false,sy=0,sh=0;
+  handle.addEventListener('mousedown',e=>{
+    drag=true;sy=e.clientY;sh=dock.offsetHeight;
+    dock.classList.remove('collapsed','expanded','tall');dock.style.height=sh+'px';
+    document.body.style.cursor='ns-resize';e.preventDefault();
+  });
+  document.addEventListener('mousemove',e=>{if(!drag)return;dock.style.height=Math.max(26,Math.min(500,sh+(sy-e.clientY)))+'px';});
+  document.addEventListener('mouseup',()=>{
+    if(!drag)return;drag=false;document.body.style.cursor='';
+    if(parseInt(dock.style.height)<=30){dock.style.height='';dock.classList.add('collapsed');}
+  });
 });
+clog(`Hub ready · hocrux v2`,'ok','system');
+clog(`Build: ${new Date().toISOString().slice(0,16).replace('T',' ')} UTC`,'info','system');
+clog(`DB: ${SB_URL.slice(8,40)}…`,'info','database');
 loadData();
 </script>
 </body>
