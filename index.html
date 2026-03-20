@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-theme="light">
 <head>
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
@@ -10,332 +10,149 @@
 <body>
 <div class="app">
 
-  <!-- ── NAV ─────────────────────────────────────────────── -->
-  <nav>
-    <div class="nav-logo">oA</div>
-    <span class="nav-title">Sales Hub <span>/ Intelligence</span></span>
-    <div class="nav-status">
-      <div id="statusDot"></div>
-      <span id="statusText">Loading…</span>
-    </div>
-    <div class="nav-right">
-      <button class="btn sm" onclick="openModal('Research a company','Enter company name to generate a full contact report:','Research [COMPANY] — full contact report with key decision makers, outreach angle, ICP fit score for onAudience data partnerships')">+ Research</button>
-      <button onclick="toggleTheme()" id="themeBtn">🌙</button>
-    </div>
-  </nav>
+<nav class="nav">
+  <div class="nav-logo">oA</div>
+  <span class="nav-brand">Sales Intelligence <span class="nav-sub">/ Hub</span></span>
+  <div class="nav-st" onclick="oaDB.reload()">
+    <div class="ndot" id="ndot"></div>
+    <span id="nstat">Loading…</span>
+  </div>
+  <div class="nav-r">
+    <button class="btn" onclick="oaDB.reload()">↺</button>
+    <button class="btn p" onclick="openModal('research')">+ Research</button>
+    <button class="btn" onclick="openModal('discover')">🎯 Discover</button>
+    <button class="btn" onclick="openClaude('Show top 5 highest-priority prospects in the onAudience database to contact this week — ICP fit, signals, outreach angle')">Top picks ↗</button>
+    <button class="tbtn" id="themeBtn" onclick="toggleTheme()">🌙</button>
+  </div>
+</nav>
 
-  <!-- ── STATS BAR ────────────────────────────────────────── -->
-  <div class="stats-bar">
-    <div class="sc active" data-f="all"      onclick="setFilter('all',this)">     <div class="sc-num" id="sc0">—</div><div class="sc-lbl">All</div></div>
-    <div class="sc"        data-f="client"   onclick="setFilter('client',this)">  <div class="sc-num" id="sc1">—</div><div class="sc-lbl">Clients</div></div>
-    <div class="sc"        data-f="poc"      onclick="setFilter('poc',this)">      <div class="sc-num" id="sc2">—</div><div class="sc-lbl">POC</div></div>
-    <div class="sc"        data-f="partner"  onclick="setFilter('partner',this)">  <div class="sc-num" id="sc3">—</div><div class="sc-lbl">Partners</div></div>
-    <div class="sc"        data-f="prospect" onclick="setFilter('prospect',this)"> <div class="sc-num" id="sc4">—</div><div class="sc-lbl">Prospects</div></div>
-    <div class="sc"        data-f="nogo"     onclick="setFilter('nogo',this)">     <div class="sc-num" id="sc5">—</div><div class="sc-lbl">No Outreach</div></div>
+<div class="sbar">
+  <div class="sc active" id="sc-all"      onclick="setFilter('all',this)">    <div class="sc-n" id="st-all">—</div>      <div class="sc-l">All</div></div>
+  <div class="sc"        id="sc-client"   onclick="setFilter('client',this)">  <div class="sc-n" id="st-client">—</div>   <div class="sc-l">Clients</div></div>
+  <div class="sc"        id="sc-poc"      onclick="setFilter('poc',this)">     <div class="sc-n" id="st-poc">—</div>      <div class="sc-l">POC</div></div>
+  <div class="sc"        id="sc-partner"  onclick="setFilter('partner',this)"> <div class="sc-n" id="st-partner">—</div>  <div class="sc-l">Partners</div></div>
+  <div class="sc"        id="sc-prospect" onclick="setFilter('prospect',this)"><div class="sc-n" id="st-prospect">—</div> <div class="sc-l">Prospects</div></div>
+  <div class="sc"        id="sc-nogo"     onclick="setFilter('nogo',this)">    <div class="sc-n" id="st-nogo">—</div>     <div class="sc-l">No Outreach</div></div>
+</div>
+
+<div class="sigs">
+  <span class="sigs-lbl">SIGNALS</span>
+  <div class="chip fire" onclick="openClaude('AudienceRate DV360 test — check Gmail for status from Gianluca Leotta and draft follow-up to unblock')">🔥 AudienceRate — DV360 reply overdue</div>
+  <div class="chip new"  onclick="openClaude('Find recent job changes at Nexxen, Samba TV, VistarMedia — people in new roles last 60 days, warm re-engagement opportunity for onAudience')">🆕 Job changes: Nexxen · Samba TV</div>
+  <div class="chip warm" onclick="openClaude('Retargetly — prior onAudience TTD/BlueKai partnership 2019 via Santi Darmandrail. Draft warm re-engagement email proposing EU/APAC data complement to their LatAm coverage')">↩ Re-engage: Retargetly 2019 deal</div>
+  <div class="chip new"  onclick="openClaude('Sportradar posted about new programmatic data product for sports publishers. Find Head of Data Partnerships at Sportradar and draft outreach for onAudience sports audience segments')">📡 Sportradar — programmatic expansion</div>
+  <div class="chip"      onclick="openClaude('VentiveIQ raised $12M Series A — identity graph for EMEA/APAC. Find decision makers and draft outreach for onAudience data partnership')">💰 VentiveIQ — $12M Series A</div>
+  <div class="chip"      onclick="openClaude('Madhive is hiring Director of Data Partnerships EMEA — scaling data buying in Europe. Find current head of data at Madhive and draft outreach for onAudience EU segments')">👔 Madhive — hiring Data Partnerships EMEA</div>
+</div>
+
+<div class="panels">
+
+  <!-- LEFT PANEL -->
+  <div class="left">
+    <div class="tabs">
+      <div class="tab active" id="tab-co"   onclick="showTab('co')">🏢 Companies</div>
+      <div class="tab"        id="tab-ct"   onclick="showTab('ct')">👤 Contacts <span class="tct" id="ctbadge">0</span></div>
+      <div class="tab"        id="tab-feed" onclick="showTab('feed')">⚡ Feed</div>
+      <div class="tab"        id="tab-grp"  onclick="showTab('grp')">🌐</div>
+    </div>
+
+    <!-- COMPANIES -->
+    <div id="pane-co" style="display:flex;flex-direction:column;flex:1;overflow:hidden">
+      <div class="sw">
+        <input class="si" id="coQ" placeholder="Search companies…" oninput="renderCo()"/>
+        <button class="btn" onclick="doResearch()">↗</button>
+      </div>
+      <div class="fr" id="fr">
+        <button class="fp active" onclick="setFilter('all',this)">All</button>
+        <button class="fp" onclick="setFilter('client',this)">Client</button>
+        <button class="fp" onclick="setFilter('partner',this)">Partner</button>
+        <button class="fp" onclick="setFilter('prospect',this)">Prospect</button>
+        <button class="fp" onclick="setFilter('poc',this)">POC</button>
+        <button class="fp" onclick="setFilter('nogo',this)">No outreach</button>
+      </div>
+      <div class="lm"><span id="colm">—</span><span>right-click for actions</span></div>
+      <div class="scr" id="coList"></div>
+    </div>
+
+    <!-- CONTACTS -->
+    <div id="pane-ct" style="display:none;flex-direction:column;flex:1;overflow:hidden">
+      <div class="sw"><input class="si" id="ctQ" placeholder="Search contacts…" oninput="renderCt()"/></div>
+      <div class="lm"><span id="ctlm">—</span><span>click to open</span></div>
+      <div class="scr" id="ctList"></div>
+    </div>
+
+    <!-- FEED -->
+    <div id="pane-feed" style="display:none;flex-direction:column;flex:1;overflow:hidden">
+      <div class="sw">
+        <span style="font-family:'IBM Plex Mono',monospace;font-size:9px;color:var(--t3);align-self:center">ACTIVITY FEED</span>
+      </div>
+      <div style="padding:5px 8px 0;display:flex;gap:4px;flex-shrink:0" id="feedtabs">
+        <button class="atab active" onclick="setFeedTab('all',this)">All</button>
+        <button class="atab" onclick="setFeedTab('li',this)">LinkedIn</button>
+        <button class="atab" onclick="setFeedTab('x',this)">X</button>
+        <button class="atab" onclick="setFeedTab('hot',this)">🔥 Signals</button>
+      </div>
+      <div class="scr" id="feedList" style="padding:4px 8px"></div>
+    </div>
+
+    <!-- GROUPS -->
+    <div id="pane-grp" style="display:none;flex-direction:column;flex:1;overflow:hidden">
+      <div class="sw">
+        <span style="font-family:'IBM Plex Mono',monospace;font-size:9px;color:var(--t3);align-self:center">INDUSTRY COMMUNITIES</span>
+      </div>
+      <div class="scr" id="grpList" style="padding:6px 10px"></div>
+    </div>
   </div>
 
-  <!-- ── THREE PANELS ─────────────────────────────────────── -->
-  <div class="panels">
+  <!-- CENTER PANEL -->
+  <div class="center" id="center">
 
-    <!-- LEFT ───────────────────────────────────────────────── -->
-    <div class="left-panel">
-
-      <!-- tab bar -->
-      <div class="tab-bar">
-        <div class="tab active" id="tabCo" onclick="switchTab('companies')">Companies</div>
-        <div class="tab"        id="tabCt" onclick="switchTab('contacts')">Contacts</div>
+    <!-- EMPTY STATE -->
+    <div class="es" id="es">
+      <div class="qa wide" style="background:var(--gb);border-color:var(--gr);cursor:default">
+        <div class="qa-ic">🎯</div>
+        <div class="qa-ti">onAudience Sales Intelligence Hub</div>
+        <div class="qa-ds" style="font-family:'IBM Plex Sans',sans-serif;font-size:11px;color:var(--t2);margin-top:2px">Data Partnerships &amp; Programmatic Outreach · v2.0 · March 2026</div>
       </div>
-
-      <!-- search row -->
-      <div class="lp-search">
-        <input id="searchInput" placeholder="Search…" oninput="filterList()"/>
-        <button class="btn sm" onclick="doResearch()">↗</button>
-      </div>
-
-      <!-- company type filters (hidden on contacts tab) -->
-      <div class="lp-filters" id="coFilters">
-        <div class="lf active" data-f="all"      onclick="setFilter('all',null)">All</div>
-        <div class="lf"        data-f="client"   onclick="setFilter('client',null)">Clients</div>
-        <div class="lf"        data-f="partner"  onclick="setFilter('partner',null)">Partners</div>
-        <div class="lf"        data-f="prospect" onclick="setFilter('prospect',null)">Prospects</div>
-        <div class="lf"        data-f="poc"      onclick="setFilter('poc',null)">POC</div>
-        <div class="lf"        data-f="nogo"     onclick="setFilter('nogo',null)">No outreach</div>
-      </div>
-
-      <!-- urgency filters (contacts tab only) -->
-      <div class="urgency-bar" id="urgencyBar">
-        <div class="uf active" data-u="all"    onclick="setUrgency('all')">    <span class="uf-icon">⚡</span>  <span class="uf-label">All</span>        <span class="uf-count" id="uc-all">0</span></div>
-        <div class="uf"        data-u="fresh"  onclick="setUrgency('fresh')"  title="Added ≤14 days, never contacted"><span class="uf-icon">🥩</span>  <span class="uf-label">Fresh Meat</span>  <span class="uf-count" id="uc-fresh">0</span></div>
-        <div class="uf"        data-u="hot"    onclick="setUrgency('hot')"    title="Contacted within 21 days">  <span class="uf-icon">🔥</span>  <span class="uf-label">Hot</span>         <span class="uf-count" id="uc-hot">0</span></div>
-        <div class="uf"        data-u="rotten" onclick="setUrgency('rotten')" title="Not contacted in 60+ days"> <span class="uf-icon">🍅</span>  <span class="uf-label">Rotten</span>      <span class="uf-count" id="uc-rotten">0</span></div>
-        <div class="uf"        data-u="ghost"  onclick="setUrgency('ghost')"  title="No contact date recorded">  <span class="uf-icon">👻</span>  <span class="uf-label">Ghosted</span>     <span class="uf-count" id="uc-ghost">0</span></div>
-        <div class="uf"        data-u="fog"    onclick="setUrgency('fog')"    title="Missing key info">          <span class="uf-icon">🌫️</span> <span class="uf-label">Fog of War</span> <span class="uf-count" id="uc-fog">0</span></div>
-      </div>
-
-      <div class="list-meta" id="listMeta"></div>
-      <div class="list-scroll" id="listScroll"></div>
-    </div><!-- /left-panel -->
-
-    <!-- CENTER ─────────────────────────────────────────────── -->
-    <div class="center-panel" id="centerPanel">
-
-      <!-- empty state -->
-      <div id="emptyState" class="empty-center">
-        <div class="empty-center-eyebrow">Sales Intelligence Hub</div>
-        <div class="empty-center-title">Select a company or contact</div>
-        <div class="empty-center-sub">or use a quick action below</div>
-        <div class="ec-grid">
-          <div class="qa-card" onclick="openModal('Research a company','Enter company name:','Research [COMPANY] — full contact report with decision makers, outreach angle, and ICP fit score for onAudience data partnerships')">
-            <div class="qa-icon">🔍</div><div class="qa-title">Company research</div><div class="qa-desc">Full contact report</div>
-          </div>
-          <div class="qa-card" onclick="openClaude('Find top 10 DSP / AdTech prospects for onAudience data partnerships in EMEA — ranked by ICP fit, with key contacts')">
-            <div class="qa-icon">🎯</div><div class="qa-title">Find prospects</div><div class="qa-desc">ICP-matched targets</div>
-          </div>
-          <div class="qa-card" onclick="openClaude('Give me the top 5 onAudience sales priorities for this week — based on pipeline stage, engagement signals, and deal size')">
-            <div class="qa-icon">⭐</div><div class="qa-title">Top picks this week</div><div class="qa-desc">Prioritized pipeline</div>
-          </div>
-          <div class="qa-card" onclick="openModal('Find similar companies','Enter a company name to find look-alikes:','Find 10 companies similar to [COMPANY] for onAudience outreach — ranked by ICP fit with contact suggestions')">
-            <div class="qa-icon">🔗</div><div class="qa-title">Find similar</div><div class="qa-desc">Look-alike targets</div>
-          </div>
-          <div class="qa-card" onclick="openClaude('Which companies in the onAudience database have gone quiet for 60+ days? Give re-engagement angles and suggested contacts for each')">
-            <div class="qa-icon">♻️</div><div class="qa-title">Re-engage dormant</div><div class="qa-desc">Win back cold leads</div>
-          </div>
-          <div class="qa-card" onclick="openClaude('Draft 3 LinkedIn connection messages for different onAudience prospect archetypes: DSP Head of Data, Publisher Revenue Lead, AdTech Partnership Manager')">
-            <div class="qa-icon">✉</div><div class="qa-title">LinkedIn template</div><div class="qa-desc">Outreach messages</div>
-          </div>
-        </div>
-      </div>
-
-      <!-- company detail (shown when a company is selected) -->
-      <div id="companyDetail" style="display:none">
-
-        <!-- header -->
-        <div class="cp-header">
-          <div class="cp-av" id="cpAv"></div>
-          <div style="flex:1;min-width:0">
-            <div class="cp-name" id="cpName"></div>
-            <div class="cp-meta">
-              <span class="tag" id="cpTag"></span>
-              <span class="icp-stars" id="cpStars"></span>
-            </div>
-          </div>
-          <div class="cp-close" onclick="closeCompany()">✕</div>
-        </div>
-
-        <!-- detail grid -->
-        <div class="detail-grid">
-          <div class="dg-item"><div class="dg-lbl">Category</div><div class="dg-val" id="cpCat">—</div></div>
-          <div class="dg-item"><div class="dg-lbl">Region</div>  <div class="dg-val" id="cpReg">—</div></div>
-          <div class="dg-item"><div class="dg-lbl">Size</div>    <div class="dg-val" id="cpSize">—</div></div>
-          <div class="dg-item"><div class="dg-lbl">Updated</div> <div class="dg-val" id="cpUpd">—</div></div>
-          <div class="dg-item"><div class="dg-lbl">Website</div> <div class="dg-val" id="cpWeb">—</div></div>
-          <div class="dg-item"><div class="dg-lbl">LinkedIn</div><div class="dg-val" id="cpLi">—</div></div>
-        </div>
-
-        <!-- technologies -->
-        <div class="ps" id="psTech">
-          <div class="ps-head" onclick="toggleSection('psTech')">
-            <span>🔌</span><span class="ps-label">Technologies</span><span class="ps-badge" id="cpTechBadge">—</span><span class="ps-chevron open">▶</span>
-          </div>
-          <div class="ps-body open"><div id="cpTechTags" class="tech-tags"></div></div>
-        </div>
-
-        <!-- outreach angle -->
-        <div class="ps" id="psAngle">
-          <div class="ps-head" onclick="toggleSection('psAngle')">
-            <span>💡</span><span class="ps-label">Outreach Angle</span><span class="ps-chevron open">▶</span>
-          </div>
-          <div class="ps-body open"><div class="angle-text" id="cpAngle"></div></div>
-        </div>
-
-        <!-- contacts -->
-        <div class="ps" id="psContacts">
-          <div class="ps-head" onclick="toggleSection('psContacts')">
-            <span>👤</span><span class="ps-label">Contacts</span><span class="ps-badge" id="cpContactBadge">0</span><span class="ps-chevron open">▶</span>
-          </div>
-          <div class="ps-body open"><div id="cpContactsList"></div></div>
-        </div>
-
-        <!-- actions -->
-        <div class="ps" id="psActions">
-          <div class="ps-head" onclick="toggleSection('psActions')">
-            <span>⚡</span><span class="ps-label">Actions</span><span class="ps-chevron open">▶</span>
-          </div>
-          <div class="ps-body open"><div class="actions-grid" id="cpActions"></div></div>
-        </div>
-
-        <!-- notes -->
-        <div class="ps" id="psNotes">
-          <div class="ps-head" onclick="toggleSection('psNotes')">
-            <span>📝</span><span class="ps-label">Notes</span><span class="ps-chevron">▶</span>
-          </div>
-          <div class="ps-body">
-            <div class="ps-inner"><div id="cpNoteText" style="font-size:12px;color:var(--t2);line-height:1.7"></div></div>
-          </div>
-        </div>
-
-      </div><!-- /companyDetail -->
-    </div><!-- /center-panel -->
-
-    <!-- RIGHT — SALES PLANNING ─────────────────────────────── -->
-    <div class="right-panel">
-
-      <div class="rp-header">
-        <span class="rp-header-title">Sales Planning</span>
-        <button class="btn sm" onclick="openPlanModal()">+ Add</button>
-      </div>
-
-      <!-- pipeline -->
-      <div class="rp-section">
-        <div class="rp-title">Pipeline <span id="pipeCount" style="color:var(--t2)">0</span></div>
-        <div id="pipelineList"></div>
-      </div>
-
-      <!-- weekly tasks -->
-      <div class="rp-section">
-        <div class="rp-title" style="display:flex;align-items:center;justify-content:space-between">
-          <span>This Week</span>
-          <span id="goalProgress" style="color:var(--t2);font-size:8px">0/0</span>
-        </div>
-        <div id="weeklyList"></div>
-        <div class="progress-bar" style="margin-top:8px">
-          <div class="progress-fill" id="progressFill" style="width:0%"></div>
-        </div>
-      </div>
-
-      <!-- metrics -->
-      <div class="rp-section">
-        <div class="rp-title">Activity Metrics</div>
-        <div class="metric-row"><span class="metric-lbl">Emails sent</span>    <span class="metric-val" id="mEmails">0</span></div>
-        <div class="metric-row"><span class="metric-lbl">Meetings booked</span><span class="metric-val" id="mMeetings">0</span></div>
-        <div class="metric-row"><span class="metric-lbl">Proposals sent</span> <span class="metric-val" id="mProposals">0</span></div>
-        <div class="metric-row"><span class="metric-lbl">Deals active</span>   <span class="metric-val" id="mDeals">—</span></div>
-      </div>
-
-      <!-- quick actions -->
-      <div class="rp-section">
-        <div class="rp-title">Quick Actions</div>
-        <div class="rp-quick-actions">
-          <button class="btn full" onclick="openClaude('Give me my onAudience sales priorities for today — top 3 actions based on pipeline and engagement')">🎯 Today's priorities</button>
-          <button class="btn full" onclick="openClaude('Draft a weekly sales activity report for onAudience — emails sent, meetings booked, prospects added this week')">📊 Weekly report</button>
-          <button class="btn full" onclick="openClaude('What are the best ICP signals for onAudience data partnerships in the DSP and publisher space right now?')">💡 ICP signals</button>
-          <button class="btn full p" onclick="openModal('Add to pipeline','Enter company name to add to pipeline:','Research [COMPANY] and add to onAudience sales pipeline — stage, decision maker, estimated deal size, next action')">+ Pipeline entry</button>
-        </div>
-      </div>
-
-    </div><!-- /right-panel -->
-
-  </div><!-- /panels -->
-</div><!-- /.app -->
-
-
-<!-- ── CONTEXT MENU (outside .app to avoid clip) ──────────── -->
-<div id="ctxMenu"></div>
-
-
-<!-- ── CONTACT DRAWER (outside .app to avoid clip) ───────── -->
-<div id="drawerOverlay" onclick="closeDrawer()"></div>
-<div id="contactDrawer">
-  <div class="drawer-header">
-    <div class="av av-round" id="drawerAv"></div>
-    <div style="min-width:0;flex:1">
-      <div class="drawer-name" id="drawerName"></div>
-      <div class="drawer-title-text" id="drawerTitleText"></div>
-      <div class="drawer-meta" id="drawerMeta"></div>
-    </div>
-    <button class="btn sm drawer-close" onclick="closeDrawer()">✕</button>
-  </div>
-  <div class="drawer-body">
-
-    <div class="drawer-section">
-      <div class="drawer-sec-title">Contact Details</div>
-      <div class="drawer-2col">
-        <div class="drawer-field"><div class="drawer-field-lbl">Email</div>    <div class="drawer-field-val" id="drawerEmail"></div></div>
-        <div class="drawer-field"><div class="drawer-field-lbl">Phone</div>    <div class="drawer-field-val" id="drawerPhone"></div></div>
-        <div class="drawer-field"><div class="drawer-field-lbl">LinkedIn</div> <div class="drawer-field-val" id="drawerLI"></div></div>
-        <div class="drawer-field"><div class="drawer-field-lbl">Location</div> <div class="drawer-field-val" id="drawerLocation"></div></div>
-      </div>
+      <div class="qa" onclick="openModal('research')"><div class="qa-ic">🔍</div><div class="qa-ti">Company research</div><div class="qa-ds">Full contact report · decision makers · ICP score · tech stack</div></div>
+      <div class="qa" onclick="openModal('discover')"><div class="qa-ic">🎯</div><div class="qa-ti">Find prospects</div><div class="qa-ds">Crunchbase · conference lists · lookalike · EMEA scan</div></div>
+      <div class="qa" onclick="openClaude('Show top 5 highest-priority onAudience prospects to contact this week — ICP fit, recency, signals, outreach angle')"><div class="qa-ic">⭐</div><div class="qa-ti">Top picks this week</div><div class="qa-ds">AI-ranked by ICP · signals · timing</div></div>
+      <div class="qa" onclick="openModal('similar')"><div class="qa-ic">🔗</div><div class="qa-ti">Find similar</div><div class="qa-ds">Lookalike discovery from existing clients or partners</div></div>
+      <div class="qa" onclick="openClaude('Find contacts at onAudience prospects who recently changed jobs in last 60 days — warm re-engagement opportunities with context and outreach angle')"><div class="qa-ic">↩</div><div class="qa-ti">Re-engage dormant</div><div class="qa-ds">Job changes · prior deals · signal-triggered outreach</div></div>
+      <div class="qa" onclick="openModal('outreach')"><div class="qa-ic">✉</div><div class="qa-ti">Draft outreach</div><div class="qa-ds">Email or LinkedIn · role-personalized · value-led</div></div>
+      <div class="qa" onclick="openClaude('Find DSP, SSP, and media agency prospects for onAudience in EMEA not yet in our database — strong programmatic data buying signals, ranked by ICP fit. Sources: LinkedIn, Crunchbase, conference exhibitor lists, programmatic ecosystem.')"><div class="qa-ic">🌍</div><div class="qa-ti">EMEA scan</div><div class="qa-ds">New prospects · not in database · programmatic signals</div></div>
+      <div class="qa" onclick="openClaude('I have 253 Havas contacts. Help me prioritize who to reach out to at Havas globally for onAudience data partnerships — most relevant roles, regions, and outreach angles')"><div class="qa-ic">📋</div><div class="qa-ti">Havas 253 contacts</div><div class="qa-ds">Prioritize by role · region · outreach angle</div></div>
     </div>
 
-    <div class="drawer-section">
-      <div class="drawer-sec-title">Role &amp; Relationship</div>
-      <div class="drawer-2col">
-        <div class="drawer-field"><div class="drawer-field-lbl">Company</div>       <div class="drawer-field-val" id="drawerCompany"></div></div>
-        <div class="drawer-field"><div class="drawer-field-lbl">Department</div>    <div class="drawer-field-val" id="drawerDept"></div></div>
-        <div class="drawer-field"><div class="drawer-field-lbl">Seniority</div>     <div class="drawer-field-val" id="drawerSeniority"></div></div>
-        <div class="drawer-field"><div class="drawer-field-lbl">Source</div>        <div class="drawer-field-val" id="drawerSource"></div></div>
-        <div class="drawer-field"><div class="drawer-field-lbl">Last contacted</div><div class="drawer-field-val" id="drawerLastContact"></div></div>
-        <div class="drawer-field"><div class="drawer-field-lbl">Added</div>         <div class="drawer-field-val" id="drawerAdded"></div></div>
-      </div>
-    </div>
-
-    <div class="drawer-section">
-      <div class="drawer-sec-title">Notes</div>
-      <div class="drawer-field-val" id="drawerNotes" style="font-size:12px;color:var(--t2);line-height:1.7"></div>
-    </div>
-
-    <div class="drawer-actions" id="drawerActions"></div>
-    <div class="drawer-cta"><button class="btn full p" id="drawerCTA"></button></div>
+    <!-- COMPANY DETAIL (rendered by JS) -->
+    <div id="dp" style="display:none"></div>
 
   </div>
 </div>
+</div>
 
+<!-- CONTACT DRAWER -->
+<div id="dov" onclick="closeDw()"></div>
+<div id="dw">
+  <div class="dh" id="dwh"></div>
+  <div class="db" id="dwb"></div>
+</div>
 
-<!-- ── RESEARCH MODAL (outside .app to avoid clip) ────────── -->
-<div id="overlay" onclick="if(event.target===this)closeModal()">
-  <div class="modal-box">
-    <div class="modal-title" id="modalTitle"></div>
-    <div class="modal-desc"  id="modalDesc"></div>
-    <input class="modal-input" id="modalInput" placeholder="Type and press Enter…"/>
-    <div class="modal-actions">
-      <button class="btn"   onclick="closeModal()">Cancel</button>
+<!-- CONTEXT MENU -->
+<div id="ctx" class="ctx" style="display:none"></div>
+
+<!-- MODAL -->
+<div id="ov" onclick="if(event.target===this)closeModal()">
+  <div class="mb">
+    <h2 id="mt">Research</h2>
+    <p id="md">Enter company name.</p>
+    <textarea id="mi" placeholder="…" rows="3"></textarea>
+    <div class="mb-a">
+      <button class="btn" onclick="closeModal()">Cancel</button>
       <button class="btn p" onclick="submitModal()">Open in Claude ↗</button>
     </div>
   </div>
 </div>
-
-
-<!-- ── SALES PLAN MODAL (outside .app to avoid clip) ─────── -->
-<div id="planOverlay" onclick="if(event.target===this)closePlanModal()">
-  <div class="plan-modal">
-    <div class="plan-modal-title">Add to Sales Plan</div>
-    <div class="plan-modal-sub">Pipeline entry or weekly task</div>
-    <div class="plan-type-btns">
-      <button class="btn p" id="planTypePipeline" onclick="setPlanType('pipeline')">Pipeline Entry</button>
-      <button class="btn"   id="planTypeTask"     onclick="setPlanType('task')">Weekly Task</button>
-    </div>
-    <div class="plan-grid">
-      <div class="plan-field full">
-        <label>Company / Task Name</label>
-        <input id="planName" placeholder="e.g. The Trade Desk"/>
-      </div>
-      <div class="plan-field" id="planStageField">
-        <label>Stage</label>
-        <select id="planStage">
-          <option value="prospect">Prospect</option>
-          <option value="outreach">Outreach</option>
-          <option value="engaged">Engaged</option>
-          <option value="proposal">Proposal</option>
-          <option value="negotiation">Negotiation</option>
-          <option value="closed">Closed Won</option>
-        </select>
-      </div>
-      <div class="plan-field" id="planValueField">
-        <label>Est. Deal Value (€)</label>
-        <input id="planValue" type="number" placeholder="e.g. 25000"/>
-      </div>
-      <div class="plan-field full">
-        <label>Notes / Next Action</label>
-        <textarea id="planNotes" placeholder="e.g. Schedule demo call with Head of Data…"></textarea>
-      </div>
-    </div>
-    <div class="plan-footer">
-      <button class="btn"   onclick="closePlanModal()">Cancel</button>
-      <button class="btn p" onclick="savePlanEntry()">Save Entry</button>
-    </div>
-  </div>
-</div>
-
 
 <script src="hub.js"></script>
 </body>
