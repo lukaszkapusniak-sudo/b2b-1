@@ -381,7 +381,7 @@ a.ml:hover{text-decoration:underline}
 // ── THEME ────────────────────────────────────────────────
 let theme=localStorage.getItem('oaTheme')||'light';
 document.documentElement.setAttribute('data-theme',theme);
-function toggleTheme(){theme=theme==='light'?'dark':'light\';document.documentElement.setAttribute(\'data-theme',theme);localStorage.setItem('oaTheme',theme);document.getElementById('themeBtn').textContent=theme==='dark'?'☀️':'🌙'}
+function toggleTheme(){theme=theme==='light'?'dark':'light';document.documentElement.setAttribute('data-theme',theme);localStorage.setItem('oaTheme',theme);document.getElementById('themeBtn').textContent=theme==='dark'?'☀️':'🌙'}
 document.getElementById('themeBtn').textContent=theme==='dark'?'☀️':'🌙';
 
 // ── SUPABASE ─────────────────────────────────────────────
@@ -391,7 +391,7 @@ document.getElementById('themeBtn').textContent=theme==='dark'?'☀️':'🌙';
 const SB_URL='https://nyzkkqqjnkctcmxoirdj.supabase.co';
 const SB_KEY='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im55emtrcXFqbmtjdGNteG9pcmRqIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzM4NzMxMzYsImV4cCI6MjA4OTQ0OTEzNn0.jhAq_C68klOp4iTyj9HmsyyvoxsOI6ACld7t_87TAk0';
 const PROXY='https://nyzkkqqjnkctcmxoirdj.supabase.co/functions/v1/data';
-const SBH_READ ={'apikey':SB_KEY,'Authorization':'Bearer \'+SB_KEY,\'Content-Type':'application/json'};
+const SBH_READ ={'apikey':SB_KEY,'Authorization':'Bearer '+SB_KEY,'Content-Type':'application/json'};
 const SBH_WRITE={'Content-Type':'application/json'}; // proxy handles auth server-side
 const SBH=SBH_READ;
 
@@ -755,7 +755,7 @@ function openCo(enc){
       return `<strong>${name}</strong> is a CTV-first DSP — and CTV without audience intelligence is just expensive TV. Their buyers need to know they're reaching the right household, not just a smart screen. The onAudience angle here is clean: bring them demographic + purchase intent segments mapped to household-level IDs, overlay it on their CTV inventory, and suddenly their clients can prove brand lift, not just impressions. The integration path is straightforward — if they're on TTD or DV360, segments are already live and can be layered in the same deal flow. Position this as a data layer upgrade for their top 10 clients, not a new vendor relationship.`;
     }
     if(_hasDSP){
-      return `<strong>${name}</strong> runs programmatic buying at scale — they're either burning through segments from whoever's easiest to access, or they're sophisticated enough to know that data quality separates their best campaigns from the mediocre ones. Either way, onAudience fits. The easy pitch: ${_ttd?'they\'re already on TTD where our segments are live — no integration, no legal, just activate':'push them to the TTD Data Marketplace where we\'re already integrated — first test in days, not weeks'}. The sharper pitch: show them our EU taxonomy (190+ CTV segments, 197 B2B segments, brand-level purchase intent) and ask which client vertical is underperforming. There's a segment for that.`;
+      return `<strong>${name}</strong> runs programmatic buying at scale — they're either burning through segments from whoever's easiest to access, or they're sophisticated enough to know that data quality separates their best campaigns from the mediocre ones. Either way, onAudience fits. The easy pitch: ${_ttd?'they're already on TTD where our segments are live — no integration, no legal, just activate':'push them to the TTD Data Marketplace where we're already integrated — first test in days, not weeks'}. The sharper pitch: show them our EU taxonomy (190+ CTV segments, 197 B2B segments, brand-level purchase intent) and ask which client vertical is underperforming. There's a segment for that.`;
     }
     if(_hasSSP){
       return `<strong>${name}</strong> sits on the supply side — which makes them a multiplier, not just a buyer. The opportunity isn't just to sell them data; it's to embed onAudience audience intelligence into their publisher monetisation stack so every impression they serve is smarter. Publishers on their platform can charge more for audience-verified inventory. Advertisers on their platform get better targeting without switching DSPs. Everyone wins. Concrete opening move: propose a data enrichment pilot on their top 5 publisher accounts — show CPM lift, then talk about a revenue-share model on the wider network.`;
@@ -894,9 +894,9 @@ function openCo(enc){
     <div class="pb">
       <div class="bgrid">
         <button class="btn" style="height:auto;padding:8px 10px;text-align:left;text-transform:none;font-size:11px;letter-spacing:0" onclick="openClaude('Find all known clients, case studies, and partnerships of ${esc(name)} — compile a full client registry with campaign types, platforms used, and results')"><div style="font-family:'IBM Plex Mono',monospace;font-size:8px;color:var(--t3);text-transform:uppercase;letter-spacing:.06em;margin-bottom:3px">Client Registry</div>Research their clients &amp; case studies</button>
-        <button class="btn" style="height:auto;padding:8px 10px;text-align:left;text-transform:none;font-size:11px;letter-spacing:0" onclick="openClaude('Research ${esc(name)} job listings — find programmatic, data, or partnerships roles that signal stack or buying intent. Which DSPs, DMPs, or data tools are mentioned?')"><div style="font-family:\'IBM Plex Mono',monospace;font-size:8px;color:var(--t3);text-transform:uppercase;letter-spacing:.06em;margin-bottom:3px">Hiring Signals</div>Scan job listings for stack clues</button>
+        <button class="btn" style="height:auto;padding:8px 10px;text-align:left;text-transform:none;font-size:11px;letter-spacing:0" onclick="openClaude('Research ${esc(name)} job listings — find programmatic, data, or partnerships roles that signal stack or buying intent. Which DSPs, DMPs, or data tools are mentioned?')"><div style="font-family:'IBM Plex Mono',monospace;font-size:8px;color:var(--t3);text-transform:uppercase;letter-spacing:.06em;margin-bottom:3px">Hiring Signals</div>Scan job listings for stack clues</button>
         <button class="btn" style="height:auto;padding:8px 10px;text-align:left;text-transform:none;font-size:11px;letter-spacing:0" onclick="openClaude('Find people who recently joined ${esc(name)} in last 90 days in programmatic, data, or partnerships roles — new hires often build new vendor relationships')"><div style="font-family:'IBM Plex Mono',monospace;font-size:8px;color:var(--t3);text-transform:uppercase;letter-spacing:.06em;margin-bottom:3px">New Hires</div>Recent joiners building their stack</button>
-        <button class="btn" style="height:auto;padding:8px 10px;text-align:left;text-transform:none;font-size:11px;letter-spacing:0" onclick="openClaude('Find recent funding, M&A, or major announcements about ${esc(name)} in 2025–2026 — are they in growth mode? Any signal to time our outreach?')"><div style="font-family:\'IBM Plex Mono',monospace;font-size:8px;color:var(--t3);text-transform:uppercase;letter-spacing:.06em;margin-bottom:3px">Funding / M&amp;A</div>Growth signals &amp; timing triggers</button>
+        <button class="btn" style="height:auto;padding:8px 10px;text-align:left;text-transform:none;font-size:11px;letter-spacing:0" onclick="openClaude('Find recent funding, M&A, or major announcements about ${esc(name)} in 2025–2026 — are they in growth mode? Any signal to time our outreach?')"><div style="font-family:'IBM Plex Mono',monospace;font-size:8px;color:var(--t3);text-transform:uppercase;letter-spacing:.06em;margin-bottom:3px">Funding / M&amp;A</div>Growth signals &amp; timing triggers</button>
       </div>
     </div>
   </div>
