@@ -10,87 +10,87 @@ const SB_KEY='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZ
 const SBH={'apikey':SB_KEY,'Authorization':'Bearer '+SB_KEY,'Content-Type':'application/json','Prefer':'resolution=merge-duplicates,return=minimal'};
 
 // ── SEED DATA ────────────────────────────────────────────
-// [name, note, type, category, region, size, icp, website, li_slug, signals[], social{}]
+// [name, note, type, category, region, size, icp, website, li_slug, signals[], social{}, offices[]]
 const SEED=[
-  ['6sense','POC client','poc','Intent Data / ABM','US',null,8,'6sense.com','6sense',['intent'],{li:'6sense',tw:'6senseInc'}],
-  ['Adform','integrated partner / DSP Europe','partner','DSP','Europe',null,8,'adform.com','adform',['DSP'],{li:'adform',tw:'AdformHQ'}],
-  ['Adobe','partner — DMP integration','partner','DMP','US',null,7,'adobe.com','adobe',['DMP'],{li:'adobe',tw:'Adobe'}],
-  ['Adtonos','client','client','Audio AdTech','UK',null,7,'adtonos.com','adtonos',[],{}],
-  ['AlikeAudience','client','client','Audience Data / DMP','APAC',null,10,'alikeaudience.com','alikeaudience',['TTD','DV360'],{li:'alikeaudience',tw:'AlikeAudience'}],
-  ['Amazon','partner','partner','DSP / Marketplace','US',null,7,'amazon.com','amazon',['DSP'],{li:'amazon',tw:'AmazonAds'}],
-  ['Anzu','POC client','poc','In-game AdTech','UK',null,7,'anzu.io','anzu-io',[],{}],
-  ['Audigent','partner / curation','partner','Data Curation','US',null,8,'audigent.com','audigent',['curation','TTD'],{li:'audigent',tw:'Audigent'}],
-  ['Bango','prospect — via LiveRamp','prospect','Data / Identity','UK',null,7,'bango.com','bango',['LiveRamp'],{li:'bango'}],
-  ['Beintoo','prospect — to continue','prospect','Mobile Data','Italy',null,6,'beintoo.com','beintoo',[],{}],
-  ['Bidtheatre','partner / DSP Scandinavia','partner','DSP','Scandinavia',null,7,'bidtheatre.com','bidtheatre',['DSP'],{li:'bidtheatre'}],
-  ['Bright Mountain Media','prospect — to continue','prospect','Media / AdTech','US',null,6,'brightmountainmedia.com','bright-mountain-media',[],{}],
-  ['Bytedance (TikTok)','client — APAC only','client','Social / DSP','APAC',null,7,'bytedance.com','bytedance',[],{li:'bytedance',tw:'TikTokBusiness'}],
-  ['Captify UK','client','client','Search Intelligence','UK',null,8,'captify.co.uk','captify',['contextual'],{li:'captify',tw:'CaptifySearch'}],
-  ['Claritas','prospect — to continue','prospect','Data Provider','US',null,7,'claritas.com','claritas-llc',['data'],{li:'claritas-llc',tw:'ClaritasLLC'}],
-  ['Criteo','partner — contact: Adrian','partner','DSP / Retargeting','Global',null,7,'criteo.com','criteo',['DSP'],{li:'criteo',tw:'Criteo'}],
-  ['Datonics','client','client','Data Provider','US',null,10,'datonics.com','datonics',['data','TTD','DV360'],{li:'datonics',tw:'Datonics'}],
-  ['Echo Analytics','POC client','poc','Location Data','France',null,8,'echo-analytics.eu','echo-analytics',[],{}],
-  ['Entity X','client — Adrian','client','AdTech','US',null,7,'entityx.com','entityx',[],{}],
-  ['Epsilon','partner — Matt deal','partner','Data / DMP','US',null,8,'epsilon.com','epsilon-data-management',['data','DMP'],{li:'epsilon-data-management',tw:'EpsilonMktg'}],
-  ['Equativ','partner / SSP curation','partner','SSP','Europe',null,8,'equativ.com','equativ',['SSP'],{li:'equativ',tw:'Equativ_'}],
-  ['Experian','prospect — Karo/Maciek','prospect','Data Provider','UK',null,7,'experian.com','experian',['data'],{li:'experian',tw:'Experian_PLC'}],
-  ['Eyeota','partner','partner','Data Provider','APAC/Global',null,7,'eyeota.com','eyeota',['data'],{li:'eyeota',tw:'Eyeota'}],
-  ['Foursquare','partner','partner','Location Data','US',null,7,'foursquare.com','foursquare',['location'],{li:'foursquare',tw:'Foursquare'}],
-  ['Fyllo','partner','partner','Data / Compliance','US',null,7,'fyllo.com','fyllo',['data'],{li:'fyllo'}],
-  ['Google','partner','partner','DSP / DMP','US',null,7,'google.com','google',['DSP','DMP'],{li:'google',tw:'Google'}],
-  ['Havas PL','client / agency','client','Media Agency','Poland',null,8,'havas.com','havas',['agency'],{li:'havas',tw:'Havas'}],
-  ['Hybrid','partner','partner','Programmatic','Poland',null,7,'hybrid.ai','hybrid-agency',[],{}],
-  ['ID5','partner / cookieless product','partner','Identity','Europe',null,9,'id5.io','id5-io',['identity','cookieless'],{li:'id5-io',tw:'ID5tech'}],
-  ['Intuizi','client — Adrian','client','Mobile Data','US',null,7,'intuizi.com','intuizi',[],{}],
-  ['Kochava','partner / data provider','partner','MMP / Data','US',null,7,'kochava.com','kochava',['data','mobile'],{li:'kochava',tw:'Kochava'}],
-  ['LiveRamp','partner / marketplace','partner','Identity / Marketplace','US',null,9,'liveramp.com','liveramp',['identity','marketplace','TTD'],{li:'liveramp',tw:'LiveRamp'}],
-  ['Madhive','prospect / DSP — Karolina','prospect','DSP / CTV','US',null,9,'madhive.com','madhive',['DSP','CTV'],{li:'madhive',tw:'MadHive_IO'}],
-  ['Mastercard','partner','partner','Data / Finance','US',null,7,'mastercard.com','mastercard',['data'],{li:'mastercard',tw:'Mastercard'}],
-  ['MediaWallah','partner / data exchange','partner','Identity / Data Exchange','US',null,7,'mediawallah.com','mediawallah',['identity'],{li:'mediawallah'}],
-  ['MeMob','client','client','Mobile AdTech','Poland',null,7,'memob.com','memob',[],{}],
-  ['Microsoft Advertising (Xandr)','partner','partner','DSP','US',null,8,'microsoft.com','microsoft',['DSP'],{li:'microsoft',tw:'MSAdvertising'}],
-  ['MNTN','partner / DSP','partner','CTV DSP','US',null,8,'mountain.com','mntn-inc',['DSP','CTV'],{li:'mntn-inc',tw:'MNTNtech'}],
-  ['Mobilewalla','client','client','Mobile Data','US',null,7,'mobilewalla.com','mobilewalla',[],{li:'mobilewalla',tw:'Mobilewalla'}],
-  ['Moboost','client','client','Mobile AdTech','Poland',null,7,'moboost.com','moboost',[],{}],
-  ['Multilocal','client — Adrian','client','Local Programmatic','UK',null,7,'multilocal.com','multilocal',[],{}],
-  ['Nexxen','prospect','prospect','DSP / CTV','US/Israel',null,8,'nexxen.com','nexxen',['DSP','CTV'],{li:'nexxen',tw:'NexxenHQ'}],
-  ['OpenSignal','client','client','Mobile Analytics','UK',null,7,'opensignal.com','opensignal',[],{}],
-  ['OpenX','prospect','prospect','SSP','US',null,7,'openx.com','openx',['SSP'],{li:'openx',tw:'OpenX'}],
-  ['Permutive','client','client','Cookieless DMP','UK',null,8,'permutive.com','permutive',['cookieless','DMP'],{li:'permutive',tw:'Permutive'}],
-  ['Pubmatic','partner','partner','SSP','US',null,7,'pubmatic.com','pubmatic',['SSP'],{li:'pubmatic',tw:'PubMatic'}],
-  ['Samba TV','prospect','prospect','CTV Data','US',null,8,'samba.tv','samba-tv',['CTV','data'],{li:'samba-tv',tw:'SambaTV'}],
-  ['Semantec','client','client','Data Provider','Poland',null,7,'semantec.pl','semantec',[],{}],
-  ['Semasio','partner — acquired by Fyllo','partner','Contextual Data','Germany',null,7,'semasio.com','semasio',['contextual'],{li:'semasio'}],
-  ['Sharethrough','partner / data exchange','partner','SSP / Native','US',null,7,'sharethrough.com','sharethrough',['SSP'],{li:'sharethrough',tw:'Sharethrough'}],
-  ['Sovrn','client — Adrian','client','Publisher Platform','US',null,7,'sovrn.com','sovrn',['data'],{li:'sovrn',tw:'sovrn'}],
-  ['Sportradar','prospect — Karolina','prospect','Sports Data','Switzerland',null,8,'sportradar.com','sportradar',['data','sports'],{li:'sportradar',tw:'Sportradar'}],
-  ['Stackadapt','prospect','prospect','DSP','Canada',null,8,'stackadapt.com','stackadapt',['DSP'],{li:'stackadapt',tw:'StackAdapt'}],
-  ['Taboola','prospect — via MSFT Curate','prospect','Native / Curation','US',null,7,'taboola.com','taboola',['native'],{li:'taboola',tw:'taboola'}],
-  ['TheTradeDesk','partner','partner','DSP','US',null,9,'thetradedesk.com','thetradedesk',['DSP'],{li:'thetradedesk',tw:'TheTradeDesk'}],
-  ['TikTok','partner — via Bytedance','partner','Social / DSP','APAC/Global',null,7,'tiktok.com','tiktok',[],{li:'tiktok',tw:'TikTokBusiness'}],
-  ['True Data','client','client','Data Provider','Japan',null,7,'true-data.co.jp','truedata',[],{}],
-  ['VentiveIQ','prospect — Maciek + Adrian','prospect','Identity / Data','US',null,8,'ventiveiq.com','ventiveiq',['identity'],{li:'ventiveiq'}],
-  ['VistarMedia (T-Mobile)','prospect','prospect','DOOH / CTV DSP','US',null,8,'vistarmedia.com','vistarmedia',['CTV','DOOH','DSP'],{li:'vistarmedia',tw:'VistarMedia'}],
-  ['Weborama','prospect','prospect','Contextual / DMP','France',null,7,'weborama.com','weborama',['contextual'],{li:'weborama',tw:'Weborama'}],
-  ['Wowcher','client','client','E-commerce','UK',null,7,'wowcher.co.uk','wowcher',[],{}],
-  ['Zeotap','client','client','CDP / Identity','Germany',null,8,'zeotap.com','zeotap',['CDP','identity'],{li:'zeotap',tw:'zeotap'}],
-  ['Beklever','prospect','prospect','AdTech','Spain',null,6,'beklever.com','beklever',[],{}],
-  ['Havas Spain','prospect','prospect','Media Agency','Spain',null,7,'havas.com','havas',['agency'],{li:'havas'}],
-  ['Dentsu Thailand','prospect','prospect','Media Agency','Thailand',null,6,'dentsu.com','dentsu',['agency'],{li:'dentsu'}],
-  ['OMD Thailand','prospect','prospect','Media Agency','Thailand',null,6,'omd.com','omd',['agency'],{li:'omd'}],
-  ['Splicky DSP','prospect','prospect','DSP / Mobile','Germany',null,7,'splicky.com','splicky',['DSP'],{li:'splicky'}],
-  ['Synthesi','partner — to be','partner','Data','France',null,6,'synthesi.fr','synthesi',[],{}],
-  ['Admixer','no outreach','nogo','AdTech','Ukraine',null,null,'admixer.com','admixer',[],{}],
-  ['Aniview','no outreach — failed deal','nogo','Video AdTech','US',null,null,'aniview.com','aniview',[],{}],
-  ['Bidscube','no outreach — former client','nogo','DSP / White Label','India',null,null,'bidscube.com','bidscube',[],{}],
-  ['Dynata','no outreach — former client','nogo','Research / Data','US',null,null,'dynata.com','dynata',[],{li:'dynata',tw:'Dynata'}],
-  ['Eskimi','no outreach — bad timing','nogo','Mobile DSP','Lithuania',null,null,'eskimi.com','eskimi',[],{}],
-  ['Lifesight','no outreach — unwanted','nogo','CDP','Singapore',null,null,'lifesight.io','lifesight',[],{}],
-  ['Lotame','no outreach — contract ended','nogo','DMP','US',null,null,'lotame.com','lotame',[],{li:'lotame',tw:'Lotame'}],
-  ['Meta','no outreach — via LiveRamp only','nogo','Social / DSP','US',null,null,'meta.com','facebook',[],{li:'facebook',tw:'Meta'}],
-  ['Nielsen','no outreach','nogo','Measurement','US',null,null,'nielsen.com','nielsen',[],{li:'nielsen',tw:'Nielsen'}],
-  ['Oracle','no outreach — closed ad division','nogo','AdTech','US',null,null,'oracle.com','oracle',[],{li:'oracle',tw:'Oracle'}],
-  ['RTB House','no business','nogo','DSP / Retargeting','Poland',null,null,'rtbhouse.com','rtb-house',[],{li:'rtb-house',tw:'RTBHouse'}],
+  ['6sense','POC client','poc','Intent Data / ABM','US',null,8,'6sense.com','6sense',['intent'],{li:'6sense',tw:'6senseInc'},['San Francisco CA (HQ)','New York NY','London UK','Bangalore IN']],
+  ['Adform','integrated partner / DSP Europe','partner','DSP','Europe',null,8,'adform.com','adform',['DSP'],{li:'adform',tw:'AdformHQ'},['Copenhagen DK (HQ)','Warsaw PL','London UK','Hamburg DE','Prague CZ','New York NY','Singapore SG']],
+  ['Adobe','partner — DMP integration','partner','DMP','US',null,7,'adobe.com','adobe',['DMP'],{li:'adobe',tw:'Adobe'},['San Jose CA (HQ)','New York NY','London UK','Amsterdam NL','Sydney AU','Tokyo JP','Mumbai IN']],
+  ['Adtonos','client','client','Audio AdTech','UK',null,7,'adtonos.com','adtonos',[],{},['London UK (HQ)','Warsaw PL']],
+  ['AlikeAudience','client','client','Audience Data / DMP','APAC',null,10,'alikeaudience.com','alikeaudience',['TTD','DV360'],{li:'alikeaudience',tw:'AlikeAudience'},['Sunnyvale CA (HQ)','Hong Kong','Singapore','Sydney AU']],
+  ['Amazon','partner','partner','DSP / Marketplace','US',null,7,'amazon.com','amazon',['DSP'],{li:'amazon',tw:'AmazonAds'},['Seattle WA (HQ)','New York NY','London UK','Luxembourg','Tokyo JP','Singapore','Sydney AU']],
+  ['Anzu','POC client','poc','In-game AdTech','UK',null,7,'anzu.io','anzu-io',[],{},['London UK (HQ)','Tel Aviv IL','New York NY']],
+  ['Audigent','partner / curation','partner','Data Curation','US',null,8,'audigent.com','audigent',['curation','TTD'],{li:'audigent',tw:'Audigent'},['New York NY (HQ)','Los Angeles CA']],
+  ['Bango','prospect — via LiveRamp','prospect','Data / Identity','UK',null,7,'bango.com','bango',['LiveRamp'],{li:'bango'},['Cambridge UK (HQ)','Tokyo JP','Cape Town ZA']],
+  ['Beintoo','prospect — to continue','prospect','Mobile Data','Italy',null,6,'beintoo.com','beintoo',[],{},['Milan IT (HQ)','Rome IT']],
+  ['Bidtheatre','partner / DSP Scandinavia','partner','DSP','Scandinavia',null,7,'bidtheatre.com','bidtheatre',['DSP'],{li:'bidtheatre'},['Stockholm SE (HQ)','Oslo NO']],
+  ['Bright Mountain Media','prospect — to continue','prospect','Media / AdTech','US',null,6,'brightmountainmedia.com','bright-mountain-media',[],{},['Boca Raton FL (HQ)']],
+  ['Bytedance (TikTok)','client — APAC only','client','Social / DSP','APAC',null,7,'bytedance.com','bytedance',[],{li:'bytedance',tw:'TikTokBusiness'},['Beijing CN (HQ)','Singapore','New York NY','London UK','Los Angeles CA','Tokyo JP','São Paulo BR']],
+  ['Captify UK','client','client','Search Intelligence','UK',null,8,'captify.co.uk','captify',['contextual'],{li:'captify',tw:'CaptifySearch'},['London UK (HQ)','New York NY','Chicago IL','Los Angeles CA','Sydney AU','Hamburg DE']],
+  ['Claritas','prospect — to continue','prospect','Data Provider','US',null,7,'claritas.com','claritas-llc',['data'],{li:'claritas-llc',tw:'ClaritasLLC'},['San Diego CA (HQ)','Nashville TN']],
+  ['Criteo','partner — contact: Adrian','partner','DSP / Retargeting','Global',null,7,'criteo.com','criteo',['DSP'],{li:'criteo',tw:'Criteo'},['Paris FR (HQ)','New York NY','London UK','Tokyo JP','Singapore','São Paulo BR','Sydney AU','Boston MA']],
+  ['Datonics','client','client','Data Provider','US',null,10,'datonics.com','datonics',['data','TTD','DV360'],{li:'datonics',tw:'Datonics'},['New York NY (HQ)']],
+  ['Echo Analytics','POC client','poc','Location Data','France',null,8,'echo-analytics.eu','echo-analytics',[],{},['Paris FR (HQ)']],
+  ['Entity X','client — Adrian','client','AdTech','US',null,7,'entityx.com','entityx',[],{},['New York NY (HQ)']],
+  ['Epsilon','partner — Matt deal','partner','Data / DMP','US',null,8,'epsilon.com','epsilon-data-management',['data','DMP'],{li:'epsilon-data-management',tw:'EpsilonMktg'},['Irving TX (HQ)','Chicago IL','New York NY','London UK','Paris FR','Düsseldorf DE','Mumbai IN','Tokyo JP','Sydney AU']],
+  ['Equativ','partner / SSP curation','partner','SSP','Europe',null,8,'equativ.com','equativ',['SSP'],{li:'equativ',tw:'Equativ_'},['Paris FR (HQ)','New York NY','London UK','Madrid ES','Hamburg DE','Singapore','Milan IT']],
+  ['Experian','prospect — Karo/Maciek','prospect','Data Provider','UK',null,7,'experian.com','experian',['data'],{li:'experian',tw:'Experian_PLC'},['Dublin IE (HQ)','London UK','Costa Mesa CA','São Paulo BR','Johannesburg ZA','Singapore','Sydney AU']],
+  ['Eyeota','partner','partner','Data Provider','APAC/Global',null,7,'eyeota.com','eyeota',['data'],{li:'eyeota',tw:'Eyeota'},['Singapore (HQ)','New York NY','London UK','Sydney AU','Tokyo JP']],
+  ['Foursquare','partner','partner','Location Data','US',null,7,'foursquare.com','foursquare',['location'],{li:'foursquare',tw:'Foursquare'},['New York NY (HQ)','San Francisco CA','Chicago IL','London UK']],
+  ['Fyllo','partner','partner','Data / Compliance','US',null,7,'fyllo.com','fyllo',['data'],{li:'fyllo'},['Chicago IL (HQ)','New York NY','Los Angeles CA']],
+  ['Google','partner','partner','DSP / DMP','US',null,7,'google.com','google',['DSP','DMP'],{li:'google',tw:'Google'},['Mountain View CA (HQ)','New York NY','London UK','Dublin IE','Singapore','Tokyo JP','Sydney AU','Warsaw PL','Mumbai IN']],
+  ['Havas PL','client / agency','client','Media Agency','Poland',null,8,'havas.com','havas',['agency'],{li:'havas',tw:'Havas'},['Warsaw PL','Paris FR (Group HQ)','London UK','New York NY']],
+  ['Hybrid','partner','partner','Programmatic','Poland',null,7,'hybrid.ai','hybrid-agency',[],{},['Warsaw PL (HQ)','Kyiv UA','Tallinn EE']],
+  ['ID5','partner / cookieless product','partner','Identity','Europe',null,9,'id5.io','id5-io',['identity','cookieless'],{li:'id5-io',tw:'ID5tech'},['Paris FR (HQ)','London UK','New York NY']],
+  ['Intuizi','client — Adrian','client','Mobile Data','US',null,7,'intuizi.com','intuizi',[],{},['Atlanta GA (HQ)']],
+  ['Kochava','partner / data provider','partner','MMP / Data','US',null,7,'kochava.com','kochava',['data','mobile'],{li:'kochava',tw:'Kochava'},['Sandpoint ID (HQ)','New York NY','London UK','Singapore']],
+  ['LiveRamp','partner / marketplace','partner','Identity / Marketplace','US',null,9,'liveramp.com','liveramp',['identity','marketplace','TTD'],{li:'liveramp',tw:'LiveRamp'},['San Francisco CA (HQ)','New York NY','London UK','Paris FR','Melbourne AU','Singapore','Tokyo JP']],
+  ['Madhive','prospect / DSP — Karolina','prospect','DSP / CTV','US',null,9,'madhive.com','madhive',['DSP','CTV'],{li:'madhive',tw:'MadHive_IO'},['New York NY (HQ)','Los Angeles CA','Chicago IL']],
+  ['Mastercard','partner','partner','Data / Finance','US',null,7,'mastercard.com','mastercard',['data'],{li:'mastercard',tw:'Mastercard'},['Purchase NY (HQ)','New York NY','London UK','Dubai UAE','Singapore','São Paulo BR','Pune IN']],
+  ['MediaWallah','partner / data exchange','partner','Identity / Data Exchange','US',null,7,'mediawallah.com','mediawallah',['identity'],{li:'mediawallah'},['New York NY (HQ)']],
+  ['MeMob','client','client','Mobile AdTech','Poland',null,7,'memob.com','memob',[],{},['Warsaw PL (HQ)']],
+  ['Microsoft Advertising (Xandr)','partner','partner','DSP','US',null,8,'microsoft.com','microsoft',['DSP'],{li:'microsoft',tw:'MSAdvertising'},['Redmond WA (HQ)','New York NY','London UK','Paris FR','Dublin IE','Singapore','Tokyo JP','Sydney AU']],
+  ['MNTN','partner / DSP','partner','CTV DSP','US',null,8,'mountain.com','mntn-inc',['DSP','CTV'],{li:'mntn-inc',tw:'MNTNtech'},['Santa Monica CA (HQ)','New York NY','Chicago IL']],
+  ['Mobilewalla','client','client','Mobile Data','US',null,7,'mobilewalla.com','mobilewalla',[],{li:'mobilewalla',tw:'Mobilewalla'},['Atlanta GA (HQ)','New York NY','Singapore']],
+  ['Moboost','client','client','Mobile AdTech','Poland',null,7,'moboost.com','moboost',[],{},['Warsaw PL (HQ)']],
+  ['Multilocal','client — Adrian','client','Local Programmatic','UK',null,7,'multilocal.com','multilocal',[],{},['London UK (HQ)']],
+  ['Nexxen','prospect','prospect','DSP / CTV','US/Israel',null,8,'nexxen.com','nexxen',['DSP','CTV'],{li:'nexxen',tw:'NexxenHQ'},['New York NY (HQ)','Tel Aviv IL','London UK','Sydney AU','Singapore','Toronto CA']],
+  ['OpenSignal','client','client','Mobile Analytics','UK',null,7,'opensignal.com','opensignal',[],{},['London UK (HQ)','Lisbon PT','New York NY']],
+  ['OpenX','prospect','prospect','SSP','US',null,7,'openx.com','openx',['SSP'],{li:'openx',tw:'OpenX'},['Pasadena CA (HQ)','New York NY','London UK','Warsaw PL','Tokyo JP','Singapore']],
+  ['Permutive','client','client','Cookieless DMP','UK',null,8,'permutive.com','permutive',['cookieless','DMP'],{li:'permutive',tw:'Permutive'},['London UK (HQ)','New York NY','San Francisco CA']],
+  ['Pubmatic','partner','partner','SSP','US',null,7,'pubmatic.com','pubmatic',['SSP'],{li:'pubmatic',tw:'PubMatic'},['Redwood City CA (HQ)','New York NY','London UK','Oslo NO','Mumbai IN','Singapore','Tokyo JP','Sydney AU']],
+  ['Samba TV','prospect','prospect','CTV Data','US',null,8,'samba.tv','samba-tv',['CTV','data'],{li:'samba-tv',tw:'SambaTV'},['San Francisco CA (HQ)','New York NY','London UK','Sydney AU']],
+  ['Semantec','client','client','Data Provider','Poland',null,7,'semantec.pl','semantec',[],{},['Warsaw PL (HQ)']],
+  ['Semasio','partner — acquired by Fyllo','partner','Contextual Data','Germany',null,7,'semasio.com','semasio',['contextual'],{li:'semasio'},['Hamburg DE (HQ)','Copenhagen DK','New York NY']],
+  ['Sharethrough','partner / data exchange','partner','SSP / Native','US',null,7,'sharethrough.com','sharethrough',['SSP'],{li:'sharethrough',tw:'Sharethrough'},['San Francisco CA (HQ)','New York NY','Chicago IL','London UK','Montréal CA']],
+  ['Sovrn','client — Adrian','client','Publisher Platform','US',null,7,'sovrn.com','sovrn',['data'],{li:'sovrn',tw:'sovrn'},['Boulder CO (HQ)','New York NY','London UK']],
+  ['Sportradar','prospect — Karolina','prospect','Sports Data','Switzerland',null,8,'sportradar.com','sportradar',['data','sports'],{li:'sportradar',tw:'Sportradar'},['St. Gallen CH (HQ)','New York NY','London UK','Vienna AT','Melbourne AU','Singapore','Cape Town ZA']],
+  ['Stackadapt','prospect','prospect','DSP','Canada',null,8,'stackadapt.com','stackadapt',['DSP'],{li:'stackadapt',tw:'StackAdapt'},['Toronto CA (HQ)','New York NY','Chicago IL','London UK','Sydney AU']],
+  ['Taboola','prospect — via MSFT Curate','prospect','Native / Curation','US',null,7,'taboola.com','taboola',['native'],{li:'taboola',tw:'taboola'},['New York NY (HQ)','Tel Aviv IL','London UK','Bangkok TH','Mumbai IN','São Paulo BR','Tokyo JP']],
+  ['TheTradeDesk','partner','partner','DSP','US',null,9,'thetradedesk.com','thetradedesk',['DSP'],{li:'thetradedesk',tw:'TheTradeDesk'},['Ventura CA (HQ)','New York NY','London UK','Amsterdam NL','Hamburg DE','Tokyo JP','Singapore','Sydney AU','Hong Kong']],
+  ['TikTok','partner — via Bytedance','partner','Social / DSP','APAC/Global',null,7,'tiktok.com','tiktok',[],{li:'tiktok',tw:'TikTokBusiness'},['Culver City CA (HQ)','New York NY','London UK','Singapore','Jakarta ID','Tokyo JP','São Paulo BR']],
+  ['True Data','client','client','Data Provider','Japan',null,7,'true-data.co.jp','truedata',[],{},['Tokyo JP (HQ)','Osaka JP']],
+  ['VentiveIQ','prospect — Maciek + Adrian','prospect','Identity / Data','US',null,8,'ventiveiq.com','ventiveiq',['identity'],{li:'ventiveiq'},['New York NY (HQ)','Bangalore IN']],
+  ['VistarMedia (T-Mobile)','prospect','prospect','DOOH / CTV DSP','US',null,8,'vistarmedia.com','vistarmedia',['CTV','DOOH','DSP'],{li:'vistarmedia',tw:'VistarMedia'},['New York NY (HQ)','Los Angeles CA','Chicago IL','London UK']],
+  ['Weborama','prospect','prospect','Contextual / DMP','France',null,7,'weborama.com','weborama',['contextual'],{li:'weborama',tw:'Weborama'},['Paris FR (HQ)','Warsaw PL','Bucharest RO','Madrid ES']],
+  ['Wowcher','client','client','E-commerce','UK',null,7,'wowcher.co.uk','wowcher',[],{},['London UK (HQ)']],
+  ['Zeotap','client','client','CDP / Identity','Germany',null,8,'zeotap.com','zeotap',['CDP','identity'],{li:'zeotap',tw:'zeotap'},['Berlin DE (HQ)','Bangalore IN','London UK','New York NY','Munich DE']],
+  ['Beklever','prospect','prospect','AdTech','Spain',null,6,'beklever.com','beklever',[],{},['Madrid ES (HQ)']],
+  ['Havas Spain','prospect','prospect','Media Agency','Spain',null,7,'havas.com','havas',['agency'],{li:'havas'},['Madrid ES','Paris FR (Group HQ)','Barcelona ES']],
+  ['Dentsu Thailand','prospect','prospect','Media Agency','Thailand',null,6,'dentsu.com','dentsu',['agency'],{li:'dentsu'},['Bangkok TH','Tokyo JP (Group HQ)','Singapore']],
+  ['OMD Thailand','prospect','prospect','Media Agency','Thailand',null,6,'omd.com','omd',['agency'],{li:'omd'},['Bangkok TH','Singapore','New York NY (Group HQ)']],
+  ['Splicky DSP','prospect','prospect','DSP / Mobile','Germany',null,7,'splicky.com','splicky',['DSP'],{li:'splicky'},['Berlin DE (HQ)','Hamburg DE']],
+  ['Synthesi','partner — to be','partner','Data','France',null,6,'synthesi.fr','synthesi',[],{},['Paris FR (HQ)']],
+  ['Admixer','no outreach','nogo','AdTech','Ukraine',null,null,'admixer.com','admixer',[],{},['Kyiv UA (HQ)','Warsaw PL','Tallinn EE','Prague CZ']],
+  ['Aniview','no outreach — failed deal','nogo','Video AdTech','US',null,null,'aniview.com','aniview',[],{},['New York NY (HQ)','Tel Aviv IL']],
+  ['Bidscube','no outreach — former client','nogo','DSP / White Label','India',null,null,'bidscube.com','bidscube',[],{},['Bengaluru IN (HQ)']],
+  ['Dynata','no outreach — former client','nogo','Research / Data','US',null,null,'dynata.com','dynata',[],{li:'dynata',tw:'Dynata'},['Shelton CT (HQ)','London UK','Paris FR','Amsterdam NL','Warsaw PL','Sydney AU','Singapore']],
+  ['Eskimi','no outreach — bad timing','nogo','Mobile DSP','Lithuania',null,null,'eskimi.com','eskimi',[],{},['Vilnius LT (HQ)','Lagos NG','Nairobi KE']],
+  ['Lifesight','no outreach — unwanted','nogo','CDP','Singapore',null,null,'lifesight.io','lifesight',[],{},['Singapore (HQ)','Mumbai IN','Jakarta ID']],
+  ['Lotame','no outreach — contract ended','nogo','DMP','US',null,null,'lotame.com','lotame',[],{li:'lotame',tw:'Lotame'},['Bethesda MD (HQ)','New York NY','London UK','Singapore','Sydney AU']],
+  ['Meta','no outreach — via LiveRamp only','nogo','Social / DSP','US',null,null,'meta.com','facebook',[],{li:'facebook',tw:'Meta'},['Menlo Park CA (HQ)','New York NY','London UK','Dublin IE','Singapore','Tokyo JP','São Paulo BR']],
+  ['Nielsen','no outreach','nogo','Measurement','US',null,null,'nielsen.com','nielsen',[],{li:'nielsen',tw:'Nielsen'},['New York NY (HQ)','Chicago IL','London UK','Frankfurt DE','Singapore','Sydney AU']],
+  ['Oracle','no outreach — closed ad division','nogo','AdTech','US',null,null,'oracle.com','oracle',[],{li:'oracle',tw:'Oracle'},['Austin TX (HQ)','Redwood City CA','London UK','Amsterdam NL','Singapore','Mumbai IN']],
+  ['RTB House','no business','nogo','DSP / Retargeting','Poland',null,null,'rtbhouse.com','rtb-house',[],{li:'rtb-house',tw:'RTBHouse'},['Warsaw PL (HQ)','New York NY','London UK','São Paulo BR','Singapore','Tokyo JP','Dubai UAE']],
 ];
 
 const SEED_CONTACTS=[
@@ -129,7 +129,7 @@ const GROUPS=[
 ];
 
 // ── STATE ────────────────────────────────────────────────
-let companies=[],contacts=[],selCo=null,selCt=null;
+let companies=[],contacts=[],selCo=null,selCt=null,prevSelCo=null;
 let activeFilter='all',activeTab='co',feedTab='all';
 let _mTpl='',_mMode='';
 
@@ -156,8 +156,20 @@ window.oaDB={
       if(!cr.ok||!rr.ok)throw new Error('HTTP '+cr.status);
       const dbCo=await cr.json();
       const dbCt=await rr.json();
-      companies=dbCo.length?dbCo.map(r=>{const s=SEED.find(x=>x[0].toLowerCase()===r.name?.toLowerCase());return{...r,signals:s?s[9]:[],social:s?s[10]:{}}}):seedCo();
-      contacts=dbCt.length?dbCt.map(r=>{const s=SEED_CONTACTS.find(x=>x.id===r.id||x.email===r.email);return{...r,activity:s?s.activity:[]}}):SEED_CONTACTS.map(x=>({...x}));
+      companies=dbCo.length?dbCo.map(r=>{
+        const s=SEED.find(x=>x[0].toLowerCase()===r.name?.toLowerCase());
+        return{...r,
+          signals:(r.signals&&r.signals.length)?r.signals:(s?s[9]:[]),
+          social:s?s[10]:{},
+          offices:(r.offices&&r.offices.length)?r.offices:(s?s[11]||[]:[]),
+          dsps:r.dsps||[],
+          tech_stack:r.tech_stack||[],
+        };
+      }):seedCo();
+      contacts=dbCt.length?dbCt.map(r=>{
+        const s=SEED_CONTACTS.find(x=>x.id===r.id||x.email===r.email);
+        return{...r,activity:s?s.activity:[],twitter_handle:r.twitter_handle||'',affiliated_pages:r.affiliated_pages||[]};
+      }):SEED_CONTACTS.map(x=>({...x}));
       dot.className='ndot live';st.textContent=`● Live · ${companies.length}co · ${contacts.length}ct`;
     }catch(e){
       companies=seedCo();contacts=SEED_CONTACTS.map(x=>({...x}));
@@ -166,17 +178,33 @@ window.oaDB={
     updateStats();renderCo();renderCt();renderFeed();renderGrp();
   },
   reload(){this.load()},
+  // saveCompany — full schema:
+  // {id, name, type, note, category, description, hq_city, region, founded_year,
+  //  size, revenue_est, funding, icp, website, linkedin_slug, twitter_handle,
+  //  offices:[], dsps:[], tech_stack:[], signals:[]}
   async saveCompany(r){
-    try{await fetch(`${SB_URL}/rest/v1/companies`,{method:'POST',headers:SBH,body:JSON.stringify(r)})}catch(e){}
+    try{
+      const body={...r};
+      ['offices','dsps','tech_stack','signals'].forEach(k=>{if(body[k]&&!Array.isArray(body[k]))body[k]=[]});
+      await fetch(`${SB_URL}/rest/v1/companies`,{method:'POST',headers:SBH,body:JSON.stringify(body)});
+    }catch(e){console.warn('saveCompany',e)}
     await this.load();
   },
+  // saveContact — full schema:
+  // {id, company_id, company_name, full_name, title, email, email_confidence,
+  //  linkedin_url, twitter_handle, phone, location, department, seniority,
+  //  source, last_contacted_at, notes, affiliated_pages:[]}
   async saveContact(r){
-    try{await fetch(`${SB_URL}/rest/v1/contacts`,{method:'POST',headers:SBH,body:JSON.stringify(r)})}catch(e){}
+    try{
+      const body={...r};
+      if(body.affiliated_pages&&!Array.isArray(body.affiliated_pages))body.affiliated_pages=[];
+      await fetch(`${SB_URL}/rest/v1/contacts`,{method:'POST',headers:SBH,body:JSON.stringify(body)});
+    }catch(e){console.warn('saveContact',e)}
     await this.load();
   },
 };
 
-function seedCo(){return SEED.map(([name,note,type,cat,reg,sz,icp,web,li,signals,social])=>({name,note:note||'',type:type||'prospect',category:cat||null,region:reg||null,size:sz||null,icp:icp||null,website:web||null,linkedin_slug:li||null,signals:signals||[],social:social||{}}))}
+function seedCo(){return SEED.map(([name,note,type,cat,reg,sz,icp,web,li,signals,social,offices])=>({name,note:note||'',type:type||'prospect',category:cat||null,region:reg||null,size:sz||null,icp:icp||null,website:web||null,linkedin_slug:li||null,signals:signals||[],social:social||{},offices:offices||[]}))}
 
 // ── STATS ────────────────────────────────────────────────
 function updateStats(){
@@ -276,7 +304,10 @@ function showTab(t){
 
 // ── OPEN CO ──────────────────────────────────────────────
 function openCo(enc){
-  const name=decodeURIComponent(enc);selCo=name;
+  const name=decodeURIComponent(enc);
+  // only clear the back-pointer if no contact drawer is currently open
+  if(!selCt) prevSelCo=null;
+  selCo=name;
   const c=companies.find(x=>x.name===name);if(!c)return;
   renderCo();
   const [bg,fg]=pal(name);
@@ -319,13 +350,37 @@ function openCo(enc){
     nogo:`⚠️ <strong>${name}</strong> is flagged for no outreach. Check notes carefully before proceeding — prior failed deal or relationship issue may apply.`,
   };
 
+  const officesH=(c.offices||[]).length
+    ? (c.offices||[]).map(o=>{
+        const isHQ=o.includes('HQ');
+        return `<span style="display:inline-flex;align-items:center;gap:3px;font-family:'IBM Plex Mono',monospace;font-size:8px;padding:2px 6px;border:1px solid ${isHQ?'var(--gr)':'var(--rule)'};border-radius:2px;background:${isHQ?'var(--gb)':'var(--surf3)'};color:${isHQ?'var(--g)':'var(--t3)'};white-space:nowrap">${isHQ?'★ ':''}<span>${o.replace(' (HQ)','')}</span>${isHQ?'<span style="font-size:7px;opacity:.7"> HQ</span>':''}</span>`;
+      }).join(' ')
+    : '—';
+
+  // pill helpers
+  const pill=(txt,hi)=>`<span style="font-family:'IBM Plex Mono',monospace;font-size:8px;padding:2px 6px;border:1px solid ${hi?'var(--gr)':'var(--rule)'};border-radius:2px;background:${hi?'var(--gb)':'var(--surf3)'};color:${hi?'var(--g)':'var(--t3)'};white-space:nowrap;display:inline-block">${txt}</span>`;
+  const pillRow=(arr)=>arr.length?`<div style="display:flex;gap:4px;flex-wrap:wrap;margin-top:2px">${arr.map(x=>pill(x,false)).join('')}</div>`:'—';
+
+  const dspPills=(c.dsps&&c.dsps.length)?pillRow(c.dsps):'—';
+  const stackPills=(c.tech_stack&&c.tech_stack.length)?pillRow(c.tech_stack):'—';
+
   const gridRows=[
-    ['Category',c.category||'—'],['Region',c.region||'—'],
-    ['Size',c.size?c.size+' employees':'—'],
-    ['ICP Score',c.icp?stars(c.icp)+` ${c.icp}/10`:'—'],
+    ['Category',    c.category||'—'],
+    ['Description', c.description||'—'],
+    ['HQ',          c.hq_city||c.region||'—'],
+    ['Region',      c.region&&c.hq_city?c.region:'—'],
+    ['Founded',     c.founded_year||'—'],
+    ['Size',        c.size?c.size.toLocaleString()+' employees':'—'],
+    ['Revenue est', c.revenue_est||'—'],
+    ['Funding',     c.funding||'—'],
+    ['ICP Score',   c.icp?stars(c.icp)+` ${c.icp}/10`:'—'],
+    (c.dsps&&c.dsps.length)?['DSPs',dspPills]:null,
+    (c.tech_stack&&c.tech_stack.length)?['Tech stack',stackPills]:null,
+    (c.offices||[]).length?['Offices',`<div style="display:flex;gap:4px;flex-wrap:wrap;margin-top:2px">${officesH}</div>`]:null,
     c.website?['Website',`<a class="ml" href="https://${c.website}" target="_blank">${c.website} ↗</a>`]:null,
     c.linkedin_slug?['LinkedIn',`<a class="ml" href="https://linkedin.com/company/${c.linkedin_slug}" target="_blank">Company page ↗</a>`]:null,
-  ].filter(Boolean);
+    (c.social&&c.social.tw)?['Twitter / X',`<a class="ml" href="https://twitter.com/${c.social.tw}" target="_blank">@${c.social.tw} ↗</a>`]:null,
+  ].filter(r=>r&&r[1]&&r[1]!=='—');
 
   document.getElementById('es').style.display='none';
   document.getElementById('dp').style.display='block';
@@ -408,6 +463,10 @@ function togglePs(hdr){
 // ── DRAWER ───────────────────────────────────────────────
 function openDw(id){
   selCt=id;const c=contacts.find(x=>x.id===id);if(!c)return;renderCt();
+  // show employer company in center panel, remember what was there
+  prevSelCo=selCo;
+  const co=companies.find(x=>x.name===c.company_name);
+  if(co){openCo(encodeURIComponent(co.name));}
   document.getElementById('dwh').innerHTML=`
     <div class="dav">${ini(c.full_name)}</div>
     <div class="dinf"><div class="dnm">${c.full_name}</div><div class="drl">${c.title} · ${c.company_name}</div></div>
@@ -416,15 +475,37 @@ function openDw(id){
     const tH=(a.tags||[]).map(t=>`<span class="ftag${t==='hot'?' hot':t==='signal'?' sig':''}">${t==='hot'?'🔥':t==='signal'?'📡':t}</span>`).join('');
     return`<div class="fi"><div class="fib"><div class="fit">${pico(a.platform)} ${a.text}</div><div class="fim">${a.date} ${tH}</div></div></div>`;
   }).join(''):`<div style="font-family:'IBM Plex Mono',monospace;font-size:9px;color:var(--t3)">No activity tracked yet</div>`;
+  // seniority badge
+  const senBadge=c.seniority?`<span class="tag" style="background:var(--pb);color:var(--pc);border-color:var(--pr)">${c.seniority}</span>`:'';
+  // email confidence badge
+  const confColor={'confirmed':'var(--cc)','high':'var(--cc)','medium':'var(--prc)','low':'var(--t3)','unknown':'var(--t3)'}[c.email_confidence]||'var(--t3)';
+  const confBg={'confirmed':'var(--cb)','high':'var(--cb)','medium':'var(--prb)','low':'var(--surf3)','unknown':'var(--surf3)'}[c.email_confidence]||'var(--surf3)';
+  const confBadge=c.email_confidence?`<span style="font-family:'IBM Plex Mono',monospace;font-size:7px;padding:1px 4px;border-radius:2px;border:1px solid;color:${confColor};background:${confBg};border-color:${confColor}40;margin-left:4px">${c.email_confidence}</span>`:'';
+  // affiliated pages pills
+  const affPills=(c.affiliated_pages&&c.affiliated_pages.length)
+    ?c.affiliated_pages.map(p=>`<span style="font-family:'IBM Plex Mono',monospace;font-size:8px;padding:2px 6px;border:1px solid var(--rule);border-radius:2px;background:var(--surf3);color:var(--t3)">${p}</span>`).join(' ')
+    :'';
+  // last contacted
+  const lastCt=c.last_contacted_at?new Date(c.last_contacted_at).toLocaleDateString('en-GB',{day:'numeric',month:'short',year:'numeric'}):'Never';
+  const addedAt=c.added_at?new Date(c.added_at).toLocaleDateString('en-GB',{day:'numeric',month:'short',year:'numeric'}):'—';
+
   document.getElementById('dwb').innerHTML=`
     <div class="ps" style="margin-bottom:8px">
       <div class="ph" onclick="togglePs(this)"><span>📋</span><span class="pl">Contact Details</span><span class="chev open">▾</span></div>
       <div class="pb"><table class="inf">
-        ${c.email?`<tr><td>Email</td><td><a class="ml" href="mailto:${c.email}">${c.email}</a></td></tr>`:''}
+        ${c.email?`<tr><td>Email</td><td><a class="ml" href="mailto:${c.email}">${c.email}</a>${confBadge}</td></tr>`:''}
+        ${c.phone?`<tr><td>Phone</td><td>${c.phone}</td></tr>`:''}
         ${c.linkedin_url?`<tr><td>LinkedIn</td><td><a class="ml" href="${c.linkedin_url}" target="_blank">Profile ↗</a></td></tr>`:''}
-        ${c.twitter?`<tr><td>Twitter / X</td><td><a class="ml" href="https://twitter.com/${c.twitter}" target="_blank">${c.twitter}</a></td></tr>`:''}
-        <tr><td>Company</td><td>${c.company_name}</td></tr>
-        ${c.notes?`<tr><td>Notes</td><td style="font-size:11px;color:var(--t2)">${c.notes}</td></tr>`:''}
+        ${(c.twitter_handle||c.twitter)?`<tr><td>Twitter / X</td><td><a class="ml" href="https://twitter.com/${c.twitter_handle||c.twitter}" target="_blank">${c.twitter_handle||c.twitter} ↗</a></td></tr>`:''}
+        <tr><td>Company</td><td><span style="cursor:pointer;color:var(--g);font-family:'IBM Plex Mono',monospace;font-size:10px" onclick="closeDw();openCo('${encodeURIComponent(c.company_name)}')">${c.company_name} ↗</span></td></tr>
+        ${c.title?`<tr><td>Title</td><td>${c.title} ${senBadge}</td></tr>`:''}
+        ${c.department?`<tr><td>Department</td><td>${c.department}</td></tr>`:''}
+        ${c.location?`<tr><td>Location</td><td>${c.location}</td></tr>`:''}
+        ${c.source?`<tr><td>Source</td><td style="font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--t3)">${c.source}</td></tr>`:''}
+        <tr><td>Last contact</td><td style="font-family:'IBM Plex Mono',monospace;font-size:10px;color:${lastCt==='Never'?'var(--t3)':'var(--t1)'}">${lastCt}</td></tr>
+        <tr><td>Added</td><td style="font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--t3)">${addedAt}</td></tr>
+        ${affPills?`<tr><td>Also at</td><td style="display:flex;gap:4px;flex-wrap:wrap;padding-top:3px">${affPills}</td></tr>`:''}
+        ${c.notes?`<tr><td>Notes</td><td style="font-size:11px;color:var(--t2);line-height:1.5">${c.notes}</td></tr>`:''}
       </table></div>
     </div>
     <div class="ps" style="margin-bottom:8px">
@@ -444,7 +525,15 @@ function openDw(id){
   document.getElementById('dw').classList.add('open');
   document.getElementById('dov').classList.add('vis');
 }
-function closeDw(){document.getElementById('dw').classList.remove('open');document.getElementById('dov').classList.remove('vis');selCt=null;renderCt()}
+function closeDw(){
+  document.getElementById('dw').classList.remove('open');
+  document.getElementById('dov').classList.remove('vis');
+  selCt=null;
+  // restore center panel to what was showing before contact was clicked
+  if(prevSelCo){const r=prevSelCo;selCo=r;prevSelCo=null;renderCo();openCo(encodeURIComponent(r));}
+  else{selCo=null;prevSelCo=null;renderCo();document.getElementById('es').style.display='grid';document.getElementById('dp').style.display='none';}
+  renderCt();
+}
 
 // ── CTX MENU ─────────────────────────────────────────────
 function showCtx(e,enc,type){
