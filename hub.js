@@ -342,12 +342,77 @@ function openCo(enc){
     return`<div class="fi"><div class="fib"><div class="fiw">${a.who}</div><div class="fit">${pico(a.platform)} ${a.text}</div><div class="fim">${a.date} ${tH}</div></div></div>`;
   }).join(''):`<div style="font-family:'IBM Plex Mono',monospace;font-size:9px;color:var(--t3)">No tracked activity — follow contacts to populate feed</div>`;
 
+  // ── OUTREACH ANGLE — elaborative, category-aware ─────────
+  const _cat=(c.category||'').toLowerCase();
+  const _sig=(c.signals||[]).map(s=>s.toLowerCase());
+  const _reg=(c.region||'').toLowerCase();
+  const _hasDSP=_sig.includes('dsp')||_cat.includes('dsp');
+  const _hasSSP=_sig.includes('ssp')||_cat.includes('ssp');
+  const _hasCTV=_sig.includes('ctv')||_cat.includes('ctv');
+  const _hasDMP=_sig.includes('dmp')||_cat.includes('dmp')||_cat.includes('cdp');
+  const _hasIdentity=_sig.includes('identity')||_sig.includes('liveramp')||_cat.includes('identity');
+  const _hasAgency=_cat.includes('agency');
+  const _hasData=_cat.includes('data')||_sig.includes('data');
+  const _isEMEA=_reg.includes('eu')||_reg.includes('europe')||_reg.includes('uk')||_reg.includes('pl')||_reg.includes('de')||_reg.includes('fr');
+  const _isAPAC=_reg.includes('apac')||_reg.includes('asia')||_reg.includes('jp')||_reg.includes('au');
+  const _ttd=_sig.includes('ttd')||_sig.includes('thetradedesk');
+  const _dv360=_sig.includes('dv360');
+
+  function _prospectAngle(){
+    if(_hasAgency){
+      return `<strong>${name}</strong> runs campaigns for dozens of brands — which means they're constantly hunting for the audience data that actually moves the needle. The pitch isn't "buy our segments", it's "your FMCG clients are wasting budget on broad demos when onAudience can hand you Purchase Intent &gt; Grocery Shoppers, or Auto Intenders &gt; SUV, pre-built and ready to activate on any DSP they're already on." Best foot in the door: offer a single-campaign test using their existing TTD or DV360 seat — zero procurement paperwork, results in one flight. If they're running programmatic in ${_isEMEA?'Europe':'the region'}, odds are their traders already know where to find us in the TTD Data Marketplace. Start there.`;
+    }
+    if(_hasDSP&&_hasCTV){
+      return `<strong>${name}</strong> is a CTV-first DSP — and CTV without audience intelligence is just expensive TV. Their buyers need to know they're reaching the right household, not just a smart screen. The onAudience angle here is clean: bring them demographic + purchase intent segments mapped to household-level IDs, overlay it on their CTV inventory, and suddenly their clients can prove brand lift, not just impressions. The integration path is straightforward — if they're on TTD or DV360, segments are already live and can be layered in the same deal flow. Position this as a data layer upgrade for their top 10 clients, not a new vendor relationship.`;
+    }
+    if(_hasDSP){
+      return `<strong>${name}</strong> runs programmatic buying at scale — they're either burning through segments from whoever's easiest to access, or they're sophisticated enough to know that data quality separates their best campaigns from the mediocre ones. Either way, onAudience fits. The easy pitch: ${_ttd?'they're already on TTD where our segments are live — no integration, no legal, just activate':'push them to the TTD Data Marketplace where we're already integrated — first test in days, not weeks'}. The sharper pitch: show them our EU taxonomy (190+ CTV segments, 197 B2B segments, brand-level purchase intent) and ask which client vertical is underperforming. There's a segment for that.`;
+    }
+    if(_hasSSP){
+      return `<strong>${name}</strong> sits on the supply side — which makes them a multiplier, not just a buyer. The opportunity isn't just to sell them data; it's to embed onAudience audience intelligence into their publisher monetisation stack so every impression they serve is smarter. Publishers on their platform can charge more for audience-verified inventory. Advertisers on their platform get better targeting without switching DSPs. Everyone wins. Concrete opening move: propose a data enrichment pilot on their top 5 publisher accounts — show CPM lift, then talk about a revenue-share model on the wider network.`;
+    }
+    if(_hasDMP||_hasCDP){
+      return `<strong>${name}</strong> is in the data infrastructure business — they're not buying audiences, they're building the pipes audiences travel through. That's precisely where onAudience becomes a high-value data supplier rather than a competitor. Their clients need third-party enrichment to fill the gaps their first-party data leaves: new customer acquisition, lookalike expansion, B2B firmographic overlays. We slot in as the enrichment layer. The deal structure that tends to work: a wholesale data supply agreement where they white-label or resell our taxonomy into their platform — our 2,500+ segments become their 2,500+ segments overnight.`;
+    }
+    if(_hasIdentity){
+      return `<strong>${name}</strong> plays in the identity space — the increasingly hot, increasingly complicated intersection of "who is this person" and "is it legal to know that". onAudience brings pre-consented, GDPR-compliant EU audience data that plugs directly into identity graphs via LiveRamp or direct S2S. The pitch: their identity solution is only as useful as the audience intelligence layered on top of it. We're the layer. If they have a data marketplace or activation platform, propose an exclusive or preferred-partner arrangement for EU/APAC segments — coverage they genuinely can't build themselves at speed.`;
+    }
+    if(_hasData){
+      return `<strong>${name}</strong> trades in data — so they know exactly how hard it is to build quality audience segments from scratch, especially outside your home market. The fastest conversation to have is around complementary geo coverage: where do their segments go thin? EU? APAC? Emerging markets? onAudience fills those gaps with pre-built, taxonomy-standardised segments that plug into whatever activation channel they're already connected to. The business model that tends to close fastest: mutual data exchange — they bring their coverage, we bring ours, and together we offer clients something neither could alone.`;
+    }
+    return `<strong>${name}</strong> is a strong ICP fit for onAudience. They're buying, building, or brokering audience data at scale — which means they need either a high-quality segment supplier, a data enrichment partner, or both. Lead with the path of least resistance: if they're on TTD or DV360, our segments are already live and ready to activate with zero integration. If they're not, a LiveRamp push or direct S2S deal gets them there in under two weeks. First conversation goal: find out which client vertical is underperforming and propose a single-campaign data test. One good result closes the relationship.`;
+  }
+
+  function _clientAngle(){
+    if(_hasAgency){
+      return `<strong>${name}</strong> is an active agency client — they trust us enough to run campaigns on our data. The question now is breadth. Which of their brand clients <em>aren't</em> using onAudience segments yet? Agency relationships scale best when the data becomes part of the default activation workflow, not an occasional add-on. Identify their top 3 accounts by programmatic spend and build a tailored segment proposal for each vertical. For bonus points: offer to co-present a data strategy session to their trading desk — turns one buyer into a team of evangelists.`;
+    }
+    if(_hasDSP){
+      return `<strong>${name}</strong> is a live DSP client. Time to look at what they're actually activating and where the ceiling is. Are they using our segments across all their verticals, or just one? Are they reselling to their own clients, or keeping it in-house? Two upsell paths worth pursuing: vertical expansion (if they run FMCG campaigns, push B2B or Finance segments they haven't touched), and seat expansion (if they activate on TTD, propose adding DV360 or Xandr to double the reach with the same contract).`;
+    }
+    return `<strong>${name}</strong> is an active client — which is the best possible starting point for a bigger conversation. The goal now is to move from "line item in a campaign" to "strategic data partner." Pull their current segment usage, identify the verticals or geos they haven't activated yet, and come in with a specific proposal rather than an open-ended check-in. Clients who expand usually do so because someone showed up with a concrete number: "here's what you left on the table last quarter, here's how to capture it."`;
+  }
+
+  function _partnerAngle(){
+    if(_hasDSP||_hasSSP){
+      return `<strong>${name}</strong> is an integrated platform partner — our segments are (or can be) live on their marketplace. The underexploited opportunity is GTM co-motion: joint case studies, co-branded sell sheets for their sales team, a shared pipeline of clients where their platform + our data creates a story neither can tell alone. Concrete next step: propose a quarterly business review where we align on which shared clients are underperforming and run a joint data push. Platform partners who see revenue from the partnership protect it. Make sure they're seeing revenue.`;
+    }
+    if(_hasIdentity){
+      return `<strong>${name}</strong> is an identity partner — meaning we share infrastructure and, increasingly, clients. The expansion play here is to formalise what's probably an informal arrangement: a co-sell motion where onAudience segments are the default enrichment layer on top of their identity resolution. Their sales team should be positioning us in every deal where a client asks "but where does the audience data come from?" That requires enablement: give their team a two-slide onAudience segment overview and a single case study. Small effort, big leverage.`;
+    }
+    return `<strong>${name}</strong> is a strategic partner — the relationship is established, the integration exists, now the question is whether we're maximising it. Map out the mutual client base: where are clients buying from both of us independently when they could get a joined-up solution? That's the co-sell motion. Also worth exploring: are there product integration depths we haven't unlocked yet — custom taxonomy builds, private marketplace deals, shared data pools? Partner relationships that don't actively grow tend to quietly atrophy.`;
+  }
+
+  function _pocAngle(){
+    return `<strong>${name}</strong> is mid-proof — which is both the most exciting and most fragile stage of any data relationship. The test is running, which means they're invested enough to care about the result. The job now is to make sure the result lands well: check that the segments they activated are the right ones for their campaign KPIs (reach isn't the same as conversion), make sure their traders know how to read the performance data, and have a next-step proposal ready for the moment they see a positive signal. The worst outcome is a good result with no follow-up. The deal to propose when tests look positive: a 90-day non-exclusive revenue-share pilot across their top 3 campaign verticals — low commitment, clear upside for both sides.`;
+  }
+
   const angles={
-    client:`<strong>${name}</strong> is an active client. Review current segment usage and identify upsell — adjacent categories, new geos, or new verticals. Check contract renewal timing.`,
-    partner:`<strong>${name}</strong> is an integrated partner. Explore joint go-to-market, co-marketing, or expanding integration scope. Look for referral pipeline opportunities.`,
-    prospect:`<strong>${name}</strong> is a strong ICP fit. Lead with the TTD Data Marketplace angle — zero integration needed for their traders. Reference a similar client case study as proof.`,
-    poc:`<strong>${name}</strong> is in active POC. Follow up on test results, remove blockers, and push toward a 90-day non-exclusive revenue-share agreement.`,
-    nogo:`⚠️ <strong>${name}</strong> is flagged for no outreach. Check notes carefully before proceeding — prior failed deal or relationship issue may apply.`,
+    client:  _clientAngle(),
+    partner: _partnerAngle(),
+    prospect:_prospectAngle(),
+    poc:     _pocAngle(),
+    nogo:`⚠️ <strong>${name}</strong> is flagged for no outreach — there's a reason this one is parked. Before reaching out, dig into what happened: a failed deal, a contract that ended badly, a "not now" that became permanent, or a change in their business that made us irrelevant. The note field should tell the story. If circumstances have genuinely changed (new decision maker, new product focus, time elapsed), that's the re-engagement hook. If not, don't waste the relationship capital.`,
   };
 
   const officesH=(c.offices||[]).length
