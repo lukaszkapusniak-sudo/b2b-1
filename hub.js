@@ -97,6 +97,7 @@ function loadSeed() {
     icp: null, category: null, region: null, website: null, size: null,
     linkedin_slug: null, fresh: false
   }));
+  _buildCoMap();
   setStatus('', `○ Seed · ${companies.length}`);
   updateStats(); renderList();
 }
@@ -135,6 +136,7 @@ async function skowyt() {
     }
     merged.sort((a,b) => a.name.localeCompare(b.name));
     companies = merged;
+    _buildCoMap();
 
     setStatus('live', `● Live · ${dbCos.length} / ${contacts.length}`);
     showToast(`✓ Skowyt — ${dbCos.length} co, ${contacts.length} ct`, 'ok');
@@ -349,29 +351,54 @@ function closePanel() {
 
 function toggleSection(head) { head.closest('.ps').classList.toggle('open'); }
 
+/* ── COMPANY LOOKUP MAP (built after skowyt) ───────────────────────────── */
+// O(1) lookup by both id and lowercase name — rebuilt every time companies updates
+let _coMap = new Map();
+function _buildCoMap() {
+  _coMap = new Map();
+  for (const c of companies) {
+    if (c.id)   _coMap.set(c.id, c);
+    if (c.name) _coMap.set(c.name.toLowerCase(), c);
+  }
+}
+
+function _findCompany(name, id) {
+  if (id   && _coMap.has(id))                   return _coMap.get(id);
+  if (name && _coMap.has(name.toLowerCase()))   return _coMap.get(name.toLowerCase());
+  return null;
+}
+
 /* ── CONTACT DRAWER ────────────────────────────────────────────────────── */
-// Snapshot of center panel state before drawer opens — restored on close
-let _drawerPrevCompany = null;
+let _drawerOpen        = false;
+let _drawerPrevCompany = null;  // center state before first drawer open — restored on close
 
 function openDrawer(ct) {
-  if (!ct) { console.warn('[hub] openDrawer: ct is null'); return; }
+  if (!ct) { console.warn('[hub] openDrawer: null contact'); return; }
 
-  // ── 1. Save current center state so we can restore on close
-  _drawerPrevCompany = selectedCompany;
-
-  // ── 2. Switch center panel to this contact's company (if found)
-  const coName = (ct.company_name||'').toLowerCase();
-  const linked = companies.find(c => c.name.toLowerCase() === coName || c.id === ct.company_id);
-  if (linked) {
-    openCompanyPanel(linked);
+  // Capture the pre-drawer center state only on the FIRST open (not when switching contacts)
+  if (!_drawerOpen) {
+    _drawerPrevCompany = selectedCompany;
+    _drawerOpen = true;
   }
 
-  // ── 3. Populate drawer header
+  // ── Switch center panel to this contact's company
+  const linked = _findCompany(ct.company_name, ct.company_id);
+  if (linked) {
+    // Temporarily show company WITHOUT updating _drawerPrevCompany
+    _openCompanyPanelSilent(linked);
+  } else if (ct.company_name) {
+    _showCompanyStub(ct.company_name);
+    _fetchAndShowCompany(ct.company_name, ct.company_id);
+  } else {
+    document.getElementById('centerPanel').innerHTML = emptyState();
+  }
+
+  // ── Populate drawer header
   document.getElementById('drawerAv').textContent    = ini(ct.full_name);
   document.getElementById('drawerName').textContent  = ct.full_name;
   document.getElementById('drawerTitle').textContent = [ct.title, ct.company_name].filter(Boolean).join(' · ');
 
-  // Store current contact on drawer for event delegation
+  // Store contact data on drawer element for action buttons via event delegation
   const d = document.getElementById('drawer');
   d.dataset.ctName  = ct.full_name;
   d.dataset.ctCo    = ct.company_name||'';
@@ -379,10 +406,10 @@ function openDrawer(ct) {
   d.dataset.ctLi    = ct.linkedin_url||'';
   d.dataset.ctNotes = ct.notes||'';
 
-  // ── 4. Drawer body — prominent facts first
+  // ── Drawer body
   const emailHtml = ct.email
     ? `<a class="fact-email" href="mailto:${h(ct.email)}">${h(ct.email)}</a>`
-    : `<span class="fact-empty">No email</span>`;
+    : `<span class="fact-empty">No email on file</span>`;
 
   const liHtml = ct.linkedin_url
     ? `<a class="btn-li" href="${h(ct.linkedin_url)}" target="_blank">LinkedIn profile ↗</a>`
@@ -392,12 +419,12 @@ function openDrawer(ct) {
     ? `<div class="drawer-notes">${h(ct.notes)}</div>`
     : '';
 
-  const contextHint = linked
-    ? `<div class="drawer-context-hint">↙ Center panel shows <span class="hint-co">${h(linked.name)}</span> · closes on ✕</div>`
+  const coHint = ct.company_name
+    ? `<div class="drawer-context-hint">↙ <span class="hint-co">${h(ct.company_name)}</span> · close to restore previous view</div>`
     : '';
 
   document.getElementById('drawerBody').innerHTML = `
-    ${contextHint}
+    ${coHint}
     <div class="fact-block">
       <div class="fact-label">Email</div>
       ${emailHtml}
@@ -419,17 +446,102 @@ function openDrawer(ct) {
   d.classList.add('open');
 }
 
+// Opens a company panel WITHOUT changing _drawerPrevCompany or selected highlight
+function _openCompanyPanelSilent(c) {
+  // We call openCompanyPanel normally — it sets selectedCompany = c
+  // which is fine: we saved _drawerPrevCompany before first open
+  openCompanyPanel(c);
+}
+
 function closeDrawer() {
   document.getElementById('drawerOverlay').classList.remove('vis');
   document.getElementById('drawer').classList.remove('open');
+  _drawerOpen = false;
 
-  // ── Restore previous center state
+  // Restore what was in center panel before the drawer was opened
   if (_drawerPrevCompany) {
     openCompanyPanel(_drawerPrevCompany);
-  } else if (!selectedCompany) {
+  } else {
+    selectedCompany = null;
     document.getElementById('centerPanel').innerHTML = emptyState();
+    delete document.getElementById('centerPanel').dataset.company;
+    renderList(); // clear selection highlight
   }
   _drawerPrevCompany = null;
+}
+
+/* Show stub while company fetch is in progress */
+function _showCompanyStub(name) {
+  const [bg, fg] = av(name);
+  document.getElementById('centerPanel').innerHTML = `
+    <div class="detail-panel">
+      <div class="dp-head">
+        <div class="dp-av" style="background:${bg};border-color:${fg}30;color:${fg}">${ini(name)}</div>
+        <div class="dp-info">
+          <div class="dp-name">${h(name)}</div>
+          <div class="dp-sub">Fetching…</div>
+        </div>
+      </div>
+      <div style="padding:20px 16px;font-family:'IBM Plex Mono',monospace;font-size:9px;color:var(--t3)">Loading…</div>
+    </div>`;
+}
+
+/* Fetch company from Supabase when not in local array */
+async function _fetchAndShowCompany(name, id) {
+  try {
+    const q = id
+      ? `id=eq.${encodeURIComponent(id)}`
+      : `name=ilike.${encodeURIComponent(name)}`;
+    const res = await fetch(
+      `${SB_URL}/rest/v1/companies?${q}&select=*&limit=1`,
+      { headers: SB_H, signal: AbortSignal.timeout(5000) }
+    );
+    if (!res.ok) throw new Error(`HTTP ${res.status}`);
+    const rows = await res.json();
+    if (rows?.length) {
+      const r = rows[0];
+      const co = {
+        id: r.id||slug(r.name), name:r.name, note:r.note||'',
+        type: r.type||classify(r.note||''),
+        icp:r.icp||null, category:r.category||null, region:r.region||null,
+        website:r.website||null, size:r.size||null, linkedin_slug:r.linkedin_slug||null,
+        fresh: !SEED_NAMES.has(r.name.toLowerCase())
+      };
+      if (!_coMap.has(co.id)) { companies.push(co); _buildCoMap(); }
+      // Only update if drawer is still open (user hasn't closed it)
+      if (_drawerOpen) _openCompanyPanelSilent(co);
+    } else {
+      if (_drawerOpen) _showCompanyNotFound(name);
+    }
+  } catch(e) {
+    console.warn('[hub] _fetchAndShowCompany:', e.message);
+    if (_drawerOpen) _showCompanyNotFound(name);
+  }
+}
+
+function _showCompanyNotFound(name) {
+  const [bg, fg] = av(name);
+  document.getElementById('centerPanel').innerHTML = `
+    <div class="detail-panel">
+      <div class="dp-head">
+        <div class="dp-av" style="background:${bg};border-color:${fg}30;color:${fg}">${ini(name)}</div>
+        <div class="dp-info">
+          <div class="dp-name">${h(name)}</div>
+          <div class="dp-sub">Not in database</div>
+        </div>
+      </div>
+      <div class="ps open">
+        <div class="ps-head" data-action="toggle"><span class="ps-title">⚡ Actions</span><span class="ps-chevron">▾</span></div>
+        <div class="ps-body">
+          <div class="actions-grid">
+            <button class="btn sm" data-action="claude" data-prompt="Research ${h(name)} full contact report decision makers outreach angle ICP fit">Full report ↗</button>
+            <button class="btn sm" data-action="claude" data-prompt="Find Head of Programmatic or Data Partnerships at ${h(name)} LinkedIn email background">Find DMs ↗</button>
+            <button class="btn sm" data-action="claude" data-prompt="Draft personalized outreach email to ${h(name)} value-led and curiosity variants">Draft email ↗</button>
+            <button class="btn sm" data-action="claude" data-prompt="Find companies similar to ${h(name)} for onAudience outreach top 10 by ICP fit">Find similar ↗</button>
+          </div>
+        </div>
+      </div>
+    </div>`;
 }
 
 /* ── EVENT DELEGATION ──────────────────────────────────────────────────── */
