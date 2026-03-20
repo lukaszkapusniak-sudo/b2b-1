@@ -385,11 +385,15 @@ function toggleTheme(){theme=theme==='light'?'dark':'light';document.documentEle
 document.getElementById('themeBtn').textContent=theme==='dark'?'☀️':'🌙';
 
 // ── SUPABASE ─────────────────────────────────────────────
+// ── DB CONFIG ────────────────────────────────────────────
+// All requests go through the edge function proxy (fixes CORS for GitHub Pages
+// and any other hosted domain). The proxy uses the service role key server-side.
 const SB_URL='https://nyzkkqqjnkctcmxoirdj.supabase.co';
 const SB_KEY='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im55emtrcXFqbmtjdGNteG9pcmRqIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzM4NzMxMzYsImV4cCI6MjA4OTQ0OTEzNn0.jhAq_C68klOp4iTyj9HmsyyvoxsOI6ACld7t_87TAk0';
+const PROXY='https://nyzkkqqjnkctcmxoirdj.supabase.co/functions/v1/data';
 const SBH_READ ={'apikey':SB_KEY,'Authorization':'Bearer '+SB_KEY,'Content-Type':'application/json'};
-const SBH_WRITE={'apikey':SB_KEY,'Authorization':'Bearer '+SB_KEY,'Content-Type':'application/json','Prefer':'resolution=merge-duplicates,return=minimal'};
-const SBH=SBH_READ; // alias — use SBH_WRITE for upserts
+const SBH_WRITE={'Content-Type':'application/json'}; // proxy handles auth server-side
+const SBH=SBH_READ;
 
 // ── SEED DATA ────────────────────────────────────────────
 // [name, note, type, category, region, size, icp, website, li_slug, signals[], social{}, offices[]]
@@ -532,8 +536,8 @@ window.oaDB={
     dot.className='ndot';st.textContent='Loading…';
     try{
       const [cr,rr]=await Promise.all([
-        fetch(`${SB_URL}/rest/v1/companies?select=*&order=name.asc`,{headers:SBH}),
-        fetch(`${SB_URL}/rest/v1/contacts?select=*&order=full_name.asc`,{headers:SBH}),
+        fetch(`${PROXY}/companies`,{headers:SBH_READ}),
+        fetch(`${PROXY}/contacts`,{headers:SBH_READ}),
       ]);
       if(!cr.ok||!rr.ok){
         const errText=await (cr.ok?rr:cr).text();
@@ -571,7 +575,7 @@ window.oaDB={
     try{
       const body={...r};
       ['offices','dsps','tech_stack','signals'].forEach(k=>{if(body[k]&&!Array.isArray(body[k]))body[k]=[]});
-      await fetch(`${SB_URL}/rest/v1/companies`,{method:'POST',headers:SBH_WRITE,body:JSON.stringify(body)});
+      await fetch(`${PROXY}/companies`,{method:'POST',headers:SBH_WRITE,body:JSON.stringify(body)});
     }catch(e){console.warn('saveCompany',e)}
     await this.load();
   },
@@ -583,7 +587,7 @@ window.oaDB={
     try{
       const body={...r};
       if(body.affiliated_pages&&!Array.isArray(body.affiliated_pages))body.affiliated_pages=[];
-      await fetch(`${SB_URL}/rest/v1/contacts`,{method:'POST',headers:SBH_WRITE,body:JSON.stringify(body)});
+      await fetch(`${PROXY}/contacts`,{method:'POST',headers:SBH_WRITE,body:JSON.stringify(body)});
     }catch(e){console.warn('saveContact',e)}
     await this.load();
   },
