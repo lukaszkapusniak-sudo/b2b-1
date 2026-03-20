@@ -337,39 +337,78 @@ html,body{
 .dp-ct-title{font-family:'IBM Plex Mono',monospace;font-size:9px;color:var(--t3)}
 .no-contacts{font-family:'IBM Plex Mono',monospace;font-size:9px;color:var(--t3);padding:4px 0 8px}
 
-/* ── CONTACT DRAWER ── */
+/* ── CONTACT DRAWER FACTS ── */
+.fact-block{ padding:0 }
+.fact-label{
+  font-family:'IBM Plex Mono',monospace;font-size:8px;text-transform:uppercase;
+  letter-spacing:.08em;color:var(--t3);margin-bottom:5px
+}
+.fact-email{
+  display:block;font-family:'IBM Plex Mono',monospace;font-size:12px;
+  font-weight:500;color:var(--g);text-decoration:none;
+  background:var(--cb);border:1px solid var(--cr);border-radius:2px;
+  padding:7px 10px;word-break:break-all;transition:background .15s
+}
+.fact-email:hover{background:var(--gb)}
+.btn-li{
+  display:inline-flex;align-items:center;height:28px;padding:0 12px;
+  background:var(--pb);border:1px solid var(--pr);border-radius:2px;
+  font-family:'IBM Plex Mono',monospace;font-size:9px;font-weight:500;
+  text-transform:uppercase;letter-spacing:.06em;color:var(--pc);
+  text-decoration:none;transition:background .15s
+}
+.btn-li:hover{background:var(--pc);color:#fff}
+.fact-empty{
+  font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--t4)
+}
+.drawer-notes{
+  font-size:11px;color:var(--t2);line-height:1.7;
+  background:var(--surf2);border-left:2px solid var(--rule);
+  padding:8px 10px;border-radius:0 2px 2px 0;
+  margin-top:4px
+}
+.drawer-actions{
+  display:grid;grid-template-columns:1fr 1fr;gap:5px;margin-top:14px
+}
 .drawer-overlay{
-  position:fixed;inset:0;background:rgba(0,0,0,.3);z-index:200;
+  position:fixed;inset:0;background:rgba(0,0,0,.25);z-index:200;
   opacity:0;pointer-events:none;transition:opacity .25s
 }
 .drawer-overlay.vis{opacity:1;pointer-events:auto}
 .drawer{
-  position:fixed;top:0;right:-400px;width:380px;height:100%;
+  position:fixed;top:0;right:-380px;width:360px;height:100%;
   background:var(--surf);border-left:1px solid var(--rule);
   z-index:201;transition:right .25s;overflow-y:auto;
   display:flex;flex-direction:column
 }
 .drawer.open{right:0}
 .drawer-head{
-  display:flex;align-items:center;gap:10px;padding:14px 16px;
-  border-bottom:1px solid var(--rule);flex-shrink:0
+  display:flex;align-items:flex-start;gap:12px;padding:16px;
+  border-bottom:1px solid var(--rule);flex-shrink:0;
+  background:var(--surf2)
 }
 .drawer-av{
-  width:40px;height:40px;border-radius:50%;flex-shrink:0;
+  width:44px;height:44px;border-radius:50%;flex-shrink:0;
   display:flex;align-items:center;justify-content:center;
-  font-family:'IBM Plex Mono',monospace;font-size:11px;font-weight:700;
-  background:var(--pb);color:var(--pc);border:1px solid var(--pr)
+  font-family:'IBM Plex Mono',monospace;font-size:13px;font-weight:700;
+  background:var(--pb);color:var(--pc);border:1.5px solid var(--pr)
 }
-.drawer-name{font-size:15px;font-weight:500;color:var(--t1)}
-.drawer-title{font-family:'IBM Plex Mono',monospace;font-size:9px;color:var(--t3);margin-top:2px}
+.drawer-name{font-size:15px;font-weight:500;color:var(--t1);line-height:1.3}
+.drawer-title{font-family:'IBM Plex Mono',monospace;font-size:9px;color:var(--t3);margin-top:5px;line-height:1.5}
 .drawer-close{
   margin-left:auto;width:26px;height:26px;border:1px solid var(--rule);
   border-radius:2px;background:transparent;cursor:pointer;font-size:13px;
   color:var(--t3);display:flex;align-items:center;justify-content:center;
-  flex-shrink:0;transition:all .15s
+  flex-shrink:0;align-self:flex-start;transition:all .15s
 }
-.drawer-close:hover{background:var(--surf2);color:var(--t1)}
-.drawer-body{padding:12px;flex:1}
+.drawer-close:hover{background:var(--surf3);color:var(--t1)}
+.drawer-body{padding:14px;flex:1}
+.drawer-context-hint{
+  display:flex;align-items:center;gap:6px;margin-bottom:14px;
+  padding-bottom:10px;border-bottom:1px solid var(--rule2);
+  font-family:'IBM Plex Mono',monospace;font-size:8px;color:var(--t3)
+}
+.drawer-context-hint .hint-co{color:var(--g);font-weight:500}
 .info-table{width:100%;border-collapse:collapse;font-size:11px}
 .info-table tr td{padding:4px 0;border-bottom:1px solid var(--rule3);vertical-align:top}
 .info-table tr:last-child td{border-bottom:none}
