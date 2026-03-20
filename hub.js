@@ -56,9 +56,11 @@ const SEED = [
 ];
 
 // ── STATE ─────────────────────────────────────────────────────────────────────
-let companies = [], contacts = [];
+// var (not let) so companies/contacts are window properties — needed by inline onclick handlers
+var companies = [], contacts = [];
 let activeFilter = 'all', activeTab = 'companies';
 let selectedCompany = null, dataSource = 'seed';
+window._cts = []; // contact lookup by index — avoids JSON-in-onclick encoding bugs
 
 // ── HELPERS ───────────────────────────────────────────────────────────────────
 function classify(n) {
@@ -118,15 +120,17 @@ async function skowyt() {
     if (!dbCos?.length) throw new Error('Empty companies');
 
     const sbMap = new Map(dbCos.map(r => [r.name.toLowerCase(), r]));
+    const seedNames = new Set(SEED.map(([n])=>n.toLowerCase()));
     const merged = dbCos.map(r => ({
       id: r.id||slug(r.name), name: r.name, note: r.note||'',
       type: r.type||classify(r.note||''),
       icp: r.icp||null, category: r.category||null, region: r.region||null,
-      website: r.website||null, size: r.size||null, linkedin_slug: r.linkedin_slug||null
+      website: r.website||null, size: r.size||null, linkedin_slug: r.linkedin_slug||null,
+      fresh: !seedNames.has(r.name.toLowerCase()) // 🥩 not in hardcoded seed
     }));
     for (const [sName, sNote] of SEED) {
       if (!sbMap.has(sName.toLowerCase()))
-        merged.push({id:slug(sName),name:sName,note:sNote||'',type:classify(sNote),icp:null,category:null,region:null,website:null,size:null,linkedin_slug:null});
+        merged.push({id:slug(sName),name:sName,note:sNote||'',type:classify(sNote),icp:null,category:null,region:null,website:null,size:null,linkedin_slug:null,fresh:false});
     }
     merged.sort((a,b)=>a.name.localeCompare(b.name));
     companies = merged;
@@ -172,6 +176,7 @@ function updateStats() {
   document.getElementById('stProspect').textContent = companies.filter(c=>c.type==='prospect').length;
   document.getElementById('stNogo').textContent = companies.filter(c=>c.type==='nogo').length;
   document.getElementById('stPoc').textContent = companies.filter(c=>c.type==='poc').length;
+  document.getElementById('stFresh').textContent = companies.filter(c=>c.fresh).length;
 }
 
 // ── TABS ──────────────────────────────────────────────────────────────────────
@@ -196,7 +201,8 @@ function setFilter(f, el) {
 function renderList() {
   const q = (document.getElementById('coSearch').value||'').toLowerCase();
   const filtered = companies.filter(c => {
-    if (activeFilter!=='all' && c.type!==activeFilter) return false;
+    if (activeFilter==='fresh' && !c.fresh) return false;
+    if (activeFilter!=='all' && activeFilter!=='fresh' && c.type!==activeFilter) return false;
     if (q) {
       const hay = (c.name+(c.note||'')+(c.category||'')+(c.region||'')).toLowerCase();
       return hay.includes(q);
@@ -213,10 +219,11 @@ function renderList() {
     const [bg,fg]=av(c.name), enc=encodeURIComponent(c.name);
     const note = (c.category&&c.region) ? `${c.category} · ${c.region}` : (c.note||'').slice(0,55)||'—';
     const icp = c.icp ? `<span class="icp-num">${c.icp}</span>` : '';
+    const freshTag = c.fresh ? `<span class="tag tf" title="New — from DB, not in seed">🥩</span>` : '';
     const sel = selectedCompany?.name===c.name;
-    return `<div class="co-row${sel?' selected':''}" onclick="openCompanyPanel(companies.find(x=>x.name===decodeURIComponent('${enc}')))" oncontextmenu="showCtx(event,'${enc}','${c.type}');return false">
+    return `<div class="co-row${sel?' selected':''}" onclick="openCompanyPanel(companies.find(x=>x.name===decodeURIComponent('${enc}')))" oncontextmenu="showCtx(event,'${enc}','${c.type}',${c.fresh});return false">
       <div class="co-av" style="background:${bg};border-color:${fg}30;color:${fg}">${ini(c.name)}</div>
-      <div class="co-info"><div class="co-name">${c.name}</div><div class="co-note-sm">${note}</div></div>
+      <div class="co-info"><div class="co-name">${c.name}${c.fresh?' <span style="font-size:9px">🥩</span>':''}</div><div class="co-note-sm">${note}</div></div>
       <div class="co-right">${icp}<span class="tag ${tagCls(c.type)}">${tagLbl(c.type)}</span></div>
     </div>`;
   }).join('');
@@ -227,7 +234,7 @@ function renderContacts() {
   const q = (document.getElementById('ctSearch').value||'').toLowerCase();
   const filtered = contacts.filter(c=>{
     if (!q) return true;
-    return (c.full_name+c.title+c.company_name).toLowerCase().includes(q);
+    return (c.full_name+(c.title||'')+(c.company_name||'')).toLowerCase().includes(q);
   });
   document.getElementById('ctMeta').textContent = `${filtered.length} of ${contacts.length}`;
   const list = document.getElementById('ctList');
@@ -235,13 +242,14 @@ function renderContacts() {
     list.innerHTML='<div class="empty-list"><div class="empty-big">∅</div><div class="empty-sub">No contacts</div></div>';
     return;
   }
-  list.innerHTML = filtered.map(c=>{
-    const enc = encodeURIComponent(JSON.stringify({id:c.id,full_name:c.full_name,title:c.title,company_name:c.company_name,email:c.email||'',linkedin_url:c.linkedin_url||'',notes:c.notes||''}));
-    return `<div class="ct-row" onclick="openDrawer(${enc})">
+  // Store filtered contacts in global lookup — safe index-based onclick
+  window._cts = filtered;
+  list.innerHTML = filtered.map((c,i)=>
+    `<div class="ct-row" onclick="openDrawerByIdx(${i})">
       <div class="ct-av">${ini(c.full_name)}</div>
       <div class="ct-info"><div class="ct-name">${c.full_name}</div><div class="ct-title-sm">${c.title||''} ${c.company_name?'· '+c.company_name:''}</div></div>
-    </div>`;
-  }).join('');
+    </div>`
+  ).join('');
 }
 
 // ── COMPANY PANEL ─────────────────────────────────────────────────────────────
@@ -250,9 +258,16 @@ function openCompanyPanel(c) {
   selectedCompany = c;
   renderList();
   const [bg,fg]=av(c.name);
-  const cos = contacts.filter(ct=>ct.company_name===c.name||ct.company_id===c.id);
+  // Case-insensitive match on both company_name and company_id
+  const cNameLow = c.name.toLowerCase();
+  const cos = contacts.filter(ct=>
+    (ct.company_name||'').toLowerCase()===cNameLow ||
+    ct.company_id===c.id
+  );
+  // Store cos in global for index-based onclick
+  window._cosCts = cos;
   const coHtml = cos.length
-    ? cos.map(ct=>`<div class="dp-ct-row" onclick="openDrawer(${encodeURIComponent(JSON.stringify({id:ct.id,full_name:ct.full_name,title:ct.title,company_name:ct.company_name,email:ct.email||'',linkedin_url:ct.linkedin_url||'',notes:ct.notes||''}))})">
+    ? cos.map((ct,i)=>`<div class="dp-ct-row" onclick="openDrawerFromPanel(${i})">
         <div class="dp-ct-av">${ini(ct.full_name)}</div>
         <div><div class="dp-ct-name">${ct.full_name}</div><div class="dp-ct-title">${ct.title||''}</div></div>
       </div>`).join('')
@@ -342,8 +357,12 @@ function emptyState() {
 }
 
 // ── CONTACT DRAWER ────────────────────────────────────────────────────────────
-function openDrawer(enc) {
-  const ct = typeof enc === 'string' ? JSON.parse(decodeURIComponent(enc)) : enc;
+// Index-based helpers (avoid JSON-in-onclick encoding bugs)
+function openDrawerByIdx(i) { openDrawer(window._cts[i]); }
+function openDrawerFromPanel(i) { openDrawer(window._cosCts[i]); }
+
+function openDrawer(ct) {
+  if (!ct) return;
   document.getElementById('drawerAv').textContent = ini(ct.full_name);
   document.getElementById('drawerName').textContent = ct.full_name;
   document.getElementById('drawerTitle').textContent = [ct.title, ct.company_name].filter(Boolean).join(' · ');
@@ -372,7 +391,7 @@ function closeDrawer() {
 }
 
 // ── CONTEXT MENU ──────────────────────────────────────────────────────────────
-function showCtx(e, enc, type) {
+function showCtx(e, enc, type, isFresh) {
   e.preventDefault(); e.stopPropagation();
   const name = decodeURIComponent(enc);
   const menu = document.getElementById('ctxMenu');
@@ -386,11 +405,15 @@ function showCtx(e, enc, type) {
   ];
   if (type==='nogo') actions.push({icon:'⚠',text:'Why no outreach?',prompt:`Explain why ${name} is marked no-outreach in onAudience database`});
   if (type==='prospect') actions.push({icon:'🚀',text:'Prioritize',prompt:`Build prioritization case for ${name} — why onAudience should focus on this account now`});
+  if (isFresh) actions.push({icon:'🥩',text:'Why fresh meat?',prompt:`Explain why ${name} was added to onAudience database as a new prospect — what is the opportunity?`});
 
-  menu.innerHTML = `<div class="ctx-lbl">${name}</div><div class="ctx-sep"></div>`
+  menu.innerHTML = `<div class="ctx-lbl">${name}${isFresh?' 🥩':''}</div><div class="ctx-sep"></div>`
     + actions.map((a,i)=>`<div class="ctx-item" data-i="${i}"><span class="ctx-ico">${a.icon}</span>${a.text}</div>`).join('');
+  // Use replaceWith to avoid duplicate listeners
   menu.querySelectorAll('.ctx-item').forEach((el,i)=>{
-    el.addEventListener('click',()=>{menu.style.display='none';openClaude(actions[i].prompt);});
+    const fresh = el.cloneNode(true);
+    el.parentNode.replaceChild(fresh,el);
+    fresh.addEventListener('click',()=>{menu.style.display='none';openClaude(actions[i].prompt);});
   });
   menu.style.left = Math.min(e.clientX, window.innerWidth-230)+'px';
   menu.style.top  = Math.min(e.clientY, window.innerHeight-300)+'px';

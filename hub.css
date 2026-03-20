@@ -107,7 +107,7 @@ html,body{
 /* ── STATS BAR ── */
 .stats-bar{
   background:var(--surf);border-bottom:1px solid var(--rule);
-  display:grid;grid-template-columns:repeat(6,1fr);flex-shrink:0
+  display:grid;grid-template-columns:repeat(7,1fr);flex-shrink:0
 }
 .sc{
   padding:8px 14px 7px;border-right:1px solid var(--rule);
