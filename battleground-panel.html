@@ -20,8 +20,9 @@ html,body{height:100%;background:var(--bg);color:var(--t1);font-family:'IBM Plex
 .nav-title{font-family:'IBM Plex Mono',monospace;font-size:10px;font-weight:500;letter-spacing:.06em;text-transform:uppercase;color:var(--t1)}
 .nav-sub{color:var(--t3);font-weight:400}
 .nav-status{font-family:'IBM Plex Mono',monospace;font-size:9px;color:var(--t3);display:flex;align-items:center;gap:4px}
-.sdot{width:5px;height:5px;border-radius:50%;background:var(--t4)}
+.sdot{width:5px;height:5px;border-radius:50%;background:var(--t4);flex-shrink:0}
 .sdot.live{background:#22C55E}
+.sdot.err{background:#CC2222}
 .nav-right{margin-left:auto;display:flex;align-items:center;gap:6px}
 .theme-btn{width:24px;height:24px;border:1px solid var(--rule);border-radius:2px;background:var(--surf2);cursor:pointer;font-size:11px;display:flex;align-items:center;justify-content:center}
 .api-btn{height:22px;padding:0 8px;border:1px solid var(--rule);border-radius:2px;font-family:'IBM Plex Mono',monospace;font-size:8px;cursor:pointer;background:var(--surf2);color:var(--t2)}
@@ -37,12 +38,28 @@ html,body{height:100%;background:var(--bg);color:var(--t1);font-family:'IBM Plex
 .meeseeks-btn:hover{background:var(--gd)}
 .meeseeks-btn:disabled{opacity:.4;cursor:not-allowed}
 
-/* ── Three-column layout ── */
+/* ── TWO-COLUMN: editor left, panel right ── */
 .main{display:flex;flex:1;overflow:hidden}
 
-/* Left sidebar */
-.sidebar{width:210px;flex-shrink:0;border-right:1px solid var(--rule);background:var(--surf);display:flex;flex-direction:column;overflow:hidden}
-.sidebar-hdr{padding:8px 10px;border-bottom:1px solid var(--rule);display:flex;align-items:center;gap:6px;flex-shrink:0}
+/* Left: full editor */
+.editor-wrap{flex:1;display:flex;flex-direction:column;overflow:hidden;border-right:1px solid var(--rule)}
+.editor{flex:1;overflow-y:auto;padding:10px;background:var(--surf2);display:flex;flex-direction:column;gap:8px}
+.editor.is-empty{align-items:center;justify-content:center}
+.empty-state{text-align:center;color:var(--t3);max-width:300px}
+.empty-ico{font-size:36px;opacity:.2;margin-bottom:10px}
+.empty-txt{font-family:'IBM Plex Mono',monospace;font-size:9px;text-transform:uppercase;letter-spacing:.07em}
+.empty-sub{font-size:11px;color:var(--t3);margin-top:6px;line-height:1.6}
+.actions-bar{background:var(--surf);border-top:1px solid var(--rule);padding:7px 12px;display:flex;align-items:center;gap:7px;flex-shrink:0}
+.save-indicator{font-family:'IBM Plex Mono',monospace;font-size:8px;flex:1}
+.save-indicator.dirty{color:var(--prc,#7A4200)}
+.save-indicator.clean{color:var(--g)}
+
+/* Right: battleground list + history stacked */
+.right-panel{width:240px;flex-shrink:0;background:var(--surf);display:flex;flex-direction:column;overflow:hidden}
+
+/* ── Battleground list (top of right panel) ── */
+.bg-section{flex-shrink:0;border-bottom:1px solid var(--rule);display:flex;flex-direction:column;max-height:50%}
+.bg-section-hdr{padding:8px 10px;display:flex;align-items:center;gap:6px;flex-shrink:0;border-bottom:1px solid var(--rule2)}
 .sb-lbl{font-family:'IBM Plex Mono',monospace;font-size:8px;text-transform:uppercase;letter-spacing:.07em;color:var(--t3);flex:1}
 .bg-list{overflow-y:auto;flex:1}
 .bg-item{padding:7px 10px;border-bottom:1px solid var(--rule3);cursor:pointer;transition:background .1s;display:flex;align-items:center;gap:7px}
@@ -54,45 +71,31 @@ html,body{height:100%;background:var(--bg);color:var(--t1);font-family:'IBM Plex
 .bg-item-meta{font-family:'IBM Plex Mono',monospace;font-size:8px;color:var(--t3);margin-top:1px}
 .bg-item-del{opacity:0;width:16px;height:16px;border:none;background:none;cursor:pointer;font-size:9px;color:var(--t3);display:flex;align-items:center;justify-content:center;border-radius:2px}
 .bg-item:hover .bg-item-del{opacity:1}
-.bg-empty{padding:24px 12px;text-align:center;font-family:'IBM Plex Mono',monospace;font-size:9px;color:var(--t3);text-transform:uppercase;letter-spacing:.07em}
+.bg-item-del:hover{background:var(--surf3);color:var(--t1)}
+.bg-empty{padding:16px 12px;text-align:center;font-family:'IBM Plex Mono',monospace;font-size:9px;color:var(--t3);text-transform:uppercase;letter-spacing:.06em}
 
-/* Center editor */
-.editor-wrap{flex:1;display:flex;flex-direction:column;overflow:hidden;border-right:1px solid var(--rule)}
-.editor{flex:1;overflow-y:auto;padding:10px;background:var(--surf2);display:flex;flex-direction:column;gap:8px}
-.editor.is-empty{align-items:center;justify-content:center}
-.empty-state{text-align:center;color:var(--t3)}
-.empty-ico{font-size:36px;opacity:.2;margin-bottom:10px}
-.empty-txt{font-family:'IBM Plex Mono',monospace;font-size:9px;text-transform:uppercase;letter-spacing:.07em}
-.empty-sub{font-size:11px;color:var(--t3);margin-top:6px;max-width:260px;line-height:1.6}
-.actions-bar{background:var(--surf);border-top:1px solid var(--rule);padding:7px 12px;display:flex;align-items:center;gap:7px;flex-shrink:0}
-.save-indicator{font-family:'IBM Plex Mono',monospace;font-size:8px;flex:1}
-.save-indicator.dirty{color:var(--prc)}
-.save-indicator.clean{color:var(--g)}
-
-/* Right history panel */
-.history-panel{width:220px;flex-shrink:0;background:var(--surf);display:flex;flex-direction:column;overflow:hidden}
-.hp-hdr{padding:10px 12px;border-bottom:1px solid var(--rule);flex-shrink:0;background:var(--surf)}
-.hp-name{font-size:14px;font-weight:500;color:var(--t1);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin-bottom:4px}
-.hp-name.empty{color:var(--t4);font-style:italic;font-size:12px}
-.hp-meta-row{display:flex;gap:5px;flex-wrap:wrap;margin-bottom:6px}
-.hp-chip{font-family:'IBM Plex Mono',monospace;font-size:8px;padding:1px 6px;border-radius:2px;border:1px solid var(--rule);background:var(--surf2);color:var(--t3)}
-.hp-chip.status-draft{color:#7A4200;background:#FEF2E0;border-color:rgba(122,66,0,.28)}
-.hp-chip.status-active{color:#146B3A;background:#E4F5EC;border-color:rgba(20,107,58,.28)}
-.hp-chip.status-paused{color:#1A4F8A;background:#E6EEFA;border-color:rgba(26,79,138,.28)}
-.hp-chip.status-archived{color:#6B6B64;background:#EFEDE6;border-color:rgba(107,107,100,.28)}
-.hp-divider{height:1px;background:var(--rule2);margin:4px 0}
-.hp-lbl{font-family:'IBM Plex Mono',monospace;font-size:8px;text-transform:uppercase;letter-spacing:.07em;color:var(--t3);margin-bottom:6px}
-.hp-body{flex:1;overflow-y:auto;padding:10px 12px}
-
-/* History timeline */
-.hist-empty{font-family:'IBM Plex Mono',monospace;font-size:9px;color:var(--t4);text-transform:uppercase;letter-spacing:.06em;text-align:center;padding:16px 0}
-.hist-item{display:flex;gap:8px;margin-bottom:10px;position:relative}
-.hist-item:not(:last-child)::after{content:'';position:absolute;left:6px;top:14px;width:1px;height:calc(100% + 4px);background:var(--rule2)}
+/* ── History panel (bottom of right panel) ── */
+.history-section{flex:1;display:flex;flex-direction:column;overflow:hidden}
+.hp-hdr{padding:10px 12px 8px;border-bottom:1px solid var(--rule);flex-shrink:0}
+.hp-bg-name{font-size:13px;font-weight:500;color:var(--t1);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin-bottom:4px}
+.hp-bg-name.no-bg{color:var(--t4);font-style:italic;font-size:11px}
+.hp-chips{display:flex;gap:4px;flex-wrap:wrap;margin-bottom:6px}
+.hp-chip{font-family:'IBM Plex Mono',monospace;font-size:7px;padding:1px 5px;border-radius:2px;border:1px solid var(--rule);background:var(--surf2);color:var(--t3)}
+.hp-chip.st-draft{color:#7A4200;background:#FEF2E0;border-color:rgba(122,66,0,.25)}
+.hp-chip.st-active{color:#146B3A;background:#E4F5EC;border-color:rgba(20,107,58,.25)}
+.hp-chip.st-paused{color:#1A4F8A;background:#E6EEFA;border-color:rgba(26,79,138,.25)}
+.hp-chip.st-archived{color:#6B6B64;background:#EFEDE6;border-color:rgba(107,107,100,.25)}
+.hp-divider{height:1px;background:var(--rule2);margin-bottom:6px}
+.hp-hist-lbl{font-family:'IBM Plex Mono',monospace;font-size:8px;text-transform:uppercase;letter-spacing:.07em;color:var(--t3)}
+.hp-body{flex:1;overflow-y:auto;padding:8px 12px}
+.hist-empty{font-family:'IBM Plex Mono',monospace;font-size:9px;color:var(--t4);text-transform:uppercase;letter-spacing:.06em;text-align:center;padding:12px 0}
+.hist-item{display:flex;gap:8px;margin-bottom:9px;position:relative}
+.hist-item:not(:last-child)::after{content:'';position:absolute;left:6px;top:14px;width:1px;height:calc(100% + 2px);background:var(--rule2)}
 .hist-dot{width:13px;height:13px;border-radius:50%;flex-shrink:0;margin-top:1px;display:flex;align-items:center;justify-content:center;font-size:7px;z-index:1}
 .hist-dot.create{background:var(--gb);border:1px solid var(--gr);color:var(--g)}
 .hist-dot.save{background:var(--surf3);border:1px solid var(--rule);color:var(--t3)}
 .hist-info{flex:1;min-width:0}
-.hist-action{font-family:'IBM Plex Mono',monospace;font-size:9px;font-weight:500;color:var(--t2);text-transform:uppercase;letter-spacing:.05em}
+.hist-action{font-family:'IBM Plex Mono',monospace;font-size:8px;font-weight:500;color:var(--t2);text-transform:uppercase;letter-spacing:.05em}
 .hist-time{font-family:'IBM Plex Mono',monospace;font-size:8px;color:var(--t4);margin-top:1px}
 .hist-detail{font-size:10px;color:var(--t3);margin-top:2px;line-height:1.4}
 
@@ -117,7 +120,7 @@ html,body{height:100%;background:var(--bg);color:var(--t1);font-family:'IBM Plex
 .target-info{flex:1;min-width:0}
 .target-name{font-size:11px;font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .target-meta{font-family:'IBM Plex Mono',monospace;font-size:8px;color:var(--t3)}
-.target-kind{font-family:'IBM Plex Mono',monospace;font-size:7px;text-transform:uppercase;letter-spacing:.04em;padding:1px 4px;border-radius:2px;border:1px solid;flex-shrink:0}
+.target-kind{font-family:'IBM Plex Mono',monospace;font-size:7px;text-transform:uppercase;padding:1px 4px;border-radius:2px;border:1px solid;flex-shrink:0}
 .target-kind.company{color:#1A4F8A;background:#E6EEFA;border-color:rgba(26,79,138,.28)}
 .target-kind.contact{color:#146B3A;background:#E4F5EC;border-color:rgba(20,107,58,.28)}
 .target-del{width:16px;height:16px;border:none;background:none;cursor:pointer;font-size:9px;color:var(--t3);display:flex;align-items:center;justify-content:center;border-radius:2px;flex-shrink:0}
@@ -190,16 +193,7 @@ html,body{height:100%;background:var(--bg);color:var(--t1);font-family:'IBM Plex
 
 <div class="main">
 
-  <!-- ── Left: battleground list ── -->
-  <div class="sidebar">
-    <div class="sidebar-hdr">
-      <span class="sb-lbl">Battlegrounds</span>
-      <button class="btn sm p" onclick="newBg()">+ New</button>
-    </div>
-    <div class="bg-list" id="bgList"></div>
-  </div>
-
-  <!-- ── Center: editor ── -->
+  <!-- ── LEFT: Editor ── -->
   <div class="editor-wrap">
     <div class="editor is-empty" id="editor">
       <div class="empty-state">
@@ -222,17 +216,31 @@ html,body{height:100%;background:var(--bg);color:var(--t1);font-family:'IBM Plex
     </div>
   </div>
 
-  <!-- ── Right: history panel ── -->
-  <div class="history-panel">
-    <div class="hp-hdr" id="histHdr">
-      <div class="hp-name empty" id="histName">No battleground</div>
-      <div class="hp-meta-row" id="histMeta"></div>
-      <div class="hp-divider"></div>
-      <div class="hp-lbl">Save History</div>
+  <!-- ── RIGHT: Battleground list + History ── -->
+  <div class="right-panel">
+
+    <!-- Battleground list -->
+    <div class="bg-section">
+      <div class="bg-section-hdr">
+        <span class="sb-lbl">Battlegrounds</span>
+        <button class="btn sm p" onclick="newBg()">+ New</button>
+      </div>
+      <div class="bg-list" id="bgList"></div>
     </div>
-    <div class="hp-body" id="histBody">
-      <div class="hist-empty">No history yet</div>
+
+    <!-- History -->
+    <div class="history-section">
+      <div class="hp-hdr">
+        <div class="hp-bg-name no-bg" id="histName">No battleground</div>
+        <div class="hp-chips" id="histChips"></div>
+        <div class="hp-divider"></div>
+        <div class="hp-hist-lbl">Save History</div>
+      </div>
+      <div class="hp-body" id="histBody">
+        <div class="hist-empty">No history yet</div>
+      </div>
     </div>
+
   </div>
 
 </div>
@@ -271,57 +279,75 @@ html,body{height:100%;background:var(--bg);color:var(--t1);font-family:'IBM Plex
 <script>
 'use strict';
 
-const SB_URL = 'https://nyzkkqqjnkctcmxoirdj.supabase.co';
-const SB_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im55emtrcXFqbmtjdGNteG9pcmRqIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzM4NzMxMzYsImV4cCI6MjA4OTQ0OTEzNn0.jhAq_C68klOp4iTyj9HmsyyvoxsOI6ACld7t_87TAk0';
-const H = { apikey: SB_KEY, Authorization: `Bearer ${SB_KEY}`, 'Content-Type': 'application/json' };
-const PROXY = 'https://nyzkkqqjnkctcmxoirdj.supabase.co/functions/v1/claude-proxy';
+const SB_URL  = 'https://nyzkkqqjnkctcmxoirdj.supabase.co';
+const SB_KEY  = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im55emtrcXFqbmtjdGNteG9pcmRqIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzM4NzMxMzYsImV4cCI6MjA4OTQ0OTEzNn0.jhAq_C68klOp4iTyj9HmsyyvoxsOI6ACld7t_87TAk0';
+const PROXY   = `${SB_URL}/functions/v1/claude-proxy`;
+const SB_HDR  = { 'Content-Type':'application/json', apikey: SB_KEY, Authorization:`Bearer ${SB_KEY}` };
 
 const OA_TAXONOMY = `onAudience Audience Segment Taxonomy:
-INTEREST: Arts & Entertainment, Automotive (Auto Intenders, Luxury, EV), Beauty, Business & Finance (B2B Decision Makers, SMB Owners, C-Suite), Careers, Education, Family & Parenting, Food & Drink, Health & Fitness (Gym, Wellness, Pharma), Hobbies, Home & Garden (DIY, Real Estate Intenders), Lifestyle (Eco, Luxury, Value), News & Politics, Personal Finance (Investors, Mortgage Shoppers, Insurance), Pets, Retail & Shopping (eCommerce, Fashion, Electronics), Sports (Football, Basketball, F1, Fitness), Style & Fashion, Technology & Computing (IT Decision Makers, Early Adopters, Gamers), Travel (Business Travelers, Luxury, Budget)
-CONNECTED TV (CTV): Premium Viewers, Binge Watchers, Sports Viewers, News Viewers, Time-of-Day (Prime Time, Early Morning, Late Fringe), Genre-based (Drama, Reality, Comedy, Documentaries)
-BRAND AFFINITY: 624 brands — Automotive (BMW, Mercedes, Tesla), Finance (Amex, Visa, PayPal), Retail (Amazon, ASOS, Zara), Tech (Apple, Google, Samsung), FMCG, Travel (Booking.com, Ryanair), Telecom
-DEMOGRAPHIC: Age groups (18–24, 25–34, 35–54, 55+), HHI tiers, Homeowners, Parents, Students, Gender
-GEOGRAPHIC: EU country-level, US DMA, UK region, APAC market, city-level in key markets`;
+INTEREST: Automotive (Auto Intenders, Luxury, EV), Beauty, Business & Finance (B2B Decision Makers, SMB Owners, C-Suite), Education, Family & Parenting, Food & Drink, Health & Fitness (Gym, Wellness, Pharma), Hobbies, Home & Garden (DIY, Real Estate Intenders), Lifestyle (Eco, Luxury, Value), Personal Finance (Investors, Mortgage Shoppers, Insurance), Retail & Shopping (eCommerce, Fashion, Electronics), Sports (Football, Basketball, F1, Fitness), Technology & Computing (IT Decision Makers, Early Adopters, Gamers), Travel (Business Travelers, Luxury, Budget)
+CONNECTED TV (CTV): Premium Viewers, Binge Watchers, Sports Viewers, Time-of-Day (Prime Time, Early Morning, Late Fringe), Genre (Drama, Reality, Comedy)
+BRAND AFFINITY: 624 brands — Automotive (BMW, Mercedes, Tesla), Finance (Amex, Visa), Retail (Amazon, ASOS, Zara), Tech (Apple, Google, Samsung), Travel (Booking.com, Ryanair)
+DEMOGRAPHIC: Age (18–24, 25–34, 35–54, 55+), HHI tiers, Homeowners, Parents, Students, Gender
+GEOGRAPHIC: EU country-level, US DMA, UK region, APAC market`;
 
-let apiKey = localStorage.getItem('oaApiKey') || '';
-let battlegrounds = [], cur = null, dirty = false;
-let originalName = ''; // track name at load time for save-vs-create logic
+let apiKey      = localStorage.getItem('oaApiKey') || '';
+let battlegrounds = [], cur = null, dirty = false, originalName = '';
 let sbCompanies = [], sbContacts = [];
-let pickerTab = 'companies';
+let pickerTab   = 'companies';
 let selectedOpps = new Set();
 
 /* ── Helpers ── */
 function av(n){const p=[['#9FE1CB','#0F6E56'],['#B5D4F4','#1A4F8A'],['#FAC775','#7A4200'],['#C0DD97','#3B6D11'],['#F4C0D1','#993556']];let h=0;for(let c of n)h=(h*31+c.charCodeAt(0))&0xffff;return p[h%p.length];}
 function ini(n){return n.replace(/[^A-Za-z ]/g,'').split(' ').filter(Boolean).map(w=>w[0]).slice(0,2).join('').toUpperCase()||'?';}
 function bgIcon(s){return{draft:'✏️',active:'⚔️',paused:'⏸️',archived:'📦'}[s]||'✏️';}
-function fmtTime(iso){if(!iso)return'';const d=new Date(iso);const now=new Date();const diff=now-d;if(diff<60000)return'just now';if(diff<3600000)return Math.floor(diff/60000)+'m ago';if(diff<86400000)return Math.floor(diff/3600000)+'h ago';return d.toLocaleDateString('en-GB',{day:'numeric',month:'short'});}
+function fmtTime(iso){if(!iso)return'';const d=new Date(iso),now=new Date(),diff=now-d;if(diff<60000)return'just now';if(diff<3600000)return Math.floor(diff/60000)+'m ago';if(diff<86400000)return Math.floor(diff/3600000)+'h ago';return d.toLocaleDateString('en-GB',{day:'numeric',month:'short'});}
 
-/* ── Supabase ── */
-async function sbGet(path){try{const r=await fetch(SB_URL+path,{headers:H});return r.ok?r.json():null;}catch{return null;}}
-async function sbPost(path,body,extra={}){return fetch(SB_URL+path,{method:'POST',headers:{...H,...extra},body:JSON.stringify(body)});}
-async function sbPatch(path,body){return fetch(SB_URL+path,{method:'PATCH',headers:H,body:JSON.stringify(body)});}
-async function sbDel(path){return fetch(SB_URL+path,{method:'DELETE',headers:H});}
-
-async function loadAll(){
-  try{
-    const [bgs,co,ct]=await Promise.all([
-      sbGet('/rest/v1/battlegrounds?select=*&order=updated_at.desc'),
-      sbGet('/rest/v1/companies?select=*&order=name.asc'),
-      sbGet('/rest/v1/contacts?select=*')
-    ]);
-    if(bgs) battlegrounds=bgs;
-    if(co) sbCompanies=co;
-    if(ct) sbContacts=ct;
-    setStatus('live',`● ${battlegrounds.length} bg`);
-  }catch(e){setStatus('off','○ Offline');}
-  renderSidebar();
-  if(battlegrounds.length) openBg(battlegrounds[0].id);
-  else renderHistoryPanel();
+/* ── Supabase (always include SB_KEY in headers) ── */
+async function sbGet(path){
+  const r = await fetch(SB_URL+path, { headers: SB_HDR });
+  if (!r.ok) throw new Error(`sbGet ${r.status}: ${path}`);
+  return r.json();
+}
+async function sbPost(path,body,extra={}){
+  return fetch(SB_URL+path,{method:'POST',headers:{...SB_HDR,...extra},body:JSON.stringify(body)});
+}
+async function sbPatch(path,body){
+  return fetch(SB_URL+path,{method:'PATCH',headers:SB_HDR,body:JSON.stringify(body)});
+}
+async function sbDel(path){
+  return fetch(SB_URL+path,{method:'DELETE',headers:SB_HDR});
 }
 
-function setStatus(mode,txt){document.getElementById('sdot').className='sdot'+(mode==='live'?' live':'');document.getElementById('statusTxt').textContent=txt;}
+async function loadAll(){
+  setStatus('','Loading…');
+  try{
+    const [bgs,co,ct] = await Promise.all([
+      sbGet('/rest/v1/battlegrounds?select=*&order=updated_at.desc'),
+      sbGet('/rest/v1/companies?select=*&order=name.asc'),
+      sbGet('/rest/v1/contacts?select=*'),
+    ]);
+    battlegrounds = bgs || [];
+    sbCompanies   = co  || [];
+    sbContacts    = ct  || [];
+    setStatus('live', `● ${battlegrounds.length} bg${battlegrounds.length!==1?'s':''} · ${sbCompanies.length} co · ${sbContacts.length} ct`);
+    renderSidebar();
+    if(battlegrounds.length) openBg(battlegrounds[0].id);
+    else renderHistoryPanel();
+  }catch(e){
+    setStatus('err','○ DB error — check console');
+    console.error('loadAll failed:', e);
+    renderSidebar();
+    renderHistoryPanel();
+  }
+}
 
-/* ── Sidebar ── */
+function setStatus(mode,txt){
+  document.getElementById('sdot').className='sdot'+(mode==='live'?' live':mode==='err'?' err':'');
+  document.getElementById('statusTxt').textContent=txt;
+}
+
+/* ── Sidebar (right panel top) ── */
 function renderSidebar(){
   const el=document.getElementById('bgList');
   if(!battlegrounds.length){el.innerHTML='<div class="bg-empty">No battlegrounds yet</div>';return;}
@@ -330,45 +356,40 @@ function renderSidebar(){
       <span class="bg-item-icon">${bgIcon(bg.status)}</span>
       <div class="bg-item-info">
         <div class="bg-item-name">${bg.name||'Untitled'}</div>
-        <div class="bg-item-meta">${(bg.targets||[]).length}t · ${(bg.opportunities||[]).length}op · ${bg.save_count||0} saves</div>
+        <div class="bg-item-meta">${(bg.targets||[]).length}t · ${(bg.opportunities||[]).length}op · ${bg.save_count||0}↑</div>
       </div>
       <button class="bg-item-del" onclick="event.stopPropagation();deleteBg('${bg.id}')">✕</button>
     </div>`).join('');
 }
 
-/* ── History panel ── */
+/* ── History panel (right panel bottom) ── */
 function renderHistoryPanel(){
+  // Header
   if(!cur){
     document.getElementById('histName').textContent='No battleground';
-    document.getElementById('histName').className='hp-name empty';
-    document.getElementById('histMeta').innerHTML='';
+    document.getElementById('histName').className='hp-bg-name no-bg';
+    document.getElementById('histChips').innerHTML='';
     document.getElementById('histBody').innerHTML='<div class="hist-empty">No history yet</div>';
     return;
   }
-  // Header
   document.getElementById('histName').textContent=cur.name||'Untitled';
-  document.getElementById('histName').className='hp-name';
-  const statusCls=`status-${cur.status||'draft'}`;
-  document.getElementById('histMeta').innerHTML=`
-    <span class="hp-chip ${statusCls}">${bgIcon(cur.status)} ${cur.status||'draft'}</span>
+  document.getElementById('histName').className='hp-bg-name';
+  const sc=`st-${cur.status||'draft'}`;
+  document.getElementById('histChips').innerHTML=`
+    <span class="hp-chip ${sc}">${bgIcon(cur.status)} ${cur.status||'draft'}</span>
     <span class="hp-chip">${cur.targets?.length||0} targets</span>
     <span class="hp-chip">${cur.opportunities?.length||0} opps</span>
-    ${cur.save_count?`<span class="hp-chip">${cur.save_count} saves</span>`:''}
-  `;
+    ${cur.save_count?`<span class="hp-chip">${cur.save_count} saves</span>`:''}`;
   // Timeline
-  const history = cur.history||[];
-  if(!history.length){
-    document.getElementById('histBody').innerHTML='<div class="hist-empty">No saves yet</div>';
-    return;
-  }
-  const items = [...history].reverse();
-  document.getElementById('histBody').innerHTML=items.map((h,i)=>`
+  const history=[...(cur.history||[])].reverse();
+  if(!history.length){document.getElementById('histBody').innerHTML='<div class="hist-empty">No saves yet</div>';return;}
+  document.getElementById('histBody').innerHTML=history.map((h,i)=>`
     <div class="hist-item">
       <div class="hist-dot ${h.action==='created'?'create':'save'}">${h.action==='created'?'★':'↑'}</div>
       <div class="hist-info">
         <div class="hist-action">${h.action==='created'?'Created':'Saved'}</div>
         <div class="hist-time">${fmtTime(h.ts)}</div>
-        ${h.targets!==undefined?`<div class="hist-detail">${h.targets}t · ${h.opps||0}op${h.name&&i>0&&h.name!==items[i+1]?.name?` · renamed to "${h.name}"`:''}</div>`:''}
+        ${h.targets!==undefined?`<div class="hist-detail">${h.targets}t · ${h.opps||0}op</div>`:''}
       </div>
     </div>`).join('');
 }
@@ -376,17 +397,17 @@ function renderHistoryPanel(){
 /* ── CRUD ── */
 function newBg(){
   cur={id:null,name:'',goal:'',hook:'',notes:'',targets:[],opportunities:[],selectedOpps:[],status:'draft',history:[],save_count:0};
-  originalName='';
-  dirty=true; selectedOpps.clear();
+  originalName=''; dirty=true; selectedOpps.clear();
   renderEditor(); renderSidebar(); renderHistoryPanel();
 }
 
 function openBg(id){
-  cur=JSON.parse(JSON.stringify(battlegrounds.find(b=>b.id===id)||{}));
+  const found=battlegrounds.find(b=>b.id===id);
+  if(!found) return;
+  cur=JSON.parse(JSON.stringify(found));
   cur.targets=cur.targets||[]; cur.opportunities=cur.opportunities||[];
   cur.selectedOpps=cur.selectedOpps||[]; cur.history=cur.history||[]; cur.save_count=cur.save_count||0;
-  originalName=cur.name||'';
-  dirty=false; selectedOpps=new Set(cur.selectedOpps);
+  originalName=cur.name||''; dirty=false; selectedOpps=new Set(cur.selectedOpps);
   renderEditor(); renderSidebar(); renderHistoryPanel();
 }
 
@@ -394,8 +415,9 @@ function openBg(id){
 function renderEditor(){
   if(!cur){
     document.getElementById('actionsBar').style.display='none';
-    document.getElementById('editor').classList.add('is-empty');
-    document.getElementById('editor').innerHTML=`<div class="empty-state"><div class="empty-ico">⚔️</div><div class="empty-txt">No battleground selected</div><div class="empty-sub">Select targets from the hub and click ⚔ Battleground, or create a new one.</div><button class="btn p" style="margin-top:12px" onclick="newBg()">+ New Battleground</button></div>`;
+    const ed=document.getElementById('editor');
+    ed.classList.add('is-empty');
+    ed.innerHTML=`<div class="empty-state"><div class="empty-ico">⚔️</div><div class="empty-txt">No battleground selected</div><div class="empty-sub">Select targets from the hub and click ⚔ Battleground, or create a new one.</div><button class="btn p" style="margin-top:12px" onclick="newBg()">+ New Battleground</button></div>`;
     return;
   }
   document.getElementById('editor').classList.remove('is-empty');
@@ -407,10 +429,10 @@ function renderEditor(){
     <div class="section">
       <div class="sec-hdr"><span>⚔️</span><span class="sec-lbl">Campaign Identity</span></div>
       <div class="sec-body">
-        <div class="field"><span class="lbl">Name</span><input class="inp" id="bgName" value="${cur.name||''}" placeholder="e.g. EMEA DSP Push Q2" oninput="cur.name=this.value;markDirty();updateHistoryName()"/></div>
+        <div class="field"><span class="lbl">Name</span><input class="inp" id="bgName" value="${esc(cur.name||'')}" placeholder="e.g. EMEA DSP Push Q2" oninput="cur.name=this.value;markDirty();syncHistName()"/></div>
         <div class="row2">
-          <div class="field"><span class="lbl">Goal</span><input class="inp" id="bgGoal" value="${cur.goal||''}" placeholder="e.g. 10 new DSP trials" oninput="cur.goal=this.value;markDirty()"/></div>
-          <div class="field"><span class="lbl">Hook / Angle</span><input class="inp" id="bgHook" value="${cur.hook||''}" placeholder="e.g. EU data gap" oninput="cur.hook=this.value;markDirty()"/></div>
+          <div class="field"><span class="lbl">Goal</span><input class="inp" id="bgGoal" value="${esc(cur.goal||'')}" placeholder="e.g. 10 new DSP trials" oninput="cur.goal=this.value;markDirty()"/></div>
+          <div class="field"><span class="lbl">Hook</span><input class="inp" id="bgHook" value="${esc(cur.hook||'')}" placeholder="e.g. EU data gap" oninput="cur.hook=this.value;markDirty()"/></div>
         </div>
         <div class="field"><span class="lbl">Notes</span><textarea class="ta" id="bgNotes" oninput="cur.notes=this.value;markDirty()" placeholder="Strategy, context, objections…">${cur.notes||''}</textarea></div>
       </div>
@@ -447,14 +469,16 @@ function renderEditor(){
   updateSaveIndicator();
 }
 
+function esc(s){return String(s||'').replace(/&/g,'&amp;').replace(/"/g,'&quot;').replace(/</g,'&lt;');}
+
 function renderOppsInner(){
-  if(!cur.opportunities.length) return `<div class="opp-empty">Add targets · click ✦ Generate to surface opportunities</div>`;
+  if(!cur.opportunities.length) return `<div class="opp-empty">Add targets · click ✦ Generate</div>`;
   return `<div class="opp-tiles">${cur.opportunities.map((opp,i)=>`
     <div class="opp-tile${selectedOpps.has(i)?' selected':''}" onclick="toggleOpp(${i})">
       <div class="opp-tile-check">✓</div>
       <div class="opp-tile-icon">${opp.icon||'💡'}</div>
-      <div class="opp-tile-title">${opp.title}</div>
-      <div class="opp-tile-hook">${opp.hook}</div>
+      <div class="opp-tile-title">${opp.title||''}</div>
+      <div class="opp-tile-hook">${opp.hook||''}</div>
       <div class="opp-tile-segs">${(opp.segments||[]).map(s=>`<span class="opp-seg">${s}</span>`).join('')}</div>
     </div>`).join('')}</div>`;
 }
@@ -469,16 +493,16 @@ function toggleOpp(i){
 function clearOpps(){
   cur.opportunities=[]; cur.selectedOpps=[]; selectedOpps.clear(); markDirty();
   document.getElementById('oppContainer').innerHTML=renderOppsInner();
-  const btn=document.getElementById('genBtn');
-  if(btn) btn.textContent='✦ Generate';
+  const b=document.getElementById('genBtn'); if(b) b.textContent='✦ Generate';
   updateMeeseeksBtn();
 }
 
-function updateHistoryName(){
-  document.getElementById('histName').textContent=cur.name||'Untitled';
+function syncHistName(){
+  const el=document.getElementById('histName');
+  if(el&&cur) el.textContent=cur.name||'Untitled';
 }
 
-/* ── Opportunity generation ── */
+/* ── Opportunities ── */
 async function generateOpportunities(){
   if(!apiKey){openKeyModal();return;}
   if(!cur||!cur.targets.length) return;
@@ -486,22 +510,22 @@ async function generateOpportunities(){
   if(btn){btn.disabled=true;btn.textContent='Thinking…';}
   document.getElementById('oppContainer').innerHTML=`<div class="opp-loading"><div class="opp-loading-txt">Analyzing targets · matching segments…</div></div>`;
 
-  const targetContext=cur.targets.map(t=>{
-    const cts=(t.contacts||[]).map(c=>`${c.name||''} (${c.title||''})`).filter(Boolean);
-    return `- ${t.kind.toUpperCase()}: ${t.name} | Category: ${t.category||'?'} | Region: ${t.region||'?'} | ICP: ${t.icp||'?'}/10 | Note: ${t.note||t.meta||'?'}${cts.length?` | Contacts: ${cts.join(', ')}`:''}`;
+  const ctx=cur.targets.map(t=>{
+    const cs=(t.contacts||[]).map(c=>`${c.name||''} (${c.title||''})`).filter(Boolean);
+    return `- ${(t.kind||'?').toUpperCase()}: ${t.name} | Cat: ${t.category||'?'} | Region: ${t.region||'?'} | ICP: ${t.icp||'?'} | Note: ${t.note||t.meta||'?'}${cs.length?` | Contacts: ${cs.join(', ')}`:''}`;
   }).join('\n');
 
-  const prompt=`You are a senior sales strategist at onAudience, a data company selling audience segments to programmatic advertisers — DSPs, agencies, data platforms.
+  const prompt=`You are a senior sales strategist at onAudience selling audience segments to DSPs, agencies, data platforms.
 
 TARGETS:
-${targetContext}
+${ctx}
 
 Campaign: ${cur.goal||'Data partnership outreach'} | Hook: ${cur.hook||'Not set'}
 
 ${OA_TAXONOMY}
 
-Identify 4-6 specific business opportunities where onAudience segments solve a real problem for these targets. Respond ONLY with a JSON array, no markdown:
-[{"icon":"emoji","title":"3-5 word name","hook":"One sentence fit explanation naming the target","segments":["Category 1","Category 2"]}]`;
+Identify 4-6 concrete business opportunities where onAudience segments solve a real problem. Respond ONLY with a JSON array, no markdown fences:
+[{"icon":"emoji","title":"3-5 word name","hook":"One sentence naming the target and the fit","segments":["Category 1","Category 2"]}]`;
 
   try{
     const res=await fetch(PROXY,{
@@ -509,12 +533,11 @@ Identify 4-6 specific business opportunities where onAudience segments solve a r
       headers:{'Content-Type':'application/json','Authorization':`Bearer ${SB_KEY}`,'apikey':SB_KEY,'x-client-api-key':apiKey},
       body:JSON.stringify({model:'claude-sonnet-4-20250514',max_tokens:2000,messages:[{role:'user',content:prompt}]})
     });
-    if(!res.ok){const t=await res.text();throw new Error(`HTTP ${res.status}: ${t}`);}
+    if(!res.ok){const t=await res.text();throw new Error(`Proxy ${res.status}: ${t}`);}
     const data=await res.json();
     if(data.error) throw new Error(data.error);
-    const text=data.content?.[0]?.text||'[]';
-    const clean=text.replace(/```json?|```/g,'').trim();
-    cur.opportunities=JSON.parse(clean);
+    const raw=(data.content?.[0]?.text||'[]').replace(/```json?|```/g,'').trim();
+    cur.opportunities=JSON.parse(raw);
     cur.selectedOpps=[]; selectedOpps.clear(); markDirty();
     document.getElementById('oppContainer').innerHTML=renderOppsInner();
     if(btn){btn.disabled=false;btn.textContent='✦ Regenerate';}
@@ -526,8 +549,8 @@ Identify 4-6 specific business opportunities where onAudience segments solve a r
 }
 
 function updateMeeseeksBtn(){
-  const btn=document.getElementById('meeseeksBtn');
-  if(btn) btn.disabled=!cur||!cur.targets.length||selectedOpps.size===0;
+  const b=document.getElementById('meeseeksBtn');
+  if(b) b.disabled=!cur||!cur.targets.length||selectedOpps.size===0;
 }
 
 /* ── Launch Meeseeks ── */
@@ -535,16 +558,16 @@ function launchMeeseeks(){
   if(!cur||!selectedOpps.size) return;
   const selOpps=[...selectedOpps].map(i=>cur.opportunities[i]).filter(Boolean);
   const payload=cur.targets.map(t=>({
-    company: t.kind==='company'?t.name:t.company,
-    contactName: t.kind==='contact'?t.name:'',
-    contactTitle: t.meta||'',
-    category: t.category||'', region: t.region||'', icp: t.icp||null,
+    company:t.kind==='company'?t.name:t.company,
+    contactName:t.kind==='contact'?t.name:'',
+    contactTitle:t.meta||'',
+    category:t.category||'',region:t.region||'',icp:t.icp||null,
     description:[t.note||t.meta||'',`Category: ${t.category||''}`,`Region: ${t.region||''}`,
       t.contacts?.length?`Contacts: ${t.contacts.map(c=>`${c.name} (${c.title})`).join(', ')}`:'']
       .filter(Boolean).join(' | '),
-    angle: selOpps.map(o=>`${o.title}: ${o.hook}`).join(' · '),
-    opportunities: selOpps,
-    campaignGoal: cur.goal||'', campaignHook: cur.hook||'',
+    angle:selOpps.map(o=>`${o.title}: ${o.hook}`).join(' · '),
+    opportunities:selOpps,
+    campaignGoal:cur.goal||'',campaignHook:cur.hook||'',
   }));
   window.parent?.postMessage({type:'LAUNCH_MEESEEKS',payload:payload.length===1?payload[0]:payload},'*');
 }
@@ -555,11 +578,11 @@ function renderTargetChip(t,i){
   return `<div class="target-chip">
     <div class="target-av" style="background:${bg};color:${fg}">${ini(t.name||'?')}</div>
     <div class="target-info">
-      <div class="target-name">${t.name}</div>
+      <div class="target-name">${t.name||'?'}</div>
       ${t.meta?`<div class="target-meta">${t.meta}</div>`:''}
       ${t.company&&t.kind==='contact'?`<div class="target-meta">@ ${t.company}</div>`:''}
     </div>
-    <span class="target-kind ${t.kind}">${t.kind}</span>
+    <span class="target-kind ${t.kind||'company'}">${t.kind||'co'}</span>
     <button class="target-del" onclick="removeTarget(${i})">✕</button>
   </div>`;
 }
@@ -584,24 +607,23 @@ function refreshTargets(){
   const genBtn=document.getElementById('genBtn');
   if(genBtn) genBtn.disabled=!cur.targets.length;
   updateMeeseeksBtn();
-  renderHistoryPanel(); // update target count in right panel
+  renderHistoryPanel();
 }
 
 function handleDrop(e){
   e.preventDefault();e.currentTarget.classList.remove('over');
   let data;try{data=JSON.parse(e.dataTransfer.getData('application/json'));}catch{return;}
-  addTarget({uid:data.name||data.uid,kind:data.kind,name:data.name,meta:data.meta||'',
+  addTarget({uid:data.name||data.uid,kind:data.kind||'company',name:data.name,meta:data.meta||'',
     company:data.company||'',category:data.category||'',region:data.region||'',
     icp:data.icp||null,note:data.note||'',contacts:data.contacts||[]});
 }
 
-/* ── Save — upsert vs create ── */
+/* ── Save ── */
 function markDirty(){
   dirty=true;
   const el=document.getElementById('saveIndicator');
   if(el){el.textContent='● Unsaved changes';el.className='save-indicator dirty';}
 }
-
 function updateSaveIndicator(){
   const el=document.getElementById('saveIndicator');
   if(!el) return;
@@ -611,51 +633,41 @@ function updateSaveIndicator(){
 
 async function saveBg(){
   if(!cur) return;
+  cur.name   = document.getElementById('bgName')?.value.trim()  || cur.name;
+  cur.goal   = document.getElementById('bgGoal')?.value.trim()  || cur.goal;
+  cur.hook   = document.getElementById('bgHook')?.value.trim()  || cur.hook;
+  cur.notes  = document.getElementById('bgNotes')?.value        || cur.notes;
+  cur.status = document.getElementById('statusSel')?.value      || cur.status;
 
-  // Read latest field values
-  cur.name  = document.getElementById('bgName')?.value.trim()  || cur.name;
-  cur.goal  = document.getElementById('bgGoal')?.value.trim()  || cur.goal;
-  cur.hook  = document.getElementById('bgHook')?.value.trim()  || cur.hook;
-  cur.notes = document.getElementById('bgNotes')?.value        || cur.notes;
-  cur.status= document.getElementById('statusSel')?.value      || cur.status;
+  const histEntry={action:cur.id?'saved':'created',ts:new Date().toISOString(),
+    name:cur.name,targets:cur.targets.length,opps:cur.opportunities.length};
+  cur.history=[...(cur.history||[]),histEntry];
+  cur.save_count=(cur.save_count||0)+1;
 
-  // History entry
-  const histEntry = {
-    action: cur.id ? 'saved' : 'created',
-    ts: new Date().toISOString(),
-    name: cur.name,
-    targets: cur.targets.length,
-    opps: cur.opportunities.length,
-  };
-  cur.history = [...(cur.history||[]), histEntry];
-  cur.save_count = (cur.save_count||0) + 1;
+  const payload={name:cur.name,goal:cur.goal,hook:cur.hook,notes:cur.notes,
+    targets:cur.targets,opportunities:cur.opportunities,selectedOpps:[...selectedOpps],
+    status:cur.status,history:cur.history,save_count:cur.save_count};
 
-  const payload = {
-    name: cur.name, goal: cur.goal, hook: cur.hook, notes: cur.notes,
-    targets: cur.targets, opportunities: cur.opportunities,
-    selectedOpps: [...selectedOpps], status: cur.status,
-    history: cur.history, save_count: cur.save_count,
-  };
+  const nameChanged=cur.name!==originalName&&originalName!=='';
 
-  // Decision: same name AND has ID → overwrite. Name changed OR new → insert.
-  const nameChanged = cur.name !== originalName && originalName !== '';
-
-  if(cur.id && !nameChanged){
-    // Overwrite existing
-    await sbPatch(`/rest/v1/battlegrounds?id=eq.${cur.id}`, payload);
-    const idx=battlegrounds.findIndex(b=>b.id===cur.id);
-    if(idx>=0) battlegrounds[idx]={...battlegrounds[idx],...payload,id:cur.id};
-  } else {
-    // Create new (either new battleground or name changed)
-    const r=await sbPost('/rest/v1/battlegrounds',payload,{Prefer:'return=representation'});
-    const d=await r.json();
-    if(d?.[0]?.id){ cur.id=d[0].id; }
-    battlegrounds.unshift({...cur,...payload});
-    originalName=cur.name; // new baseline
+  try{
+    if(cur.id&&!nameChanged){
+      await sbPatch(`/rest/v1/battlegrounds?id=eq.${cur.id}`,payload);
+      const idx=battlegrounds.findIndex(b=>b.id===cur.id);
+      if(idx>=0) battlegrounds[idx]={...battlegrounds[idx],...payload,id:cur.id};
+    }else{
+      const r=await sbPost('/rest/v1/battlegrounds',payload,{Prefer:'return=representation'});
+      const d=await r.json();
+      if(d?.[0]?.id){cur.id=d[0].id;}
+      battlegrounds.unshift({...cur,...payload});
+      originalName=cur.name;
+    }
+    dirty=false; updateSaveIndicator();
+    renderSidebar(); renderHistoryPanel();
+  }catch(err){
+    console.error('saveBg error:',err);
+    alert('Save failed: '+err.message);
   }
-
-  dirty=false; updateSaveIndicator();
-  renderSidebar(); renderHistoryPanel();
 }
 
 async function deleteBg(id){
@@ -689,7 +701,7 @@ function renderPicker(){
     const meta=pickerTab==='companies'?(item.category||item.note||''):(item.title||'')+(item.company_name?' · '+item.company_name:'');
     const [bg,fg]=av(name||'?');
     const added=(cur?.targets||[]).some(t=>t.uid===name);
-    return `<div class="picker-item${added?' added':''}" onclick="pickerAdd(${JSON.stringify(name)},${JSON.stringify(meta)},${JSON.stringify(item.company_name||'')},${JSON.stringify(item.category||'')},${JSON.stringify(item.region||'')},${item.icp||0})">
+    return `<div class="picker-item${added?' added':''}" onclick="pickerAdd(${JSON.stringify(name||'')},${JSON.stringify(meta||'')},${JSON.stringify(item.company_name||'')},${JSON.stringify(item.category||'')},${JSON.stringify(item.region||'')},${item.icp||0})">
       <div class="picker-av" style="background:${bg};color:${fg}">${ini(name||'?')}</div>
       <div style="flex:1;min-width:0"><div class="picker-name">${name||'—'}</div><div class="picker-meta">${meta}</div></div>
       ${added?'<span style="color:var(--g);font-size:10px">✓</span>':''}
@@ -704,7 +716,7 @@ function pickerAdd(name,meta,company,category,region,icp){
 /* ── API key ── */
 function openKeyModal(){document.getElementById('keyModal').classList.add('vis');document.getElementById('keyInput').value=apiKey;}
 function closeKeyModal(){document.getElementById('keyModal').classList.remove('vis');}
-function saveKey(){apiKey=document.getElementById('keyInput').value.trim();localStorage.setItem('oaApiKey',apiKey);closeKeyModal();document.getElementById('keyBtn').textContent=apiKey?'🔑 Key ✓':'🔑 Key';renderEditor();}
+function saveKey(){apiKey=document.getElementById('keyInput').value.trim();localStorage.setItem('oaApiKey',apiKey);closeKeyModal();document.getElementById('keyBtn').textContent=apiKey?'🔑 Key ✓':'🔑 API Key';renderEditor();}
 
 /* ── postMessage ── */
 window.addEventListener('message',e=>{
@@ -728,11 +740,13 @@ window.addEventListener('message',e=>{
 
 /* ── Theme ── */
 let theme=localStorage.getItem('oaTheme')||'light';
-function setTheme(t){theme=t;document.documentElement.setAttribute('data-theme',t);localStorage.setItem('oaTheme',t);document.getElementById('themeBtn').textContent=t==='dark'?'☀️':'🌙';}
+function setTheme(t){theme=t;document.documentElement.setAttribute('data-theme',t);localStorage.setItem('oaTheme',t);const b=document.getElementById('themeBtn');if(b)b.textContent=t==='dark'?'☀️':'🌙';}
 function toggleTheme(){setTheme(theme==='light'?'dark':'light');}
+
+/* ── Boot ── */
 document.documentElement.setAttribute('data-theme',theme);
 document.getElementById('themeBtn').textContent=theme==='dark'?'☀️':'🌙';
-document.getElementById('keyBtn').textContent=apiKey?'🔑 Key ✓':'🔑 Key';
+document.getElementById('keyBtn').textContent=apiKey?'🔑 Key ✓':'🔑 API Key';
 loadAll();
 </script>
 </body>

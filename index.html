@@ -19,6 +19,7 @@
       <span id="statusText">Loading…</span>
     </div>
     <div class="nav-right">
+      <button class="api-btn" id="keyBtn" onclick="openKeyModal()">🔑 API Key</button>
       <button class="btn p sm" onclick="doResearch()">+ Research ↗</button>
       <button class="theme-btn" onclick="toggleTheme()" id="themeBtn">🌙</button>
     </div>
@@ -28,133 +29,185 @@
   <div class="page-tabs">
     <div class="ptab active" id="ptab-dashboard" onclick="switchPageTab('dashboard')">
       <span class="ptab-icon">📊</span> Dashboard
-      <span class="ptab-badge" id="ptab-badge-dashboard">—</span>
+      <span class="ptab-badge" id="ptab-badge-co">—</span>
     </div>
     <div class="ptab" id="ptab-battleground" onclick="switchPageTab('battleground')">
       <span class="ptab-icon">⚔️</span> Battleground
-      <span class="ptab-badge">Planner</span>
+      <span class="ptab-badge" id="ptab-badge-bg">—</span>
     </div>
     <div class="ptab" id="ptab-meeseeks" onclick="switchPageTab('meeseeks')">
       <span class="ptab-icon">✉️</span> MEESEEKS
-      <span class="ptab-badge">Composer</span>
     </div>
   </div>
 
-  <!-- ════════ TAB: DASHBOARD ════════ -->
-  <div class="tab-page active" id="tab-dashboard">
+  <!-- ── Hub body: Left panel (always visible) + Tab content ── -->
+  <div class="hub-body">
 
-    <!-- Stats bar -->
-    <div class="stats-bar">
-      <div class="sc active" id="sc-all"      onclick="setFilter('all')">
-        <div class="sc-num" id="st-all">—</div><div class="sc-lbl">All</div></div>
-      <div class="sc" id="sc-client"   onclick="setFilter('client')">
-        <div class="sc-num" id="st-client">—</div><div class="sc-lbl">Clients</div></div>
-      <div class="sc" id="sc-poc"      onclick="setFilter('poc')">
-        <div class="sc-num" id="st-poc">—</div><div class="sc-lbl">Active Deal</div></div>
-      <div class="sc" id="sc-partner"  onclick="setFilter('partner')">
-        <div class="sc-num" id="st-partner">—</div><div class="sc-lbl">Partners</div></div>
-      <div class="sc" id="sc-prospect" onclick="setFilter('prospect')">
-        <div class="sc-num" id="st-prospect">—</div><div class="sc-lbl">Prospects</div></div>
-      <div class="sc" id="sc-nogo"     onclick="setFilter('nogo')">
-        <div class="sc-num" id="st-nogo">—</div><div class="sc-lbl">No Outreach</div></div>
-      <div class="sc" id="sc-fresh"    onclick="setFilter('fresh')">
-        <div class="sc-num" id="st-fresh">—</div><div class="sc-lbl">Fresh Meat 🥩</div></div>
-    </div>
+    <!-- ═══ LEFT PANEL (shared across all tabs) ═══ -->
+    <div class="panel-left">
 
-    <!-- Search strip -->
-    <div class="search-strip">
-      <div class="sbox">
-        <span class="sico">⌕</span>
-        <input class="sinp" id="searchQ" placeholder="Search companies, notes…"
-          oninput="renderList();if(leftTab==='contacts')renderContactsList()"/>
+      <!-- Companies / Contacts tabs -->
+      <div class="lp-tabs">
+        <div class="lp-tab active" id="lptab-companies" onclick="switchLeftTab('companies')">Companies</div>
+        <div class="lp-tab" id="lptab-contacts" onclick="switchLeftTab('contacts')">Contacts</div>
       </div>
-      <div class="fpills">
-        <button class="fp active" onclick="setFilter('all');setFpActive(this)">All</button>
-        <button class="fp" onclick="setFilter('client');setFpActive(this)">Clients</button>
-        <button class="fp" onclick="setFilter('partner');setFpActive(this)">Partners</button>
-        <button class="fp" onclick="setFilter('prospect');setFpActive(this)">Prospects</button>
-        <button class="fp" onclick="setFilter('poc');setFpActive(this)">Active deal</button>
-        <button class="fp" onclick="setFilter('nogo');setFpActive(this)">No outreach</button>
-      </div>
-    </div>
 
-    <!-- Two-panel -->
-    <div class="panels">
-      <div class="panel-left">
-
-        <!-- Left tabs -->
-        <div class="lp-tabs">
-          <div class="lp-tab active" id="lptab-companies" onclick="switchLeftTab('companies')">Companies</div>
-          <div class="lp-tab" id="lptab-contacts" onclick="switchLeftTab('contacts')">Contacts</div>
+      <!-- Companies sub-panel -->
+      <div class="lp-sub active" id="lpsub-companies">
+        <!-- Compact stats bar -->
+        <div class="lp-stats">
+          <div class="lp-sc active" id="sc-all"      onclick="setFilter('all')"><div class="lp-sc-num" id="st-all">—</div><div class="lp-sc-lbl">All</div></div>
+          <div class="lp-sc"        id="sc-client"   onclick="setFilter('client')"><div class="lp-sc-num" id="st-client">—</div><div class="lp-sc-lbl">Client</div></div>
+          <div class="lp-sc"        id="sc-poc"      onclick="setFilter('poc')"><div class="lp-sc-num" id="st-poc">—</div><div class="lp-sc-lbl">Deal</div></div>
+          <div class="lp-sc"        id="sc-partner"  onclick="setFilter('partner')"><div class="lp-sc-num" id="st-partner">—</div><div class="lp-sc-lbl">Partner</div></div>
+          <div class="lp-sc"        id="sc-prospect" onclick="setFilter('prospect')"><div class="lp-sc-num" id="st-prospect">—</div><div class="lp-sc-lbl">Prospect</div></div>
+          <div class="lp-sc"        id="sc-nogo"     onclick="setFilter('nogo')"><div class="lp-sc-num" id="st-nogo">—</div><div class="lp-sc-lbl">No out.</div></div>
+          <div class="lp-sc"        id="sc-fresh"    onclick="setFilter('fresh')"><div class="lp-sc-num" id="st-fresh">—</div><div class="lp-sc-lbl">Fresh🥩</div></div>
         </div>
-
-        <!-- Companies sub -->
-        <div class="lp-sub active" id="lpsub-companies">
-          <div class="list-meta">
-            <span id="listMeta">—</span>
-            <span style="cursor:pointer;color:var(--t3)" onclick="clearSelection()" id="clearSelBtn" style="display:none">Clear</span>
+        <!-- Search + filters -->
+        <div class="lp-search">
+          <div class="sbox">
+            <span class="sico">⌕</span>
+            <input class="sinp" id="searchQ" placeholder="Search…"
+              oninput="renderList();if(leftTab==='contacts')renderContactsList()"/>
           </div>
-          <div class="co-list" id="coList"></div>
-        </div>
-
-        <!-- Contacts sub -->
-        <div class="lp-sub" id="lpsub-contacts">
-          <div class="list-meta"><span id="ctListMeta">—</span><span>click · drag</span></div>
-          <div class="co-list" id="ctList"></div>
-        </div>
-
-        <!-- Selection bar (shared, shown when any items selected) -->
-        <div class="sel-bar" id="selBar">
-          <div class="sel-count" id="selCount">0 selected</div>
-          <div style="display:flex;gap:5px;flex-wrap:wrap">
-            <button class="btn sm" onclick="clearSelection()">✕ Clear</button>
-            <button class="btn sm" onclick="sendSelectionToBattleground()">⚔️ Battleground</button>
-            <button class="btn sm p" onclick="sendSelectionToMeeseeks()">✉ MEESEEKS</button>
+          <div class="fpills">
+            <button class="fp active" onclick="setFilter('all');setFpActive(this)">All</button>
+            <button class="fp" onclick="setFilter('client');setFpActive(this)">Clients</button>
+            <button class="fp" onclick="setFilter('partner');setFpActive(this)">Partners</button>
+            <button class="fp" onclick="setFilter('prospect');setFpActive(this)">Prospects</button>
+            <button class="fp" onclick="setFilter('poc');setFpActive(this)">POC</button>
           </div>
         </div>
-
+        <div class="list-meta"><span id="listMeta">—</span><span>click · ✓ select · drag</span></div>
+        <div class="co-list" id="coList"></div>
       </div>
 
-      <!-- Center -->
-      <div class="panel-center" id="centerPanel"></div>
-    </div>
+      <!-- Contacts sub-panel -->
+      <div class="lp-sub" id="lpsub-contacts">
+        <div class="list-meta"><span id="ctListMeta">—</span><span>click · ✓ select</span></div>
+        <div class="co-list" id="ctList"></div>
+      </div>
 
-  </div><!-- /tab-dashboard -->
+      <!-- Selection bar (shown when items selected) -->
+      <div class="sel-bar" id="selBar">
+        <div class="sel-count" id="selCount">0 selected</div>
+        <div class="sel-btns">
+          <button class="btn sm" onclick="clearSelection()">✕ Clear</button>
+          <button class="btn sm" onclick="sendSelectionToBattleground()">⚔ Battleground</button>
+          <button class="btn sm p" onclick="sendSelectionToMeeseeks()">✉ MEESEEKS</button>
+        </div>
+      </div>
 
-  <!-- ════════ TAB: BATTLEGROUND ════════ -->
-  <div class="tab-page" id="tab-battleground">
-    <div class="iframe-shell">
-      <div class="iframe-toolbar">
-        <span class="ptab-icon">⚔️</span>
-        <span class="iframe-label">Battleground — Opportunity Planner</span>
-        <span class="iframe-hint">Select companies/contacts from Dashboard → ⚔ Battleground · or drag rows onto this tab</span>
-        <button class="btn sm" onclick="document.getElementById('battleground-iframe').src=document.getElementById('battleground-iframe').src">↺ Reload</button>
-      </div>
-      <div class="iframe-wrap">
-        <iframe id="battleground-iframe" src="" sandbox="allow-scripts allow-same-origin allow-forms allow-popups allow-modals"></iframe>
-      </div>
-    </div>
-  </div>
+    </div><!-- /panel-left -->
 
-  <!-- ════════ TAB: MEESEEKS ════════ -->
-  <div class="tab-page" id="tab-meeseeks">
-    <div class="iframe-shell">
-      <div class="iframe-toolbar">
-        <span class="ptab-icon">✉️</span>
-        <span class="iframe-label">MEESEEKS — Email Composer</span>
-        <span class="iframe-hint">Receives context from Battleground · pick a persona · generate</span>
-        <button class="btn sm" onclick="document.getElementById('meeseeks-iframe').src=document.getElementById('meeseeks-iframe').src">↺ Reload</button>
+    <!-- ═══ MAIN CONTENT ═══ -->
+    <div class="main-content">
+
+      <!-- ── Tab: Dashboard ── -->
+      <div class="tab-pane active" id="tab-dashboard">
+        <div class="panel-center" id="centerPanel"></div>
       </div>
-      <div class="iframe-wrap">
-        <iframe id="meeseeks-iframe" src="" sandbox="allow-scripts allow-same-origin allow-forms allow-popups allow-modals"></iframe>
-      </div>
-    </div>
-  </div>
+
+      <!-- ── Tab: Battleground ── -->
+      <div class="tab-pane" id="tab-battleground">
+        <div class="bg-tab-wrap">
+
+          <!-- Center: editor -->
+          <div class="bg-editor-col">
+            <div class="bg-editor is-empty" id="bgEditor">
+              <div class="bg-empty-state">
+                <div class="bg-empty-ico">⚔️</div>
+                <div class="bg-empty-txt">No battleground selected</div>
+                <div class="bg-empty-sub">Select companies or contacts from the left panel and click ⚔ Battleground — or create a new one.</div>
+                <button class="btn p" style="margin-top:12px" onclick="newBg()">+ New Battleground</button>
+              </div>
+            </div>
+            <div class="bg-actions" id="bgActions" style="display:none">
+              <span class="save-ind" id="saveInd"></span>
+              <select id="statusSel" style="height:22px;padding:0 6px;border:1px solid var(--rule);border-radius:2px;background:var(--surf2);color:var(--t2);font-family:'IBM Plex Mono',monospace;font-size:8px;outline:none;cursor:pointer" onchange="markBgDirty()">
+                <option value="draft">Draft</option>
+                <option value="active">Active ⚔</option>
+                <option value="paused">Paused ⏸</option>
+                <option value="archived">Archived 📦</option>
+              </select>
+              <button class="btn sm" onclick="saveBg()">💾 Save</button>
+              <button class="meeseeks-btn" id="meeseeksBtn" disabled onclick="launchFromBattleground()">✉ MEESEEKS</button>
+            </div>
+          </div>
+
+          <!-- Right: bg list + history -->
+          <div class="bg-right-col">
+            <div class="bg-list-section">
+              <div class="bg-list-hdr">
+                <span class="bg-list-lbl">Battlegrounds</span>
+                <button class="btn xs p" onclick="newBg()">+ New</button>
+              </div>
+              <div class="bg-list-body" id="bgList"></div>
+            </div>
+            <div class="bg-history-section">
+              <div class="hp-hdr">
+                <div class="hp-name empty" id="histName">No battleground</div>
+                <div class="hp-chips" id="histChips"></div>
+                <div class="hp-divider"></div>
+                <div class="hp-hist-lbl">Save History</div>
+              </div>
+              <div class="hp-body" id="histBody"><div class="hist-empty">No history yet</div></div>
+            </div>
+          </div>
+
+        </div>
+      </div><!-- /tab-battleground -->
+
+      <!-- ── Tab: MEESEEKS ── -->
+      <div class="tab-pane" id="tab-meeseeks">
+        <div class="ms-tab-wrap">
+
+          <!-- Left: persona picker + form -->
+          <div class="ms-form-col">
+            <!-- Queue strip -->
+            <div class="ms-queue" id="msQueue">
+              <div class="ms-queue-lbl">Queue <span id="queueCount">0</span></div>
+              <div class="q-chips" id="qChips"></div>
+            </div>
+            <!-- Persona grid -->
+            <div class="ms-personas">
+              <div class="ms-personas-lbl">Pick Meeseek <span class="ms-sel-lbl" id="msSelLabel"></span></div>
+              <div class="ms-grid" id="msGrid"></div>
+            </div>
+            <!-- Form -->
+            <div class="ms-form">
+              <div class="row2">
+                <div class="field"><span class="lbl">Company *</span><input class="inp" id="msCompany" placeholder="e.g. Adform"/></div>
+                <div class="field"><span class="lbl">Contact</span><input class="inp" id="msContact" placeholder="e.g. Jan Kowalski"/></div>
+              </div>
+              <div class="row2">
+                <div class="field"><span class="lbl">Title / Role</span><input class="inp" id="msTitle" placeholder="e.g. VP Data"/></div>
+                <div class="field"><span class="lbl">DSP / Platform</span><input class="inp" id="msDsp" placeholder="e.g. TTD, DV360"/></div>
+              </div>
+              <div class="field"><span class="lbl">Context — what they do, recent news, tech stack</span><textarea class="ta" id="msDesc" placeholder="Programmatic DSP focused on CTV…"></textarea></div>
+              <div class="field"><span class="lbl">Angle / Hook</span><textarea class="ta" id="msAngle" style="min-height:36px" placeholder="EU data gap, CTV expansion…"></textarea></div>
+              <div class="field"><span class="lbl">Email (if known)</span><input class="inp" id="msEmail" placeholder="contact@company.com"/></div>
+              <button class="ms-generate-btn" id="msGenerateBtn" onclick="generateEmail()">✉ Generate Email</button>
+            </div>
+          </div>
+
+          <!-- Right: output -->
+          <div class="ms-output-col" id="msOutput">
+            <div class="ms-empty">
+              <div class="ms-empty-icon">✉</div>
+              <div class="ms-empty-txt">No email generated yet</div>
+              <div class="ms-empty-sub">Pick a Meeseek · fill in company details · click Generate<br><br>Or select companies/contacts in the left panel and click ✉ MEESEEKS</div>
+            </div>
+          </div>
+
+        </div>
+      </div><!-- /tab-meeseeks -->
+
+    </div><!-- /main-content -->
+  </div><!-- /hub-body -->
 
 </div><!-- /.app -->
-
-<!-- ── Context menu ── -->
-<div id="ctxMenu" class="ctx-menu" style="display:none"></div>
 
 <!-- ── Contact drawer ── -->
 <div id="ctDrawerOverlay" onclick="closeDrawer()"></div>
@@ -167,6 +220,9 @@
   <div class="drawer-body" id="drawerBody"></div>
 </div>
 
+<!-- ── Context menu ── -->
+<div id="ctxMenu" class="ctx-menu" style="display:none"></div>
+
 <!-- ── Research modal ── -->
 <div id="overlay">
   <div class="modal-box">
@@ -177,6 +233,36 @@
       <button class="btn" onclick="closeModal()">Cancel</button>
       <button class="btn p" onclick="submitModal()">Open in Claude ↗</button>
     </div>
+  </div>
+</div>
+
+<!-- ── API Key modal ── -->
+<div id="keyModal">
+  <div class="modal-box">
+    <div class="modal-title">Anthropic API Key</div>
+    <div class="modal-desc">Required for Battleground opportunity generation and MEESEEKS email writing. Stored in your browser only.</div>
+    <input class="modal-inp" id="keyInput" type="password" placeholder="sk-ant-…"/>
+    <div class="modal-tip">Get your key at console.anthropic.com</div>
+    <div class="modal-actions">
+      <button class="btn" onclick="closeKeyModal()">Cancel</button>
+      <button class="btn p" onclick="saveKey()">Save Key</button>
+    </div>
+  </div>
+</div>
+
+<!-- ── Picker modal (for Battleground + Add) ── -->
+<div id="pickerModal">
+  <div class="picker-box">
+    <div class="picker-hdr">
+      <span class="picker-title">Add Targets</span>
+      <button class="btn sm" onclick="closePicker()">✕</button>
+    </div>
+    <div class="picker-tabs-bar">
+      <div class="picker-tab active" id="picker-tab-co" onclick="switchPickerTab('companies')">🏢 Companies</div>
+      <div class="picker-tab" id="picker-tab-ct" onclick="switchPickerTab('contacts')">👤 Contacts</div>
+    </div>
+    <div class="picker-search"><input class="picker-sinp" id="pickerQ" placeholder="Search…" oninput="renderPicker()"/></div>
+    <div class="picker-list" id="pickerList"></div>
   </div>
 </div>
 
