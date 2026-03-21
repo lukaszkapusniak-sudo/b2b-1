@@ -503,6 +503,39 @@ a.ml:hover{text-decoration:underline}
 .role-viewer{color:#6B6B64;background:#EFEDE6;border-color:rgba(107,107,100,.3)}
 #userBadge{align-items:center;gap:6px}
 
+/* ── Skill trigger visual cues ── */
+/* Any element that calls openClaude() gets this class or inherits the treatment */
+.qa-card{position:relative;overflow:hidden}
+.qa-card::after{
+  content:'↗ Claude';position:absolute;bottom:8px;right:10px;
+  font-family:'IBM Plex Mono',monospace;font-size:7px;font-weight:500;
+  text-transform:uppercase;letter-spacing:.06em;color:var(--g);opacity:0;
+  transition:opacity .15s}
+.qa-card:hover::after{opacity:1}
+
+/* rs-btn (row-level quick actions) */
+.rs-btn{
+  height:20px;width:20px;padding:0;border:1px solid transparent;border-radius:2px;
+  font-size:11px;cursor:pointer;background:transparent;color:var(--t3);
+  transition:all .12s;display:inline-flex;align-items:center;justify-content:center;
+  position:relative}
+.rs-btn:hover{background:var(--gb);border-color:var(--gr);color:var(--g);transform:scale(1.1)}
+.rs-btn:hover::after{
+  content:attr(title);position:absolute;bottom:calc(100% + 4px);left:50%;
+  transform:translateX(-50%);background:var(--t1);color:var(--bg);
+  font-family:'IBM Plex Mono',monospace;font-size:8px;padding:2px 6px;
+  border-radius:2px;white-space:nowrap;pointer-events:none;z-index:100}
+
+/* Inline action buttons with lookup triggers */
+.act-row .btn:hover{border-color:var(--gr);color:var(--g);background:var(--gb)}
+
+/* Context menu items */
+.ctx-item{position:relative}
+.ctx-item.skill-trigger::before{
+  content:'';position:absolute;left:0;top:0;bottom:0;width:2px;
+  background:transparent;transition:background .12s;border-radius:0}
+.ctx-item.skill-trigger:hover::before{background:var(--g)}
+
 </style>
 </head>
 <body>
@@ -531,7 +564,7 @@ a.ml:hover{text-decoration:underline}
       <span class="ptab-badge" id="ptab-badge-co">—</span>
     </div>
     <div class="ptab" id="ptab-battleground" onclick="switchPageTab('battleground')">
-      <span class="ptab-icon">📋</span> Plans
+      <span class="ptab-icon">⚔️</span> Battleplans
       <span class="ptab-badge" id="ptab-badge-bg">—</span>
     </div>
     <div class="ptab" id="ptab-meeseeks" onclick="switchPageTab('meeseeks')">
@@ -593,7 +626,7 @@ a.ml:hover{text-decoration:underline}
         <div class="sel-count" id="selCount">0 selected</div>
         <div class="sel-btns">
           <button class="btn sm" onclick="clearSelection()">✕ Clear</button>
-          <button class="btn sm" onclick="sendSelectionToBattleground()">⚔ Battleground</button>
+          <button class="btn sm" onclick="sendSelectionToBattleground()">⚔ Battleplans</button>
           <button class="btn sm p" onclick="sendSelectionToMeeseeks()">✉ MEESEEKS</button>
         </div>
       </div>
@@ -608,7 +641,7 @@ a.ml:hover{text-decoration:underline}
         <div class="panel-center" id="centerPanel"></div>
       </div>
 
-      <!-- ── Tab: Battleground ── -->
+      <!-- ── Tab: Battleplans ── -->
       <div class="tab-pane" id="tab-battleground">
         <div class="bg-tab-wrap">
 
@@ -617,9 +650,9 @@ a.ml:hover{text-decoration:underline}
             <div class="bg-editor is-empty" id="bgEditor">
               <div class="bg-empty-state">
                 <div class="bg-empty-ico">⚔️</div>
-                <div class="bg-empty-txt">No battleground selected</div>
-                <div class="bg-empty-sub">Select companies or contacts from the left panel and click ⚔ Battleground — or create a new one.</div>
-                <button class="btn p" style="margin-top:12px" onclick="newBg()">+ New Battleground</button>
+                <div class="bg-empty-txt">No battleplan selected</div>
+                <div class="bg-empty-sub">Select companies or contacts from the left panel and click ⚔ Battleplans — or create a new one.</div>
+                <button class="btn p" style="margin-top:12px" onclick="newBg()">+ New Battleplan</button>
               </div>
             </div>
             <div class="bg-actions" id="bgActions" style="display:none">
@@ -639,14 +672,14 @@ a.ml:hover{text-decoration:underline}
           <div class="bg-right-col">
             <div class="bg-list-section">
               <div class="bg-list-hdr">
-                <span class="bg-list-lbl">Battlegrounds</span>
+                <span class="bg-list-lbl">Battleplans</span>
                 <button class="btn xs p" onclick="newBg()">+ New</button>
               </div>
               <div class="bg-list-body" id="bgList"></div>
             </div>
             <div class="bg-history-section">
               <div class="hp-hdr">
-                <div class="hp-name empty" id="histName">No battleground</div>
+                <div class="hp-name empty" id="histName">No battleplan</div>
                 <div class="hp-chips" id="histChips"></div>
                 <div class="hp-divider"></div>
                 <div class="hp-hist-lbl">Save History</div>
@@ -739,7 +772,7 @@ a.ml:hover{text-decoration:underline}
 <div id="keyModal">
   <div class="modal-box">
     <div class="modal-title">Anthropic API Key</div>
-    <div class="modal-desc">Required for Battleground opportunity generation and MEESEEKS email writing. Stored in your browser only.</div>
+    <div class="modal-desc">Required for Battleplans opportunity generation and MEESEEKS email writing. Stored in your browser only.</div>
     <input class="modal-inp" id="keyInput" type="password" placeholder="sk-ant-…"/>
     <div class="modal-tip">Get your key at console.anthropic.com</div>
     <div class="modal-actions">
@@ -749,7 +782,7 @@ a.ml:hover{text-decoration:underline}
   </div>
 </div>
 
-<!-- ── Picker modal (for Battleground + Add) ── -->
+<!-- ── Picker modal (for Battleplans + Add) ── -->
 <div id="pickerModal">
   <div class="picker-box">
     <div class="picker-hdr">
@@ -771,7 +804,7 @@ a.ml:hover{text-decoration:underline}
 const HUB_PIN = 'onaudience2026'; // change this to set your own PIN
 /* ═══════════════════════════════════════════════
    onAudience Sales Intelligence Hub — hub.js v3
-   Unified: Dashboard · Plans · MEESEEKS
+   Unified: Dashboard · Battleplans · MEESEEKS
 ═══════════════════════════════════════════════ */
 
 /* ── SEED ── */
@@ -1039,6 +1072,11 @@ function renderList(){
         ${c.icp?`<span class="icp-n">${c.icp}</span>`:''}
         <span class="tag ${tagCls(c.type)}" style="font-size:7px">${tagLbl(c.type).slice(0,3)}</span>
         <div class="ct-dot ${dotCls}" title="${pct}%"></div>
+      </div>
+      <div class="row-skills">
+        <button class="rs-btn" title="Full report" onclick="event.stopPropagation();openClaude('Research ${escJs(c.name)} — full contact report, decision makers, ICP fit','Full Report · ${escJs(c.name)}')">🔍</button>
+        <button class="rs-btn" title="Find DMs" onclick="event.stopPropagation();openClaude('Find Head of Programmatic or Data Partnerships at ${escJs(c.name)} — LinkedIn, email','Find DMs · ${escJs(c.name)}')">👤</button>
+        <button class="rs-btn" title="Check Gmail" onclick="event.stopPropagation();openClaude('Check Gmail for prior contact with ${escJs(c.name)}','Gmail · ${escJs(c.name)}')">📧</button>
       </div></div>`;
   }).join('');
 }
@@ -1066,7 +1104,11 @@ function renderContactsList(){
       <div class="ct-row-info"><div class="ct-row-name">${ct.full_name||'—'}</div>
       <div class="ct-row-sub">${ct.title||''}${ct.title&&ct.company_name?' · ':''}${ct.company_name?coIcon+' '+ct.company_name:''}</div></div>
       ${bgToggle}
-      <div class="ct-dot ${dotCls}" title="${pct}%"></div></div>`;
+      <div class="ct-dot ${dotCls}" title="${pct}%"></div>
+      <div class="row-skills">
+        <button class="rs-btn" title="Research contact" onclick="event.stopPropagation();openClaude('Research ${escJs(ct.full_name||'')} at ${escJs(ct.company_name||'')} — LinkedIn profile, email, background','Research · ${escJs(ct.full_name||'')}')">🔍</button>
+        <button class="rs-btn" title="Draft email" onclick="event.stopPropagation();sendSingleToMeeseeks('${escJs(ct.company_name||'')}','${escJs(ct.full_name||'')}','${escJs(ct.title||'')}','${escJs(ct.email||'')}')">✉️</button>
+      </div></div>`;
   }).join('');
 }
 
@@ -1277,7 +1319,7 @@ function resetCenter(){
   document.getElementById('centerPanel').innerHTML=`<div class="qa-grid">
     <div class="qa-card" onclick="promptModal('Research a company','Enter company name:','Research [COMPANY] — full contact report, decision makers, ICP fit')"><div class="qa-icon">🔍</div><div class="qa-title">Company Research</div><div class="qa-desc">Full contact report with DMs and ICP fit</div></div>
     <div class="qa-card" onclick="openClaude('Find new DSP, SSP and media agency prospects for onAudience in EMEA')"><div class="qa-icon">🎯</div><div class="qa-title">Find Prospects</div><div class="qa-desc">EMEA focus, strong programmatic signals</div></div>
-    <div class="qa-card" onclick="switchPageTab('plan')"><div class="qa-icon">⚔️</div><div class="qa-title">Plans</div><div class="qa-desc">Plan outreach, find opportunities</div></div>
+    <div class="qa-card" onclick="switchPageTab('plan')"><div class="qa-icon">⚔️</div><div class="qa-title">Battleplans</div><div class="qa-desc">Plan outreach, find opportunities</div></div>
     <div class="qa-card" onclick="switchPageTab('meeseeks')"><div class="qa-icon">✉️</div><div class="qa-title">MEESEEKS</div><div class="qa-desc">Compose personalized outreach</div></div>
     <div class="qa-card" onclick="openClaude('Re-engage dormant onAudience prospects — not contacted in 60+ days')"><div class="qa-icon">♻️</div><div class="qa-title">Re-engage</div><div class="qa-desc">Dormant prospects worth reviving</div></div>
     <div class="qa-card" onclick="openClaude('Top 5 highest-priority onAudience prospects this week')"><div class="qa-icon">⭐</div><div class="qa-title">Top Picks</div><div class="qa-desc">Priority prospects this week</div></div>
@@ -1291,15 +1333,15 @@ function showCtx(e,enc){
   const c=companies.find(x=>x.name===name);
   const menu=document.getElementById('ctxMenu');
   const actions=[
-    {icon:'🔍',text:'Full contact report',   fn:()=>openClaude(`Research ${name} — full contact report`)},
-    {icon:'👤',text:'Find decision makers',   fn:()=>openClaude(`Find Head of Programmatic at ${name} — LinkedIn, email`)},
-    {icon:'⚔️',text:'Add to Plan',    fn:()=>addSingleToBg(name)},
-    {icon:'✉️',text:'Open in MEESEEKS',       fn:()=>sendSingleToMeeseeks(name,'','','')},
-    {icon:'🔗',text:'Find similar',           fn:()=>openClaude(`Find companies similar to ${name} for onAudience — top 10`)},
-    {icon:'📧',text:'Check Gmail',            fn:()=>openClaude(`Check Gmail for prior contact with ${name}`)},
+    {icon:'🔍',text:'Full contact report',  s:1, fn:()=>openClaude(`Research ${name} — full contact report, decision makers, ICP fit`)},
+    {icon:'👤',text:'Find decision makers',  s:1, fn:()=>openClaude(`Find Head of Programmatic at ${name} — LinkedIn, email`)},
+    {icon:'⚔️',text:'Add to Battleplan',   s:0, fn:()=>addSingleToBg(name)},
+    {icon:'✉️',text:'Open in MEESEEKS',    s:0, fn:()=>sendSingleToMeeseeks(name,'','','')},
+    {icon:'🔗',text:'Find similar',         s:1, fn:()=>openClaude(`Find companies similar to ${name} for onAudience — top 10`)},
+    {icon:'📧',text:'Check Gmail',          s:1, fn:()=>openClaude(`Check Gmail for prior contact with ${name}`)},
   ];
-  if(c?.type==='prospect') actions.push({icon:'🚀',text:'Prioritize',fn:()=>openClaude(`Make the case for prioritizing ${name} this quarter`)});
-  menu.innerHTML=`<div class="ctx-lbl">${name}</div><div class="ctx-sep"></div>`+actions.map((a,i)=>`<div class="ctx-item" data-i="${i}"><span class="ctx-ico">${a.icon}</span>${a.text}</div>`).join('');
+  if(c&&c.type==='prospect') actions.push({icon:'🚀',text:'Prioritize',s:1,fn:()=>openClaude(`Make the case for prioritizing ${name} this quarter`)});
+  menu.innerHTML=`<div class="ctx-lbl">${name}</div><div class="ctx-sep"></div>`+actions.map((a,i)=>`<div class="ctx-item${a.s?' skill-trigger':''}" data-i="${i}"><span class="ctx-ico">${a.icon}</span>${a.text}</div>`).join('');
   menu.querySelectorAll('.ctx-item').forEach((el,i)=>el.addEventListener('click',()=>{menu.style.display='none';actions[i].fn();}));
   const x=Math.min(e.clientX,window.innerWidth-230),y=Math.min(e.clientY,window.innerHeight-actions.length*36-50);
   menu.style.left=x+'px';menu.style.top=y+'px';menu.style.display='block';
@@ -1431,7 +1473,7 @@ function renderBgEditor(){
   if(!cur){
     actions.style.display='none';
     ed.classList.add('is-empty');
-    ed.innerHTML=`<div class="bg-empty-state"><div class="bg-empty-ico">⚔️</div><div class="bg-empty-txt">No plan selected</div><div class="bg-empty-sub">Select targets from the left panel and click ⚔ Plans tab, or create a new one.</div><button class="btn p" style="margin-top:12px" onclick="newBg()">+ New Plan</button></div>`;
+    ed.innerHTML=`<div class="bg-empty-state"><div class="bg-empty-ico">⚔️</div><div class="bg-empty-txt">No plan selected</div><div class="bg-empty-sub">Select targets from the left panel and add to Battleplans, or create a new one.</div><button class="btn p" style="margin-top:12px" onclick="newBg()">+ New Plan</button></div>`;
     return;
   }
   ed.classList.remove('is-empty');
@@ -1893,11 +1935,11 @@ async function deleteBg(id){
   if(!confirm('Delete this plan?'))return;
   await sb.from('plans').delete().eq('id',id);
   plans=plans.filter(b=>b.id!==id);
-  if(cur?.id===id){cur=null;document.getElementById('bgActions').style.display='none';const ed=document.getElementById('bgEditor');ed.classList.add('is-empty');ed.innerHTML=`<div class="bg-empty-state"><div class="bg-empty-ico">📋</div><div class="bg-empty-txt">No plan</div><button class="btn p" style="margin-top:12px" onclick="newBg()">+ New</button></div>`;renderHistoryPanel();}
+  if(cur?.id===id){cur=null;document.getElementById('bgActions').style.display='none';const ed=document.getElementById('bgEditor');ed.classList.add('is-empty');ed.innerHTML=`<div class="bg-empty-state"><div class="bg-empty-ico">📋</div><div class="bg-empty-txt">No plan</div><button class="btn p" style="margin-top:12px" onclick="newBg()">+ New Plan</button></div>`;renderHistoryPanel();}
   renderBgList();
 }
 
-/* ── Picker (for Plans + Add) ── */
+/* ── Picker (for Battleplans + Add) ── */
 function openPicker(){document.getElementById('pickerModal').classList.add('vis');document.getElementById('pickerQ').value='';renderPicker();}
 function closePicker(){document.getElementById('pickerModal').classList.remove('vis');}
 function switchPickerTab(t){
@@ -2281,7 +2323,136 @@ function toggleTheme(){
 }
 
 /* ── Utility ── */
-function openClaude(prompt){window.open('https://claude.ai/new?q='+encodeURIComponent(prompt),'_blank');}
+/* ── Lookup launch overlay ── */
+const SKILL_STEPS = {
+  research:   ['🔍 Scanning company profile','👥 Finding decision makers','🏢 Checking tech stack','💡 Building outreach angle','📊 Scoring ICP fit'],
+  prospects:  ['🔭 Scanning EMEA market','🎯 Filtering DSP/SSP signals','📊 Ranking by ICP fit','✏ Preparing prospect list'],
+  similar:    ['🔍 Identifying category signals','🔗 Finding lookalike companies','📊 Ranking by ICP match'],
+  gmail:      ['📬 Searching Gmail history','🔎 Scanning threads & replies','📋 Summarising relationship'],
+  dm:         ['👤 Scanning LinkedIn profiles','✏ Inferring email format','🔎 Checking seniority signals'],
+  prioritize: ['📊 Reviewing pipeline signals','⚡ Checking recency & fit','🚀 Building priority case'],
+  reEngage:   ['📅 Checking last contact date','💤 Identifying dormant accounts','📬 Drafting re-activation angle'],
+  topPicks:   ['📊 Scanning pipeline health','🎯 Ranking open signals','⭐ Selecting top 5 this week'],
+  def:        ['🔍 Preparing research prompt','⚙ Loading context','🚀 Launching in Claude'],
+};
+function _detectSteps(prompt){
+  const p=prompt.toLowerCase();
+  if(p.includes('full contact')||(p.includes('research')&&p.includes('decision'))) return SKILL_STEPS.research;
+  if(p.includes('contact report')||p.includes('icp fit')) return SKILL_STEPS.research;
+  if(p.includes('find new')||p.includes('prospects for')) return SKILL_STEPS.prospects;
+  if(p.includes('similar')) return SKILL_STEPS.similar;
+  if(p.includes('gmail')) return SKILL_STEPS.gmail;
+  if(p.includes('decision maker')||p.includes('find head')||p.includes('linkedin, email')) return SKILL_STEPS.dm;
+  if(p.includes('prioritiz')) return SKILL_STEPS.prioritize;
+  if(p.includes('dormant')||p.includes('re-engage')) return SKILL_STEPS.reEngage;
+  if(p.includes('top 5')||p.includes('priority')||p.includes('this week')) return SKILL_STEPS.topPicks;
+  return SKILL_STEPS.def;
+}
+function _autoLabel(prompt){
+  const p=prompt.toLowerCase();
+  const nameMatch=prompt.match(/(?:Research|at|with|for|similar to|contact with|Prioriti[sz]e|Find.*?at)\s+([A-Z][A-Za-z0-9 &()\-\.]+?)(?:\s+—|\s+—|$)/);
+  const company=nameMatch?nameMatch[1].trim():'';
+  if(p.includes('full contact')||p.includes('contact report')) return 'Full Report'+(company?' · '+company:'');
+  if(p.includes('find new')||p.includes('prospects for')) return 'Find Prospects';
+  if(p.includes('similar')) return 'Find Similar'+(company?' · '+company:'');
+  if(p.includes('gmail')) return 'Gmail History'+(company?' · '+company:'');
+  if(p.includes('decision maker')||p.includes('find head')) return 'Find DMs'+(company?' · '+company:'');
+  if(p.includes('prioritiz')) return 'Prioritise'+(company?' · '+company:'');
+  if(p.includes('dormant')||p.includes('re-engage')) return 'Re-engage';
+  if(p.includes('top 5')||p.includes('this week')) return 'Top Picks';
+  if(p.includes('research')) return 'Research'+(company?' · '+company:'');
+  return 'Launching Skill';
+}
+function openClaude(prompt,label){
+  const steps=_detectSteps(prompt);
+  const title=label||_autoLabel(prompt);
+  let ol=document.getElementById('launchOverlay');
+  if(!ol){ol=document.createElement('div');ol.id='launchOverlay';document.body.appendChild(ol);}
+  ol.innerHTML='';
+  ol.setAttribute('style',
+    'position:fixed;inset:0;background:rgba(0,0,0,.6);backdrop-filter:blur(4px);'+
+    'z-index:10000;display:flex;align-items:center;justify-content:center');
+  const box=document.createElement('div');
+  box.setAttribute('style',
+    'background:var(--surf);border:1px solid var(--rule);border-radius:4px;'+
+    'padding:24px 28px;width:360px;box-shadow:var(--sh);position:relative');
+  // Header
+  const hdr=document.createElement('div');
+  hdr.setAttribute('style','display:flex;align-items:center;gap:10px;margin-bottom:18px');
+  hdr.innerHTML=
+    '<div style="width:28px;height:28px;background:var(--g);border-radius:3px;display:flex;'+
+    'align-items:center;justify-content:center;font-family:IBM Plex Mono,monospace;'+
+    'font-size:9px;font-weight:700;color:#fff;flex-shrink:0">oA</div>'+
+    '<div style="flex:1;min-width:0">'+
+    '<div style="font-family:IBM Plex Mono,monospace;font-size:10px;font-weight:600;'+
+    'text-transform:uppercase;letter-spacing:.08em;color:var(--t1);white-space:nowrap;'+
+    'overflow:hidden;text-overflow:ellipsis">'+title+'</div>'+
+    '<div style="font-size:10px;color:var(--t3);margin-top:2px">Opening in Claude.ai ↗</div></div>'+
+    '<button id="launchOverlayClose" '+
+    'style="width:20px;height:20px;border:none;background:transparent;cursor:pointer;'+
+    'color:var(--t3);font-size:14px;padding:0;line-height:1;flex-shrink:0">✕</button>';
+  box.appendChild(hdr);
+  const closeBtn=box.querySelector('#launchOverlayClose');
+  if(closeBtn)closeBtn.addEventListener('click',function(){ol.style.display='none';});
+  // Progress bar (top)
+  const barWrap=document.createElement('div');
+  barWrap.setAttribute('style',
+    'height:3px;background:var(--rule);border-radius:2px;overflow:hidden;margin-bottom:18px');
+  const fill=document.createElement('div');
+  fill.setAttribute('style','height:100%;width:0%;background:var(--g);transition:width .3s ease');
+  barWrap.appendChild(fill);
+  box.appendChild(barWrap);
+  // Steps
+  const stepsEl=document.createElement('div');
+  stepsEl.setAttribute('style','display:flex;flex-direction:column;gap:6px');
+  steps.forEach(function(s){
+    const row=document.createElement('div');
+    row.setAttribute('style',
+      'display:flex;align-items:center;gap:9px;opacity:.25;'+
+      'transition:opacity .25s,transform .25s;transform:translateX(-6px)');
+    const dot=document.createElement('div');
+    dot.setAttribute('style',
+      'width:4px;height:4px;border-radius:50%;background:var(--t4);flex-shrink:0;'+
+      'transition:background .25s,transform .2s');
+    const lbl=document.createElement('div');
+    lbl.setAttribute('style','font-size:11px;color:var(--t2);font-family:IBM Plex Sans,sans-serif');
+    lbl.textContent=s;
+    row.appendChild(dot);
+    row.appendChild(lbl);
+    stepsEl.appendChild(row);
+  });
+  box.appendChild(stepsEl);
+  ol.appendChild(box);
+  // Animate
+  const rows=stepsEl.children;
+  const delay=Math.min(340,1300/steps.length);
+  let i=0;
+  function next(){
+    if(i<rows.length){
+      rows[i].style.opacity='1';
+      rows[i].style.transform='translateX(0)';
+      rows[i].firstElementChild.style.background='var(--g)';
+      rows[i].firstElementChild.style.transform='scale(1.4)';
+      fill.style.width=Math.round((i+1)/rows.length*85)+'%';
+      i++;
+      setTimeout(next,delay);
+    } else {
+      fill.style.width='100%';
+      setTimeout(function(){
+        window.open('https://claude.ai/new?q='+encodeURIComponent(prompt),'_blank');
+        ol.style.transition='opacity .2s';
+        ol.style.opacity='0';
+        setTimeout(function(){
+          ol.style.display='none';
+          ol.style.opacity='';
+          ol.style.transition='';
+        },220);
+      },280);
+    }
+  }
+  setTimeout(next,60);
+  ol.addEventListener('click',function(e){if(e.target===ol)ol.style.display='none';});
+}
 
 /* ── Auth ── */
 function signIn(){
