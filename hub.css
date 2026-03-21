@@ -412,6 +412,22 @@ a.ml:hover{text-decoration:underline}
 .ms-generate-btn:hover{background:var(--gd)}
 .ms-generate-btn:disabled{opacity:.4;cursor:not-allowed}
 
+/* Company context cards (shown above opp tiles) */
+.co-ctx-card{display:flex;align-items:flex-start;gap:8px;padding:8px 10px;
+  background:var(--surf2);border:1px solid var(--rule);border-radius:2px;
+  border-left:2px solid var(--gr)}
+.co-ctx-av{width:26px;height:26px;border-radius:3px;flex-shrink:0;display:flex;
+  align-items:center;justify-content:center;font-family:'IBM Plex Mono',monospace;
+  font-size:8px;font-weight:700;border:1px solid;margin-top:2px}
+.co-ctx-info{flex:1;min-width:0}
+.co-ctx-name{font-size:12px;font-weight:500;display:flex;align-items:center;gap:5px;flex-wrap:wrap}
+.co-ctx-cat{font-family:'IBM Plex Mono',monospace;font-size:7px;text-transform:uppercase;
+  letter-spacing:.05em;color:var(--t3);background:var(--surf3);border:1px solid var(--rule);
+  border-radius:2px;padding:0 4px}
+.co-ctx-meta{font-size:10px;color:var(--t3);margin-top:2px;line-height:1.4}
+.co-ctx-contacts{display:flex;gap:4px;flex-wrap:wrap;margin-top:4px}
+.co-ctx-ct{font-family:'IBM Plex Mono',monospace;font-size:8px;color:var(--pc);
+  background:var(--pb);border:1px solid var(--pr);border-radius:2px;padding:1px 5px}
 /* Draft nav bar */
 .ms-output-col{display:flex;flex-direction:column}
 .ms-output-col>.ms-output-section{flex:1}

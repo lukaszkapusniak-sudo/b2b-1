@@ -619,7 +619,7 @@ function renderHistoryPanel(){
 }
 
 function newBg(){
-  cur={id:null,name:'',goal:'',hook:'',notes:'',targets:[],opportunities:[],selectedOpps:[],status:'draft',history:[],save_count:0};
+  cur={id:null,name:'',goal:'',hook:'',notes:'',targets:[],opportunities:[],companyContext:[],selectedOpps:[],status:'draft',history:[],save_count:0,email_drafts:{}};
   originalName='';bgDirty=true;selectedOpps.clear();
   renderBgEditor();renderBgList();renderHistoryPanel();
 }
@@ -633,6 +633,7 @@ function openBg(id){
   cur.selectedOpps=cur.selected_opps||cur.selectedOpps||[];
   cur.history=cur.history||[];
   cur.save_count=cur.save_count||0;
+  cur.companyContext=cur.company_context||cur.companyContext||[];
   cur.email_drafts=cur.email_drafts||{};
   originalName=cur.name||'';
   bgDirty=false;
@@ -702,6 +703,7 @@ function renderBgEditor(){
         ${apiKey?`<button class="btn xs" id="genBtn" onclick="generateOpportunities()" ${!cur.targets.length?'disabled':''}>✦ Generate</button>`:`<button class="btn xs" onclick="openKeyModal()">🔑 Key needed</button>`}
         ${cur.opportunities.length?`<button class="btn xs" onclick="clearOpps()" style="margin-left:3px">↺</button>`:''}
       </div>
+      ${renderCompanyContextCards()}
       <div id="oppContainer">${renderOppsInner()}</div>
     </div>`;
 
@@ -718,6 +720,38 @@ function renderOppsInner(){
       <div class="opp-tile-hook">${opp.hook||''}</div>
       <div class="opp-tile-segs">${(opp.segments||[]).map(s=>`<span class="opp-seg">${s}</span>`).join('')}</div>
     </div>`).join('')}</div>`;
+}
+
+function renderCompanyContextCards(){
+  const ctx=cur.companyContext||[];
+  if(!ctx.length) return '';
+  return `<div style="padding:7px 8px 0;display:flex;flex-direction:column;gap:5px">`+ctx.map((c,i)=>{
+    const [,fg]=av(c.name);
+    const domain=c.website?domainOf(c.website):'';
+    const targets=cur.targets.filter(t=>t.company===c.name||t.uid===c.name);
+    return `<div class="co-ctx-card">
+      <div class="co-ctx-av" style="color:${fg};border-color:${fg}30;background:${fg}12">${ini(c.name)}</div>
+      <div class="co-ctx-info">
+        <div class="co-ctx-name">${c.name}
+          ${c.category?`<span class="co-ctx-cat">${catIcon(c.category)} ${c.category}</span>`:''}
+          ${c.icp?`<span style="font-family:'IBM Plex Mono',monospace;font-size:7px;color:var(--g)">${stars(c.icp)}</span>`:''}
+        </div>
+        <div class="co-ctx-meta">${[c.region?'📍 '+c.region:'',c.note?c.note.slice(0,80)+(c.note.length>80?'…':''):''].filter(Boolean).join(' · ')||'—'}</div>
+        <div class="co-ctx-contacts">${targets.length?targets.map(t=>`<span class="co-ctx-ct">👤 ${t.name}${t.meta?' · '+t.meta:''}</span>`).join(''):`<span style="color:var(--t4);font-size:9px">No contacts added</span>`}</div>
+      </div>
+      <button class="co-ctx-del btn xs" onclick="removeCompanyContext(${i})">✕</button>
+    </div>`;
+  }).join('')+'</div>';
+}
+
+function removeCompanyContext(i){
+  if(!cur) return;
+  const name=cur.companyContext[i]?.name;
+  cur.companyContext.splice(i,1);
+  // Also remove any contact targets that belonged to this company
+  if(name) cur.targets=cur.targets.filter(t=>!(t.kind==='contact'&&t.company===name));
+  markBgDirty();
+  renderBgEditor(); // full re-render since structure changed
 }
 
 function toggleOpp(i){
@@ -746,20 +780,24 @@ async function suggestBgContext(){
   const btn=document.getElementById('suggestBtn');
   if(btn){btn.disabled=true;btn.textContent='✦ Thinking…';}
 
-  const ctx=cur.targets.map(t=>{
-    const cts=(t.contacts||[]).map(c=>`${c.name||''} (${c.title||''})`).filter(Boolean);
-    return `- ${(t.kind||'?').toUpperCase()}: ${t.name}`
-      +`${t.category?' | '+catIcon(t.category)+' '+t.category:''}`
-      +`${t.region?' | 📍 '+t.region:''}`
-      +`${t.icp?' | ICP '+t.icp+'/10':''}`
-      +`${t.note?' | '+t.note:''}`
-      +`${cts.length?' | Contacts: '+cts.join(', '):''}`;
-  }).join('\n');
+  const ctx=cur.targets.map(t=>`${t.name}`
+      +`${t.company&&t.kind==='contact'?' @ '+t.company:''}`
+      +`${t.category?' ('+catIcon(t.category)+' '+t.category+')':''}`
+      +`${t.region?' 📍 '+t.region:''}`
+      +`${t.icp?' ICP '+t.icp+'/10':''}`
+      +`${t.note?' — '+t.note:''}`
+      +`${t.meta&&t.kind==='contact'?' · '+t.meta:''}`
+  ).join('\n');
 
-  const prompt=`You are a senior sales strategist at onAudience (a data company selling behavioral, demographic, B2B, CTV, and brand-affinity audience segments to programmatic buyers).
+  const ctxCo=(cur.companyContext||[]).map(c=>
+    `Company: ${c.name}${c.category?' ('+c.category+')':''}${c.region?' '+c.region:''}${c.note?' — '+c.note:''}`
+  ).join('\n');
 
-These targets have been added to a sales campaign:
+  const prompt=`You are a senior sales strategist at onAudience (sells behavioral, demographic, B2B, CTV, and brand-affinity audience segments to programmatic buyers).
+
+These contacts have been added to a sales campaign:
 ${ctx}
+${ctxCo?'\nCompany context:\n'+ctxCo:''}
 
 Generate a concise campaign identity. Respond ONLY with JSON, no markdown:
 {
@@ -821,9 +859,13 @@ async function generateOpportunities(){
     return `- ${(t.kind||'?').toUpperCase()}: ${t.name} | Cat: ${t.category||'?'} | Region: ${t.region||'?'} | ICP: ${t.icp||'?'} | Note: ${t.note||t.meta||'?'}${cs.length?` | Contacts: ${cs.join(', ')}`:''}`;
   }).join('\n');
 
+  const coCtxStr=(cur.companyContext||[]).map(c=>
+    `- COMPANY: ${c.name} | ${c.category||'?'} | ${c.region||'?'} | ICP: ${c.icp||'?'}${c.note?' | '+c.note:''}`
+  ).join('\n');
+
   const prompt=`You are a senior sales strategist at onAudience selling audience segments to DSPs, agencies, data platforms.
 
-TARGETS:
+${coCtxStr?'COMPANIES (context):\n'+coCtxStr+'\n\n':''}CONTACTS (targets):
 ${ctx}
 
 Campaign: ${cur.goal||'Data partnership outreach'} | Hook: ${cur.hook||'Not set'}
@@ -888,36 +930,51 @@ function renderTargetChip(t,i){
 
 function addTarget(item){
   if(!cur)return;
-  if(cur.targets.find(t=>t.uid===item.uid&&t.kind===item.kind))return;
-  cur.targets.push(item);
 
-  // When adding a company, also add all its known contacts as individual targets
-  if(item.kind==='company'&&item.contacts?.length){
-    item.contacts.forEach(ct=>{
-      if(!ct.name) return;
-      const uid=ct.name;
-      if(cur.targets.find(t=>t.uid===uid&&t.kind==='contact')) return;
-      // Enrich from contacts DB if available
-      const dbCt=contacts.find(c=>c.full_name===ct.name);
-      cur.targets.push({
-        uid,kind:'contact',name:ct.name,
-        meta:ct.title||dbCt?.title||'',
-        company:item.name,
-        category:item.category||'',
-        region:item.region||'',
-        icp:item.icp||null,
-        note:dbCt?.notes||'',
-        contacts:[],
-        email:ct.email||dbCt?.email||'',
-        linkedin_url:ct.linkedin_url||dbCt?.linkedin_url||'',
+  if(item.kind==='company'){
+    // Company drag: store as context (not a target row), then add its contacts
+    if(!cur.companyContext) cur.companyContext=[];
+    if(!cur.companyContext.find(c=>c.name===item.name)){
+      cur.companyContext.push({
+        name:item.name, category:item.category||'', region:item.region||'',
+        icp:item.icp||null, note:item.note||'', website:item.website||'',
+        linkedin_slug:item.linkedin_slug||'',
       });
-    });
+    }
+    // Add each contact as an individual target
+    if(item.contacts?.length){
+      item.contacts.forEach(ct=>{
+        if(!ct.name) return;
+        if(cur.targets.find(t=>t.uid===ct.name&&t.kind==='contact')) return;
+        const dbCt=contacts.find(c=>c.full_name===ct.name);
+        cur.targets.push({
+          uid:ct.name, kind:'contact', name:ct.name,
+          meta:ct.title||dbCt?.title||'',
+          company:item.name, category:item.category||'', region:item.region||'',
+          icp:item.icp||null, note:dbCt?.notes||'',
+          contacts:[],
+          email:ct.email||dbCt?.email||'',
+          linkedin_url:ct.linkedin_url||dbCt?.linkedin_url||'',
+        });
+      });
+    } else {
+      // Company has no contacts in DB — add a placeholder row so BG isn't empty
+      if(!cur.targets.find(t=>t.uid===item.name&&t.kind==='company')){
+        cur.targets.push({...item});
+      }
+    }
+  } else {
+    if(cur.targets.find(t=>t.uid===item.uid&&t.kind===item.kind)) return;
+    cur.targets.push(item);
   }
 
-  markBgDirty();refreshBgTargets();
-  // Auto-suggest identity context on first target if fields empty and API key set
-  if(cur.targets.length===1&&apiKey&&!cur.name&&!cur.goal&&!cur.hook){
-    suggestBgContext();
+  markBgDirty(); refreshBgTargets();
+
+  // Re-trigger suggest whenever targets change and goal or hook is still empty
+  if(apiKey && cur.targets.length>=1 && (!cur.goal||!cur.hook)){
+    // Debounce: cancel previous timeout
+    clearTimeout(window._suggestDebounce);
+    window._suggestDebounce=setTimeout(()=>suggestBgContext(),400);
   }
 }
 
@@ -1001,6 +1058,7 @@ async function saveBg(){
     targets:     cur.targets,
     opportunities:  cur.opportunities,
     selected_opps:  [...selectedOpps],
+    company_context: cur.companyContext||[],
     status:      cur.status,
     history:     cur.history,
     save_count:  cur.save_count,
