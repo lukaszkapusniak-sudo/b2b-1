@@ -561,8 +561,8 @@ async function callClaudeStream(id, prompt) {
         +'<div class="toast-sub">Done · '+charCount+' chars</div>'
         +'</div>'
         +'<div class="toast-actions">'
-        +'<button class="toast-btn primary" onclick="showResult(''+id+'')">View</button>'
-        +'<button class="toast-close" onclick="dismissToast(''+id+'')">&#x2715;</button>'
+        +'<button class="toast-btn primary" onclick="showResult(\'+id+\')">View</button>'
+        +'<button class="toast-close" onclick="dismissToast(\'+id+\')">&#x2715;</button>'
         +'</div>';
       setTimeout(function(){ autoDismissToast(id); }, 8000);
     }
@@ -581,8 +581,8 @@ async function callClaudeStream(id, prompt) {
         +'<div class="toast-sub" title="'+err.message+'">'+err.message.slice(0,60)+'</div>'
         +'</div>'
         +'<div class="toast-actions">'
-        +'<button class="toast-btn" onclick="openClaudeTab(''+id+'')">Try in Claude</button>'
-        +'<button class="toast-close" onclick="dismissToast(''+id+'')">&#x2715;</button>'
+        +'<button class="toast-btn" onclick="openClaudeTab(\'+id+\')">Try in Claude</button>'
+        +'<button class="toast-close" onclick="dismissToast(\'+id+\')">&#x2715;</button>'
         +'</div>';
     }
     if(task.btnEl){ task.btnEl.classList.remove('loading'); }
