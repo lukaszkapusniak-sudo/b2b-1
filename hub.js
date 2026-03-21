@@ -146,6 +146,28 @@ function domainOf(u){try{return new URL(u.includes('://')?u:'https://'+u).hostna
 function classify(n){const s=(n||'').toLowerCase();if(s.includes('no outreach')||s.includes('no fit')||s.includes('no business')||s.includes('internal')||s.includes('closed'))return'nogo';if(s.includes('poc'))return'poc';if(s.includes('client'))return'client';if(s.includes('partner'))return'partner';if(s.includes('prospect')||s.includes('to check')||s.includes('to continue'))return'prospect';return'prospect';}
 function fmtTime(iso){if(!iso)return'';const d=new Date(iso),now=new Date(),diff=now-d;if(diff<60000)return'just now';if(diff<3600000)return Math.floor(diff/60000)+'m ago';if(diff<86400000)return Math.floor(diff/3600000)+'h ago';return d.toLocaleDateString('en-GB',{day:'numeric',month:'short'});}
 function bgIcon(s){return{draft:'✏️',active:'⚔️',paused:'⏸️',archived:'📦'}[s]||'✏️';}
+function catIcon(cat){
+  if(!cat)return'';
+  const c=cat.toLowerCase();
+  if(c.includes('dsp'))return'🖥';
+  if(c.includes('ssp'))return'📡';
+  if(c.includes('agency')||c.includes('media buy'))return'🏢';
+  if(c.includes('data provider')||c.includes('programmatic data'))return'🗄';
+  if(c.includes('dmp')||c.includes('cdp'))return'🧩';
+  if(c.includes('identity')||c.includes('id5')||c.includes('cookieless'))return'🔑';
+  if(c.includes('ctv')||c.includes('connected tv'))return'📺';
+  if(c.includes('location')||c.includes('geo'))return'📍';
+  if(c.includes('mobile'))return'📱';
+  if(c.includes('publisher')||c.includes('ssp'))return'📰';
+  if(c.includes('telco'))return'📶';
+  if(c.includes('retail')||c.includes('commerce'))return'🛒';
+  if(c.includes('b2b'))return'💼';
+  if(c.includes('intent'))return'🎯';
+  if(c.includes('native'))return'✍️';
+  if(c.includes('measurement')||c.includes('analytics'))return'📊';
+  if(c.includes('contextual')||c.includes('semantic'))return'🔍';
+  return'';
+}
 
 /* ── Supabase ── */
 async function sbGet(p){const r=await fetch(SB_URL+p,{headers:SB_HDR});if(!r.ok)throw new Error(`sbGet ${r.status}`);return r.json();}
@@ -228,7 +250,7 @@ function renderList(){
     const sel=c.name===selectedName?' selected':'';
     const cbSel=selection.has(c.name)?' cb-selected':'';
     const enc=encodeURIComponent(c.name);
-    const meta=c.category?`${c.category}${c.region?' · '+c.region:''}`:(c.note.slice(0,36)||'—');
+    const meta=c.category?`${catIcon(c.category)} ${c.category}${c.region?' · '+c.region:''}`:(c.note.slice(0,36)||'—');
     const {pct}=companyScore(c);
     const dotCls=pct>=75?'full':pct>=40?'partial':'empty';
     return `<div class="co-row${sel}${cbSel}" draggable="true"
@@ -263,7 +285,7 @@ function renderContactsList(){
       <div class="co-cb${selection.has(uid)?' checked':''}" onclick="toggleSelect('${enc}','contact',event)"></div>
       <div class="ct-row-av">${ini(ct.full_name||'?')}</div>
       <div class="ct-row-info"><div class="ct-row-name">${ct.full_name||'—'}</div>
-      <div class="ct-row-sub">${ct.title||''}${ct.title&&ct.company_name?' · ':''}${ct.company_name||''}</div></div>
+      <div class="ct-row-sub">${ct.title||''}${ct.title&&ct.company_name?' · ':''}${ct.company_name?catIcon(companies.find(c=>c.name.toLowerCase()===ct.company_name?.toLowerCase())?.category||'')+' '+ct.company_name:''}</div></div>
       <div class="ct-dot ${dotCls}" title="${pct}%"></div></div>`;
   }).join('');
 }
@@ -393,7 +415,7 @@ function openDetail(enc){
       <div class="det-av" style="background:${fg}">${ini(name)}</div>
       <div style="flex:1;min-width:0">
         <div class="det-name">${name}<span class="tag ${tagCls(c.type)}">${tagLbl(c.type)}</span>${domain?`<a class="ml" href="https://${domain}" target="_blank">${domain} ↗</a>`:''}</div>
-        <div class="det-sub">${c.category||''}${c.region?' · '+c.region:''}</div>
+        <div class="det-sub">${catIcon(c.category)} ${c.category||''}${c.region?' · '+c.region:''}</div>
         ${c.icp?`<div style="margin-top:3px;font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--g)">${stars(c.icp)} <span style="color:var(--t3)">${c.icp}/10</span></div>`:''}
         <div style="display:flex;align-items:center;gap:7px;margin-top:4px">
           <div style="width:90px;height:3px;background:var(--surf4);border-radius:2px;overflow:hidden"><div style="height:100%;width:${coPct}%;background:${coBar};border-radius:2px"></div></div>
@@ -410,13 +432,13 @@ function openDetail(enc){
       <div class="sec-hdr"><span>🏢</span><span class="sec-lbl">Overview</span></div>
       <div class="sec-body"><table class="info">
         <tr><td>Status</td><td><span class="tag ${tagCls(c.type)}">${tagLbl(c.type)}</span></td></tr>
-        ${c.category?`<tr><td>Category</td><td>${c.category}</td></tr>`:''}
-        ${c.region?`<tr><td>Region</td><td>${c.region}</td></tr>`:''}
-        ${c.size?`<tr><td>Size</td><td>${c.size} employees</td></tr>`:''}
+        ${c.category?`<tr><td>Category</td><td>${catIcon(c.category)} ${c.category}</td></tr>`:''}
+        ${c.region?`<tr><td>Region</td><td>📍 ${c.region}</td></tr>`:''}
+        ${c.size?`<tr><td>Size</td><td>👥 ${c.size}</td></tr>`:''}
         ${c.icp?`<tr><td>ICP</td><td>${stars(c.icp)} ${c.icp}/10</td></tr>`:''}
         ${c.note?`<tr><td>Note</td><td>${c.note}</td></tr>`:''}
-        ${domain?`<tr><td>Website</td><td><a class="ml" href="https://${domain}" target="_blank">${domain} ↗</a></td></tr>`:''}
-        ${c.linkedin_slug?`<tr><td>LinkedIn</td><td><a class="ml" href="https://linkedin.com/company/${c.linkedin_slug}" target="_blank">↗ profile</a></td></tr>`:''}
+        ${domain?`<tr><td>Website</td><td>🌐 <a class="ml" href="https://${domain}" target="_blank">${domain} ↗</a></td></tr>`:''}
+        ${c.linkedin_slug?`<tr><td>LinkedIn</td><td>💼 <a class="ml" href="https://linkedin.com/company/${c.linkedin_slug}" target="_blank">↗ profile</a></td></tr>`:''}
       </table></div>
     </div>
     <div class="section">
@@ -603,18 +625,6 @@ function renderBgEditor(){
 
   ed.innerHTML=`
     <div class="bg-section">
-      <div class="bg-sec-hdr"><span>⚔️</span><span class="bg-sec-lbl">Campaign Identity</span></div>
-      <div class="bg-sec-body">
-        <div class="field"><span class="lbl">Name</span><input class="inp" id="bgName" value="${esc(cur.name||'')}" placeholder="e.g. EMEA DSP Push Q2" oninput="cur.name=this.value;markBgDirty();syncHistName()"/></div>
-        <div class="row2">
-          <div class="field"><span class="lbl">Goal</span><input class="inp" id="bgGoal" value="${esc(cur.goal||'')}" placeholder="e.g. 10 new DSP trials" oninput="cur.goal=this.value;markBgDirty()"/></div>
-          <div class="field"><span class="lbl">Hook</span><input class="inp" id="bgHook" value="${esc(cur.hook||'')}" placeholder="e.g. EU data gap" oninput="cur.hook=this.value;markBgDirty()"/></div>
-        </div>
-        <div class="field"><span class="lbl">Notes</span><textarea class="ta" id="bgNotes" oninput="cur.notes=this.value;markBgDirty()" placeholder="Strategy, context, objections…">${cur.notes||''}</textarea></div>
-      </div>
-    </div>
-
-    <div class="bg-section">
       <div class="bg-sec-hdr">
         <span>🎯</span><span class="bg-sec-lbl">Targets</span>
         <span style="font-family:'IBM Plex Mono',monospace;font-size:8px;background:var(--surf3);border:1px solid var(--rule);border-radius:2px;padding:1px 4px;color:var(--t3)" id="bgTargetCount">${cur.targets.length}</span>
@@ -633,7 +643,22 @@ function renderBgEditor(){
 
     <div class="bg-section">
       <div class="bg-sec-hdr">
-        <span class="bg-sec-lbl">Business Opportunities</span>
+        <span>⚔️</span><span class="bg-sec-lbl">Campaign Identity</span>
+        ${cur.targets.length?`<button class="btn xs" style="margin-left:auto;color:var(--g);border-color:var(--gr)" onclick="suggestBgContext()" id="suggestBtn">✦ Suggest from targets</button>`:''}
+      </div>
+      <div class="bg-sec-body">
+        <div class="field"><span class="lbl">🏷 Name</span><input class="inp" id="bgName" value="${esc(cur.name||'')}" placeholder="e.g. EMEA DSP Push Q2" oninput="cur.name=this.value;markBgDirty();syncHistName()"/></div>
+        <div class="row2">
+          <div class="field"><span class="lbl">🎯 Goal</span><input class="inp" id="bgGoal" value="${esc(cur.goal||'')}" placeholder="e.g. 10 new DSP trials" oninput="cur.goal=this.value;markBgDirty()"/></div>
+          <div class="field"><span class="lbl">💡 Hook / Angle</span><input class="inp" id="bgHook" value="${esc(cur.hook||'')}" placeholder="e.g. EU data gap" oninput="cur.hook=this.value;markBgDirty()"/></div>
+        </div>
+        <div class="field"><span class="lbl">📋 Strategy / Notes</span><textarea class="ta" id="bgNotes" oninput="cur.notes=this.value;markBgDirty()" placeholder="Strategy, context, objections…">${cur.notes||''}</textarea></div>
+      </div>
+    </div>
+
+    <div class="bg-section">
+      <div class="bg-sec-hdr">
+        <span>💡</span><span class="bg-sec-lbl">Business Opportunities</span>
         ${apiKey?`<button class="btn xs" id="genBtn" onclick="generateOpportunities()" ${!cur.targets.length?'disabled':''}>✦ Generate</button>`:`<button class="btn xs" onclick="openKeyModal()">🔑 Key needed</button>`}
         ${cur.opportunities.length?`<button class="btn xs" onclick="clearOpps()" style="margin-left:3px">↺</button>`:''}
       </div>
@@ -672,6 +697,60 @@ function clearOpps(){
 function syncHistName(){
   const el=document.getElementById('histName');
   if(el&&cur)el.textContent=cur.name||'Untitled';
+}
+
+/* ── Smart suggest: derive campaign identity from targets ── */
+async function suggestBgContext(){
+  if(!apiKey){openKeyModal();return;}
+  if(!cur?.targets?.length)return;
+  const btn=document.getElementById('suggestBtn');
+  if(btn){btn.disabled=true;btn.textContent='✦ Thinking…';}
+
+  const ctx=cur.targets.map(t=>{
+    const cts=(t.contacts||[]).map(c=>`${c.name||''} (${c.title||''})`).filter(Boolean);
+    return `- ${(t.kind||'?').toUpperCase()}: ${t.name}`
+      +`${t.category?' | '+catIcon(t.category)+' '+t.category:''}`
+      +`${t.region?' | 📍 '+t.region:''}`
+      +`${t.icp?' | ICP '+t.icp+'/10':''}`
+      +`${t.note?' | '+t.note:''}`
+      +`${cts.length?' | Contacts: '+cts.join(', '):''}`;
+  }).join('\n');
+
+  const prompt=`You are a senior sales strategist at onAudience (a data company selling behavioral, demographic, B2B, CTV, and brand-affinity audience segments to programmatic buyers).
+
+These targets have been added to a sales campaign:
+${ctx}
+
+Generate a concise campaign identity. Respond ONLY with JSON, no markdown:
+{
+  "name": "Short campaign name (4-6 words, specific to these targets)",
+  "goal": "Concrete measurable goal (e.g. '3 new DSP data integrations in EMEA')",
+  "hook": "The single sharpest angle/hook for this target group (e.g. 'EU cookieless data gap on TTD')",
+  "notes": "2-3 sentence strategy: why these targets, what pain they have, what onAudience offers them specifically. Reference their categories/roles."
+}
+
+Be specific to the actual target companies and their known characteristics. No generic platitudes.`;
+
+  try{
+    const res=await fetch(PROXY,{method:'POST',
+      headers:{'Content-Type':'application/json','Authorization':`Bearer ${SB_KEY}`,'apikey':SB_KEY,'x-client-api-key':apiKey},
+      body:JSON.stringify({model:'claude-sonnet-4-20250514',max_tokens:600,messages:[{role:'user',content:prompt}]})
+    });
+    if(!res.ok){const t=await res.text();throw new Error(`HTTP ${res.status}: ${t}`);}
+    const data=await res.json();
+    if(data.error)throw new Error(data.error);
+    const raw=(data.content?.[0]?.text||'{}').replace(/```json?|```/g,'').trim();
+    const sug=JSON.parse(raw);
+    // Only fill empty fields (don't overwrite user's work)
+    if(sug.name&&!cur.name){const el=document.getElementById('bgName');if(el){el.value=sug.name;cur.name=sug.name;syncHistName();}}
+    if(sug.goal&&!cur.goal){const el=document.getElementById('bgGoal');if(el){el.value=sug.goal;cur.goal=sug.goal;}}
+    if(sug.hook&&!cur.hook){const el=document.getElementById('bgHook');if(el){el.value=sug.hook;cur.hook=sug.hook;}}
+    if(sug.notes&&!cur.notes){const el=document.getElementById('bgNotes');if(el){el.value=sug.notes;cur.notes=sug.notes;}}
+    markBgDirty();
+  }catch(err){
+    console.error('suggestBgContext:',err);
+  }
+  if(btn){btn.disabled=false;btn.textContent='✦ Suggest from targets';}
 }
 
 function markBgDirty(){
@@ -756,10 +835,12 @@ function launchFromBattleground(){
 /* ── Targets ── */
 function renderTargetChip(t,i){
   const [bg,fg]=av(t.name||'?');
+  const icon=t.kind==='contact'?'👤':(catIcon(t.category)||'🏢');
+  const meta=t.category?`${catIcon(t.category)} ${t.category}${t.region?' · '+t.region:''}`:t.meta||'';
   return `<div class="target-chip">
     <div class="target-av" style="background:${bg};color:${fg}">${ini(t.name||'?')}</div>
-    <div class="target-info"><div class="target-name">${t.name||'?'}</div>${t.meta?`<div class="target-meta">${t.meta}</div>`:''}</div>
-    <span class="target-kind ${t.kind||'company'}">${(t.kind||'co').slice(0,2)}</span>
+    <div class="target-info"><div class="target-name">${t.name||'?'}</div>${meta?`<div class="target-meta">${meta}</div>`:''}</div>
+    <span class="target-kind ${t.kind||'company'}">${t.kind==='contact'?'👤 ct':'🏢 co'}</span>
     <button class="target-del" onclick="removeBgTarget(${i})">✕</button>
   </div>`;
 }
@@ -768,6 +849,10 @@ function addTarget(item){
   if(!cur)return;
   if(cur.targets.find(t=>t.uid===item.uid&&t.kind===item.kind))return;
   cur.targets.push(item);markBgDirty();refreshBgTargets();
+  // Auto-suggest identity context on first target if fields empty and API key set
+  if(cur.targets.length===1&&apiKey&&!cur.name&&!cur.goal&&!cur.hook){
+    suggestBgContext();
+  }
 }
 
 function removeBgTarget(idx){cur.targets.splice(idx,1);markBgDirty();refreshBgTargets();}
@@ -782,6 +867,18 @@ function refreshBgTargets(){
   zone.querySelectorAll('.target-chip').forEach(c=>c.remove());
   cur.targets.forEach((t,i)=>zone.insertAdjacentHTML('beforeend',renderTargetChip(t,i)));
   const genBtn=document.getElementById('genBtn');if(genBtn)genBtn.disabled=!cur.targets.length;
+  // Show/hide the suggest button dynamically
+  const secHdr=document.querySelector('#bgEditor .bg-section:nth-child(2) .bg-sec-hdr');
+  if(secHdr){
+    const existing=secHdr.querySelector('#suggestBtn');
+    if(cur.targets.length&&!existing){
+      const b=document.createElement('button');
+      b.id='suggestBtn';b.className='btn xs';
+      b.style.cssText='margin-left:auto;color:var(--g);border-color:var(--gr)';
+      b.textContent='✦ Suggest from targets';b.onclick=suggestBgContext;
+      secHdr.appendChild(b);
+    }else if(!cur.targets.length&&existing){existing.remove();}
+  }
   updateMeeseeksBtn();
   renderHistoryPanel();
 }
