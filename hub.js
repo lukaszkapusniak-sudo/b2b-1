@@ -1514,20 +1514,41 @@ function toggleTheme(){
 function openClaude(prompt){window.open('https://claude.ai/new?q='+encodeURIComponent(prompt),'_blank');}
 
 /* ── Auth ── */
-async function signInWithGoogle(){
-  const btn=document.getElementById('loginBtn');
-  if(btn){btn.disabled=true;btn.textContent='Redirecting…';}
-  const redirectTo=window.location.href.split('?')[0].split('#')[0];
-  const {error}=await sb.auth.signInWithOAuth({
-    provider:'google',
-    options:{redirectTo, queryParams:{access_type:'offline',prompt:'select_account'}}
-  });
-  if(error){
-    if(btn){btn.disabled=false;btn.textContent='Continue with Google';}
-    document.getElementById('loginMsg').textContent='⚠ '+error.message;
-  }
+async function signInWithEmail(){
+  const email=(document.getElementById('loginEmail')?.value||'').trim();
+  const pass=(document.getElementById('loginPass')?.value||'').trim();
+  if(!email||!pass){ setLoginMsg('⚠ Enter email and password'); return; }
+  setLoginBusy(true);
+  const {error}=await sb.auth.signInWithPassword({email,password:pass});
+  setLoginBusy(false);
+  if(error) setLoginMsg('⚠ '+error.message);
+}
+
+async function signUpWithEmail(){
+  const email=(document.getElementById('loginEmail')?.value||'').trim();
+  const pass=(document.getElementById('loginPass')?.value||'').trim();
+  if(!email||!pass){ setLoginMsg('⚠ Enter email and password'); return; }
+  if(pass.length<6){ setLoginMsg('⚠ Password must be at least 6 characters'); return; }
+  setLoginBusy(true);
+  const {error}=await sb.auth.signUp({email,password:pass,options:{emailRedirectTo:window.location.href.split('?')[0]}});
+  setLoginBusy(false);
+  if(error) setLoginMsg('⚠ '+error.message);
+  else setLoginMsg('✓ Check your email to confirm, then sign in.');
+}
+
+function setLoginBusy(busy){
+  const b1=document.getElementById('loginSignInBtn');
+  const b2=document.getElementById('loginSignUpBtn');
+  if(b1)b1.disabled=busy;
+  if(b2)b2.disabled=busy;
+}
+function setLoginMsg(msg){
+  const el=document.getElementById('loginMsg');
+  if(el)el.textContent=msg;
 }
 function showLoginForm(){}
+// keep alias for any references
+function signInWithGoogle(){ signInWithEmail(); }
 async function signOut(){
   await sb.auth.signOut();
 }
@@ -1556,12 +1577,16 @@ function roleCls(r){return{admin:'role-admin',sales:'role-sales',viewer:'role-vi
 function roleIcon(r){return{admin:'⧡',sales:'◈',viewer:'◇'}[r||'sales']||'◈';}
 
 function showLoginScreen(){
-  document.getElementById('loginScreen').style.display='flex';
-  document.getElementById('app').style.display='none';
+  const ls=document.getElementById('loginScreen');
+  const ap=document.querySelector('.app');
+  if(ls)ls.style.display='flex';
+  if(ap)ap.style.display='none';
 }
 function hideLoginScreen(){
-  document.getElementById('loginScreen').style.display='none';
-  document.getElementById('app').style.display='flex';
+  const ls=document.getElementById('loginScreen');
+  const ap=document.querySelector('.app');
+  if(ls)ls.style.display='none';
+  if(ap)ap.style.display='flex';
 }
 
 /* ── Boot ── */
