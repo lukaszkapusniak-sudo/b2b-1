@@ -626,9 +626,25 @@ function newBg(){
 function openBg(id){
   const found=battlegrounds.find(b=>b.id===id);if(!found)return;
   cur=JSON.parse(JSON.stringify(found));
-  cur.targets=cur.targets||[];cur.opportunities=cur.opportunities||[];
-  cur.selectedOpps=cur.selectedOpps||[];cur.history=cur.history||[];cur.save_count=cur.save_count||0;
-  originalName=cur.name||'';bgDirty=false;selectedOpps=new Set(cur.selectedOpps);
+  cur.targets=cur.targets||[];
+  cur.opportunities=cur.opportunities||[];
+  // DB column is selected_opps, keep both for compat
+  cur.selectedOpps=cur.selected_opps||cur.selectedOpps||[];
+  cur.history=cur.history||[];
+  cur.save_count=cur.save_count||0;
+  cur.email_drafts=cur.email_drafts||{};
+  originalName=cur.name||'';
+  bgDirty=false;
+  selectedOpps=new Set(cur.selectedOpps);
+
+  // Restore email drafts from battleground into local msgStore
+  if(cur.email_drafts&&typeof cur.email_drafts==='object'){
+    Object.entries(cur.email_drafts).forEach(([k,v])=>{
+      if(Array.isArray(v)) msgStore[k]=v;
+    });
+    saveMsgStore();
+  }
+
   renderBgEditor();renderBgList();renderHistoryPanel();
 }
 
@@ -914,6 +930,17 @@ function handleBgDrop(e){
   addTarget({uid:data.name||data.uid,kind:data.kind||'company',name:data.name,meta:data.meta||'',company:data.company||'',category:data.category||'',region:data.region||'',icp:data.icp||null,note:data.note||'',contacts:data.contacts||[]});
 }
 
+function syncDraftsToBg(){
+  if(!cur?.id) return;
+  const emailDrafts={...(cur.email_drafts||{})};
+  // Merge all keys that belong to this bg's targets
+  const targetKeys=cur.targets.map(t=>draftKey(t.kind==='company'?t.name:t.company||'',t.kind==='contact'?t.name:''));
+  targetKeys.forEach(k=>{ if(msgStore[k]) emailDrafts[k]=msgStore[k]; });
+  if(activeDraftKey&&msgStore[activeDraftKey]) emailDrafts[activeDraftKey]=msgStore[activeDraftKey];
+  cur.email_drafts=emailDrafts;
+  sbPatch(`/rest/v1/battlegrounds?id=eq.${cur.id}`,{email_drafts:emailDrafts}).catch(e=>console.warn('syncDrafts:',e));
+}
+
 /* ── Bg save ── */
 async function saveBg(){
   if(!cur)return;
@@ -929,8 +956,29 @@ async function saveBg(){
   }
 
   const histEntry={action:cur.id?'saved':'created',ts:new Date().toISOString(),name:cur.name,targets:cur.targets.length,opps:cur.opportunities.length};
-  cur.history=[...(cur.history||[]),histEntry];cur.save_count=(cur.save_count||0)+1;
-  const payload={name:cur.name,goal:cur.goal,hook:cur.hook,notes:cur.notes,targets:cur.targets,opportunities:cur.opportunities,selectedOpps:[...selectedOpps],status:cur.status,history:cur.history,save_count:cur.save_count};
+  cur.history=[...(cur.history||[]),histEntry];
+  cur.save_count=(cur.save_count||0)+1;
+
+  // Merge local msg store drafts for this battleground into email_drafts
+  const emailDrafts={...( cur.email_drafts||{})};
+  if(activeDraftKey&&msgStore[activeDraftKey]){
+    emailDrafts[activeDraftKey]=msgStore[activeDraftKey];
+  }
+  cur.email_drafts=emailDrafts;
+
+  const payload={
+    name:        cur.name,
+    goal:        cur.goal,
+    hook:        cur.hook,
+    notes:       cur.notes,
+    targets:     cur.targets,
+    opportunities:  cur.opportunities,
+    selected_opps:  [...selectedOpps],
+    status:      cur.status,
+    history:     cur.history,
+    save_count:  cur.save_count,
+    email_drafts: cur.email_drafts,
+  };
   const nameChanged=cur.name!==originalName&&originalName!=='';
   try{
     if(cur.id&&!nameChanged){
@@ -1252,6 +1300,8 @@ Rules:
 
     // Save to local store
     pushDraft(activeDraftKey,{subject,body,persona:selectedMs.id,company,contact,fitScore:fit.score,fitLabel:fit.label});
+    // Also sync to open battleground (lazy background save — no await to keep UX snappy)
+    if(cur?.id&&activeDraftKey) syncDraftsToBg();
     renderDraftOutput(fit,company,contact,selectedMs);
   }catch(err){
     document.getElementById('msOutput').innerHTML=`<div style="padding:16px;color:#CC2222;font-family:'IBM Plex Mono',monospace;font-size:10px">Error: ${err.message}</div>`;
