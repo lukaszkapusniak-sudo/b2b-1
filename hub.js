@@ -1514,29 +1514,20 @@ function toggleTheme(){
 function openClaude(prompt){window.open('https://claude.ai/new?q='+encodeURIComponent(prompt),'_blank');}
 
 /* ── Auth ── */
-async function signIn(){
-  const email=(document.getElementById('loginEmail')?.value||'').trim();
-  if(!email){return;}
-  document.getElementById('loginBtn').disabled=true;
-  document.getElementById('loginMsg').textContent='Sending…';
-  const {error}=await sb.auth.signInWithOtp({
-    email,
-    options:{emailRedirectTo:window.location.href.split('?')[0].split('#')[0]}
+async function signInWithGoogle(){
+  const btn=document.getElementById('loginBtn');
+  if(btn){btn.disabled=true;btn.textContent='Redirecting…';}
+  const redirectTo=window.location.href.split('?')[0].split('#')[0];
+  const {error}=await sb.auth.signInWithOAuth({
+    provider:'google',
+    options:{redirectTo, queryParams:{access_type:'offline',prompt:'select_account'}}
   });
-  document.getElementById('loginBtn').disabled=false;
   if(error){
+    if(btn){btn.disabled=false;btn.textContent='Continue with Google';}
     document.getElementById('loginMsg').textContent='⚠ '+error.message;
-  } else {
-    document.getElementById('loginForm').style.display='none';
-    document.getElementById('loginSent').style.display='block';
-    document.getElementById('loginSentEmail').textContent=`Magic link sent to ${email}. Click it to sign in.`;
   }
 }
-function showLoginForm(){
-  document.getElementById('loginForm').style.display='block';
-  document.getElementById('loginSent').style.display='none';
-  document.getElementById('loginMsg').textContent='';
-}
+function showLoginForm(){}
 async function signOut(){
   await sb.auth.signOut();
 }
