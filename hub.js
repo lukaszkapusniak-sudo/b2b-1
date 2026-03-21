@@ -1,4 +1,5 @@
 'use strict';
+const HUB_PIN = 'onaudience2026'; // change this to set your own PIN
 /* ═══════════════════════════════════════════════
    onAudience Sales Intelligence Hub — hub.js v3
    Unified: Dashboard · Battleground · MEESEEKS
@@ -1515,8 +1516,10 @@ function openClaude(prompt){window.open('https://claude.ai/new?q='+encodeURIComp
 
 /* ── Auth ── */
 function signIn(){
-  const pin=(document.getElementById('loginPin')?.value||'').trim();
-  const name=(document.getElementById('loginName')?.value||'').trim();
+  const pinEl=document.getElementById('loginPin');
+  const nameEl=document.getElementById('loginName');
+  const pin=((pinEl&&pinEl.value)||'').trim();
+  const name=((nameEl&&nameEl.value)||'').trim();
   if(!pin){ setLoginMsg('⚠ Enter the access PIN'); return; }
   if(pin !== HUB_PIN){ setLoginMsg('⚠ Wrong PIN'); return; }
   // Store session
@@ -1532,13 +1535,14 @@ function showLoginForm(){}
 function signInWithGoogle(){ signIn(); }
 function signInWithEmail(){ signIn(); }
 function signUpWithEmail(){ signIn(); }
-async function signOut(){
+function signOut(){
   localStorage.removeItem('oaUser');
   currentUser=null;
+  // hide user badge
+  const badge=document.getElementById('userBadge');
+  if(badge){badge.style.display='none';badge.innerHTML='';}
+  closeUserMenu();
   showLoginScreen();
-}
-async function signOut(){
-  await sb.auth.signOut();
 }
 async function loadUserProfile(userId){
   let {data}=await sb.from('user_profiles').select('*').eq('id',userId).single();
@@ -1548,21 +1552,83 @@ async function loadUserProfile(userId){
   }
   return data;
 }
-function renderUserBadge(profile){
-  const email=currentUser?.email||'';
-  const name=profile?.full_name||email.split('@')[0]||'User';
-  const role=profile?.role||'sales';
-  const color=profile?.avatar_color||'#178066';
+function renderUserBadge(u){
+  u=u||currentUser||{};
+  const name=u.full_name||u.email||'User';
+  const role=u.role||'sales';
+  const color=u.avatar_color||'#178066';
   const badge=document.getElementById('userBadge');
   if(!badge)return;
   badge.style.display='flex';
-  badge.innerHTML=`
-    <div style="width:24px;height:24px;border-radius:50%;background:${color};display:flex;align-items:center;justify-content:center;font-family:'IBM Plex Mono',monospace;font-size:8px;font-weight:700;color:#fff;cursor:default" title="${email}">${ini(name)}</div>
-    <span class="role-badge ${roleCls(role)}">${roleIcon(role)} ${role}</span>
-    <button class="btn xs" onclick="signOut()" title="Sign out">→ Out</button>`;
+  badge.style.alignItems='center';
+  badge.style.gap='6px';
+  badge.innerHTML=
+    '<div id="userAv" onclick="toggleUserMenu(event)" style="width:26px;height:26px;border-radius:50%;background:'+color+
+    ';display:flex;align-items:center;justify-content:center;font-family:IBM Plex Mono,monospace;'+
+    'font-size:8px;font-weight:700;color:#fff;cursor:pointer;border:1.5px solid rgba(255,255,255,0.25)" title="'+name+'">'+
+    ini(name)+'</div>'+
+    '<span class="role-badge '+roleCls(role)+'">'+roleIcon(role)+' '+role+'</span>';
+}
+
+let _userMenuOpen=false;
+function toggleUserMenu(e){
+  e.stopPropagation();
+  if(_userMenuOpen){closeUserMenu();return;}
+  const u=currentUser||{};
+  const name=u.full_name||u.email||'User';
+  const role=u.role||'sales';
+  const menu=document.createElement('div');
+  menu.id='userMenu';
+  menu.setAttribute('style',
+    'position:fixed;top:46px;right:14px;background:var(--surf);border:1px solid var(--rule);'+
+    'border-radius:4px;padding:6px;min-width:190px;z-index:9998;box-shadow:var(--sh)');
+  const hdr=document.createElement('div');
+  hdr.setAttribute('style','padding:7px 10px 6px;border-bottom:1px solid var(--rule2);margin-bottom:4px');
+  hdr.innerHTML='<div style="font-size:12px;font-weight:500;color:var(--t1)">'+name+'</div>'+
+    '<div style="font-family:IBM Plex Mono,monospace;font-size:8px;color:var(--t3);margin-top:2px;text-transform:uppercase">'+role+'</div>';
+  menu.appendChild(hdr);
+  function makeItem(icon,label,color,fn){
+    const d=document.createElement('div');
+    d.setAttribute('style','display:flex;align-items:center;gap:8px;padding:7px 10px;border-radius:2px;cursor:pointer;font-size:12px;color:'+(color||'var(--t1)'));
+    d.innerHTML=icon+' '+label;
+    d.addEventListener('mouseenter',function(){this.style.background='var(--surf2)';});
+    d.addEventListener('mouseleave',function(){this.style.background='';});
+    d.addEventListener('click',fn);
+    menu.appendChild(d);
+  }
+  makeItem('\u270f\ufe0f','Change name',null,function(){closeUserMenu();showChangeNameModal();});
+  makeItem('\u2192','Sign out','#CC2222',function(){signOut();});
+  document.body.appendChild(menu);
+  _userMenuOpen=true;
+}
+function closeUserMenu(){
+  const m=document.getElementById('userMenu');
+  if(m)m.remove();
+  _userMenuOpen=false;
+}
+document.addEventListener('click',function(){closeUserMenu();});
+
+function showChangeNameModal(){
+  const cur=currentUser||{};
+  const n=prompt('Your display name:',cur.full_name||'');
+  if(n===null)return;
+  if(currentUser){
+    currentUser.full_name=n.trim()||currentUser.full_name;
+    localStorage.setItem('oaUser',JSON.stringify(currentUser));
+    renderUserBadge(currentUser);
+  }
 }
 function roleCls(r){return{admin:'role-admin',sales:'role-sales',viewer:'role-viewer'}[r||'sales']||'role-sales';}
-function roleIcon(r){return{admin:'⧡',sales:'◈',viewer:'◇'}[r||'sales']||'◈';}
+function roleIcon(r){return{admin:'\u29e1',sales:'\u25c8',viewer:'\u25c7'}[r||'sales']||'\u25c8';}
+
+function signOut(){
+  localStorage.removeItem('oaUser');
+  currentUser=null;
+  closeUserMenu();
+  const badge=document.getElementById('userBadge');
+  if(badge){badge.style.display='none';badge.innerHTML='';}
+  showLoginScreen();
+}
 
 function showLoginScreen(){
   const ls=document.getElementById('loginScreen');
@@ -1577,35 +1643,57 @@ function hideLoginScreen(){
   if(ap)ap.style.display='flex';
 }
 
+function signIn(){
+  const pinEl=document.getElementById('loginPin');
+  const nameEl=document.getElementById('loginName');
+  const pin=((pinEl&&pinEl.value)||'').trim();
+  const name=((nameEl&&nameEl.value)||'').trim();
+  if(!pin){setLoginMsg('\u26a0 Enter the access PIN');return;}
+  if(pin!==HUB_PIN){setLoginMsg('\u26a0 Wrong PIN');return;}
+  const user={id:'local-'+Date.now(),email:name||'user',role:'sales',full_name:name||'Sales User',avatar_color:'#178066'};
+  localStorage.setItem('oaUser',JSON.stringify(user));
+  currentUser=user;
+  renderUserBadge(user);
+  hideLoginScreen();
+  bootHub();
+}
+function setLoginMsg(msg){const el=document.getElementById('loginMsg');if(el)el.textContent=msg;}
+function showLoginForm(){}
+function signInWithGoogle(){signIn();}
+function signInWithEmail(){signIn();}
+function signUpWithEmail(){signIn();}
+
 function bootHub(){
   updateStats();renderList();resetCenter();buildMsGrid();setupTabDrop();loadMsgStore();
-  setStatus('seed',`○ Seed · ${companies.length}`);
+  setStatus('seed','\u25cb Seed \u00b7 '+companies.length);
   loadAll();
 }
 
-/* ── Boot ── */
-document.addEventListener('DOMContentLoaded',()=>{
+/* \u2500\u2500 Boot \u2500\u2500 */
+document.addEventListener('DOMContentLoaded',function(){
   document.documentElement.setAttribute('data-theme',theme);
-  document.getElementById('themeBtn').textContent=theme==='dark'?'☀️':'🌙';
-  document.getElementById('keyBtn').textContent=apiKey?'🔑 Key ✓':'🔑 API Key';
-  document.getElementById('modalInput').addEventListener('keydown',e=>{if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();submitModal();}});
-  document.getElementById('overlay').addEventListener('click',e=>{if(e.target===document.getElementById('overlay'))closeModal();});
+  document.getElementById('themeBtn').textContent=theme==='dark'?'\u2600\ufe0f':'\ud83c\udf19';
+  document.getElementById('keyBtn').textContent=apiKey?'\ud83d\udd11 Key \u2713':'\ud83d\udd11 API Key';
+  document.getElementById('modalInput').addEventListener('keydown',function(e){if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();submitModal();}});
+  document.getElementById('overlay').addEventListener('click',function(e){if(e.target===document.getElementById('overlay'))closeModal();});
 
-  // Init supabase-js client
-  sb = supabase.createClient(SB_URL, SB_KEY, {
-    auth:{persistSession:true, autoRefreshToken:true, detectSessionInUrl:true}
-  });
+  // Init supabase-js client (still needed for DB queries, not auth)
+  sb=supabase.createClient(SB_URL,SB_KEY,{auth:{persistSession:false,autoRefreshToken:false}});
+
+  // Hide app initially (Safari fix)
+  const _ap=document.querySelector('.app');
+  if(_ap)_ap.style.display='none';
 
   // Check for stored PIN session
-  const storedUser = localStorage.getItem('oaUser');
+  const storedUser=localStorage.getItem('oaUser');
   if(storedUser){
     try{
       currentUser=JSON.parse(storedUser);
       renderUserBadge(currentUser);
       hideLoginScreen();
       bootHub();
-    }catch{ showLoginScreen(); }
-  } else {
+    }catch(e){showLoginScreen();}
+  }else{
     showLoginScreen();
   }
 });
