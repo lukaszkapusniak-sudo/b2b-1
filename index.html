@@ -531,7 +531,7 @@ a.ml:hover{text-decoration:underline}
       <span class="ptab-badge" id="ptab-badge-co">—</span>
     </div>
     <div class="ptab" id="ptab-battleground" onclick="switchPageTab('battleground')">
-      <span class="ptab-icon">⚔️</span> Battleground
+      <span class="ptab-icon">📋</span> Plans
       <span class="ptab-badge" id="ptab-badge-bg">—</span>
     </div>
     <div class="ptab" id="ptab-meeseeks" onclick="switchPageTab('meeseeks')">
@@ -771,7 +771,7 @@ a.ml:hover{text-decoration:underline}
 const HUB_PIN = 'onaudience2026'; // change this to set your own PIN
 /* ═══════════════════════════════════════════════
    onAudience Sales Intelligence Hub — hub.js v3
-   Unified: Dashboard · Battleground · MEESEEKS
+   Unified: Dashboard · Plans · MEESEEKS
 ═══════════════════════════════════════════════ */
 
 /* ── SEED ── */
@@ -901,8 +901,8 @@ let activeFilter = 'all';
 let selectedName = null;
 let selection    = new Map();
 
-// Battleground
-let battlegrounds = [], cur = null, bgDirty = false, originalName = '';
+// Plans
+let plans = [], cur = null, bgDirty = false, originalName = '';
 let selectedOpps  = new Set();
 let pickerTab     = 'companies';
 
@@ -956,21 +956,21 @@ async function loadAll(){
     const [{data:co},{data:ct},{data:bgs}] = await Promise.all([
       sb.from('companies').select('*').order('name',{ascending:true}),
       sb.from('contacts').select('*'),
-      sb.from('battlegrounds').select('*').order('updated_at',{ascending:false}),
+      sb.from('plans').select('*').order('updated_at',{ascending:false}),
     ]);
     if(co&&co.length) companies=co.map(r=>({name:r.name||'',note:r.note||'',type:r.type||classify(r.note||''),icp:r.icp||null,category:r.category||null,region:r.region||null,size:r.size||null,website:r.website||null,linkedin_slug:r.linkedin_slug||null}));
     if(ct) contacts=ct;
-    if(bgs) battlegrounds=bgs;
-    setStatus('live',`● ${companies.length} co · ${contacts.length} ct · ${battlegrounds.length} bg`);
+    if(bgs) plans=bgs;
+    setStatus('live',`● ${companies.length} co · ${contacts.length} ct · ${plans.length} bg`);
   }catch(e){
     setStatus('err','○ DB error');
     console.error('loadAll:',e);
   }
   updateStats();renderList();
   document.getElementById('ptab-badge-co').textContent=companies.length;
-  document.getElementById('ptab-badge-bg').textContent=battlegrounds.length;
+  document.getElementById('ptab-badge-bg').textContent=plans.length;
   renderBgList();
-  if(battlegrounds.length) openBg(battlegrounds[0].id);
+  if(plans.length) openBg(plans[0].id);
   else renderHistoryPanel();
 }
 
@@ -1056,9 +1056,9 @@ function renderContactsList(){
     const uid=ct.id||ct.full_name||'';
     const enc=encodeURIComponent(uid);
     const cbSel=selection.has(uid)?' cb-selected':'';
-    // Target toggle: show when a battleground is open
+    // Target toggle: show when a plan is open
     const inBg=cur&&cur.targets.some(t=>t.uid===uid&&t.kind==='contact');
-    const bgToggle=cur?`<button class="ct-bg-toggle${inBg?' in-bg':''}" title="${inBg?'Remove from battleground':'Add to battleground'}" onclick="toggleContactInBg('${enc}',event)">${inBg?'✓':'⊕'}</button>`:'';
+    const bgToggle=cur?`<button class="ct-bg-toggle${inBg?' in-bg':''}" title="${inBg?'Remove from plan':'Add to plan'}" onclick="toggleContactInBg('${enc}',event)">${inBg?'✓':'⊕'}</button>`:'';
     const coIcon=catIcon(companies.find(c=>c.name.toLowerCase()===ct.company_name?.toLowerCase())?.category||'');
     return `<div class="ct-row${cbSel}" draggable="true" ondragstart="startDrag(event,'${enc}','contact')" onclick="openContactDrawer('${enc}')">
       <div class="co-cb${selection.has(uid)?' checked':''}" onclick="toggleSelect('${enc}','contact',event)"></div>
@@ -1124,9 +1124,9 @@ function updateSelectionBar(){
   count.textContent=`${selection.size} selected (${parts.join(' + ')})`;
 }
 
-function sendSelectionToBattleground(){
+function sendSelectionToPlan(){
   if(!selection.size)return;
-  switchPageTab('battleground');
+  switchPageTab('plan');
   if(!cur)newBg();
   [...selection.values()].forEach(item=>addTarget({uid:item.name,kind:item.kind,name:item.name,meta:item.meta||'',company:item.company||item.name,category:item.category||'',region:item.region||'',icp:item.icp||null,note:item.note||'',contacts:item.contacts||[]}));
 }
@@ -1178,7 +1178,7 @@ function setupTabDrop(){
     el.addEventListener('drop',e=>{
       e.preventDefault();el.classList.remove('drop-over');
       let data;try{data=JSON.parse(e.dataTransfer.getData('application/json'));}catch{return;}
-      if(id==='ptab-battleground'){switchPageTab('battleground');if(!cur)newBg();addTarget({uid:data.name,kind:data.kind,name:data.name,meta:data.meta||'',company:data.company||data.name,category:data.category||'',region:data.region||'',icp:data.icp||null,note:data.note||'',contacts:data.contacts||[]});}
+      if(id==='ptab-battleground'){switchPageTab('plan');if(!cur)newBg();addTarget({uid:data.name,kind:data.kind,name:data.name,meta:data.meta||'',company:data.company||data.name,category:data.category||'',region:data.region||'',icp:data.icp||null,note:data.note||'',contacts:data.contacts||[]});}
       else{switchPageTab('meeseeks');prefillMeeseeks({company:data.company||data.name,contactName:data.kind==='contact'?data.name:'',contactTitle:data.meta,description:data.note});}
     });
   });
@@ -1251,7 +1251,7 @@ function openDetail(enc){
       <div class="sec-body"><div class="act-row">
         <button class="btn sm" onclick="openClaude('Research ${escJs(name)} — full contact report, decision makers, ICP fit')">🔍 Full report</button>
         <button class="btn sm" onclick="openClaude('Find decision makers at ${escJs(name)} — LinkedIn, email')">👤 Find DMs</button>
-        <button class="btn sm p" onclick="addSingleToBg('${escJs(name)}')">⚔ Battleground</button>
+        <button class="btn sm p" onclick="addSingleToBg('${escJs(name)}')">📋 Add to Plan</button>
         <button class="btn sm" onclick="sendSingleToMeeseeks('${escJs(name)}','','','')">✉ MEESEEKS</button>
         <button class="btn sm" onclick="openClaude('Find companies similar to ${escJs(name)} — top 10 by ICP fit')">🔗 Similar</button>
         <button class="btn sm" onclick="openClaude('Check Gmail for prior contact with ${escJs(name)}')">📧 Gmail</button>
@@ -1263,7 +1263,7 @@ function openDetail(enc){
 function addSingleToBg(name){
   const c=companies.find(x=>x.name===name);
   const cts=c?contactsFor(c.name):[];
-  switchPageTab('battleground');
+  switchPageTab('plan');
   if(!cur)newBg();
   addTarget({uid:name,kind:'company',name,meta:c?.note||'',company:name,category:c?.category||'',region:c?.region||'',icp:c?.icp||null,note:c?.note||'',contacts:cts.map(x=>({name:x.full_name,title:x.title,email:x.email}))});
 }
@@ -1277,7 +1277,7 @@ function resetCenter(){
   document.getElementById('centerPanel').innerHTML=`<div class="qa-grid">
     <div class="qa-card" onclick="promptModal('Research a company','Enter company name:','Research [COMPANY] — full contact report, decision makers, ICP fit')"><div class="qa-icon">🔍</div><div class="qa-title">Company Research</div><div class="qa-desc">Full contact report with DMs and ICP fit</div></div>
     <div class="qa-card" onclick="openClaude('Find new DSP, SSP and media agency prospects for onAudience in EMEA')"><div class="qa-icon">🎯</div><div class="qa-title">Find Prospects</div><div class="qa-desc">EMEA focus, strong programmatic signals</div></div>
-    <div class="qa-card" onclick="switchPageTab('battleground')"><div class="qa-icon">⚔️</div><div class="qa-title">Battleground</div><div class="qa-desc">Plan outreach, find opportunities</div></div>
+    <div class="qa-card" onclick="switchPageTab('plan')"><div class="qa-icon">⚔️</div><div class="qa-title">Plans</div><div class="qa-desc">Plan outreach, find opportunities</div></div>
     <div class="qa-card" onclick="switchPageTab('meeseeks')"><div class="qa-icon">✉️</div><div class="qa-title">MEESEEKS</div><div class="qa-desc">Compose personalized outreach</div></div>
     <div class="qa-card" onclick="openClaude('Re-engage dormant onAudience prospects — not contacted in 60+ days')"><div class="qa-icon">♻️</div><div class="qa-title">Re-engage</div><div class="qa-desc">Dormant prospects worth reviving</div></div>
     <div class="qa-card" onclick="openClaude('Top 5 highest-priority onAudience prospects this week')"><div class="qa-icon">⭐</div><div class="qa-title">Top Picks</div><div class="qa-desc">Priority prospects this week</div></div>
@@ -1293,7 +1293,7 @@ function showCtx(e,enc){
   const actions=[
     {icon:'🔍',text:'Full contact report',   fn:()=>openClaude(`Research ${name} — full contact report`)},
     {icon:'👤',text:'Find decision makers',   fn:()=>openClaude(`Find Head of Programmatic at ${name} — LinkedIn, email`)},
-    {icon:'⚔️',text:'Add to Battleground',    fn:()=>addSingleToBg(name)},
+    {icon:'⚔️',text:'Add to Plan',    fn:()=>addSingleToBg(name)},
     {icon:'✉️',text:'Open in MEESEEKS',       fn:()=>sendSingleToMeeseeks(name,'','','')},
     {icon:'🔗',text:'Find similar',           fn:()=>openClaude(`Find companies similar to ${name} for onAudience — top 10`)},
     {icon:'📧',text:'Check Gmail',            fn:()=>openClaude(`Check Gmail for prior contact with ${name}`)},
@@ -1352,9 +1352,9 @@ function closeDrawer(){document.getElementById('ctDrawer').classList.remove('ope
 ══════════════════════════════════ */
 function renderBgList(){
   const el=document.getElementById('bgList');
-  document.getElementById('ptab-badge-bg').textContent=battlegrounds.length;
-  if(!battlegrounds.length){el.innerHTML='<div class="bg-list-empty">No battlegrounds yet</div>';return;}
-  el.innerHTML=battlegrounds.map(bg=>`
+  document.getElementById('ptab-badge-bg').textContent=plans.length;
+  if(!plans.length){el.innerHTML='<div class="bg-list-empty">No plans yet</div>';return;}
+  el.innerHTML=plans.map(bg=>`
     <div class="bg-item${cur?.id===bg.id?' active':''}" onclick="openBg('${bg.id}')">
       <span class="bg-item-icon">${bgIcon(bg.status)}</span>
       <div class="bg-item-info">
@@ -1367,7 +1367,7 @@ function renderBgList(){
 
 function renderHistoryPanel(){
   if(!cur){
-    document.getElementById('histName').textContent='No battleground';
+    document.getElementById('histName').textContent='No plan';
     document.getElementById('histName').className='hp-name empty';
     document.getElementById('histChips').innerHTML='';
     document.getElementById('histBody').innerHTML='<div class="hist-empty">No history yet</div>';
@@ -1400,7 +1400,7 @@ function newBg(){
 }
 
 function openBg(id){
-  const found=battlegrounds.find(b=>b.id===id);if(!found)return;
+  const found=plans.find(b=>b.id===id);if(!found)return;
   cur=JSON.parse(JSON.stringify(found));
   cur.targets=cur.targets||[];
   cur.opportunities=cur.opportunities||[];
@@ -1414,7 +1414,7 @@ function openBg(id){
   bgDirty=false;
   selectedOpps=new Set(cur.selectedOpps);
 
-  // Restore email drafts from battleground into local msgStore
+  // Restore email drafts from plan into local msgStore
   if(cur.email_drafts&&typeof cur.email_drafts==='object'){
     Object.entries(cur.email_drafts).forEach(([k,v])=>{
       if(Array.isArray(v)) msgStore[k]=v;
@@ -1431,7 +1431,7 @@ function renderBgEditor(){
   if(!cur){
     actions.style.display='none';
     ed.classList.add('is-empty');
-    ed.innerHTML=`<div class="bg-empty-state"><div class="bg-empty-ico">⚔️</div><div class="bg-empty-txt">No battleground selected</div><div class="bg-empty-sub">Select targets from the left panel and click ⚔ Battleground, or create a new one.</div><button class="btn p" style="margin-top:12px" onclick="newBg()">+ New Battleground</button></div>`;
+    ed.innerHTML=`<div class="bg-empty-state"><div class="bg-empty-ico">⚔️</div><div class="bg-empty-txt">No plan selected</div><div class="bg-empty-sub">Select targets from the left panel and click ⚔ Plans tab, or create a new one.</div><button class="btn p" style="margin-top:12px" onclick="newBg()">+ New Plan</button></div>`;
     return;
   }
   ed.classList.remove('is-empty');
@@ -1670,8 +1670,8 @@ Identify 4-6 concrete business opportunities. Respond ONLY with JSON array, no m
   }
 }
 
-/* ── Launch from battleground → MEESEEKS ── */
-function launchFromBattleground(){
+/* ── Launch from plan → MEESEEKS ── */
+function launchFromPlan(){
   if(!cur||!selectedOpps.size)return;
   const selOpps=[...selectedOpps].map(i=>cur.opportunities[i]).filter(Boolean);
   const payload=cur.targets.map(t=>({
@@ -1797,10 +1797,10 @@ function syncDraftsToBg(){
   targetKeys.forEach(k=>{ if(msgStore[k]) emailDrafts[k]=msgStore[k]; });
   if(activeDraftKey&&msgStore[activeDraftKey]) emailDrafts[activeDraftKey]=msgStore[activeDraftKey];
   cur.email_drafts=emailDrafts;
-  sb.from('battlegrounds').update({email_drafts:emailDrafts}).eq('id',cur.id).then(({error})=>error&&console.warn('syncDrafts:',error));
+  sb.from('plans').update({email_drafts:emailDrafts}).eq('id',cur.id).then(({error})=>error&&console.warn('syncDrafts:',error));
 }
 
-/* ── Bg save ── */
+/* ── Plan save ── */
 async function saveBg(){
   if(!cur)return;
   cur.name  =document.getElementById('bgName')?.value.trim()||cur.name;
@@ -1836,16 +1836,16 @@ async function saveBg(){
   const nameChanged=cur.name!==originalName&&originalName!=='';
   try{
     if(cur.id&&!nameChanged){
-      const {error}=await sb.from('battlegrounds').update(payload).eq('id',cur.id);
+      const {error}=await sb.from('plans').update(payload).eq('id',cur.id);
       if(error) throw error;
-      const idx=battlegrounds.findIndex(b=>b.id===cur.id);
-      if(idx>=0) battlegrounds[idx]={...battlegrounds[idx],...payload,id:cur.id};
+      const idx=plans.findIndex(b=>b.id===cur.id);
+      if(idx>=0) plans[idx]={...plans[idx],...payload,id:cur.id};
     }else{
-      const {data,error}=await sb.from('battlegrounds').insert({...payload,owner_id:currentUser?.id}).select().single();
+      const {data,error}=await sb.from('plans').insert({...payload,owner_id:currentUser?.id}).select().single();
       if(error) throw error;
       if(data?.id) cur.id=data.id;
       cur.owner_id=currentUser?.id;
-      battlegrounds.unshift({...cur,...payload,owner_id:currentUser?.id});
+      plans.unshift({...cur,...payload,owner_id:currentUser?.id});
       originalName=cur.name;
     }
     bgDirty=false;updateBgSaveInd();
@@ -1890,14 +1890,14 @@ Respond with JSON only:
 }
 
 async function deleteBg(id){
-  if(!confirm('Delete this battleground?'))return;
-  await sb.from('battlegrounds').delete().eq('id',id);
-  battlegrounds=battlegrounds.filter(b=>b.id!==id);
-  if(cur?.id===id){cur=null;document.getElementById('bgActions').style.display='none';const ed=document.getElementById('bgEditor');ed.classList.add('is-empty');ed.innerHTML=`<div class="bg-empty-state"><div class="bg-empty-ico">⚔️</div><div class="bg-empty-txt">No battleground</div><button class="btn p" style="margin-top:12px" onclick="newBg()">+ New</button></div>`;renderHistoryPanel();}
+  if(!confirm('Delete this plan?'))return;
+  await sb.from('plans').delete().eq('id',id);
+  plans=plans.filter(b=>b.id!==id);
+  if(cur?.id===id){cur=null;document.getElementById('bgActions').style.display='none';const ed=document.getElementById('bgEditor');ed.classList.add('is-empty');ed.innerHTML=`<div class="bg-empty-state"><div class="bg-empty-ico">📋</div><div class="bg-empty-txt">No plan</div><button class="btn p" style="margin-top:12px" onclick="newBg()">+ New</button></div>`;renderHistoryPanel();}
   renderBgList();
 }
 
-/* ── Picker (for Battleground + Add) ── */
+/* ── Picker (for Plans + Add) ── */
 function openPicker(){document.getElementById('pickerModal').classList.add('vis');document.getElementById('pickerQ').value='';renderPicker();}
 function closePicker(){document.getElementById('pickerModal').classList.remove('vis');}
 function switchPickerTab(t){
@@ -2157,7 +2157,7 @@ Rules:
 
     // Save to local store
     pushDraft(activeDraftKey,{subject,body,persona:selectedMs.id,company,contact,fitScore:fit.score,fitLabel:fit.label});
-    // Also sync to open battleground (lazy background save — no await to keep UX snappy)
+    // Also sync to open plan (lazy background save — no await to keep UX snappy)
     if(cur?.id&&activeDraftKey) syncDraftsToBg();
     renderDraftOutput(fit,company,contact,selectedMs);
   }catch(err){
