@@ -412,6 +412,12 @@ a.ml:hover{text-decoration:underline}
 .ms-generate-btn:hover{background:var(--gd)}
 .ms-generate-btn:disabled{opacity:.4;cursor:not-allowed}
 
+/* Draft nav bar */
+.ms-output-col{display:flex;flex-direction:column}
+.ms-output-col>.ms-output-section{flex:1}
+.ms-draft-nav{display:flex;align-items:center;gap:6px;padding:6px 0;flex-shrink:0;border-top:1px solid var(--rule)}
+
+/* Fit score badge in output header */
 /* Meeseek output */
 .ms-empty{padding:40px 20px;text-align:center;color:var(--t3)}
 .ms-empty-icon{font-size:28px;opacity:.25;margin-bottom:8px}

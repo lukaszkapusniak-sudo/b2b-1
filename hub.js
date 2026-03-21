@@ -1029,6 +1029,70 @@ function pickerAdd(name,meta,company,category,region,icp){
 /* ══════════════════════════════════
    MEESEEKS
 ══════════════════════════════════ */
+/* ══════════════════════════════════
+   MEESEEKS — Message Store (localStorage)
+══════════════════════════════════ */
+const MSG_KEY = 'oaMsgStore_v1';
+let msgStore = {};      // { [draftKey]: [{id,ts,subject,body,persona,company,contact,fitScore,fitLabel},...] }
+let draftIdx  = -1;     // current position in history for active draft key
+let activeDraftKey = null;
+
+function loadMsgStore(){
+  try{ msgStore=JSON.parse(localStorage.getItem(MSG_KEY)||'{}'); }catch{ msgStore={}; }
+}
+function saveMsgStore(){
+  try{ localStorage.setItem(MSG_KEY,JSON.stringify(msgStore)); }catch(e){ console.warn('msgStore:',e); }
+}
+function draftKey(company,contact){
+  const norm=s=>(s||'').toLowerCase().trim().replace(/\s+/g,'_').replace(/[^a-z0-9_]/g,'');
+  return `${norm(company)}|${norm(contact)}`;
+}
+function getDrafts(key){ return msgStore[key]||[]; }
+function pushDraft(key,draft){
+  if(!msgStore[key]) msgStore[key]=[];
+  msgStore[key].push({...draft,id:Date.now(),ts:new Date().toISOString()});
+  if(msgStore[key].length>30) msgStore[key]=msgStore[key].slice(-30);
+  saveMsgStore();
+  draftIdx=msgStore[key].length-1;
+}
+
+/* ── Fit assessment ── */
+function assessFit(company,contact,title,category,opps,icp){
+  let score=0; const warnings=[]; const positives=[];
+  const adtechCats=['dsp','ssp','agency','media buy','data provider','dmp','cdp','identity','ctv','programmatic','adtech','attribution','measurement','contextual','curation'];
+  const cat=(category||'').toLowerCase();
+  const goodCat=adtechCats.some(g=>cat.includes(g));
+
+  if(!company){warnings.push('No company — email will be generic'); score+=5;}
+  else score+=15;
+
+  if(!category){warnings.push('Company category unknown — unclear if they buy programmatic data'); score+=10;}
+  else if(goodCat){positives.push(`${category} is a typical onAudience buyer`); score+=40;}
+  else{warnings.push(`"${category}" is not a typical programmatic data buyer — this pitch may miss the mark`); score+=8;}
+
+  const goodTitles=['data','programmatic','digital','partnerships','media','trading','buying','head','vp','director','ceo','coo','cto','founder','president','managing','commercial','strategy','growth','product','tech'];
+  const t=(title||'').toLowerCase();
+  if(!title){warnings.push('No contact title — can\'t verify decision-making authority'); score+=5;}
+  else if(goodTitles.some(g=>t.includes(g))){positives.push(`"${title}" is a relevant role`); score+=25;}
+  else{warnings.push(`"${title}" may not be the right person for data partnership discussions`); score+=10;}
+
+  if(!contact){warnings.push('No named contact — email is addressed generically'); score+=0;}
+  else score+=10;
+
+  if(opps&&opps.length){positives.push(`${opps.length} opportunity segment(s) identified`); score+=10;}
+  else warnings.push('No opportunity segments — email will be less specific');
+
+  if(icp&&icp>=8){positives.push(`ICP score ${icp}/10`); score+=10;}
+  else if(icp&&icp>=6) score+=5;
+
+  score=Math.min(100,score);
+  const label=score>=70?'Good fit':score>=45?'Possible fit':'Weak fit';
+  const color=score>=70?'var(--g)':score>=45?'var(--prc)':'#CC2222';
+  const emoji=score>=70?'🟢':score>=45?'🟡':'🔴';
+  return {score,label,color,emoji,warnings,positives};
+}
+
+/* ── MEESEEKS grid ── */
 function buildMsGrid(){
   const el=document.getElementById('msGrid');if(!el)return;
   el.innerHTML=MEESEEKS.map(m=>`
@@ -1039,31 +1103,35 @@ function buildMsGrid(){
       <div class="ms-tag">${m.tag}</div>
     </div>`).join('');
 }
-
 function selectMs(id){
   selectedMs=MEESEEKS.find(m=>m.id===id);
   buildMsGrid();
   document.getElementById('msSelLabel').textContent='— '+selectedMs.name;
 }
 
+/* ── Prefill + queue ── */
 function prefillMeeseeks(payload){
   buildMsGrid();
-  if(Array.isArray(payload)){
-    setQueue(payload);
-  }else{
-    setQueue([]);
-    document.getElementById('msCompany').value=payload.company||'';
-    document.getElementById('msContact').value=payload.contactName||'';
-    document.getElementById('msTitle').value=payload.contactTitle||'';
-    document.getElementById('msDsp').value=Array.isArray(payload.dsps)?payload.dsps.join(', '):(payload.dsps||'');
-    let desc=payload.description||payload.note||'';
-    if(payload.opportunities?.length) desc=(desc?desc+'\n\nOpps:\n':'')+payload.opportunities.map(o=>`• ${o.title}: ${o.hook}`).join('\n');
-    document.getElementById('msDesc').value=desc;
-    document.getElementById('msAngle').value=payload.angle||payload.opportunities?.[0]?.hook||'';
-    document.getElementById('msEmail').value=payload.email||'';
-  }
+  if(Array.isArray(payload)) setQueue(payload);
+  else{ setQueue([]); fillMsForm(payload); }
 }
-
+function fillMsForm(item){
+  document.getElementById('msCompany').value=item.company||'';
+  document.getElementById('msContact').value=item.contactName||'';
+  document.getElementById('msTitle').value=item.contactTitle||'';
+  document.getElementById('msDsp').value=Array.isArray(item.dsps)?item.dsps.join(', '):(item.dsps||'');
+  let desc=item.description||item.note||'';
+  if(item.opportunities?.length) desc=(desc?desc+'\n\nOpps:\n':'')+item.opportunities.map(o=>`• ${o.title}: ${o.hook}`).join('\n');
+  document.getElementById('msDesc').value=desc;
+  document.getElementById('msAngle').value=item.angle||item.opportunities?.[0]?.hook||'';
+  document.getElementById('msEmail').value=item.email||'';
+  // Show existing drafts for this key
+  activeDraftKey=draftKey(item.company||'',item.contactName||'');
+  const drafts=getDrafts(activeDraftKey);
+  draftIdx=drafts.length>0?drafts.length-1:-1;
+  if(draftIdx>=0) showDraftAt(draftIdx);
+  else renderEmptyOutput();
+}
 function setQueue(arr){
   queue=arr;queueIdx=0;
   const strip=document.getElementById('msQueue');
@@ -1081,94 +1149,193 @@ function renderQueueChips(){
 function loadFromQueue(idx){
   queueIdx=idx;renderQueueChips();
   const item=queue[idx];if(!item)return;
-  document.getElementById('msCompany').value=item.company||'';
-  document.getElementById('msContact').value=item.contactName||'';
-  document.getElementById('msTitle').value=item.contactTitle||'';
-  document.getElementById('msDsp').value=Array.isArray(item.dsps)?item.dsps.join(', '):(item.dsps||'');
-  let desc=item.description||item.note||'';
-  if(item.opportunities?.length) desc=(desc?desc+'\n\nOpps:\n':'')+item.opportunities.map(o=>`• ${o.title}: ${o.hook}`).join('\n');
-  document.getElementById('msDesc').value=desc;
-  document.getElementById('msAngle').value=item.angle||item.opportunities?.[0]?.hook||'';
-  document.getElementById('msEmail').value=item.email||'';
+  fillMsForm(item);
 }
 
+/* ── Core generation ── */
 async function generateEmail(){
   const company=document.getElementById('msCompany').value.trim();
   if(!company){alert('Company name is required');return;}
   if(!selectedMs){alert('Pick a Meeseek persona first');return;}
   if(!apiKey){openKeyModal();return;}
+
   const contact=document.getElementById('msContact').value.trim();
   const title  =document.getElementById('msTitle').value.trim();
   const dsp    =document.getElementById('msDsp').value.trim();
   const desc   =document.getElementById('msDesc').value.trim();
   const angle  =document.getElementById('msAngle').value.trim();
-  const email  =document.getElementById('msEmail').value.trim();
-  document.getElementById('msGenerateBtn').disabled=true;
-  document.getElementById('msOutput').innerHTML=`<div class="ms-loading"><div class="ms-loading-txt">Channelling ${selectedMs.name}…</div></div>`;
+  const emailFld=document.getElementById('msEmail').value.trim();
 
-  const prompt=`You are writing a cold outreach email for onAudience, a data company selling audience segments (behavioral, demographic, B2B, purchase intent, CTV, brand affinity) to programmatic buyers — DSPs, agencies, data platforms.
+  // Find enriched company + contact data from DB
+  const co=companies.find(c=>c.name.toLowerCase()===company.toLowerCase())||companies.find(c=>c.name.toLowerCase().includes(company.toLowerCase())||company.toLowerCase().includes(c.name.toLowerCase()));
+  const ct=contacts.find(c=>c.full_name&&c.full_name.toLowerCase()===contact.toLowerCase());
+
+  // Gather only hard facts
+  const category=co?.category||'';
+  const region=co?.region||'';
+  const icpScore=co?.icp||null;
+  const companyNote=co?.note||'';
+  const contactEmail=ct?.email||emailFld||'';
+  const contactLI=ct?.linkedin_url||'';
+  const contactNotes=ct?.notes||'';
+
+  // Parse opportunity segments from desc field
+  const oppLines=(desc.match(/•[^\n]+/g)||[]).map(l=>l.replace('•','').trim());
+
+  // Fit assessment
+  const fit=assessFit(company,contact,title,category,oppLines,icpScore);
+  activeDraftKey=draftKey(company,contact);
+
+  // Show loading with fit indicator
+  document.getElementById('msGenerateBtn').disabled=true;
+  document.getElementById('msOutput').innerHTML=`
+    <div style="padding:12px 14px;display:flex;align-items:center;gap:8px">
+      <span style="font-size:13px">${fit.emoji}</span>
+      <span style="font-family:'IBM Plex Mono',monospace;font-size:9px;color:${fit.color};text-transform:uppercase;letter-spacing:.06em">${fit.label} (${fit.score}%)</span>
+    </div>
+    <div class="ms-loading"><div class="ms-loading-txt">Channelling ${selectedMs.name}…</div></div>`;
+
+  // Build strictly evidence-based prompt
+  const knownFacts=[];
+  if(company) knownFacts.push(`Company: ${company}`);
+  if(category) knownFacts.push(`Category: ${category}${co?.website?' | Website: '+co.website:''}`);
+  if(region) knownFacts.push(`Region: ${region}`);
+  if(icpScore) knownFacts.push(`ICP Score: ${icpScore}/10`);
+  if(companyNote) knownFacts.push(`Known about them: ${companyNote}`);
+  if(contact) knownFacts.push(`Contact name: ${contact}`);
+  if(title) knownFacts.push(`Contact title: ${title}`);
+  if(contactEmail) knownFacts.push(`Contact email: ${contactEmail}`);
+  if(contactLI) knownFacts.push(`LinkedIn: ${contactLI}`);
+  if(contactNotes) knownFacts.push(`Contact notes: ${contactNotes}`);
+  if(dsp) knownFacts.push(`Their DSP / Platform: ${dsp}`);
+  if(oppLines.length) knownFacts.push(`Identified opportunities:\n${oppLines.map(l=>'  - '+l).join('\n')}`);
+  if(angle) knownFacts.push(`Angle / Hook: ${angle}`);
+  if(desc&&!oppLines.length) knownFacts.push(`Additional context: ${desc}`);
+
+  const fitWarningNote=fit.score<45
+    ?`\n\nIMPORTANT: The data on this contact is thin or this company type is an unusual fit for onAudience. Flag this honestly if it affects confidence — but still write the best possible email with what you have.`
+    :'';
+
+  const prompt=`You are writing a cold outreach email for onAudience, a data company selling behavioral, demographic, B2B, CTV, and brand-affinity audience segments to programmatic buyers.
 
 Writing style: ${selectedMs.name} (${selectedMs.tag}). ${selectedMs.style}
 
-Company: ${company}
-${contact?'Contact: '+contact:''}
-${title?'Role: '+title:''}
-${dsp?'DSP / Platform: '+dsp:''}
-${desc?'About them / Context: '+desc:''}
-${angle?'Angle / Hook: '+angle:''}
+KNOWN FACTS ONLY — do not fabricate any information not listed below:
+${knownFacts.join('\n')}${fitWarningNote}
 
-Write a concise cold outreach email (max 150 words). Output EXACTLY in this format:
-SUBJECT: [subject line here]
+Output EXACTLY this format, nothing else:
+SUBJECT: [subject line]
 ---
-[email body here]
+[email body, max 150 words]
 
 Rules:
-- Never open with "I hope this finds you well" or a question
-- Open with a specific observation about ${company}
-- Reference the angle/opportunity if provided — be concrete
-- One clear value proposition linked to their context
-- Soft call to action
-- No generic adtech jargon`;
+- Use ONLY the known facts above — do not invent campaigns, results, clients, or context you weren't given
+- If contact name known, address them personally; if not, don't use a name
+- Open with something specific about the company (from the known facts), not a generic opener
+- Reference the opportunity segments if provided — name them specifically
+- One concrete value proposition
+- Soft CTA — a question or offer, not a demand
+- No "I hope this finds you well", no "reach out", no generic adtech jargon`;
 
   try{
     const res=await fetch(PROXY,{method:'POST',
       headers:{'Content-Type':'application/json','Authorization':`Bearer ${SB_KEY}`,'apikey':SB_KEY,'x-client-api-key':apiKey},
-      body:JSON.stringify({model:'claude-sonnet-4-20250514',max_tokens:1000,messages:[{role:'user',content:prompt}]})
+      body:JSON.stringify({model:'claude-sonnet-4-20250514',max_tokens:800,messages:[{role:'user',content:prompt}]})
     });
     if(!res.ok){const t=await res.text();throw new Error(`HTTP ${res.status}: ${t}`);}
     const data=await res.json();
     if(data.error)throw new Error(data.error);
     const text=data.content?.[0]?.text||'';
-    renderEmailOutput(text,company,contact,selectedMs);
+    const parts=text.split('---');
+    const subject=(parts[0]||'').replace('SUBJECT:','').trim();
+    const body=(parts[1]||parts[0]||'').trim();
+
+    // Save to local store
+    pushDraft(activeDraftKey,{subject,body,persona:selectedMs.id,company,contact,fitScore:fit.score,fitLabel:fit.label});
+    renderDraftOutput(fit,company,contact,selectedMs);
   }catch(err){
     document.getElementById('msOutput').innerHTML=`<div style="padding:16px;color:#CC2222;font-family:'IBM Plex Mono',monospace;font-size:10px">Error: ${err.message}</div>`;
   }
   document.getElementById('msGenerateBtn').disabled=false;
 }
 
-function renderEmailOutput(text,company,contact,ms){
-  const parts=text.split('---');
-  const subjectRaw=(parts[0]||'').replace('SUBJECT:','').trim();
-  const body=(parts[1]||parts[0]||'').trim();
+/* ── Draft rendering ── */
+function renderEmptyOutput(){
+  document.getElementById('msOutput').innerHTML=`
+    <div class="ms-empty">
+      <div class="ms-empty-icon">✉</div>
+      <div class="ms-empty-txt">No email generated yet</div>
+      <div class="ms-empty-sub">Pick a Meeseek · fill in company details · click Generate<br><br>Or select companies/contacts and click ✉ MEESEEKS</div>
+    </div>`;
+}
+
+function showDraftAt(idx){
+  const drafts=getDrafts(activeDraftKey);
+  if(!drafts.length||idx<0||idx>=drafts.length){renderEmptyOutput();return;}
+  draftIdx=idx;
+  const d=drafts[idx];
+  const ms=MEESEEKS.find(m=>m.id===d.persona)||selectedMs||MEESEEKS[0];
+  const fit={score:d.fitScore||0,label:d.fitLabel||'?',color:d.fitScore>=70?'var(--g)':d.fitScore>=45?'var(--prc)':'#CC2222',emoji:d.fitScore>=70?'🟢':d.fitScore>=45?'🟡':'🔴'};
+  renderDraftHTML(d.subject,d.body,ms,fit,d.company,d.contact,drafts.length,idx,d.ts);
+}
+
+function renderDraftOutput(fit,company,contact,ms){
+  const drafts=getDrafts(activeDraftKey);
+  const d=drafts[draftIdx];if(!d)return;
+  renderDraftHTML(d.subject,d.body,ms,fit,company,contact,drafts.length,draftIdx,d.ts);
+}
+
+function renderDraftHTML(subject,body,ms,fit,company,contact,total,idx,ts){
+  const isWeak=fit.score<45;
+  const warnings=isWeak?`
+    <div style="margin:0 0 8px;background:#CC222210;border:1px solid #CC222250;border-left:3px solid #CC2222;border-radius:2px;padding:7px 10px;">
+      <div style="font-family:'IBM Plex Mono',monospace;font-size:8px;font-weight:600;text-transform:uppercase;letter-spacing:.06em;color:#CC2222;margin-bottom:3px">⚠ Weak fit — not recommended</div>
+      <div style="font-size:11px;color:var(--t2);line-height:1.5">Limited data or unusual company type. This email may not land well. Consider researching more before sending.</div>
+    </div>`:
+    fit.score<70?`<div style="margin:0 0 8px;background:var(--prb);border:1px solid var(--prr);border-radius:2px;padding:5px 10px;font-size:11px;color:var(--prc)">${fit.emoji} ${fit.label} — some data missing, review before sending</div>`:'';
+
+  const fmtTs=ts?new Date(ts).toLocaleString('en-GB',{day:'numeric',month:'short',hour:'2-digit',minute:'2-digit'}):'';
   document.getElementById('msOutput').innerHTML=`
     <div class="ms-output-section">
       <div class="ms-output-hdr">
-        <span style="font-size:14px">${ms.icon}</span>
+        <span title="${fit.label} (${fit.score}%)" style="font-size:12px;cursor:default">${fit.emoji}</span>
+        <span style="font-size:13px">${ms.icon}</span>
         <span class="ms-output-lbl">${ms.name} · ${company}${contact?' · '+contact:''}</span>
-        <button class="btn sm" onclick="copyEmail()">⎘ Copy</button>
+        <button class="btn sm" onclick="redoDraft()" title="Regenerate">↺ Redo</button>
+        <button class="btn sm" onclick="copyEmail()" title="Copy email">⎘ Copy</button>
         ${queue.length>1?`<button class="btn sm" onclick="nextInQueue()">Next →</button>`:''}
       </div>
       <div class="ms-output-body">
-        ${subjectRaw?`<div class="ms-subject">Subject: ${subjectRaw}</div>`:''}
+        ${warnings}
+        ${subject?`<div class="ms-subject">Subject: ${subject}</div>`:''}
         <div class="ms-email-body" id="msEmailBody">${body}</div>
       </div>
     </div>
-    ${queue.length>1?`<div style="font-family:'IBM Plex Mono',monospace;font-size:8px;color:var(--t3);text-transform:uppercase;letter-spacing:.07em;margin-top:4px">${queueIdx+1} of ${queue.length}</div>`:''}`;
+    <div style="display:flex;align-items:center;gap:6px;padding:6px 0;flex-shrink:0">
+      <button class="btn sm" onclick="navDraft(-1)" ${idx<=0?'disabled':''} title="Previous draft">← Prev</button>
+      <span style="font-family:'IBM Plex Mono',monospace;font-size:8px;color:var(--t3);flex:1;text-align:center">${idx+1} / ${total} · ${fmtTs}</span>
+      <button class="btn sm" onclick="navDraft(1)" ${idx>=total-1?'disabled':''} title="Next draft">Next →</button>
+    </div>`;
+}
+
+function navDraft(dir){
+  if(!activeDraftKey)return;
+  const drafts=getDrafts(activeDraftKey);
+  const next=draftIdx+dir;
+  if(next<0||next>=drafts.length)return;
+  showDraftAt(next);
+}
+
+function redoDraft(){
+  generateEmail();
 }
 
 function copyEmail(){
   const body=document.getElementById('msEmailBody')?.textContent||'';
-  navigator.clipboard.writeText(body).then(()=>{const b=document.querySelector('.ms-output-hdr .btn');if(b){b.textContent='✓ Copied';setTimeout(()=>b.textContent='⎘ Copy',1500);}});
+  navigator.clipboard.writeText(body).then(()=>{
+    const btn=document.querySelector('.ms-output-hdr .btn[onclick="copyEmail()"]');
+    if(btn){btn.textContent='✓ Copied';setTimeout(()=>btn.textContent='⎘ Copy',1500);}
+  });
 }
 
 function nextInQueue(){
@@ -1216,7 +1383,7 @@ document.addEventListener('DOMContentLoaded',()=>{
   document.getElementById('keyBtn').textContent=apiKey?'🔑 Key ✓':'🔑 API Key';
   document.getElementById('modalInput').addEventListener('keydown',e=>{if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();submitModal();}});
   document.getElementById('overlay').addEventListener('click',e=>{if(e.target===document.getElementById('overlay'))closeModal();});
-  updateStats();renderList();resetCenter();buildMsGrid();setupTabDrop();
+  updateStats();renderList();resetCenter();buildMsGrid();setupTabDrop();loadMsgStore();
   setStatus('seed',`○ Seed · ${companies.length}`);
   loadAll();
 });
