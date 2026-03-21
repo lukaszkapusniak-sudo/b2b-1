@@ -1,11 +1,9 @@
 /* ═══════════════════════════════════════════════
-   onAudience Sales Intelligence Hub — hub.css
-   Design system + all component styles
+   onAudience Sales Intelligence Hub — hub.css v2
 ═══════════════════════════════════════════════ */
 
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 
-/* ── Tokens ── */
 [data-theme="light"]{
   --bg:#F4F2EC;--surf:#FFFFFF;--surf2:#F8F6F0;--surf3:#EFEDE6;--surf4:#E8E6DE;
   --rule:rgba(0,0,0,0.09);--rule2:rgba(0,0,0,0.05);--rule3:rgba(0,0,0,0.03);
@@ -36,8 +34,6 @@
     linear-gradient(90deg,rgba(255,255,255,.016) 1px,transparent 1px);
   background-size:40px 40px;
 }
-
-/* ── Base ── */
 html,body{height:100%;background:var(--bg);color:var(--t1);
   font-family:'IBM Plex Sans',sans-serif;font-size:13px;line-height:1.5;
   transition:background .25s,color .25s;overflow:hidden}
@@ -103,6 +99,8 @@ html,body{height:100%;background:var(--bg);color:var(--t1);
   background:var(--surf3);border:1px solid var(--rule);border-radius:2px;
   padding:1px 5px;color:var(--t3)}
 .ptab.active .ptab-badge{background:var(--gb);border-color:var(--gr);color:var(--g)}
+/* Drop glow on tab */
+.ptab.drop-over{background:var(--gb);border-bottom-color:var(--g);color:var(--g)}
 
 /* ── Tab pages ── */
 .tab-page{flex:1;overflow:hidden;display:none;flex-direction:column}
@@ -158,12 +156,25 @@ html,body{height:100%;background:var(--bg);color:var(--t1);
 .lp-sub{display:none;flex-direction:column;flex:1;overflow:hidden}
 .lp-sub.active{display:flex}
 
-/* ── Company/contact rows ── */
+/* ── Selection bar ── */
+.sel-bar{display:none;padding:8px 10px;border-top:1px solid var(--rule);
+  background:var(--surf);flex-shrink:0;flex-direction:column;gap:6px}
+.sel-bar.vis{display:flex}
+.sel-count{font-family:'IBM Plex Mono',monospace;font-size:9px;font-weight:500;
+  color:var(--g);text-transform:uppercase;letter-spacing:.06em}
+
+/* ── Checkbox rows ── */
 .co-row{display:flex;align-items:center;gap:8px;padding:6px 10px;
   border-bottom:1px solid var(--rule3);cursor:pointer;transition:background .1s;user-select:none}
 .co-row:hover{background:var(--surf2)}
 .co-row.selected{background:var(--gb);border-left:2px solid var(--g);padding-left:8px}
-.co-row.drag-over{background:var(--gb);outline:1px dashed var(--g)}
+.co-row.cb-selected{background:var(--gb)}
+.co-cb{width:14px;height:14px;border:1px solid var(--rule);border-radius:2px;
+  flex-shrink:0;display:flex;align-items:center;justify-content:center;
+  background:var(--surf2);transition:all .12s;cursor:pointer}
+.co-cb.checked{background:var(--g);border-color:var(--g)}
+.co-cb.checked::after{content:'✓';font-size:8px;color:#fff;font-weight:700}
+.co-row:hover .co-cb{border-color:var(--g)}
 .av{width:28px;height:28px;border-radius:3px;flex-shrink:0;display:flex;
   align-items:center;justify-content:center;font-family:'IBM Plex Mono',monospace;
   font-size:9px;font-weight:600;border:1px solid transparent}
@@ -177,6 +188,7 @@ html,body{height:100%;background:var(--bg);color:var(--t1);
 .ct-row{display:flex;align-items:center;gap:8px;padding:6px 10px;
   border-bottom:1px solid var(--rule3);cursor:pointer;transition:background .1s}
 .ct-row:hover{background:var(--surf2)}
+.ct-row.cb-selected{background:var(--gb)}
 .ct-row-av{width:28px;height:28px;border-radius:50%;flex-shrink:0;display:flex;
   align-items:center;justify-content:center;font-family:'IBM Plex Mono',monospace;
   font-size:8px;font-weight:700;background:var(--pb);color:var(--pc);border:1px solid var(--pr)}
@@ -240,8 +252,7 @@ a.ml:hover{text-decoration:underline}
   font-size:9px;font-weight:700;background:var(--pb);color:var(--pc);border:1px solid var(--pr)}
 .ct-meta{flex:1;min-width:0}
 .ct-cname{font-size:12px;font-weight:500;color:var(--t1)}
-.ct-crole{font-family:'IBM Plex Mono',monospace;font-size:9px;color:var(--t3);
-  margin-top:1px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.ct-crole{font-family:'IBM Plex Mono',monospace;font-size:9px;color:var(--t3);margin-top:1px}
 .ct-fields{display:flex;gap:4px;margin-top:7px;flex-wrap:wrap}
 .ct-field{font-family:'IBM Plex Mono',monospace;font-size:8px;text-transform:uppercase;
   letter-spacing:.05em;padding:1px 6px;border-radius:2px;border:1px solid;
@@ -255,7 +266,7 @@ a.ml:hover{text-decoration:underline}
 .ct-no-contacts{padding:10px 0;font-family:'IBM Plex Mono',monospace;font-size:9px;
   text-transform:uppercase;letter-spacing:.07em;color:var(--t3);text-align:center}
 
-/* ── Iframe shell (MEESEEKS / Battleground tabs) ── */
+/* ── Iframe shell ── */
 .iframe-shell{display:flex;flex-direction:column;flex:1;overflow:hidden;background:var(--bg)}
 .iframe-toolbar{background:var(--surf);border-bottom:1px solid var(--rule);
   padding:0 14px;height:36px;display:flex;align-items:center;gap:8px;flex-shrink:0}
@@ -264,9 +275,6 @@ a.ml:hover{text-decoration:underline}
 .iframe-hint{font-family:'IBM Plex Mono',monospace;font-size:9px;color:var(--t3)}
 .iframe-wrap{flex:1;overflow:hidden;position:relative}
 .iframe-wrap iframe{width:100%;height:100%;border:none;display:block}
-
-/* ── Drop target overlay (when dragging over panel tab) ── */
-.drop-glow{outline:2px dashed var(--g);outline-offset:-4px}
 
 /* ── Context menu ── */
 .ctx-menu{position:fixed;background:var(--surf);border:1px solid var(--rule);
@@ -315,6 +323,3 @@ a.ml:hover{text-decoration:underline}
   resize:vertical;outline:none;font-family:'IBM Plex Sans',sans-serif;line-height:1.5}
 .modal-ta:focus{border-color:var(--gr)}
 .modal-actions{display:flex;gap:6px;justify-content:flex-end;margin-top:10px}
-
-/* ── Drag ghost ── */
-.dragging{opacity:.5;cursor:grabbing}

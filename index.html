@@ -30,13 +30,13 @@
       <span class="ptab-icon">📊</span> Dashboard
       <span class="ptab-badge" id="ptab-badge-dashboard">—</span>
     </div>
-    <div class="ptab" id="ptab-meeseeks" onclick="switchPageTab('meeseeks')">
-      <span class="ptab-icon">✉️</span> MEESEEKS
-      <span class="ptab-badge">Composer</span>
-    </div>
     <div class="ptab" id="ptab-battleground" onclick="switchPageTab('battleground')">
       <span class="ptab-icon">⚔️</span> Battleground
       <span class="ptab-badge">Planner</span>
+    </div>
+    <div class="ptab" id="ptab-meeseeks" onclick="switchPageTab('meeseeks')">
+      <span class="ptab-icon">✉️</span> MEESEEKS
+      <span class="ptab-badge">Composer</span>
     </div>
   </div>
 
@@ -45,7 +45,7 @@
 
     <!-- Stats bar -->
     <div class="stats-bar">
-      <div class="sc active" id="sc-all"      onclick="setFilter('all');setFpActive(document.querySelector('.fp'))">
+      <div class="sc active" id="sc-all"      onclick="setFilter('all')">
         <div class="sc-num" id="st-all">—</div><div class="sc-lbl">All</div></div>
       <div class="sc" id="sc-client"   onclick="setFilter('client')">
         <div class="sc-num" id="st-client">—</div><div class="sc-lbl">Clients</div></div>
@@ -81,6 +81,7 @@
     <!-- Two-panel -->
     <div class="panels">
       <div class="panel-left">
+
         <!-- Left tabs -->
         <div class="lp-tabs">
           <div class="lp-tab active" id="lptab-companies" onclick="switchLeftTab('companies')">Companies</div>
@@ -89,7 +90,10 @@
 
         <!-- Companies sub -->
         <div class="lp-sub active" id="lpsub-companies">
-          <div class="list-meta"><span id="listMeta">—</span><span>click · right-click · drag</span></div>
+          <div class="list-meta">
+            <span id="listMeta">—</span>
+            <span style="cursor:pointer;color:var(--t3)" onclick="clearSelection()" id="clearSelBtn" style="display:none">Clear</span>
+          </div>
           <div class="co-list" id="coList"></div>
         </div>
 
@@ -98,6 +102,17 @@
           <div class="list-meta"><span id="ctListMeta">—</span><span>click · drag</span></div>
           <div class="co-list" id="ctList"></div>
         </div>
+
+        <!-- Selection bar (shared, shown when any items selected) -->
+        <div class="sel-bar" id="selBar">
+          <div class="sel-count" id="selCount">0 selected</div>
+          <div style="display:flex;gap:5px;flex-wrap:wrap">
+            <button class="btn sm" onclick="clearSelection()">✕ Clear</button>
+            <button class="btn sm" onclick="sendSelectionToBattleground()">⚔️ Battleground</button>
+            <button class="btn sm p" onclick="sendSelectionToMeeseeks()">✉ MEESEEKS</button>
+          </div>
+        </div>
+
       </div>
 
       <!-- Center -->
@@ -106,32 +121,32 @@
 
   </div><!-- /tab-dashboard -->
 
+  <!-- ════════ TAB: BATTLEGROUND ════════ -->
+  <div class="tab-page" id="tab-battleground">
+    <div class="iframe-shell">
+      <div class="iframe-toolbar">
+        <span class="ptab-icon">⚔️</span>
+        <span class="iframe-label">Battleground — Opportunity Planner</span>
+        <span class="iframe-hint">Select companies/contacts from Dashboard → ⚔ Battleground · or drag rows onto this tab</span>
+        <button class="btn sm" onclick="document.getElementById('battleground-iframe').src=document.getElementById('battleground-iframe').src">↺ Reload</button>
+      </div>
+      <div class="iframe-wrap">
+        <iframe id="battleground-iframe" src="" sandbox="allow-scripts allow-same-origin allow-forms allow-popups allow-modals"></iframe>
+      </div>
+    </div>
+  </div>
+
   <!-- ════════ TAB: MEESEEKS ════════ -->
   <div class="tab-page" id="tab-meeseeks">
     <div class="iframe-shell">
       <div class="iframe-toolbar">
         <span class="ptab-icon">✉️</span>
         <span class="iframe-label">MEESEEKS — Email Composer</span>
-        <span class="iframe-hint">Drag companies or contacts from the Dashboard left panel · or use ✉ buttons</span>
+        <span class="iframe-hint">Receives context from Battleground · pick a persona · generate</span>
         <button class="btn sm" onclick="document.getElementById('meeseeks-iframe').src=document.getElementById('meeseeks-iframe').src">↺ Reload</button>
       </div>
       <div class="iframe-wrap">
         <iframe id="meeseeks-iframe" src="" sandbox="allow-scripts allow-same-origin allow-forms allow-popups allow-modals"></iframe>
-      </div>
-    </div>
-  </div>
-
-  <!-- ════════ TAB: BATTLEGROUND ════════ -->
-  <div class="tab-page" id="tab-battleground">
-    <div class="iframe-shell">
-      <div class="iframe-toolbar">
-        <span class="ptab-icon">⚔️</span>
-        <span class="iframe-label">Battleground — Outreach Planner</span>
-        <span class="iframe-hint">Drag companies or contacts in · pick Meeseek · Launch Battle</span>
-        <button class="btn sm" onclick="document.getElementById('battleground-iframe').src=document.getElementById('battleground-iframe').src">↺ Reload</button>
-      </div>
-      <div class="iframe-wrap">
-        <iframe id="battleground-iframe" src="" sandbox="allow-scripts allow-same-origin allow-forms allow-popups allow-modals"></iframe>
       </div>
     </div>
   </div>

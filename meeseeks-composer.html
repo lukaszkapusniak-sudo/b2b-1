@@ -246,7 +246,11 @@ async function generate() {
   document.getElementById('generateBtn').disabled = true;
   document.getElementById('outputCol').innerHTML = `<div class="loading"><div class="loading-txt">Channelling ${selectedMs.name}…</div></div>`;
 
-  const prompt = `You are writing a cold outreach email for onAudience, a data company that sells audience segments (behavioral, demographic, B2B, purchase intent, CTV) to programmatic buyers — DSPs, agencies, data platforms.
+  const oppContext = window._activeOpportunities?.length
+    ? '\n\nSelected business opportunities to address:\n' + window._activeOpportunities.map(o=>`• ${o.title}: ${o.hook}\n  Relevant segments: ${(o.segments||[]).join(', ')}`).join('\n')
+    : '';
+
+  const prompt = `You are writing a cold outreach email for onAudience, a data company that sells audience segments (behavioral, demographic, B2B, purchase intent, CTV, brand affinity) to programmatic buyers — DSPs, agencies, and data platforms.
 
 Writing style: ${selectedMs.name} (${selectedMs.tag}). ${selectedMs.style}
 
@@ -255,7 +259,7 @@ ${contact?'Contact: '+contact:''}
 ${title?'Role: '+title:''}
 ${dsp?'DSP / Platform: '+dsp:''}
 ${desc?'About them: '+desc:''}
-${angle?'Our angle / hook: '+angle:''}
+${angle?'Core angle / hook: '+angle:''}${oppContext}
 
 Write a concise cold outreach email (max 150 words). Output EXACTLY in this format:
 SUBJECT: [subject line here]
@@ -265,15 +269,16 @@ SUBJECT: [subject line here]
 Rules:
 - Never open with "I hope this finds you well" or a question
 - Open with a specific observation about ${company} or the contact
+- Reference the specific opportunity angle — be concrete, not generic
 - One clear value proposition linked to their specific context
 - Include a soft call to action
 - No generic adtech jargon
 - Body starts directly, no greeting line needed unless contact name is known`;
 
   try {
-    const res = await fetch('https://api.anthropic.com/v1/messages', {
+    const res = await fetch('https://nyzkkqqjnkctcmxoirdj.supabase.co/functions/v1/claude-proxy', {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json', 'x-api-key': apiKey, 'anthropic-version': '2023-06-01' },
+      headers: { 'Content-Type': 'application/json', 'x-client-api-key': apiKey },
       body: JSON.stringify({ model: 'claude-sonnet-4-20250514', max_tokens: 1000, messages: [{ role: 'user', content: prompt }] })
     });
     if (!res.ok) throw new Error('API error: ' + res.status);
@@ -325,21 +330,32 @@ function saveKey() { apiKey=document.getElementById('keyInput').value.trim(); lo
 
 /* ── postMessage ── */
 const isEmbedded = window.self !== window.top;
+
+function loadPayloadItem(payload) {
+  document.getElementById('fCompany').value   = payload.company      || '';
+  document.getElementById('fContact').value   = payload.contactName  || '';
+  document.getElementById('fTitle').value     = payload.contactTitle || '';
+  document.getElementById('fDsp').value       = Array.isArray(payload.dsps)?payload.dsps.join(', '):(payload.dsps||'');
+  // Enrich description with opportunity context if present
+  let desc = payload.description || payload.note || '';
+  if (payload.opportunities?.length) {
+    const oppContext = payload.opportunities.map(o=>`• ${o.title}: ${o.hook}`).join('\n');
+    desc = desc ? desc + '\n\nOpportunities:\n' + oppContext : 'Opportunities:\n' + oppContext;
+  }
+  document.getElementById('fDesc').value  = desc;
+  document.getElementById('fAngle').value = payload.angle || (payload.opportunities?.[0]?.hook || '');
+  document.getElementById('fEmail').value = payload.email || '';
+  // Store opportunities for prompt enrichment
+  window._activeOpportunities = payload.opportunities || [];
+  window._campaignGoal = payload.campaignGoal || '';
+}
+
 window.addEventListener('message', e => {
   const d = e.data; if (!d||!d.type) return;
-  if (d.type === 'COMPOSE_PREFILL') {
+  if (d.type === 'COMPOSE_PREFILL' || d.type === 'LAUNCH_MEESEEKS') {
     const payload = d.payload;
     if (Array.isArray(payload)) setQueue(payload);
-    else {
-      setQueue([]);
-      document.getElementById('fCompany').value   = payload.company      || '';
-      document.getElementById('fContact').value   = payload.contactName  || '';
-      document.getElementById('fTitle').value     = payload.contactTitle || '';
-      document.getElementById('fDsp').value       = Array.isArray(payload.dsps)?payload.dsps.join(', '):(payload.dsps||'');
-      document.getElementById('fDesc').value      = payload.description  || payload.note || '';
-      document.getElementById('fAngle').value     = payload.angle        || '';
-      document.getElementById('fEmail').value     = payload.email        || '';
-    }
+    else { setQueue([]); loadPayloadItem(payload); }
   }
   if (d.type === 'THEME_SYNC') setTheme(d.payload?.theme);
 });
