@@ -272,7 +272,7 @@
 
 <!-- ── Login screen ── -->
 <div id="loginScreen" style="position:fixed;inset:0;background:var(--bg);z-index:9999;display:flex;align-items:center;justify-content:center">
-  <div style="background:var(--surf);border:1px solid var(--rule);border-radius:4px;padding:32px 28px;width:320px;box-shadow:var(--sh)">
+  <div style="background:var(--surf);border:1px solid var(--rule);border-radius:4px;padding:32px 28px;width:300px;box-shadow:var(--sh)">
     <div style="display:flex;align-items:center;gap:10px;margin-bottom:24px">
       <div style="width:32px;height:32px;background:var(--g);border-radius:4px;display:flex;align-items:center;justify-content:center;font-family:'IBM Plex Mono',monospace;font-size:10px;font-weight:600;color:#fff;flex-shrink:0">oA</div>
       <div>
@@ -281,25 +281,17 @@
       </div>
     </div>
     <div style="display:flex;flex-direction:column;gap:7px">
-      <input id="loginEmail" type="email" autocomplete="email" placeholder="Email"
+      <input id="loginName" type="text" autocomplete="name" placeholder="Your name (optional)"
         style="width:100%;height:34px;padding:0 10px;border:1px solid var(--rule);border-radius:2px;background:var(--surf2);color:var(--t1);font-family:'IBM Plex Mono',monospace;font-size:11px;outline:none;transition:border-color .15s"
         onfocus="this.style.borderColor='var(--gr)'" onblur="this.style.borderColor='var(--rule)'"
-        onkeydown="if(event.key==='Enter')document.getElementById('loginPass').focus()"/>
-      <input id="loginPass" type="password" autocomplete="current-password" placeholder="Password"
+        onkeydown="if(event.key==='Enter')document.getElementById('loginPin').focus()"/>
+      <input id="loginPin" type="password" placeholder="Access PIN"
         style="width:100%;height:34px;padding:0 10px;border:1px solid var(--rule);border-radius:2px;background:var(--surf2);color:var(--t1);font-family:'IBM Plex Mono',monospace;font-size:11px;outline:none;transition:border-color .15s"
         onfocus="this.style.borderColor='var(--gr)'" onblur="this.style.borderColor='var(--rule)'"
-        onkeydown="if(event.key==='Enter')signInWithEmail()"/>
-      <button onclick="signInWithEmail()" id="loginSignInBtn"
+        onkeydown="if(event.key==='Enter')signIn()"/>
+      <button onclick="signIn()"
         style="width:100%;height:36px;border:none;border-radius:2px;background:var(--g);color:#fff;font-family:'IBM Plex Mono',monospace;font-size:10px;font-weight:500;text-transform:uppercase;letter-spacing:.08em;cursor:pointer;transition:background .15s"
-        onmouseover="this.style.background='var(--gd)'" onmouseout="this.style.background='var(--g)'">Sign In</button>
-      <div style="display:flex;align-items:center;gap:7px;margin:2px 0">
-        <div style="flex:1;height:1px;background:var(--rule)"></div>
-        <span style="font-family:'IBM Plex Mono',monospace;font-size:8px;color:var(--t4);text-transform:uppercase">or</span>
-        <div style="flex:1;height:1px;background:var(--rule)"></div>
-      </div>
-      <button onclick="signUpWithEmail()" id="loginSignUpBtn"
-        style="width:100%;height:34px;border:1px solid var(--rule);border-radius:2px;background:var(--surf2);color:var(--t2);font-family:'IBM Plex Mono',monospace;font-size:9px;font-weight:500;text-transform:uppercase;letter-spacing:.07em;cursor:pointer;transition:background .15s"
-        onmouseover="this.style.background='var(--surf3)'" onmouseout="this.style.background='var(--surf2)'">Create Account</button>
+        onmouseover="this.style.background='var(--gd)'" onmouseout="this.style.background='var(--g)'">Enter Hub</button>
     </div>
     <div id="loginMsg" style="margin-top:9px;font-family:'IBM Plex Mono',monospace;font-size:9px;color:var(--t3);min-height:14px;text-align:center"></div>
   </div>

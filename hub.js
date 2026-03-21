@@ -1514,41 +1514,29 @@ function toggleTheme(){
 function openClaude(prompt){window.open('https://claude.ai/new?q='+encodeURIComponent(prompt),'_blank');}
 
 /* ── Auth ── */
-async function signInWithEmail(){
-  const email=(document.getElementById('loginEmail')?.value||'').trim();
-  const pass=(document.getElementById('loginPass')?.value||'').trim();
-  if(!email||!pass){ setLoginMsg('⚠ Enter email and password'); return; }
-  setLoginBusy(true);
-  const {error}=await sb.auth.signInWithPassword({email,password:pass});
-  setLoginBusy(false);
-  if(error) setLoginMsg('⚠ '+error.message);
+function signIn(){
+  const pin=(document.getElementById('loginPin')?.value||'').trim();
+  const name=(document.getElementById('loginName')?.value||'').trim();
+  if(!pin){ setLoginMsg('⚠ Enter the access PIN'); return; }
+  if(pin !== HUB_PIN){ setLoginMsg('⚠ Wrong PIN'); return; }
+  // Store session
+  const user = {id:'local-'+Date.now(), email:name||'user', role:'sales', full_name:name||'Sales User', avatar_color:'#178066'};
+  localStorage.setItem('oaUser', JSON.stringify(user));
+  currentUser = user;
+  renderUserBadge(user);
+  hideLoginScreen();
+  bootHub();
 }
-
-async function signUpWithEmail(){
-  const email=(document.getElementById('loginEmail')?.value||'').trim();
-  const pass=(document.getElementById('loginPass')?.value||'').trim();
-  if(!email||!pass){ setLoginMsg('⚠ Enter email and password'); return; }
-  if(pass.length<6){ setLoginMsg('⚠ Password must be at least 6 characters'); return; }
-  setLoginBusy(true);
-  const {error}=await sb.auth.signUp({email,password:pass,options:{emailRedirectTo:window.location.href.split('?')[0]}});
-  setLoginBusy(false);
-  if(error) setLoginMsg('⚠ '+error.message);
-  else setLoginMsg('✓ Check your email to confirm, then sign in.');
-}
-
-function setLoginBusy(busy){
-  const b1=document.getElementById('loginSignInBtn');
-  const b2=document.getElementById('loginSignUpBtn');
-  if(b1)b1.disabled=busy;
-  if(b2)b2.disabled=busy;
-}
-function setLoginMsg(msg){
-  const el=document.getElementById('loginMsg');
-  if(el)el.textContent=msg;
-}
+function setLoginMsg(msg){ const el=document.getElementById('loginMsg'); if(el)el.textContent=msg; }
 function showLoginForm(){}
-// keep alias for any references
-function signInWithGoogle(){ signInWithEmail(); }
+function signInWithGoogle(){ signIn(); }
+function signInWithEmail(){ signIn(); }
+function signUpWithEmail(){ signIn(); }
+async function signOut(){
+  localStorage.removeItem('oaUser');
+  currentUser=null;
+  showLoginScreen();
+}
 async function signOut(){
   await sb.auth.signOut();
 }
@@ -1589,6 +1577,12 @@ function hideLoginScreen(){
   if(ap)ap.style.display='flex';
 }
 
+function bootHub(){
+  updateStats();renderList();resetCenter();buildMsGrid();setupTabDrop();loadMsgStore();
+  setStatus('seed',`○ Seed · ${companies.length}`);
+  loadAll();
+}
+
 /* ── Boot ── */
 document.addEventListener('DOMContentLoaded',()=>{
   document.documentElement.setAttribute('data-theme',theme);
@@ -1602,22 +1596,16 @@ document.addEventListener('DOMContentLoaded',()=>{
     auth:{persistSession:true, autoRefreshToken:true, detectSessionInUrl:true}
   });
 
-  // Auth state listener — single source of truth
-  sb.auth.onAuthStateChange(async (event, session)=>{
-    if(session?.user){
-      currentUser={id:session.user.id, email:session.user.email};
-      const profile=await loadUserProfile(session.user.id);
-      currentUser.role=profile.role||'sales';
-      currentUser.full_name=profile.full_name||'';
-      currentUser.avatar_color=profile.avatar_color||'#178066';
-      renderUserBadge(profile);
+  // Check for stored PIN session
+  const storedUser = localStorage.getItem('oaUser');
+  if(storedUser){
+    try{
+      currentUser=JSON.parse(storedUser);
+      renderUserBadge(currentUser);
       hideLoginScreen();
-      updateStats();renderList();resetCenter();buildMsGrid();setupTabDrop();loadMsgStore();
-      setStatus('seed',`○ Seed · ${companies.length}`);
-      loadAll();
-    } else {
-      currentUser=null;
-      showLoginScreen();
-    }
-  });
+      bootHub();
+    }catch{ showLoginScreen(); }
+  } else {
+    showLoginScreen();
+  }
 });
