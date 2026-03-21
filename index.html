@@ -21,6 +21,7 @@
     <div class="nav-right">
       <button class="api-btn" id="keyBtn" onclick="openKeyModal()">🔑 API Key</button>
       <button class="btn p sm" onclick="doResearch()">+ Research ↗</button>
+      <div id="userBadge" style="display:none;align-items:center;gap:6px"></div>
       <button class="theme-btn" onclick="toggleTheme()" id="themeBtn">🌙</button>
     </div>
   </nav>
@@ -266,6 +267,42 @@
   </div>
 </div>
 
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
 <script src="hub.js"></script>
+
+<!-- ── Login screen ── -->
+<div id="loginScreen" style="position:fixed;inset:0;background:var(--bg);z-index:9999;display:flex;align-items:center;justify-content:center">
+  <div style="background:var(--surf);border:1px solid var(--rule);border-radius:4px;padding:32px 28px;width:340px;box-shadow:var(--sh)">
+    <div style="display:flex;align-items:center;gap:10px;margin-bottom:24px">
+      <div style="width:32px;height:32px;background:var(--g);border-radius:4px;display:flex;align-items:center;justify-content:center;font-family:'IBM Plex Mono',monospace;font-size:10px;font-weight:600;color:#fff">oA</div>
+      <div>
+        <div style="font-family:'IBM Plex Mono',monospace;font-size:11px;font-weight:500;text-transform:uppercase;letter-spacing:.06em;color:var(--t1)">Sales Intelligence Hub</div>
+        <div style="font-size:11px;color:var(--t3);margin-top:1px">onAudience</div>
+      </div>
+    </div>
+    <div id="loginForm">
+      <div style="font-size:12px;color:var(--t2);margin-bottom:14px;line-height:1.6">Enter your email to receive a sign-in link.</div>
+      <input id="loginEmail" type="email" autocomplete="email" placeholder="you@company.com"
+        style="width:100%;height:36px;padding:0 10px;border:1px solid var(--rule);border-radius:2px;background:var(--surf2);color:var(--t1);font-family:'IBM Plex Mono',monospace;font-size:12px;outline:none;margin-bottom:8px;transition:border-color .15s"
+        onfocus="this.style.borderColor='var(--gr)'" onblur="this.style.borderColor='var(--rule)'"
+        onkeydown="if(event.key==='Enter')signIn()"/>
+      <button onclick="signIn()" id="loginBtn"
+        style="width:100%;height:36px;border:none;border-radius:2px;background:var(--g);color:#fff;font-family:'IBM Plex Mono',monospace;font-size:10px;font-weight:500;text-transform:uppercase;letter-spacing:.08em;cursor:pointer;transition:background .15s"
+        onmouseover="this.style.background='var(--gd)'" onmouseout="this.style.background='var(--g)'">
+        Send Magic Link
+      </button>
+      <div id="loginMsg" style="margin-top:8px;font-family:'IBM Plex Mono',monospace;font-size:9px;color:var(--t3);text-align:center;min-height:14px"></div>
+    </div>
+    <div id="loginSent" style="display:none;text-align:center">
+      <div style="font-size:28px;margin-bottom:12px">✉️</div>
+      <div style="font-family:'IBM Plex Mono',monospace;font-size:10px;font-weight:500;text-transform:uppercase;letter-spacing:.06em;color:var(--t1);margin-bottom:8px">Check your email</div>
+      <div id="loginSentEmail" style="font-size:12px;color:var(--t2);line-height:1.6"></div>
+      <button onclick="showLoginForm()"
+        style="margin-top:16px;background:none;border:1px solid var(--rule);border-radius:2px;padding:4px 14px;font-family:'IBM Plex Mono',monospace;font-size:9px;cursor:pointer;color:var(--t3)">
+        Different email
+      </button>
+    </div>
+  </div>
+</div>
 </body>
 </html>

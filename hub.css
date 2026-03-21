@@ -485,3 +485,12 @@ a.ml:hover{text-decoration:underline}
 .picker-av{width:22px;height:22px;border-radius:3px;display:flex;align-items:center;justify-content:center;font-family:'IBM Plex Mono',monospace;font-size:7px;font-weight:600;flex-shrink:0}
 .picker-name{font-size:12px;font-weight:500;flex:1}
 .picker-meta{font-family:'IBM Plex Mono',monospace;font-size:8px;color:var(--t3)}
+
+/* ── Role badges ── */
+.role-badge{font-family:'IBM Plex Mono',monospace;font-size:7px;font-weight:600;
+  text-transform:uppercase;letter-spacing:.07em;padding:2px 6px;border-radius:2px;
+  border:1px solid;white-space:nowrap}
+.role-admin{color:#4B2D9E;background:#EDE8FD;border-color:rgba(75,45,158,.3)}
+.role-sales{color:#146B3A;background:#E4F5EC;border-color:rgba(20,107,58,.3)}
+.role-viewer{color:#6B6B64;background:#EFEDE6;border-color:rgba(107,107,100,.3)}
+#userBadge{align-items:center;gap:6px}

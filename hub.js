@@ -103,10 +103,18 @@ DEMOGRAPHIC: Age (18-24, 25-34, 35-54, 55+), HHI tiers, Homeowners, Parents, Stu
 GEOGRAPHIC: EU country-level, US DMA, UK region, APAC market, city-level`;
 
 /* ── Config ── */
-const SB_URL = 'https://nyzkkqqjnkctcmxoirdj.supabase.co';
-const SB_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im55emtrcXFqbmtjdGNteG9pcmRqIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzM4NzMxMzYsImV4cCI6MjA4OTQ0OTEzNn0.jhAq_C68klOp4iTyj9HmsyyvoxsOI6ACld7t_87TAk0';
-const SB_HDR = { 'Content-Type':'application/json', apikey:SB_KEY, Authorization:`Bearer ${SB_KEY}` };
-const PROXY  = `${SB_URL}/functions/v1/claude-proxy`;
+const SB_URL  = 'https://nyzkkqqjnkctcmxoirdj.supabase.co';
+const SB_KEY  = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im55emtrcXFqbmtjdGNteG9pcmRqIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzM4NzMxMzYsImV4cCI6MjA4OTQ0OTEzNn0.jhAq_C68klOp4iTyj9HmsyyvoxsOI6ACld7t_87TAk0';
+const PROXY   = `${SB_URL}/functions/v1/claude-proxy`;
+// supabase-js v2 client — init in boot after CDN loads
+let sb;
+
+/* ── Auth + role ── */
+let currentUser = null; // { id, email, role, full_name, avatar_color }
+function canEdit(){ return currentUser?.role !== 'viewer'; }
+function isAdmin(){ return currentUser?.role === 'admin'; }
+function roleCls(r){ return {admin:'role-admin',sales:'role-sales',viewer:'role-viewer'}[r||'sales']||'role-sales'; }
+function roleIcon(r){ return {admin:'⬡',sales:'◈',viewer:'◇'}[r||'sales']||'◈'; }
 
 /* ── State ── */
 let companies = SEED.map(([n,note,t,cat,reg,sz,icp,web,li]) => ({
@@ -169,19 +177,16 @@ function catIcon(cat){
   return'';
 }
 
-/* ── Supabase ── */
-async function sbGet(p){const r=await fetch(SB_URL+p,{headers:SB_HDR});if(!r.ok)throw new Error(`sbGet ${r.status}`);return r.json();}
-async function sbPost(p,b,ex={}){return fetch(SB_URL+p,{method:'POST',headers:{...SB_HDR,...ex},body:JSON.stringify(b)});}
-async function sbPatch(p,b){return fetch(SB_URL+p,{method:'PATCH',headers:SB_HDR,body:JSON.stringify(b)});}
-async function sbDel(p){return fetch(SB_URL+p,{method:'DELETE',headers:SB_HDR});}
+/* ── Supabase helpers (supabase-js v2) ── */
+async function sbFrom(table){ return sb.from(table); }
 
 async function loadAll(){
   setStatus('','Loading…');
   try{
-    const [co,ct,bgs]=await Promise.all([
-      sbGet('/rest/v1/companies?select=*&order=name.asc'),
-      sbGet('/rest/v1/contacts?select=*'),
-      sbGet('/rest/v1/battlegrounds?select=*&order=updated_at.desc'),
+    const [{data:co},{data:ct},{data:bgs}] = await Promise.all([
+      sb.from('companies').select('*').order('name',{ascending:true}),
+      sb.from('contacts').select('*'),
+      sb.from('battlegrounds').select('*').order('updated_at',{ascending:false}),
     ]);
     if(co&&co.length) companies=co.map(r=>({name:r.name||'',note:r.note||'',type:r.type||classify(r.note||''),icp:r.icp||null,category:r.category||null,region:r.region||null,size:r.size||null,website:r.website||null,linkedin_slug:r.linkedin_slug||null}));
     if(ct) contacts=ct;
@@ -1022,7 +1027,7 @@ function syncDraftsToBg(){
   targetKeys.forEach(k=>{ if(msgStore[k]) emailDrafts[k]=msgStore[k]; });
   if(activeDraftKey&&msgStore[activeDraftKey]) emailDrafts[activeDraftKey]=msgStore[activeDraftKey];
   cur.email_drafts=emailDrafts;
-  sbPatch(`/rest/v1/battlegrounds?id=eq.${cur.id}`,{email_drafts:emailDrafts}).catch(e=>console.warn('syncDrafts:',e));
+  sb.from('battlegrounds').update({email_drafts:emailDrafts}).eq('id',cur.id).then(({error})=>error&&console.warn('syncDrafts:',error));
 }
 
 /* ── Bg save ── */
@@ -1034,46 +1039,43 @@ async function saveBg(){
   cur.notes =document.getElementById('bgNotes')?.value||cur.notes;
   cur.status=document.getElementById('statusSel')?.value||cur.status;
 
-  // Auto-generate witty goal + hook if either is blank and we have targets
-  if(apiKey&&cur.targets.length&&(!cur.goal||!cur.hook)){
-    await autoFillGoalHook();
-  }
+  if(apiKey&&cur.targets.length&&(!cur.goal||!cur.hook)) await autoFillGoalHook();
 
-  const histEntry={action:cur.id?'saved':'created',ts:new Date().toISOString(),name:cur.name,targets:cur.targets.length,opps:cur.opportunities.length};
+  const histEntry={
+    action:cur.id?'saved':'created',ts:new Date().toISOString(),
+    name:cur.name,targets:cur.targets.length,opps:cur.opportunities.length,
+    by:currentUser?.email||'',
+  };
   cur.history=[...(cur.history||[]),histEntry];
   cur.save_count=(cur.save_count||0)+1;
 
-  // Merge local msg store drafts for this battleground into email_drafts
-  const emailDrafts={...( cur.email_drafts||{})};
-  if(activeDraftKey&&msgStore[activeDraftKey]){
-    emailDrafts[activeDraftKey]=msgStore[activeDraftKey];
-  }
+  const emailDrafts={...(cur.email_drafts||{})};
+  if(activeDraftKey&&msgStore[activeDraftKey]) emailDrafts[activeDraftKey]=msgStore[activeDraftKey];
   cur.email_drafts=emailDrafts;
 
   const payload={
-    name:        cur.name,
-    goal:        cur.goal,
-    hook:        cur.hook,
-    notes:       cur.notes,
-    targets:     cur.targets,
-    opportunities:  cur.opportunities,
-    selected_opps:  [...selectedOpps],
-    company_context: cur.companyContext||[],
-    status:      cur.status,
-    history:     cur.history,
-    save_count:  cur.save_count,
-    email_drafts: cur.email_drafts,
+    name:cur.name, goal:cur.goal, hook:cur.hook, notes:cur.notes,
+    targets:cur.targets, opportunities:cur.opportunities,
+    selected_opps:[...selectedOpps],
+    company_context:cur.companyContext||[],
+    status:cur.status, history:cur.history, save_count:cur.save_count,
+    email_drafts:cur.email_drafts,
+    owner_id:cur.owner_id||currentUser?.id||null,
+    visibility:cur.visibility||'private',
   };
   const nameChanged=cur.name!==originalName&&originalName!=='';
   try{
     if(cur.id&&!nameChanged){
-      await sbPatch(`/rest/v1/battlegrounds?id=eq.${cur.id}`,payload);
+      const {error}=await sb.from('battlegrounds').update(payload).eq('id',cur.id);
+      if(error) throw error;
       const idx=battlegrounds.findIndex(b=>b.id===cur.id);
-      if(idx>=0)battlegrounds[idx]={...battlegrounds[idx],...payload,id:cur.id};
+      if(idx>=0) battlegrounds[idx]={...battlegrounds[idx],...payload,id:cur.id};
     }else{
-      const r=await sbPost('/rest/v1/battlegrounds',payload,{Prefer:'return=representation'});
-      const d=await r.json();if(d?.[0]?.id)cur.id=d[0].id;
-      battlegrounds.unshift({...cur,...payload});
+      const {data,error}=await sb.from('battlegrounds').insert({...payload,owner_id:currentUser?.id}).select().single();
+      if(error) throw error;
+      if(data?.id) cur.id=data.id;
+      cur.owner_id=currentUser?.id;
+      battlegrounds.unshift({...cur,...payload,owner_id:currentUser?.id});
       originalName=cur.name;
     }
     bgDirty=false;updateBgSaveInd();
@@ -1119,7 +1121,7 @@ Respond with JSON only:
 
 async function deleteBg(id){
   if(!confirm('Delete this battleground?'))return;
-  await sbDel(`/rest/v1/battlegrounds?id=eq.${id}`);
+  await sb.from('battlegrounds').delete().eq('id',id);
   battlegrounds=battlegrounds.filter(b=>b.id!==id);
   if(cur?.id===id){cur=null;document.getElementById('bgActions').style.display='none';const ed=document.getElementById('bgEditor');ed.classList.add('is-empty');ed.innerHTML=`<div class="bg-empty-state"><div class="bg-empty-ico">⚔️</div><div class="bg-empty-txt">No battleground</div><button class="btn p" style="margin-top:12px" onclick="newBg()">+ New</button></div>`;renderHistoryPanel();}
   renderBgList();
@@ -1511,6 +1513,66 @@ function toggleTheme(){
 /* ── Utility ── */
 function openClaude(prompt){window.open('https://claude.ai/new?q='+encodeURIComponent(prompt),'_blank');}
 
+/* ── Auth ── */
+async function signIn(){
+  const email=(document.getElementById('loginEmail')?.value||'').trim();
+  if(!email){return;}
+  document.getElementById('loginBtn').disabled=true;
+  document.getElementById('loginMsg').textContent='Sending…';
+  const {error}=await sb.auth.signInWithOtp({
+    email,
+    options:{emailRedirectTo:window.location.href.split('?')[0].split('#')[0]}
+  });
+  document.getElementById('loginBtn').disabled=false;
+  if(error){
+    document.getElementById('loginMsg').textContent='⚠ '+error.message;
+  } else {
+    document.getElementById('loginForm').style.display='none';
+    document.getElementById('loginSent').style.display='block';
+    document.getElementById('loginSentEmail').textContent=`Magic link sent to ${email}. Click it to sign in.`;
+  }
+}
+function showLoginForm(){
+  document.getElementById('loginForm').style.display='block';
+  document.getElementById('loginSent').style.display='none';
+  document.getElementById('loginMsg').textContent='';
+}
+async function signOut(){
+  await sb.auth.signOut();
+}
+async function loadUserProfile(userId){
+  let {data}=await sb.from('user_profiles').select('*').eq('id',userId).single();
+  if(!data){
+    await sb.from('user_profiles').insert({id:userId}).onConflict('id').ignore();
+    data={id:userId,role:'sales',full_name:'',avatar_color:'#178066'};
+  }
+  return data;
+}
+function renderUserBadge(profile){
+  const email=currentUser?.email||'';
+  const name=profile?.full_name||email.split('@')[0]||'User';
+  const role=profile?.role||'sales';
+  const color=profile?.avatar_color||'#178066';
+  const badge=document.getElementById('userBadge');
+  if(!badge)return;
+  badge.style.display='flex';
+  badge.innerHTML=`
+    <div style="width:24px;height:24px;border-radius:50%;background:${color};display:flex;align-items:center;justify-content:center;font-family:'IBM Plex Mono',monospace;font-size:8px;font-weight:700;color:#fff;cursor:default" title="${email}">${ini(name)}</div>
+    <span class="role-badge ${roleCls(role)}">${roleIcon(role)} ${role}</span>
+    <button class="btn xs" onclick="signOut()" title="Sign out">→ Out</button>`;
+}
+function roleCls(r){return{admin:'role-admin',sales:'role-sales',viewer:'role-viewer'}[r||'sales']||'role-sales';}
+function roleIcon(r){return{admin:'⧡',sales:'◈',viewer:'◇'}[r||'sales']||'◈';}
+
+function showLoginScreen(){
+  document.getElementById('loginScreen').style.display='flex';
+  document.getElementById('app').style.display='none';
+}
+function hideLoginScreen(){
+  document.getElementById('loginScreen').style.display='none';
+  document.getElementById('app').style.display='flex';
+}
+
 /* ── Boot ── */
 document.addEventListener('DOMContentLoaded',()=>{
   document.documentElement.setAttribute('data-theme',theme);
@@ -1518,7 +1580,28 @@ document.addEventListener('DOMContentLoaded',()=>{
   document.getElementById('keyBtn').textContent=apiKey?'🔑 Key ✓':'🔑 API Key';
   document.getElementById('modalInput').addEventListener('keydown',e=>{if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();submitModal();}});
   document.getElementById('overlay').addEventListener('click',e=>{if(e.target===document.getElementById('overlay'))closeModal();});
-  updateStats();renderList();resetCenter();buildMsGrid();setupTabDrop();loadMsgStore();
-  setStatus('seed',`○ Seed · ${companies.length}`);
-  loadAll();
+
+  // Init supabase-js client
+  sb = supabase.createClient(SB_URL, SB_KEY, {
+    auth:{persistSession:true, autoRefreshToken:true, detectSessionInUrl:true}
+  });
+
+  // Auth state listener — single source of truth
+  sb.auth.onAuthStateChange(async (event, session)=>{
+    if(session?.user){
+      currentUser={id:session.user.id, email:session.user.email};
+      const profile=await loadUserProfile(session.user.id);
+      currentUser.role=profile.role||'sales';
+      currentUser.full_name=profile.full_name||'';
+      currentUser.avatar_color=profile.avatar_color||'#178066';
+      renderUserBadge(profile);
+      hideLoginScreen();
+      updateStats();renderList();resetCenter();buildMsGrid();setupTabDrop();loadMsgStore();
+      setStatus('seed',`○ Seed · ${companies.length}`);
+      loadAll();
+    } else {
+      currentUser=null;
+      showLoginScreen();
+    }
+  });
 });
