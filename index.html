@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-theme="light">
 <head>
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
@@ -8,146 +8,156 @@
 <link rel="stylesheet" href="hub.css"/>
 </head>
 <body>
-
 <div class="app">
 
-  <!-- ── NAV ── -->
-  <nav class="nav">
+  <!-- ── Nav ── -->
+  <nav class="topnav">
     <div class="nav-logo">oA</div>
-    <span class="nav-brand">Sales Hub <span class="nav-sub">/ onAudience</span></span>
+    <span class="nav-brand">Sales Intelligence Hub <span class="nav-sub">/ onAudience</span></span>
     <div class="nav-status">
       <div class="status-dot" id="statusDot"></div>
-      <span id="statusText">Seed</span>
+      <span id="statusText">Loading…</span>
     </div>
     <div class="nav-right">
-      <button class="btn-skowyt" id="skowytBtn" onclick="skowyt()">
-        <span class="skowyt-ic" id="skowytIc">↓</span>
-        <span id="skowytLbl">Skowyt</span>
-      </button>
-      <button class="btn" id="themeBtn" onclick="toggleTheme()" style="width:26px;padding:0">🌙</button>
+      <button class="btn p sm" onclick="doResearch()">+ Research ↗</button>
+      <button class="theme-btn" onclick="toggleTheme()" id="themeBtn">🌙</button>
     </div>
   </nav>
 
-  <!-- ── STATS BAR ── -->
-  <div class="stats-bar">
-    <div class="sc active" data-f="all" onclick="setFilter('all',this)">
-      <div class="sc-num" id="stAll">—</div>
-      <div class="sc-lbl">Total</div>
+  <!-- ── Page Tabs ── -->
+  <div class="page-tabs">
+    <div class="ptab active" id="ptab-dashboard" onclick="switchPageTab('dashboard')">
+      <span class="ptab-icon">📊</span> Dashboard
+      <span class="ptab-badge" id="ptab-badge-dashboard">—</span>
     </div>
-    <div class="sc" data-f="client" onclick="setFilter('client',this)">
-      <div class="sc-num" id="stClient">—</div>
-      <div class="sc-lbl">Clients</div>
+    <div class="ptab" id="ptab-meeseeks" onclick="switchPageTab('meeseeks')">
+      <span class="ptab-icon">✉️</span> MEESEEKS
+      <span class="ptab-badge">Composer</span>
     </div>
-    <div class="sc" data-f="poc" onclick="setFilter('poc',this)">
-      <div class="sc-num" id="stPoc">—</div>
-      <div class="sc-lbl">POC</div>
-    </div>
-    <div class="sc" data-f="partner" onclick="setFilter('partner',this)">
-      <div class="sc-num" id="stPartner">—</div>
-      <div class="sc-lbl">Partners</div>
-    </div>
-    <div class="sc" data-f="prospect" onclick="setFilter('prospect',this)">
-      <div class="sc-num" id="stProspect">—</div>
-      <div class="sc-lbl">Prospects</div>
-    </div>
-    <div class="sc" data-f="nogo" onclick="setFilter('nogo',this)">
-      <div class="sc-num" id="stNogo">—</div>
-      <div class="sc-lbl">No outreach</div>
-    </div>
-    <div class="sc" data-f="fresh" onclick="setFilter('fresh',this)">
-      <div class="sc-num" id="stFresh">—</div>
-      <div class="sc-lbl">🥩 Fresh meat</div>
+    <div class="ptab" id="ptab-battleground" onclick="switchPageTab('battleground')">
+      <span class="ptab-icon">⚔️</span> Battleground
+      <span class="ptab-badge">Planner</span>
     </div>
   </div>
 
-  <!-- ── PANELS ── -->
-  <div class="panels">
+  <!-- ════════ TAB: DASHBOARD ════════ -->
+  <div class="tab-page active" id="tab-dashboard">
 
-    <!-- LEFT PANEL -->
-    <div class="panel-left">
-
-      <!-- Tab bar -->
-      <div class="tab-bar">
-        <div class="tab active" data-tab="companies" onclick="switchTab('companies')">Companies</div>
-        <div class="tab" data-tab="contacts" onclick="switchTab('contacts')">Contacts</div>
-      </div>
-
-      <!-- Companies sub-panel -->
-      <div id="coPanel" style="display:flex;flex-direction:column;flex:1;overflow:hidden">
-        <div class="panel-search">
-          <div class="search-wrap">
-            <span class="search-ico">⌕</span>
-            <input class="sinp" id="coSearch" placeholder="Search…" oninput="renderList()"/>
-          </div>
-          <button class="btn sm" onclick="doResearch()">↗</button>
-        </div>
-        <div class="filter-pills">
-          <button class="fp active" data-f="all"      onclick="setFilter('all',this)">All</button>
-          <button class="fp"        data-f="client"   onclick="setFilter('client',this)">Clients</button>
-          <button class="fp"        data-f="partner"  onclick="setFilter('partner',this)">Partners</button>
-          <button class="fp"        data-f="prospect" onclick="setFilter('prospect',this)">Prospects</button>
-          <button class="fp"        data-f="poc"      onclick="setFilter('poc',this)">POC</button>
-          <button class="fp"        data-f="nogo"     onclick="setFilter('nogo',this)">No outreach</button>
-          <button class="fp"        data-f="fresh"    onclick="setFilter('fresh',this)">🥩 Fresh</button>
-        </div>
-        <div class="list-meta-bar">
-          <span id="coMeta">Loading…</span>
-          <span id="coSrc"></span>
-        </div>
-        <div class="co-list" id="coList"></div>
-      </div>
-
-      <!-- Contacts sub-panel -->
-      <div id="ctPanel" style="display:none;flex-direction:column;flex:1;overflow:hidden">
-        <div class="panel-search">
-          <div class="search-wrap">
-            <span class="search-ico">⌕</span>
-            <input class="sinp" id="ctSearch" placeholder="Search contacts…" oninput="renderContacts()"/>
-          </div>
-        </div>
-        <div class="list-meta-bar">
-          <span id="ctMeta">—</span>
-        </div>
-        <div class="ct-list" id="ctList"></div>
-      </div>
-
-    </div><!-- /panel-left -->
-
-    <!-- CENTER PANEL -->
-    <div class="panel-center" id="centerPanel">
-      <!-- filled by JS -->
+    <!-- Stats bar -->
+    <div class="stats-bar">
+      <div class="sc active" id="sc-all"      onclick="setFilter('all');setFpActive(document.querySelector('.fp'))">
+        <div class="sc-num" id="st-all">—</div><div class="sc-lbl">All</div></div>
+      <div class="sc" id="sc-client"   onclick="setFilter('client')">
+        <div class="sc-num" id="st-client">—</div><div class="sc-lbl">Clients</div></div>
+      <div class="sc" id="sc-poc"      onclick="setFilter('poc')">
+        <div class="sc-num" id="st-poc">—</div><div class="sc-lbl">Active Deal</div></div>
+      <div class="sc" id="sc-partner"  onclick="setFilter('partner')">
+        <div class="sc-num" id="st-partner">—</div><div class="sc-lbl">Partners</div></div>
+      <div class="sc" id="sc-prospect" onclick="setFilter('prospect')">
+        <div class="sc-num" id="st-prospect">—</div><div class="sc-lbl">Prospects</div></div>
+      <div class="sc" id="sc-nogo"     onclick="setFilter('nogo')">
+        <div class="sc-num" id="st-nogo">—</div><div class="sc-lbl">No Outreach</div></div>
+      <div class="sc" id="sc-fresh"    onclick="setFilter('fresh')">
+        <div class="sc-num" id="st-fresh">—</div><div class="sc-lbl">Fresh Meat 🥩</div></div>
     </div>
 
-  </div><!-- /panels -->
-
-</div><!-- /app -->
-
-<!-- CONTACT DRAWER (outside .app) -->
-<div class="drawer-overlay" id="drawerOverlay" onclick="closeDrawer()"></div>
-<div class="drawer" id="drawer">
-  <div class="drawer-head">
-    <div class="drawer-av" id="drawerAv">??</div>
-    <div style="flex:1;min-width:0">
-      <div class="drawer-name" id="drawerName">—</div>
-      <div class="drawer-title" id="drawerTitle">—</div>
+    <!-- Search strip -->
+    <div class="search-strip">
+      <div class="sbox">
+        <span class="sico">⌕</span>
+        <input class="sinp" id="searchQ" placeholder="Search companies, notes…"
+          oninput="renderList();if(leftTab==='contacts')renderContactsList()"/>
+      </div>
+      <div class="fpills">
+        <button class="fp active" onclick="setFilter('all');setFpActive(this)">All</button>
+        <button class="fp" onclick="setFilter('client');setFpActive(this)">Clients</button>
+        <button class="fp" onclick="setFilter('partner');setFpActive(this)">Partners</button>
+        <button class="fp" onclick="setFilter('prospect');setFpActive(this)">Prospects</button>
+        <button class="fp" onclick="setFilter('poc');setFpActive(this)">Active deal</button>
+        <button class="fp" onclick="setFilter('nogo');setFpActive(this)">No outreach</button>
+      </div>
     </div>
+
+    <!-- Two-panel -->
+    <div class="panels">
+      <div class="panel-left">
+        <!-- Left tabs -->
+        <div class="lp-tabs">
+          <div class="lp-tab active" id="lptab-companies" onclick="switchLeftTab('companies')">Companies</div>
+          <div class="lp-tab" id="lptab-contacts" onclick="switchLeftTab('contacts')">Contacts</div>
+        </div>
+
+        <!-- Companies sub -->
+        <div class="lp-sub active" id="lpsub-companies">
+          <div class="list-meta"><span id="listMeta">—</span><span>click · right-click · drag</span></div>
+          <div class="co-list" id="coList"></div>
+        </div>
+
+        <!-- Contacts sub -->
+        <div class="lp-sub" id="lpsub-contacts">
+          <div class="list-meta"><span id="ctListMeta">—</span><span>click · drag</span></div>
+          <div class="co-list" id="ctList"></div>
+        </div>
+      </div>
+
+      <!-- Center -->
+      <div class="panel-center" id="centerPanel"></div>
+    </div>
+
+  </div><!-- /tab-dashboard -->
+
+  <!-- ════════ TAB: MEESEEKS ════════ -->
+  <div class="tab-page" id="tab-meeseeks">
+    <div class="iframe-shell">
+      <div class="iframe-toolbar">
+        <span class="ptab-icon">✉️</span>
+        <span class="iframe-label">MEESEEKS — Email Composer</span>
+        <span class="iframe-hint">Drag companies or contacts from the Dashboard left panel · or use ✉ buttons</span>
+        <button class="btn sm" onclick="document.getElementById('meeseeks-iframe').src=document.getElementById('meeseeks-iframe').src">↺ Reload</button>
+      </div>
+      <div class="iframe-wrap">
+        <iframe id="meeseeks-iframe" src="" sandbox="allow-scripts allow-same-origin allow-forms allow-popups allow-modals"></iframe>
+      </div>
+    </div>
+  </div>
+
+  <!-- ════════ TAB: BATTLEGROUND ════════ -->
+  <div class="tab-page" id="tab-battleground">
+    <div class="iframe-shell">
+      <div class="iframe-toolbar">
+        <span class="ptab-icon">⚔️</span>
+        <span class="iframe-label">Battleground — Outreach Planner</span>
+        <span class="iframe-hint">Drag companies or contacts in · pick Meeseek · Launch Battle</span>
+        <button class="btn sm" onclick="document.getElementById('battleground-iframe').src=document.getElementById('battleground-iframe').src">↺ Reload</button>
+      </div>
+      <div class="iframe-wrap">
+        <iframe id="battleground-iframe" src="" sandbox="allow-scripts allow-same-origin allow-forms allow-popups allow-modals"></iframe>
+      </div>
+    </div>
+  </div>
+
+</div><!-- /.app -->
+
+<!-- ── Context menu ── -->
+<div id="ctxMenu" class="ctx-menu" style="display:none"></div>
+
+<!-- ── Contact drawer ── -->
+<div id="ctDrawerOverlay" onclick="closeDrawer()"></div>
+<div id="ctDrawer">
+  <div class="drawer-hdr">
+    <div class="drawer-av" id="drawerAv"></div>
+    <div><div class="drawer-name" id="drawerName">—</div><div class="drawer-role" id="drawerRole">—</div></div>
     <button class="drawer-close" onclick="closeDrawer()">✕</button>
   </div>
   <div class="drawer-body" id="drawerBody"></div>
 </div>
 
-<!-- CONTEXT MENU -->
-<div class="ctx" id="ctxMenu"></div>
-
-<!-- TOAST -->
-<div class="toast" id="toast"></div>
-
-<!-- MODAL -->
-<div id="overlay" onclick="if(event.target===this)closeModal()">
+<!-- ── Research modal ── -->
+<div id="overlay">
   <div class="modal-box">
-    <h2 id="modalTitle">Research a company</h2>
-    <p id="modalDesc">Enter company name</p>
-    <textarea id="modalInput" placeholder="Company name…"></textarea>
+    <div class="modal-title" id="modalTitle">Research</div>
+    <div class="modal-desc" id="modalDesc"></div>
+    <textarea class="modal-ta" id="modalInput" placeholder="Company name…"></textarea>
     <div class="modal-actions">
       <button class="btn" onclick="closeModal()">Cancel</button>
       <button class="btn p" onclick="submitModal()">Open in Claude ↗</button>

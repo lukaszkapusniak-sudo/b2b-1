@@ -1,0 +1,531 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>onAudience — Battleground</title>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@300;400;500;600&family=IBM+Plex+Sans:wght@300;400;500;600&display=swap" rel="stylesheet"/>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+[data-theme="light"]{--bg:#F4F2EC;--surf:#FFFFFF;--surf2:#F8F6F0;--surf3:#EFEDE6;--surf4:#E8E6DE;--rule:rgba(0,0,0,0.09);--rule2:rgba(0,0,0,0.05);--rule3:rgba(0,0,0,0.03);--t1:#0C0C0A;--t2:#5C5C56;--t3:#9A9990;--t4:#C8C6BC;--g:#178066;--gd:#0F6E56;--gb:rgba(23,128,102,0.08);--gr:rgba(23,128,102,0.28);--sh:0 1px 2px rgba(0,0,0,0.06),0 4px 12px rgba(0,0,0,0.04)}
+[data-theme="dark"]{--bg:#0C0C0A;--surf:#141412;--surf2:#1C1C1A;--surf3:#242421;--surf4:#2E2E2B;--rule:rgba(255,255,255,0.08);--rule2:rgba(255,255,255,0.05);--rule3:rgba(255,255,255,0.03);--t1:#F0EFE8;--t2:#8A8A82;--t3:#555550;--t4:#38382E;--g:#1FA882;--gd:#178066;--gb:rgba(31,168,130,0.1);--gr:rgba(31,168,130,0.3);--sh:0 1px 3px rgba(0,0,0,0.5),0 6px 20px rgba(0,0,0,0.35)}
+[data-theme="dark"] body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;background-image:linear-gradient(rgba(255,255,255,.016) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.016) 1px,transparent 1px);background-size:40px 40px}
+html,body{height:100%;background:var(--bg);color:var(--t1);font-family:'IBM Plex Sans',sans-serif;font-size:13px;line-height:1.5;overflow:hidden}
+::-webkit-scrollbar{width:3px}::-webkit-scrollbar-thumb{background:var(--surf4);border-radius:2px}
+.app{display:flex;flex-direction:column;height:100vh;overflow:hidden;position:relative;z-index:1}
+/* Nav */
+.nav{background:var(--surf);border-bottom:1px solid var(--rule);display:flex;align-items:center;height:40px;padding:0 14px;gap:10px;flex-shrink:0}
+.nav-logo{width:22px;height:22px;background:var(--g);border-radius:3px;display:flex;align-items:center;justify-content:center;font-family:'IBM Plex Mono',monospace;font-weight:600;font-size:8px;color:#fff}
+.nav-title{font-family:'IBM Plex Mono',monospace;font-size:10px;font-weight:500;letter-spacing:.06em;text-transform:uppercase;color:var(--t1)}
+.nav-sub{color:var(--t3);font-weight:400}
+.nav-status{font-family:'IBM Plex Mono',monospace;font-size:9px;color:var(--t3);display:flex;align-items:center;gap:4px}
+.sdot{width:5px;height:5px;border-radius:50%;background:var(--t4)}
+.sdot.live{background:#22C55E}
+.nav-right{margin-left:auto;display:flex;align-items:center;gap:6px}
+.theme-btn{width:24px;height:24px;border:1px solid var(--rule);border-radius:2px;background:var(--surf2);cursor:pointer;font-size:11px;display:flex;align-items:center;justify-content:center}
+/* Buttons */
+.btn{height:26px;padding:0 10px;border:1px solid var(--rule);border-radius:2px;font-family:'IBM Plex Mono',monospace;font-size:9px;font-weight:500;text-transform:uppercase;letter-spacing:.06em;cursor:pointer;background:var(--surf2);color:var(--t2);transition:all .15s}
+.btn:hover{background:var(--surf3);color:var(--t1)}
+.btn.p{background:var(--g);color:#fff;border-color:var(--g)}
+.btn.p:hover{background:var(--gd)}
+.btn.sm{height:22px;padding:0 7px;font-size:8px}
+.btn.danger{background:#CC2222;color:#fff;border-color:#CC2222}
+.btn:disabled{opacity:.4;cursor:not-allowed}
+.launch-btn{height:32px;padding:0 16px;border:none;border-radius:2px;background:var(--g);color:#fff;font-family:'IBM Plex Mono',monospace;font-size:10px;font-weight:500;text-transform:uppercase;letter-spacing:.08em;cursor:pointer;transition:background .15s}
+.launch-btn:hover{background:var(--gd)}
+.launch-btn:disabled{opacity:.4;cursor:not-allowed}
+/* Layout */
+.main{display:flex;flex:1;overflow:hidden}
+/* Sidebar */
+.sidebar{width:220px;flex-shrink:0;border-right:1px solid var(--rule);background:var(--surf);display:flex;flex-direction:column;overflow:hidden}
+.sidebar-hdr{padding:8px 10px;border-bottom:1px solid var(--rule);display:flex;align-items:center;gap:6px;flex-shrink:0}
+.sidebar-lbl{font-family:'IBM Plex Mono',monospace;font-size:8px;text-transform:uppercase;letter-spacing:.07em;color:var(--t3);flex:1}
+.bg-list{overflow-y:auto;flex:1}
+.bg-item{padding:8px 10px;border-bottom:1px solid var(--rule3);cursor:pointer;transition:background .1s;display:flex;align-items:center;gap:7px}
+.bg-item:hover{background:var(--surf2)}
+.bg-item.active{background:var(--gb);border-left:2px solid var(--g);padding-left:8px}
+.bg-item-icon{font-size:12px;flex-shrink:0}
+.bg-item-info{flex:1;min-width:0}
+.bg-item-name{font-size:12px;font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.bg-item-meta{font-family:'IBM Plex Mono',monospace;font-size:8px;color:var(--t3);margin-top:1px}
+.bg-item-del{opacity:0;width:18px;height:18px;border:none;background:none;cursor:pointer;font-size:10px;color:var(--t3);padding:0;display:flex;align-items:center;justify-content:center;border-radius:2px;transition:all .15s}
+.bg-item:hover .bg-item-del{opacity:1}
+.bg-item-del:hover{background:var(--surf3);color:var(--t1)}
+.bg-empty{padding:24px 12px;text-align:center;font-family:'IBM Plex Mono',monospace;font-size:9px;color:var(--t3);text-transform:uppercase;letter-spacing:.07em}
+/* Editor */
+.editor{flex:1;overflow-y:auto;padding:14px;background:var(--surf2);display:flex;flex-direction:column;gap:10px}
+.editor.empty-editor{align-items:center;justify-content:center}
+.empty-editor-content{text-align:center;color:var(--t3)}
+.empty-big{font-size:40px;opacity:.2;margin-bottom:10px}
+.empty-txt{font-family:'IBM Plex Mono',monospace;font-size:9px;text-transform:uppercase;letter-spacing:.07em}
+.empty-sub{font-size:11px;color:var(--t3);margin-top:6px;max-width:280px}
+/* Sections */
+.section{background:var(--surf);border:1px solid var(--rule);border-radius:2px;overflow:hidden}
+.sec-hdr{padding:6px 12px;border-bottom:1px solid var(--rule);background:var(--surf2);display:flex;align-items:center;gap:6px}
+.sec-lbl{font-family:'IBM Plex Mono',monospace;font-size:9px;font-weight:500;text-transform:uppercase;letter-spacing:.08em;color:var(--t3)}
+.sec-body{padding:10px 12px}
+.lbl{display:block;font-family:'IBM Plex Mono',monospace;font-size:8px;text-transform:uppercase;letter-spacing:.07em;color:var(--t3);margin-bottom:4px}
+.inp,.ta{width:100%;padding:6px 8px;border:1px solid var(--rule);border-radius:2px;background:var(--surf2);color:var(--t1);font-family:'IBM Plex Sans',sans-serif;font-size:12px;outline:none;transition:border-color .15s}
+.inp:focus,.ta:focus{border-color:var(--gr)}
+.ta{min-height:50px;resize:vertical;line-height:1.5}
+.field{margin-bottom:8px}
+.field:last-child{margin-bottom:0}
+.row2{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+/* Meeseeks selector */
+.ms-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:5px}
+.ms-card{border:1px solid var(--rule);border-radius:2px;padding:7px 5px;text-align:center;cursor:pointer;transition:all .15s;background:var(--surf2)}
+.ms-card:hover{background:var(--surf3)}
+.ms-card.active{border-width:2px;background:var(--surf)}
+.ms-icon{font-size:16px;line-height:1;margin-bottom:3px}
+.ms-name{font-family:'IBM Plex Mono',monospace;font-size:7px;text-transform:uppercase;letter-spacing:.05em;color:var(--t2)}
+.ms-tag{font-family:'IBM Plex Mono',monospace;font-size:6px;color:var(--t3);margin-top:1px}
+/* Targets */
+.drop-zone{min-height:70px;border:2px dashed var(--rule);border-radius:2px;padding:10px;transition:all .2s;display:flex;flex-direction:column;gap:5px}
+.drop-zone.over{border-color:var(--g);background:var(--gb)}
+.drop-zone-hint{font-family:'IBM Plex Mono',monospace;font-size:9px;text-transform:uppercase;letter-spacing:.07em;color:var(--t3);text-align:center;padding:12px 0;pointer-events:none}
+.target-chip{display:flex;align-items:center;gap:7px;padding:5px 8px;background:var(--surf2);border:1px solid var(--rule);border-radius:2px}
+.target-av{width:22px;height:22px;border-radius:3px;display:flex;align-items:center;justify-content:center;font-family:'IBM Plex Mono',monospace;font-size:7px;font-weight:700;flex-shrink:0}
+.target-info{flex:1;min-width:0}
+.target-name{font-size:11px;font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.target-meta{font-family:'IBM Plex Mono',monospace;font-size:8px;color:var(--t3)}
+.target-kind{font-family:'IBM Plex Mono',monospace;font-size:7px;text-transform:uppercase;letter-spacing:.05em;padding:1px 5px;border-radius:2px;border:1px solid;flex-shrink:0}
+.target-kind.company{color:#1A4F8A;background:#E6EEFA;border-color:rgba(26,79,138,.28)}
+.target-kind.contact{color:#146B3A;background:#E4F5EC;border-color:rgba(20,107,58,.28)}
+.target-del{width:18px;height:18px;border:none;background:none;cursor:pointer;font-size:10px;color:var(--t3);padding:0;display:flex;align-items:center;justify-content:center;border-radius:2px;flex-shrink:0}
+.target-del:hover{background:var(--surf3);color:var(--t1)}
+/* Actions bar */
+.actions-bar{background:var(--surf);border-top:1px solid var(--rule);padding:8px 14px;display:flex;align-items:center;gap:8px;flex-shrink:0}
+.actions-bar select{height:26px;padding:0 8px;border:1px solid var(--rule);border-radius:2px;background:var(--surf2);color:var(--t2);font-family:'IBM Plex Mono',monospace;font-size:9px;outline:none;cursor:pointer}
+.save-indicator{font-family:'IBM Plex Mono',monospace;font-size:8px;color:var(--t3);margin-right:auto}
+/* Picker modal */
+#pickerModal{display:none;position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:999;align-items:center;justify-content:center;backdrop-filter:blur(4px)}
+#pickerModal.vis{display:flex}
+.picker-box{background:var(--surf);border:1px solid var(--rule);border-radius:4px;width:480px;max-height:80vh;display:flex;flex-direction:column;box-shadow:var(--sh)}
+.picker-hdr{padding:10px 14px;border-bottom:1px solid var(--rule);display:flex;align-items:center;gap:8px}
+.picker-title{font-family:'IBM Plex Mono',monospace;font-size:10px;font-weight:500;text-transform:uppercase;letter-spacing:.07em;flex:1}
+.picker-tabs{display:flex;border-bottom:1px solid var(--rule)}
+.ptab{flex:1;padding:7px 0;font-family:'IBM Plex Mono',monospace;font-size:9px;text-transform:uppercase;letter-spacing:.07em;text-align:center;cursor:pointer;border-bottom:2px solid transparent;color:var(--t3);transition:all .15s}
+.ptab:hover{color:var(--t1);background:var(--surf2)}
+.ptab.active{color:var(--g);border-bottom-color:var(--g)}
+.picker-search{padding:8px}
+.picker-sinp{width:100%;height:28px;padding:0 8px;border:1px solid var(--rule);border-radius:2px;background:var(--surf2);color:var(--t1);font-family:'IBM Plex Mono',monospace;font-size:11px;outline:none}
+.picker-sinp:focus{border-color:var(--gr)}
+.picker-list{flex:1;overflow-y:auto;padding:0 8px 8px}
+.picker-item{display:flex;align-items:center;gap:8px;padding:6px 8px;border-radius:2px;cursor:pointer;transition:background .1s}
+.picker-item:hover{background:var(--surf2)}
+.picker-item.added{opacity:.5;pointer-events:none}
+.picker-av{width:24px;height:24px;border-radius:3px;display:flex;align-items:center;justify-content:center;font-family:'IBM Plex Mono',monospace;font-size:8px;font-weight:600;flex-shrink:0}
+.picker-name{font-size:12px;font-weight:500;flex:1}
+.picker-meta{font-family:'IBM Plex Mono',monospace;font-size:9px;color:var(--t3)}
+.picker-check{font-size:10px;color:var(--g);flex-shrink:0}
+</style>
+</head>
+<body>
+<div class="app">
+
+<nav class="nav">
+  <div class="nav-logo">oA</div>
+  <span class="nav-title">Battleground <span class="nav-sub">/ Planner</span></span>
+  <div class="nav-status">
+    <div class="sdot" id="sdot"></div>
+    <span id="statusTxt">Loading…</span>
+  </div>
+  <div class="nav-right">
+    <button class="theme-btn" onclick="toggleTheme()" id="themeBtn">🌙</button>
+  </div>
+</nav>
+
+<div class="main">
+  <!-- Sidebar -->
+  <div class="sidebar">
+    <div class="sidebar-hdr">
+      <span class="sidebar-lbl">Battlegrounds</span>
+      <button class="btn sm p" onclick="newBg()">+ New</button>
+    </div>
+    <div class="bg-list" id="bgList"></div>
+  </div>
+
+  <!-- Editor + actions -->
+  <div style="flex:1;display:flex;flex-direction:column;overflow:hidden">
+    <div class="editor" id="editor"></div>
+    <div class="actions-bar" id="actionsBar" style="display:none">
+      <span class="save-indicator" id="saveIndicator"></span>
+      <select id="statusSel" onchange="markDirty()">
+        <option value="draft">Draft</option>
+        <option value="active">Active ⚔</option>
+        <option value="paused">Paused ⏸</option>
+        <option value="archived">Archived 📦</option>
+      </select>
+      <button class="btn" onclick="saveBg()">💾 Save</button>
+      <button class="launch-btn" id="launchBtn" disabled onclick="launchBattle()">Launch Battle ⚔</button>
+    </div>
+  </div>
+</div>
+
+</div><!-- /.app -->
+
+<!-- Picker modal -->
+<div id="pickerModal">
+  <div class="picker-box">
+    <div class="picker-hdr">
+      <span class="picker-title">Add Targets</span>
+      <button class="btn sm" onclick="closePicker()">✕</button>
+    </div>
+    <div class="picker-tabs">
+      <div class="ptab active" id="ptab-co" onclick="switchPickerTab('companies')">🏢 Companies</div>
+      <div class="ptab" id="ptab-ct" onclick="switchPickerTab('contacts')">👤 Contacts</div>
+    </div>
+    <div class="picker-search"><input class="picker-sinp" id="pickerQ" placeholder="Search…" oninput="renderPicker()"/></div>
+    <div class="picker-list" id="pickerList"></div>
+  </div>
+</div>
+
+<script>
+'use strict';
+const SB_URL = 'https://nyzkkqqjnkctcmxoirdj.supabase.co';
+const SB_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im55emtrcXFqbmtjdGNteG9pcmRqIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzM4NzMxMzYsImV4cCI6MjA4OTQ0OTEzNn0.jhAq_C68klOp4iTyj9HmsyyvoxsOI6ACld7t_87TAk0';
+const H = { apikey: SB_KEY, Authorization: `Bearer ${SB_KEY}`, 'Content-Type': 'application/json' };
+
+const MEESEEKS = [
+  {id:'jobs',     icon:'🍎',name:'Steve',  tag:'Visionary', color:'#1A1A1A'},
+  {id:'obama',    icon:'🎙',name:'Barack', tag:'Inspiring', color:'#1A4F8A'},
+  {id:'ogilvy',   icon:'📰',name:'David',  tag:'Research',  color:'#146B3A'},
+  {id:'gary',     icon:'⚡',name:'Gary',   tag:'No-BS',     color:'#CC2222'},
+  {id:'bezos',    icon:'📦',name:'Jeff',   tag:'Metrics',   color:'#CC6600'},
+  {id:'thatcher', icon:'🗝',name:'Maggie', tag:'Conviction',color:'#7A4200'},
+  {id:'churchill',icon:'🏛',name:'Winston',tag:'Rallying',  color:'#4B2D9E'},
+  {id:'elon',     icon:'🚀',name:'Elon',   tag:'Disruptive',color:'#4B4B4B'},
+  {id:'maya',     icon:'🌊',name:'Maya',   tag:'Story',     color:'#993556'},
+  {id:'oprah',    icon:'✨',name:'Oprah',  tag:'Authentic', color:'#8B5E3C'},
+];
+
+let battlegrounds = [], cur = null, dirty = false;
+let sbCompanies = [], sbContacts = [];
+let pickerTab = 'companies';
+
+/* ── Avatar ── */
+function av(n) {
+  const p=[['#9FE1CB','#0F6E56'],['#B5D4F4','#1A4F8A'],['#FAC775','#7A4200'],['#C0DD97','#3B6D11'],['#F4C0D1','#993556']];
+  let h=0; for (let c of n) h=(h*31+c.charCodeAt(0))&0xffff; return p[h%p.length];
+}
+function ini(n) { return n.replace(/[^A-Za-z ]/g,'').split(' ').filter(Boolean).map(w=>w[0]).slice(0,2).join('').toUpperCase()||'?'; }
+
+/* ── Supabase ── */
+async function sbGet(path) { const r=await fetch(SB_URL+path,{headers:H}); return r.ok?r.json():null; }
+async function sbUpsert(table, body) {
+  return fetch(`${SB_URL}/rest/v1/${table}`, {
+    method:'POST', headers:{...H, Prefer:'resolution=merge-duplicates,return=minimal'},
+    body: JSON.stringify(body)
+  });
+}
+async function sbDelete(table, id) {
+  return fetch(`${SB_URL}/rest/v1/${table}?id=eq.${id}`, { method:'DELETE', headers:H });
+}
+
+async function loadAll() {
+  try {
+    const [bgs, co, ct] = await Promise.all([
+      sbGet('/rest/v1/battlegrounds?select=*&order=updated_at.desc'),
+      sbGet('/rest/v1/companies?select=*&order=name.asc'),
+      sbGet('/rest/v1/contacts?select=*')
+    ]);
+    if (bgs) battlegrounds = bgs;
+    if (co) sbCompanies = co;
+    if (ct) sbContacts = ct;
+    setStatus('live', `● ${battlegrounds.length} battleground${battlegrounds.length!==1?'s':''}`);
+  } catch(e) { setStatus('seed', '○ Offline'); }
+  renderSidebar();
+  if (battlegrounds.length) openBg(battlegrounds[0].id);
+  else renderEmptyEditor();
+}
+
+function setStatus(mode, txt) {
+  document.getElementById('sdot').className = 'sdot'+(mode==='live'?' live':'');
+  document.getElementById('statusTxt').textContent = txt;
+}
+
+/* ── Battleground CRUD ── */
+function bgStatusIcon(s) { return {draft:'✏️',active:'⚔️',paused:'⏸️',archived:'📦'}[s]||'✏️'; }
+
+function renderSidebar() {
+  const el = document.getElementById('bgList');
+  if (!battlegrounds.length) { el.innerHTML='<div class="bg-empty">No battlegrounds yet</div>'; return; }
+  el.innerHTML = battlegrounds.map(bg => `
+    <div class="bg-item${cur?.id===bg.id?' active':''}" onclick="openBg('${bg.id}')">
+      <span class="bg-item-icon">${bgStatusIcon(bg.status)}</span>
+      <div class="bg-item-info">
+        <div class="bg-item-name">${bg.name||'Untitled'}</div>
+        <div class="bg-item-meta">${(bg.targets||[]).length} targets · ${bg.meeseek_id||'no meeseek'}</div>
+      </div>
+      <button class="bg-item-del" onclick="event.stopPropagation();deleteBg('${bg.id}')">✕</button>
+    </div>`).join('');
+}
+
+function newBg() {
+  cur = { id: null, name: '', goal: '', hook: '', notes: '', meeseek_id: null, targets: [], status: 'draft' };
+  dirty = true;
+  renderEditor();
+  renderSidebar();
+}
+
+function openBg(id) {
+  cur = battlegrounds.find(b=>b.id===id);
+  if (!cur) return;
+  cur.targets = cur.targets || [];
+  dirty = false;
+  renderEditor();
+  renderSidebar();
+}
+
+function renderEmptyEditor() {
+  document.getElementById('actionsBar').style.display = 'none';
+  document.getElementById('editor').innerHTML = `<div class="empty-editor-content"><div class="empty-big">⚔️</div><div class="empty-txt">No battleground selected</div><div class="empty-sub">Create a new battleground to plan your outreach campaign. Drag companies and contacts from the hub, pick a Meeseek, and launch.</div><button class="btn p" style="margin-top:12px" onclick="newBg()">+ New Battleground</button></div>`;
+  document.getElementById('editor').classList.add('empty-editor');
+}
+
+function renderEditor() {
+  if (!cur) { renderEmptyEditor(); return; }
+  document.getElementById('editor').classList.remove('empty-editor');
+  document.getElementById('actionsBar').style.display = 'flex';
+  document.getElementById('statusSel').value = cur.status || 'draft';
+  updateLaunchBtn();
+
+  document.getElementById('editor').innerHTML = `
+    <div class="section">
+      <div class="sec-hdr"><span>⚔️</span><span class="sec-lbl">Identity</span></div>
+      <div class="sec-body">
+        <div class="field"><span class="lbl">Name</span><input class="inp" id="bgName" value="${cur.name||''}" placeholder="e.g. EMEA DSP Push Q2" oninput="cur.name=this.value;markDirty()"/></div>
+        <div class="row2">
+          <div class="field"><span class="lbl">Goal</span><input class="inp" id="bgGoal" value="${cur.goal||''}" placeholder="e.g. 10 new DSP trials" oninput="cur.goal=this.value;markDirty()"/></div>
+          <div class="field"><span class="lbl">Hook</span><input class="inp" id="bgHook" value="${cur.hook||''}" placeholder="e.g. EU data gap" oninput="cur.hook=this.value;markDirty()"/></div>
+        </div>
+        <div class="field"><span class="lbl">Notes</span><textarea class="ta" id="bgNotes" placeholder="Strategy notes, context, objections to handle…" oninput="cur.notes=this.value;markDirty()">${cur.notes||''}</textarea></div>
+      </div>
+    </div>
+
+    <div class="section">
+      <div class="sec-hdr"><span>✉️</span><span class="sec-lbl">Meeseek</span><span style="font-family:'IBM Plex Mono',monospace;font-size:8px;color:var(--t3);margin-left:4px">Pick the persona for this campaign</span></div>
+      <div class="sec-body">
+        <div class="ms-grid" id="msGrid"></div>
+      </div>
+    </div>
+
+    <div class="section">
+      <div class="sec-hdr">
+        <span>🎯</span><span class="sec-lbl">Targets</span>
+        <span style="font-family:'IBM Plex Mono',monospace;font-size:9px;background:var(--surf3);border:1px solid var(--rule);border-radius:2px;padding:1px 5px;color:var(--t3)" id="targetCount">${cur.targets.length}</span>
+        <button class="btn sm" style="margin-left:auto" onclick="openPicker()">+ Add</button>
+      </div>
+      <div class="sec-body" style="padding:8px">
+        <div class="drop-zone" id="dropZone"
+          ondragover="event.preventDefault();this.classList.add('over')"
+          ondragleave="this.classList.remove('over')"
+          ondrop="handleDrop(event)">
+          <div class="drop-zone-hint" id="dropHint" ${cur.targets.length?'style="display:none"':''}>Drag companies or contacts here — or click + Add</div>
+          ${cur.targets.map((t,i) => renderTargetChip(t, i)).join('')}
+        </div>
+      </div>
+    </div>`;
+
+  buildMsGrid();
+  updateSaveIndicator();
+}
+
+function renderTargetChip(t, i) {
+  const [bg,fg] = av(t.name);
+  return `<div class="target-chip">
+    <div class="target-av" style="background:${bg};color:${fg}">${ini(t.name)}</div>
+    <div class="target-info"><div class="target-name">${t.name}</div>${t.meta?`<div class="target-meta">${t.meta}</div>`:''}${t.company&&t.kind==='contact'?`<div class="target-meta">@ ${t.company}</div>`:''}</div>
+    <span class="target-kind ${t.kind}">${t.kind}</span>
+    <button class="target-del" onclick="removeTarget(${i})">✕</button>
+  </div>`;
+}
+
+function buildMsGrid() {
+  const el = document.getElementById('msGrid');
+  if (!el) return;
+  el.innerHTML = MEESEEKS.map(m =>
+    `<div class="ms-card${cur?.meeseek_id===m.id?' active':''}" id="msc-${m.id}" onclick="selectMs('${m.id}')" title="${m.tag}" ${cur?.meeseek_id===m.id?`style="border-color:${m.color};color:${m.color}"`:''}>
+      <div class="ms-icon">${m.icon}</div>
+      <div class="ms-name">${m.name}</div>
+      <div class="ms-tag">${m.tag}</div>
+    </div>`
+  ).join('');
+}
+
+function selectMs(id) {
+  if (!cur) return;
+  cur.meeseek_id = cur.meeseek_id===id ? null : id;
+  markDirty();
+  buildMsGrid();
+  updateLaunchBtn();
+}
+
+function addTarget(item) {
+  if (!cur) newBg();
+  const exists = cur.targets.find(t=>t.uid===item.uid&&t.kind===item.kind);
+  if (exists) return;
+  cur.targets.push(item);
+  markDirty();
+  updateTargetDisplay();
+}
+
+function removeTarget(idx) {
+  cur.targets.splice(idx, 1);
+  markDirty();
+  updateTargetDisplay();
+}
+
+function updateTargetDisplay() {
+  const zone = document.getElementById('dropZone');
+  const hint = document.getElementById('dropHint');
+  const count = document.getElementById('targetCount');
+  if (!zone) return;
+  if (hint) hint.style.display = cur.targets.length ? 'none' : '';
+  if (count) count.textContent = cur.targets.length;
+  // re-render chips
+  const chips = zone.querySelectorAll('.target-chip');
+  chips.forEach(c=>c.remove());
+  cur.targets.forEach((t,i) => zone.insertAdjacentHTML('beforeend', renderTargetChip(t, i)));
+  updateLaunchBtn();
+}
+
+function handleDrop(e) {
+  e.preventDefault();
+  e.currentTarget.classList.remove('over');
+  let data; try { data=JSON.parse(e.dataTransfer.getData('application/json')); } catch { return; }
+  addTarget({uid:data.name||data.uid, kind:data.kind, name:data.name, meta:data.meta||'', company:data.company||''});
+}
+
+/* ── Save ── */
+function markDirty() { dirty=true; updateSaveIndicator(); }
+function updateSaveIndicator() {
+  const el = document.getElementById('saveIndicator');
+  if (el) el.textContent = dirty ? '● Unsaved changes' : '✓ Saved';
+}
+
+async function saveBg() {
+  if (!cur) return;
+  cur.name = document.getElementById('bgName')?.value.trim() || cur.name;
+  cur.goal = document.getElementById('bgGoal')?.value.trim() || cur.goal;
+  cur.hook = document.getElementById('bgHook')?.value.trim() || cur.hook;
+  cur.notes = document.getElementById('bgNotes')?.value || cur.notes;
+  cur.status = document.getElementById('statusSel')?.value || cur.status;
+  const payload = { name:cur.name, goal:cur.goal, hook:cur.hook, notes:cur.notes,
+    meeseek_id:cur.meeseek_id, targets:cur.targets, status:cur.status };
+  if (cur.id) {
+    await fetch(`${SB_URL}/rest/v1/battlegrounds?id=eq.${cur.id}`, {
+      method:'PATCH', headers:H, body:JSON.stringify(payload)
+    });
+  } else {
+    const r = await fetch(`${SB_URL}/rest/v1/battlegrounds`, {
+      method:'POST', headers:{...H, Prefer:'return=representation'}, body:JSON.stringify(payload)
+    });
+    const d = await r.json(); if (d?.[0]?.id) cur.id = d[0].id;
+    battlegrounds.unshift(cur);
+  }
+  dirty = false; updateSaveIndicator();
+  const idx = battlegrounds.findIndex(b=>b.id===cur.id);
+  if (idx>=0) battlegrounds[idx] = {...battlegrounds[idx], ...payload};
+  renderSidebar();
+}
+
+async function deleteBg(id) {
+  if (!confirm('Delete this battleground?')) return;
+  await sbDelete('battlegrounds', id);
+  battlegrounds = battlegrounds.filter(b=>b.id!==id);
+  if (cur?.id===id) { cur=null; renderEmptyEditor(); }
+  renderSidebar();
+}
+
+function updateLaunchBtn() {
+  const btn = document.getElementById('launchBtn');
+  if (btn) btn.disabled = !cur || !cur.meeseek_id || !cur.targets.length;
+}
+
+/* ── Launch Battle ── */
+function launchBattle() {
+  if (!cur || !cur.meeseek_id || !cur.targets.length) return;
+  const ms = MEESEEKS.find(m=>m.id===cur.meeseek_id);
+  const payload = cur.targets.map(t => ({
+    company:    t.kind==='company' ? t.name : t.company,
+    contactName: t.kind==='contact' ? t.name : '',
+    contactTitle: t.meta || '',
+    description: cur.hook || cur.notes || '',
+    angle: cur.hook || '',
+    meeseekId: cur.meeseek_id,
+    meeseekName: ms?.name || '',
+  }));
+  window.parent?.postMessage({ type: 'LAUNCH_BATTLE', payload: payload.length===1?payload[0]:payload }, '*');
+}
+
+/* ── Picker ── */
+function openPicker() {
+  document.getElementById('pickerModal').classList.add('vis');
+  document.getElementById('pickerQ').value = '';
+  renderPicker();
+}
+function closePicker() { document.getElementById('pickerModal').classList.remove('vis'); }
+function switchPickerTab(tab) {
+  pickerTab = tab;
+  document.querySelectorAll('#pickerModal .ptab').forEach(t=>t.classList.remove('active'));
+  document.getElementById('ptab-'+(tab==='companies'?'co':'ct')).classList.add('active');
+  renderPicker();
+}
+function renderPicker() {
+  const q = (document.getElementById('pickerQ').value||'').toLowerCase();
+  const list = pickerTab==='companies' ? sbCompanies : sbContacts;
+  const el = document.getElementById('pickerList');
+  const filtered = list.filter(item => {
+    const hay = pickerTab==='companies' ? (item.name||'') : ((item.full_name||'')+' '+(item.company_name||'')+(item.title||''));
+    return !q || hay.toLowerCase().includes(q);
+  }).slice(0, 60);
+  el.innerHTML = filtered.map(item => {
+    const name = pickerTab==='companies' ? item.name : item.full_name;
+    const meta = pickerTab==='companies' ? (item.category||item.note||'') : (item.title||'')+(item.company_name?' · '+item.company_name:'');
+    const [bg,fg] = av(name||'?');
+    const uid = name||'?';
+    const added = (cur?.targets||[]).some(t=>t.uid===uid);
+    return `<div class="picker-item${added?' added':''}" onclick="pickerAdd('${(name||'').replace(/'/g,"\\'")}','${(meta||'').replace(/'/g,"\\'")}','${(item.company_name||'').replace(/'/g,"\\'")}')">
+      <div class="picker-av" style="background:${bg};color:${fg}">${ini(name||'?')}</div>
+      <div style="flex:1;min-width:0"><div class="picker-name">${name||'—'}</div><div class="picker-meta">${meta}</div></div>
+      ${added?'<span class="picker-check">✓</span>':''}
+    </div>`;
+  }).join('') || '<div style="padding:20px;text-align:center;font-family:IBM Plex Mono,monospace;font-size:9px;color:var(--t3);text-transform:uppercase">No results</div>';
+}
+function pickerAdd(name, meta, company) {
+  addTarget({uid:name, kind:pickerTab==='companies'?'company':'contact', name, meta, company: company||name});
+  renderPicker();
+}
+
+/* ── postMessage ── */
+window.addEventListener('message', e => {
+  const d = e.data; if (!d||!d.type) return;
+  if (d.type === 'ADD_TO_BATTLEGROUND') {
+    if (!d.payload?.name) return;
+    if (!cur) newBg();
+    addTarget({uid:d.payload.uid||d.payload.name, kind:d.payload.kind||'company', name:d.payload.name, meta:d.payload.meta||'', company:d.payload.company||''});
+  }
+  if (d.type === 'COMPOSE_PREFILL') {
+    const arr = Array.isArray(d.payload) ? d.payload : [d.payload];
+    if (!cur) newBg();
+    arr.forEach(p => {
+      if (p?.company) addTarget({uid:p.company, kind:'company', name:p.company, meta:p.description||p.note||'', company:p.company});
+      if (p?.contactName) addTarget({uid:p.contactName, kind:'contact', name:p.contactName, meta:p.contactTitle||'', company:p.company||''});
+    });
+  }
+  if (d.type === 'THEME_SYNC') setTheme(d.payload?.theme);
+});
+
+/* ── Theme ── */
+let theme = localStorage.getItem('oaTheme')||'light';
+function setTheme(t) { theme=t; document.documentElement.setAttribute('data-theme',t); localStorage.setItem('oaTheme',t); document.getElementById('themeBtn').textContent=t==='dark'?'☀️':'🌙'; }
+function toggleTheme() { setTheme(theme==='light'?'dark':'light'); }
+document.documentElement.setAttribute('data-theme', theme);
+
+/* ── Boot ── */
+document.getElementById('themeBtn').textContent = theme==='dark'?'☀️':'🌙';
+loadAll();
+</script>
+</body>
+</html>
