@@ -378,7 +378,8 @@ function startDrag(e,enc,kind){
   e.dataTransfer.setData('application/json',JSON.stringify({
     uid:name,kind,name,meta:c?.note||ct?.title||'',company:ct?.company_name||name,
     category:c?.category||'',region:c?.region||'',icp:c?.icp||null,
-    note:c?.note||'',contacts:cts.map(x=>({name:x.full_name,title:x.title,email:x.email}))
+    note:c?.note||'',
+    contacts:cts.map(x=>({name:x.full_name,title:x.title,email:x.email,linkedin_url:x.linkedin_url||''}))
   }));
   e.dataTransfer.effectAllowed='copy';
 }
@@ -874,8 +875,9 @@ function launchFromBattleground(){
 /* ── Targets ── */
 function renderTargetChip(t,i){
   const [bg,fg]=av(t.name||'?');
-  const icon=t.kind==='contact'?'👤':(catIcon(t.category)||'🏢');
-  const meta=t.category?`${catIcon(t.category)} ${t.category}${t.region?' · '+t.region:''}`:t.meta||'';
+  const meta=t.kind==='contact'
+    ? (t.meta||'')+(t.email?` · ${t.email}`:'')
+    : t.category?`${catIcon(t.category)} ${t.category}${t.region?' · '+t.region:''}`:t.meta||'';
   return `<div class="target-chip">
     <div class="target-av" style="background:${bg};color:${fg}">${ini(t.name||'?')}</div>
     <div class="target-info"><div class="target-name">${t.name||'?'}</div>${meta?`<div class="target-meta">${meta}</div>`:''}</div>
@@ -887,7 +889,32 @@ function renderTargetChip(t,i){
 function addTarget(item){
   if(!cur)return;
   if(cur.targets.find(t=>t.uid===item.uid&&t.kind===item.kind))return;
-  cur.targets.push(item);markBgDirty();refreshBgTargets();
+  cur.targets.push(item);
+
+  // When adding a company, also add all its known contacts as individual targets
+  if(item.kind==='company'&&item.contacts?.length){
+    item.contacts.forEach(ct=>{
+      if(!ct.name) return;
+      const uid=ct.name;
+      if(cur.targets.find(t=>t.uid===uid&&t.kind==='contact')) return;
+      // Enrich from contacts DB if available
+      const dbCt=contacts.find(c=>c.full_name===ct.name);
+      cur.targets.push({
+        uid,kind:'contact',name:ct.name,
+        meta:ct.title||dbCt?.title||'',
+        company:item.name,
+        category:item.category||'',
+        region:item.region||'',
+        icp:item.icp||null,
+        note:dbCt?.notes||'',
+        contacts:[],
+        email:ct.email||dbCt?.email||'',
+        linkedin_url:ct.linkedin_url||dbCt?.linkedin_url||'',
+      });
+    });
+  }
+
+  markBgDirty();refreshBgTargets();
   // Auto-suggest identity context on first target if fields empty and API key set
   if(cur.targets.length===1&&apiKey&&!cur.name&&!cur.goal&&!cur.hook){
     suggestBgContext();
