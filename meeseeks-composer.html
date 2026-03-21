@@ -275,14 +275,26 @@ Rules:
 - No generic adtech jargon
 - Body starts directly, no greeting line needed unless contact name is known`;
 
+  const PROXY = 'https://nyzkkqqjnkctcmxoirdj.supabase.co/functions/v1/claude-proxy';
+  const SB_ANON = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im55emtrcXFqbmtjdGNteG9pcmRqIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzM4NzMxMzYsImV4cCI6MjA4OTQ0OTEzNn0.jhAq_C68klOp4iTyj9HmsyyvoxsOI6ACld7t_87TAk0';
+
   try {
-    const res = await fetch('https://nyzkkqqjnkctcmxoirdj.supabase.co/functions/v1/claude-proxy', {
+    const res = await fetch(PROXY, {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json', 'x-client-api-key': apiKey },
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${SB_ANON}`,
+        'apikey': SB_ANON,
+        'x-client-api-key': apiKey,
+      },
       body: JSON.stringify({ model: 'claude-sonnet-4-20250514', max_tokens: 1000, messages: [{ role: 'user', content: prompt }] })
     });
-    if (!res.ok) throw new Error('API error: ' + res.status);
+    if (!res.ok) {
+      const errBody = await res.text();
+      throw new Error(`HTTP ${res.status}: ${errBody}`);
+    }
     const data = await res.json();
+    if (data.error) throw new Error(data.error);
     const text = data.content?.[0]?.text || '';
     renderOutput(text, company, contact, selectedMs);
   } catch(err) {
