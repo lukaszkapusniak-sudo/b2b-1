@@ -179,6 +179,13 @@ html,body{height:100%;background:var(--bg);color:var(--t1);
 .ct-dot.partial{background:var(--prc)}
 .ct-dot.empty{background:var(--t4)}
 
+/* Contact target-toggle button */
+.ct-bg-toggle{width:18px;height:18px;border:1px solid var(--rule);border-radius:50%;
+  background:none;cursor:pointer;font-size:9px;font-weight:600;color:var(--t4);
+  display:flex;align-items:center;justify-content:center;flex-shrink:0;
+  transition:all .12s;font-family:'IBM Plex Mono',monospace;line-height:1}
+.ct-bg-toggle:hover{border-color:var(--g);color:var(--g);background:var(--gb)}
+.ct-bg-toggle.in-bg{border-color:var(--g);background:var(--g);color:#fff}
 /* Contact rows */
 .ct-row{display:flex;align-items:center;gap:7px;padding:5px 8px;
   border-bottom:1px solid var(--rule3);cursor:pointer;transition:background .1s}

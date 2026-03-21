@@ -281,13 +281,36 @@ function renderContactsList(){
     const uid=ct.id||ct.full_name||'';
     const enc=encodeURIComponent(uid);
     const cbSel=selection.has(uid)?' cb-selected':'';
+    // Target toggle: show when a battleground is open
+    const inBg=cur&&cur.targets.some(t=>t.uid===uid&&t.kind==='contact');
+    const bgToggle=cur?`<button class="ct-bg-toggle${inBg?' in-bg':''}" title="${inBg?'Remove from battleground':'Add to battleground'}" onclick="toggleContactInBg('${enc}',event)">${inBg?'✓':'⊕'}</button>`:'';
+    const coIcon=catIcon(companies.find(c=>c.name.toLowerCase()===ct.company_name?.toLowerCase())?.category||'');
     return `<div class="ct-row${cbSel}" draggable="true" ondragstart="startDrag(event,'${enc}','contact')" onclick="openContactDrawer('${enc}')">
       <div class="co-cb${selection.has(uid)?' checked':''}" onclick="toggleSelect('${enc}','contact',event)"></div>
       <div class="ct-row-av">${ini(ct.full_name||'?')}</div>
       <div class="ct-row-info"><div class="ct-row-name">${ct.full_name||'—'}</div>
-      <div class="ct-row-sub">${ct.title||''}${ct.title&&ct.company_name?' · ':''}${ct.company_name?catIcon(companies.find(c=>c.name.toLowerCase()===ct.company_name?.toLowerCase())?.category||'')+' '+ct.company_name:''}</div></div>
+      <div class="ct-row-sub">${ct.title||''}${ct.title&&ct.company_name?' · ':''}${ct.company_name?coIcon+' '+ct.company_name:''}</div></div>
+      ${bgToggle}
       <div class="ct-dot ${dotCls}" title="${pct}%"></div></div>`;
   }).join('');
+}
+
+function toggleContactInBg(enc,event){
+  event&&event.stopPropagation();
+  if(!cur)return;
+  const uid=decodeURIComponent(enc);
+  const already=cur.targets.findIndex(t=>t.uid===uid&&t.kind==='contact');
+  if(already>=0){
+    cur.targets.splice(already,1);markBgDirty();refreshBgTargets();
+  }else{
+    const ct=contacts.find(c=>(c.id||c.full_name||'')===uid)||contacts.find(c=>c.full_name===uid);
+    if(!ct)return;
+    const coCat=companies.find(c=>c.name.toLowerCase()===ct.company_name?.toLowerCase())?.category||'';
+    addTarget({uid,kind:'contact',name:ct.full_name||uid,meta:ct.title||'',
+      company:ct.company_name||'',category:coCat,region:'',
+      icp:null,note:ct.notes||'',contacts:[]});
+  }
+  renderContactsList(); // re-render to flip the button state
 }
 
 function switchLeftTab(tab){
@@ -881,6 +904,8 @@ function refreshBgTargets(){
   }
   updateMeeseeksBtn();
   renderHistoryPanel();
+  // Re-render contact list if visible to sync ⊕/✓ toggle state
+  if(leftTab==='contacts') renderContactsList();
 }
 
 function handleBgDrop(e){
@@ -897,6 +922,12 @@ async function saveBg(){
   cur.hook  =document.getElementById('bgHook')?.value.trim()||cur.hook;
   cur.notes =document.getElementById('bgNotes')?.value||cur.notes;
   cur.status=document.getElementById('statusSel')?.value||cur.status;
+
+  // Auto-generate witty goal + hook if either is blank and we have targets
+  if(apiKey&&cur.targets.length&&(!cur.goal||!cur.hook)){
+    await autoFillGoalHook();
+  }
+
   const histEntry={action:cur.id?'saved':'created',ts:new Date().toISOString(),name:cur.name,targets:cur.targets.length,opps:cur.opportunities.length};
   cur.history=[...(cur.history||[]),histEntry];cur.save_count=(cur.save_count||0)+1;
   const payload={name:cur.name,goal:cur.goal,hook:cur.hook,notes:cur.notes,targets:cur.targets,opportunities:cur.opportunities,selectedOpps:[...selectedOpps],status:cur.status,history:cur.history,save_count:cur.save_count};
@@ -915,6 +946,42 @@ async function saveBg(){
     bgDirty=false;updateBgSaveInd();
     renderBgList();renderHistoryPanel();
   }catch(err){console.error('saveBg:',err);alert('Save failed: '+err.message);}
+}
+
+async function autoFillGoalHook(){
+  const ctx=cur.targets.map(t=>`${t.name}${t.category?' ('+t.category+')':''}${t.region?' '+t.region:''}`).join(', ');
+  const needGoal=!cur.goal, needHook=!cur.hook;
+  const fields=[];
+  if(needGoal) fields.push('"goal": "witty 6-8 word campaign goal, specific, with a number if possible"');
+  if(needHook) fields.push('"hook": "sharp one-liner angle — the single best reason these targets need onAudience data right now"');
+
+  const prompt=`You are writing a sales campaign for onAudience (sells behavioral, B2B, CTV, brand-affinity segments to programmatic buyers).
+
+Targets: ${ctx}
+${cur.notes?'Context: '+cur.notes:''}
+
+Generate ONLY what's requested. Be specific to the targets — witty but professional, no fluff.
+Respond with JSON only:
+{${fields.join(',\n')}}`;
+
+  try{
+    const res=await fetch(PROXY,{method:'POST',
+      headers:{'Content-Type':'application/json','Authorization':`Bearer ${SB_KEY}`,'apikey':SB_KEY,'x-client-api-key':apiKey},
+      body:JSON.stringify({model:'claude-sonnet-4-20250514',max_tokens:200,messages:[{role:'user',content:prompt}]})
+    });
+    if(!res.ok) return;
+    const data=await res.json();
+    const raw=(data.content?.[0]?.text||'{}').replace(/```json?|```/g,'').trim();
+    const gen=JSON.parse(raw);
+    if(needGoal&&gen.goal){
+      cur.goal=gen.goal;
+      const el=document.getElementById('bgGoal');if(el)el.value=gen.goal;
+    }
+    if(needHook&&gen.hook){
+      cur.hook=gen.hook;
+      const el=document.getElementById('bgHook');if(el)el.value=gen.hook;
+    }
+  }catch(e){console.warn('autoFillGoalHook:',e);}
 }
 
 async function deleteBg(id){
