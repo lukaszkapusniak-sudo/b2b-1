@@ -420,9 +420,6 @@ body.ai-open .body .center{transition:none}
 /* ══════════════════════════════════════════
    MEESEEKS — TAG STATE
 ══════════════════════════════════════════ */
-MS.tags = [];       // { id, label, value, cat, on }
-MS.contact = {};    // { name, title, email, company }
-
 function msBuildTags(ctx) {
   const tags = [];
   const c = window.currentCompany || {};
@@ -669,6 +666,9 @@ const MS = {
   selected: null,
   context: {}
 };
+MS.tags = [];       // { id, label, value, cat, on }
+MS.contact = {};    // { name, title, email, company }
+MS.selected = null;
 
 function msInit() {
   const grid = document.getElementById('ms-persona-grid');
@@ -2207,13 +2207,16 @@ loadFromSupabase();
 <!-- HUB PATCH v11 -->
 <script>
 // HUB PATCH v11
+const _SB = 'https://nyzkkqqjnkctcmxoirdj.supabase.co';
+const _SK = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im55emtrcXFqbmtjdGNteG9pcmRqIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzM4NzMxMzYsImV4cCI6MjA4OTQ0OTIzNn0.jhAq_C68klOp4iTyj9HmsyyvoxsOI6ACld7t_87TAk0';
+window.SB_URL = _SB; window.SB_KEY = _SK;
 
 window.loadFromSupabase = async function() {
   document.getElementById('statusLabel').textContent = 'Connecting…';
   try {
     const resp = await Promise.race([
-      fetch(`${SB_URL}/rest/v1/companies?select=*&order=name.asc`, {
-        headers: { apikey: SB_KEY, Authorization: `Bearer ${SB_KEY}` }
+      fetch(`${_SB}/rest/v1/companies?select=*&order=name.asc`, {
+        headers: { apikey: _SK, Authorization: `Bearer ${_SK}` }
       }),
       new Promise((_,r) => setTimeout(() => r(new Error('timeout')), 8000))
     ]);
@@ -2221,8 +2224,8 @@ window.loadFromSupabase = async function() {
     const rows = await resp.json();
 
     // Also load contacts
-    const cresp = await fetch(`${SB_URL}/rest/v1/contacts?select=*&order=full_name.asc`, {
-      headers: { apikey: SB_KEY, Authorization: `Bearer ${SB_KEY}` }
+    const cresp = await fetch(`${_SB}/rest/v1/contacts?select=*&order=full_name.asc`, {
+      headers: { apikey: _SK, Authorization: `Bearer ${_SK}` }
     });
     contacts = cresp.ok ? await cresp.json() : [...SEED_CONTACTS];
 
@@ -2267,15 +2270,15 @@ window.loadContacts = async function(slug) {
   if (!body) return;
   try {
     const res = await fetch(
-      `${SB_URL}/rest/v1/contacts?company_id=eq.${encodeURIComponent(slug)}&select=*&order=created_at.asc`,
-      { headers: { apikey: SB_KEY, Authorization: `Bearer ${SB_KEY}` } }
+      `${_SB}/rest/v1/contacts?company_id=eq.${encodeURIComponent(slug)}&select=*&order=created_at.asc`,
+      { headers: { apikey: _SK, Authorization: `Bearer ${_SK}` } }
     );
     const rows = await res.json();
     const cname = window.currentCompany?.name || '';
     // Also match by company name directly
     const res2 = await fetch(
-      `${SB_URL}/rest/v1/contacts?company_name=ilike.${encodeURIComponent('%25'+cname+'%25')}&select=*`,
-      { headers: { apikey: SB_KEY, Authorization: `Bearer ${SB_KEY}` } }
+      `${_SB}/rest/v1/contacts?company_name=ilike.${encodeURIComponent('%25'+cname+'%25')}&select=*`,
+      { headers: { apikey: _SK, Authorization: `Bearer ${_SK}` } }
     );
     const rows2 = await res2.json();
     // Merge, deduplicate by id
@@ -2321,8 +2324,8 @@ window.loadTechStack = async function(slug, openRescan) {
 
   try {
     const r = await fetch(
-      `${SB_URL}/rest/v1/companies?id=eq.${slug}&select=tech_stack,products,last_enriched_at`,
-      { headers: { apikey: SB_KEY, Authorization: `Bearer ${SB_KEY}` } }
+      `${_SB}/rest/v1/companies?id=eq.${slug}&select=tech_stack,products,last_enriched_at`,
+      { headers: { apikey: _SK, Authorization: `Bearer ${_SK}` } }
     );
     const rows = await r.json();
     if (!rows?.length) return;
@@ -2409,7 +2412,7 @@ window.saveAIResult = async function() {
   statusEl.textContent = 'Saving…';
 
   const results = [];
-  const headers = { 'Content-Type': 'application/json', apikey: SB_KEY, Authorization: `Bearer ${SB_KEY}`, Prefer: 'resolution=merge-duplicates,return=minimal' };
+  const headers = { 'Content-Type': 'application/json', apikey: _SK, Authorization: `Bearer ${_SK}`, Prefer: 'resolution=merge-duplicates,return=minimal' };
 
   // Canonical ID overrides — AI sometimes generates wrong slugs for known companies
   const ID_OVERRIDES = {
@@ -2439,14 +2442,14 @@ window.saveAIResult = async function() {
     try {
       // Check by ID first, then by name — catches AI using wrong slug for existing company
       let existingData = [];
-      const byId = await fetch(`${SB_URL}/rest/v1/companies?id=eq.${co.id}&select=id,name,type`, {
-        headers: { apikey: SB_KEY, Authorization: `Bearer ${SB_KEY}` }
+      const byId = await fetch(`${_SB}/rest/v1/companies?id=eq.${co.id}&select=id,name,type`, {
+        headers: { apikey: _SK, Authorization: `Bearer ${_SK}` }
       });
       existingData = await byId.json();
       if (!existingData.length) {
         // Also check by name — catches slug mismatches
-        const byName = await fetch(`${SB_URL}/rest/v1/companies?name=eq.${encodeURIComponent(co.name)}&select=id,name,type`, {
-          headers: { apikey: SB_KEY, Authorization: `Bearer ${SB_KEY}` }
+        const byName = await fetch(`${_SB}/rest/v1/companies?name=eq.${encodeURIComponent(co.name)}&select=id,name,type`, {
+          headers: { apikey: _SK, Authorization: `Bearer ${_SK}` }
         });
         const byNameData = await byName.json();
         if (byNameData.length) {
@@ -2470,12 +2473,12 @@ window.saveAIResult = async function() {
           if (!confirmed) {
             results.push(`Company ${co.name}: ⏭ skipped (existing)`);
           } else {
-            const r = await fetch(`${SB_URL}/rest/v1/companies`, { method: 'POST', headers, body: JSON.stringify(co) });
+            const r = await fetch(`${_SB}/rest/v1/companies`, { method: 'POST', headers, body: JSON.stringify(co) });
             results.push(`Company ${co.name}: ${r.ok ? '✅ updated' : '❌ '+r.status}`);
           }
         }
       } else {
-        const r = await fetch(`${SB_URL}/rest/v1/companies`, { method: 'POST', headers, body: JSON.stringify(co) });
+        const r = await fetch(`${_SB}/rest/v1/companies`, { method: 'POST', headers, body: JSON.stringify(co) });
         results.push(`Company ${co.name}: ${r.ok ? '✅ created' : '❌ '+r.status}`);
       }
     } catch(e) { results.push(`Company error: ${e.message}`); }
@@ -2485,7 +2488,7 @@ window.saveAIResult = async function() {
   for (const ct of (data.contacts || [])) {
     if (!ct.id) continue;
     try {
-      const r = await fetch(`${SB_URL}/rest/v1/contacts`, {
+      const r = await fetch(`${_SB}/rest/v1/contacts`, {
         method: 'POST', headers,
         body: JSON.stringify({ ...ct, updated_at: new Date().toISOString() })
       });
@@ -2503,7 +2506,7 @@ window.saveAIResult = async function() {
   for (const rel of (data.relations || [])) {
     if (!rel.from_company || !rel.to_company) continue;
     try {
-      const r = await fetch(`${SB_URL}/rest/v1/company_relations`, {
+      const r = await fetch(`${_SB}/rest/v1/company_relations`, {
         method: 'POST',
         headers: { ...headers, Prefer: 'resolution=ignore-duplicates,return=minimal' },
         body: JSON.stringify(rel)
@@ -2517,10 +2520,10 @@ window.saveAIResult = async function() {
     let slug = resolveSlug(_aiCompany) || data.company?.id || '';
     if (slug) {
       try {
-        await fetch(`${SB_URL}/rest/v1/intelligence?company_id=eq.${slug}&type=eq.press_links`, {
+        await fetch(`${_SB}/rest/v1/intelligence?company_id=eq.${slug}&type=eq.press_links`, {
           method: 'DELETE', headers
         });
-        const r = await fetch(`${SB_URL}/rest/v1/intelligence`, {
+        const r = await fetch(`${_SB}/rest/v1/intelligence`, {
           method: 'POST', headers,
           body: JSON.stringify({ company_id: slug, type: 'press_links', content: data.press_links, source: 'ai_drawer' })
         });
@@ -2557,8 +2560,8 @@ window.loadRelations = async function(slug) {
   if (!body) return;
   try {
     const res  = await fetch(
-      `${SB_URL}/rest/v1/company_relations?or=(from_company.eq.${slug},to_company.eq.${slug})&select=*`,
-      { headers: { apikey: SB_KEY, Authorization: `Bearer ${SB_KEY}` } }
+      `${_SB}/rest/v1/company_relations?or=(from_company.eq.${slug},to_company.eq.${slug})&select=*`,
+      { headers: { apikey: _SK, Authorization: `Bearer ${_SK}` } }
     );
     const rels = await res.json();
     if (!Array.isArray(rels) || !rels.length) {
@@ -2620,8 +2623,8 @@ window.loadIntelligence = async function(slug) {
   if (!body) return;
   try {
     const res = await fetch(
-      `${SB_URL}/rest/v1/intelligence?company_id=eq.${slug}&type=eq.press_links&select=*&limit=1`,
-      { headers: { apikey: SB_KEY, Authorization: `Bearer ${SB_KEY}` } }
+      `${_SB}/rest/v1/intelligence?company_id=eq.${slug}&type=eq.press_links&select=*&limit=1`,
+      { headers: { apikey: _SK, Authorization: `Bearer ${_SK}` } }
     );
     const rows = await res.json();
     if (!Array.isArray(rows) || !rows.length || !rows[0].content) {
@@ -2714,10 +2717,10 @@ window.doMerge = async function(dupSlug, canonSlug, canonName) {
 
   try {
     const r = await fetch(
-      `${SB_URL}/rest/v1/rpc/merge_company`,
+      `${_SB}/rest/v1/rpc/merge_company`,
       {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json', apikey: SB_KEY, Authorization: `Bearer ${SB_KEY}` },
+        headers: { 'Content-Type': 'application/json', apikey: _SK, Authorization: `Bearer ${_SK}` },
         body: JSON.stringify({ duplicate_id: dupSlug, canonical_id: canonSlug })
       }
     );
@@ -2752,6 +2755,7 @@ window.doMerge = async function(dupSlug, canonSlug, canonName) {
   };
 }());
 
+window.SB_URL = _SB; window.SB_KEY = _SK;
 if (typeof window.loadFromSupabase === 'function') window.loadFromSupabase();
 </script>
 </body>
