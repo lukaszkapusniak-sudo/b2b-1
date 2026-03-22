@@ -1399,15 +1399,62 @@ async function saveAIResult() {
   const results = [];
   const headers = { 'Content-Type': 'application/json', apikey: SB_KEY, Authorization: `Bearer ${SB_KEY}`, Prefer: 'resolution=merge-duplicates,return=minimal' };
 
+  // Canonical ID overrides — AI sometimes generates wrong slugs for known companies
+  const ID_OVERRIDES = {
+    'onaudience-ltd': 'onaudience',
+    'onaudience_ltd': 'onaudience',
+    'on-audience': 'onaudience',
+    'on-audience-ltd': 'onaudience',
+  };
+
   // Save company
   if (data.company?.id) {
     const co = { ...data.company };
+    // Apply canonical ID override if known
+    if (ID_OVERRIDES[co.id]) co.id = ID_OVERRIDES[co.id];
     // Sanitize types
     if (co.dsps && !Array.isArray(co.dsps)) co.dsps = [co.dsps];
     if (co.size !== undefined) { const n = parseInt(co.size); co.size = isNaN(n) ? null : n; }
     if (co.icp !== undefined) { const n = parseInt(co.icp); co.icp = isNaN(n) ? null : n; }
     if (co.founded_year !== undefined) { const n = parseInt(co.founded_year); co.founded_year = isNaN(n) ? null : n; }
     const validTypes = ['client','partner','prospect','nogo','poc'];
+    if (co.type && !validTypes.includes(co.type)) co.type = 'prospect';
+    try {
+      // Check by ID first, then by name — catches AI using wrong slug for existing company
+      let existingData = [];
+      const byId = await fetch(`${SB_URL}/rest/v1/companies?id=eq.${co.id}&select=id,name,type`, {
+        headers: { apikey: SB_KEY, Authorization: `Bearer ${SB_KEY}` }
+      });
+      existingData = await byId.json();
+      if (!existingData.length) {
+        // Also check by name — catches slug mismatches
+        const byName = await fetch(`${SB_URL}/rest/v1/companies?name=eq.${encodeURIComponent(co.name)}&select=id,name,type`, {
+          headers: { apikey: SB_KEY, Authorization: `Bearer ${SB_KEY}` }
+        });
+        const byNameData = await byName.json();
+        if (byNameData.length) {
+          existingData = byNameData;
+          co.id = byNameData[0].id; // use canonical id from DB
+        }
+      }
+      if (existingData.length > 0) {
+        const ex = existingData[0];
+        const confirmed = window.confirm(
+          `Company already exists in DB:\n\n"${ex.name}" (${ex.type})\n\nOverwrite with AI result (type: ${co.type}, ICP: ${co.icp})?\n\nOK = Update  |  Cancel = Skip`
+        );
+        if (!confirmed) {
+          results.push(`Company ${co.name}: ⏭ skipped (existing)`);
+          // Skip to contacts
+        } else {
+          const r = await fetch(`${SB_URL}/rest/v1/companies`, { method: 'POST', headers, body: JSON.stringify(co) });
+          results.push(`Company ${co.name}: ${r.ok ? '✅ updated' : '❌ '+r.status}`);
+        }
+      } else {
+        const r = await fetch(`${SB_URL}/rest/v1/companies`, { method: 'POST', headers, body: JSON.stringify(co) });
+        results.push(`Company ${co.name}: ${r.ok ? '✅ created' : '❌ '+r.status}`);
+      }
+    } catch(e) { results.push(`Company error: ${e.message}`); }
+  }
     if (co.type && !validTypes.includes(co.type)) co.type = 'prospect';
     try {
       // Check if company already exists
@@ -1482,9 +1529,14 @@ async function saveAIResult() {
   saveBtn.disabled = false;
   statusEl.textContent = results.join(' · ') || 'Nothing to save';
 
-  // Reload company data if we saved the current company
+  // Reload data and re-open detail panel so enriched fields show immediately
   if (data.company?.id && _aiCompany) {
-    setTimeout(() => loadFromSupabase(), 500);
+    const savedName = _aiCompany.name;
+    loadFromSupabase().then(() => {
+      // Re-open the company by name to show freshly fetched data
+      const fresh = companies.find(c => c.name === savedName);
+      if (fresh) setTimeout(() => openCompany(fresh), 100);
+    });
   }
 }
 function doResearch() {
