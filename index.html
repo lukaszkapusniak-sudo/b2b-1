@@ -765,7 +765,9 @@ const MS = {
   ],
   selected: null,
   context: {}
-};
+}
+window.MS = MS;  // sync to window so external scripts can access
+;
 MS.tags = [];       // { id, label, value, cat, on }
 MS.contact = {};    // { name, title, email, company }
 MS.selected = null;
@@ -3017,6 +3019,54 @@ window.doMerge = async function(dupSlug, canonSlug, canonName) {
         setTimeout(function(){ if (window.loadIntelligence) loadIntelligence(slug); }, 120);
         setTimeout(function(){ if (window.loadTechStack) loadTechStack(slug, false); }, 160);
       }
+      // If Meeseeks overlay is open, refresh its context for the new company
+      setTimeout(function() {
+        var overlay = document.getElementById('meeseeks-overlay');
+        if (overlay && overlay.style.display === 'flex' && window.MS && window.msBuildTags && window.msRenderTags) {
+          var prevContact = window.MS.contact || {};
+          window.msBuildTags({
+            company:     c.name || '',
+            description: c.description || '',
+            angle:       c.outreach_angle || '',
+            dsps:        c.dsps || [],
+            category:    c.category || '',
+            region:      c.hq_city || c.region || '',
+            // preserve existing contact if one was manually set
+            contactName: prevContact.name || '',
+            title:       prevContact.title || '',
+            email:       prevContact.email || ''
+          });
+          window.msRenderTags();
+          // Reload contact picker for new company
+          if (slug && window.msRenderContactPicker) {
+            var SB = window.SB_URL, SK = window.SB_KEY;
+            if (SB && SK) {
+              fetch(SB + '/rest/v1/contacts?company_id=eq.' + encodeURIComponent(slug) + '&order=full_name.asc&limit=10',
+                { headers: { apikey: SK, Authorization: 'Bearer ' + SK } })
+                .then(function(r){ return r.json(); })
+                .then(function(data){
+                  window.MS._contacts = Array.isArray(data) ? data : [];
+                  window.MS._slug = slug;
+                  window.MS.contact = { name:'', title:'', email:'', company: c.name||'' };
+                  window.msRenderContactPicker(window.MS._contacts);
+                  // Update To: field
+                  var toEl = document.getElementById('ms-to');
+                  if (toEl) toEl.value = '';
+                  var badge = document.getElementById('ms-contact-badge');
+                  if (badge) badge.textContent = '';
+                  // Add relation tags async
+                  if (window.msMaybeAddRelTags) setTimeout(window.msMaybeAddRelTags, 300);
+                }).catch(function(){});
+            }
+          }
+          // Visual flash on the tag area to indicate refresh
+          var tagEl = document.getElementById('ms-tags');
+          if (tagEl) {
+            tagEl.style.opacity = '0.4';
+            setTimeout(function(){ tagEl.style.opacity = '1'; }, 200);
+          }
+        }
+      }, 50);
     }
   };
 }());
