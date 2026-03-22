@@ -549,6 +549,7 @@ async function loadFromSupabase() {
     contacts = cresp.ok ? await cresp.json() : [...SEED_CONTACTS];
 
     companies = rows.map(r => ({
+      id: r.id,
       name: r.name, note: r.note||'', type: r.type || classify(r.note),
       category: r.category, region: r.region, hq_city: r.hq_city,
       size: r.size, icp: r.icp, website: r.website, linkedin_slug: r.linkedin_slug,
@@ -695,7 +696,7 @@ function openCompany(c) {
   const [bg, fg] = av(c.name);
   const domain = c.website ? domainOf(c.website) : '';
   const liSlug = c.linkedin_slug || _slug(c.name);
-  const slug   = _slug(c.name);
+  const slug   = c.id || _slug(c.name);  // prefer DB id over derived slug
   const cname  = c.name.replace(/'/g,"\\'");
 
   // contacts — match by company_name (case-insensitive) OR company_id slug
