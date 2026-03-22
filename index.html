@@ -347,9 +347,9 @@ body.ai-open .body .center{transition:none}
     </div>
     <div class="ai-foot">
       <span class="ai-save-status" id="ai-save-status"></span>
-      <button class="btn sm" id="ai-save-btn" onclick="saveAIResult()" style="display:none">💾 Save to DB</button>
-      <button class="btn sm" onclick="copyAIResult()">Copy</button>
       <button class="btn sm" id="ai-clear-cache-btn" onclick="(function(){const s=_aiCompany?(_aiCompany.id||_slug(_aiCompany.name)):'';if(s){cacheClear(s);renderList();document.getElementById('ai-status').innerHTML='';const b=document.getElementById('ai-clear-cache-btn');b.textContent='✓ Cleared';setTimeout(()=>b.textContent='Clear cache',1500);}})()" style="display:none">Clear cache</button>
+      <button class="btn sm" onclick="copyAIResult()">Copy</button>
+      <button class="btn sm" onclick="clearAIContext()" title="Clear result and reset context">✕ Clear</button>
       <button class="btn sm" onclick="openInClaude()">Open in Claude ↗</button>
     </div>
   </div>
@@ -1246,7 +1246,6 @@ function openClaude(prompt, company) {
   document.getElementById('ai-title').textContent = title;
   document.getElementById('ai-prompt-ta').value = prompt;
   document.getElementById('ai-status').innerHTML = '';
-  document.getElementById('ai-save-btn').style.display = 'none';
   document.getElementById('ai-save-status').textContent = '';
   setProgressBar('');
   document.getElementById('ai-overlay').classList.add('vis');
@@ -1264,12 +1263,11 @@ function openClaude(prompt, company) {
       `<span style="font-family:'IBM Plex Mono',monospace;font-size:9px;color:var(--t3)">` +
       `cached ${age} · <span style="color:var(--g);cursor:pointer;text-decoration:underline" ` +
       `onclick="cacheClear('${slug}');document.getElementById('ai-clear-cache-btn').style.display='none';runAI()">re-run</span></span>`;
-    // Show save button if structured data present
-    if (cached.text.includes('```save-data')) {
-      document.getElementById('ai-save-btn').style.display = 'inline-flex';
-      document.getElementById('ai-save-status').textContent = '✦ Cached data — ready to save';
-    }
+    // Cached result: show clear-cache button, no auto-save (user can re-run)
     document.getElementById('ai-clear-cache-btn').style.display = 'inline-flex';
+    if (cached.text.includes('```save-data')) {
+      document.getElementById('ai-save-status').textContent = '✦ Cached — re-run to auto-save';
+    }
     return; // Don't auto-run
   }
   document.getElementById('ai-clear-cache-btn').style.display = 'none';
@@ -1284,6 +1282,18 @@ function closeAI() {
   if (_aiAbort) { _aiAbort.abort(); _aiAbort = null; }
   document.getElementById('ai-overlay').classList.remove('vis');
   document.body.classList.remove('ai-open');
+}
+
+function clearAIContext() {
+  _aiRawText = '';
+  _aiCompany = null;
+  window._lastPrompt = '';
+  document.getElementById('ai-result').innerHTML =
+    '<div style="font-family:\'IBM Plex Mono\',monospace;font-size:10px;color:var(--t3);text-transform:uppercase;letter-spacing:.06em">Ready — press Run to execute</div>';
+  document.getElementById('ai-save-status').textContent = '';
+  document.getElementById('ai-status').innerHTML = '';
+  document.getElementById('ai-clear-cache-btn').style.display = 'none';
+  setAIStatus('');
 }
 
 function openInClaude() {
@@ -1320,7 +1330,6 @@ async function runAI() {
 
   const runBtn = document.getElementById('ai-run-btn');
   runBtn.disabled = true; runBtn.textContent = '⏳ Running';
-  document.getElementById('ai-save-btn').style.display = 'none';
   document.getElementById('ai-save-status').textContent = '';
 
   const resultEl = document.getElementById('ai-result');
@@ -1406,10 +1415,10 @@ Only include fields you are confident about. Omit sections if no data found.`;
       renderList(); // update cache dots in list
     }
 
-    // Check for save-data block
+    // Auto-save if structured data block present
     if (_aiRawText.includes('```save-data')) {
-      document.getElementById('ai-save-btn').style.display = 'inline-flex';
-      document.getElementById('ai-save-status').textContent = '✦ Structured data detected — ready to save';
+      document.getElementById('ai-save-status').textContent = '↻ Auto-saving…';
+      setTimeout(() => saveAIResult(), 400);
     }
 
   } catch (err) {
@@ -1487,7 +1496,7 @@ function renderAIResult(md, streaming) {
 }
 
 async function saveAIResult() {
-  const saveBtn = document.getElementById('ai-save-btn');
+  const saveBtn = null; // auto-save: no button
   const statusEl = document.getElementById('ai-save-status');
 
   // Extract save-data JSON block
@@ -1498,7 +1507,7 @@ async function saveAIResult() {
   try { data = JSON.parse(match[1].trim()); }
   catch(e) { statusEl.textContent = '✗ JSON parse error: ' + e.message; return; }
 
-  saveBtn.disabled = true;
+  if (saveBtn) saveBtn.disabled = true;
   setAIStatus('saving');
   statusEl.textContent = 'Saving…';
 
@@ -1620,7 +1629,7 @@ async function saveAIResult() {
   }
 
   setAIStatus('done');
-  saveBtn.disabled = false;
+  if (saveBtn) saveBtn.disabled = false;
   statusEl.textContent = results.join(' · ') || 'Nothing to save';
 
   // Reload data and re-open detail panel so enriched fields show immediately
@@ -1725,10 +1734,9 @@ updateStats();
 renderList();
 loadFromSupabase();
 </script>
-<!-- HUB PATCH v6 — inline overrides -->
-<!-- HUB PATCH v7 -->
+<!-- HUB PATCH v8 -->
 <script>
-// HUB PATCH v7 — explicit window assignments with semicolons
+// HUB PATCH v8
 
 window.loadFromSupabase = async function() {
   document.getElementById('statusLabel').textContent = 'Connecting…';
@@ -1853,7 +1861,7 @@ window.loadTechStack = async function(slug, openRescan) {
 };
 
 window.saveAIResult = async function() {
-  const saveBtn = document.getElementById('ai-save-btn');
+  const saveBtn = null; // auto-save: no button
   const statusEl = document.getElementById('ai-save-status');
 
   // Extract save-data JSON block
@@ -1864,7 +1872,7 @@ window.saveAIResult = async function() {
   try { data = JSON.parse(match[1].trim()); }
   catch(e) { statusEl.textContent = '✗ JSON parse error: ' + e.message; return; }
 
-  saveBtn.disabled = true;
+  if (saveBtn) saveBtn.disabled = true;
   setAIStatus('saving');
   statusEl.textContent = 'Saving…';
 
@@ -1986,7 +1994,7 @@ window.saveAIResult = async function() {
   }
 
   setAIStatus('done');
-  saveBtn.disabled = false;
+  if (saveBtn) saveBtn.disabled = false;
   statusEl.textContent = results.join(' · ') || 'Nothing to save';
 
   // Reload data and re-open detail panel so enriched fields show immediately
@@ -2109,6 +2117,18 @@ window.loadIntelligence = async function(slug) {
   }
 };
 
+window.clearAIContext = function() {
+  _aiRawText = '';
+  _aiCompany = null;
+  window._lastPrompt = '';
+  document.getElementById('ai-result').innerHTML =
+    '<div style="font-family:\'IBM Plex Mono\',monospace;font-size:10px;color:var(--t3);text-transform:uppercase;letter-spacing:.06em">Ready — press Run to execute</div>';
+  document.getElementById('ai-save-status').textContent = '';
+  document.getElementById('ai-status').innerHTML = '';
+  document.getElementById('ai-clear-cache-btn').style.display = 'none';
+  setAIStatus('');
+};
+
 window.renderMergeSuggestions = function(currentSlug) {
   const q = (document.getElementById('merge-search')?.value || '').toLowerCase().trim();
   const box = document.getElementById('merge-suggestions');
@@ -2178,7 +2198,7 @@ window.doMerge = async function(dupSlug, canonSlug, canonName) {
   }
 };
 
-// Patch openCompany: use c.id as slug + auto-reload tech stack
+// Patch openCompany
 (function(){
   var _oc = window.openCompany;
   if (!_oc) return;
@@ -2197,10 +2217,8 @@ window.doMerge = async function(dupSlug, canonSlug, canonName) {
   };
 }());
 
-// Re-init after patch
-if (typeof window.loadFromSupabase === 'function') {
-  window.loadFromSupabase();
-}
+// Re-init
+if (typeof window.loadFromSupabase === 'function') { window.loadFromSupabase(); }
 </script>
 </body>
 </html>
