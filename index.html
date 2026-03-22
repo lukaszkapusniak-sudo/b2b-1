@@ -1170,6 +1170,16 @@ document.addEventListener('DOMContentLoaded', () => {
 let _aiRawText = '';
 let _aiCurrentPrompt = '';
 let _aiCompany = null;
+
+// Resolve canonical slug: prefer c.id, then companies array lookup, then _slug()
+function resolveSlug(c) {
+  if (!c) return '';
+  if (c.id) return c.id;
+  // Check in-memory companies array for canonical id
+  const found = (window.companies || []).find(x => x.name === c.name);
+  if (found?.id) return found.id;
+  return _slug(c.name);
+}
 let _aiAbort = null;
 
 /* ─── API KEY ───────────────────────────── */
@@ -1242,7 +1252,7 @@ function openClaude(prompt, company) {
   _aiCompany = company || window.currentCompany || null;
   _aiRawText = '';
 
-  const slug = _aiCompany ? (_aiCompany.id || _slug(_aiCompany.name)) : '';
+  const slug = resolveSlug(_aiCompany);
 
   // Derive title from prompt
   const title = prompt.length > 60 ? prompt.slice(0, 60) + '…' : prompt;
@@ -1412,7 +1422,7 @@ Only include fields you are confident about. Omit sections if no data found.`;
     setAIStatus('done');
 
     // Write to cache
-    const cSlug = _aiCompany ? (_aiCompany.id || _slug(_aiCompany.name)) : '';
+    const cSlug = resolveSlug(_aiCompany);
     if (cSlug && _aiRawText.length > 100) {
       cacheSet(cSlug, _aiRawText, prompt);
       renderList(); // update cache dots in list
@@ -1614,7 +1624,7 @@ async function saveAIResult() {
 
   // Save press_links → intelligence table
   if (data.press_links?.length) {
-    const slug = _aiCompany ? (_aiCompany.id || _slug(_aiCompany.name)) : (data.company?.id || '');
+    let slug = resolveSlug(_aiCompany) || data.company?.id || '';
     if (slug) {
       try {
         await fetch(`${SB_URL}/rest/v1/intelligence?company_id=eq.${slug}&type=eq.press_links`, {
@@ -1638,7 +1648,7 @@ async function saveAIResult() {
   // Reload data and re-open detail panel so enriched fields show immediately
   if (data.company?.id && _aiCompany) {
     const savedName = _aiCompany.name;
-    const savedSlug = _aiCompany.id || _slug(_aiCompany.name);
+    const savedSlug = resolveSlug(_aiCompany);
     // If tech_stack or products were in the save block, reload immediately without full page refresh
     if (data.company.tech_stack || data.company.products) {
       setTimeout(() => loadTechStack(savedSlug), 300);
@@ -1737,9 +1747,9 @@ updateStats();
 renderList();
 loadFromSupabase();
 </script>
-<!-- HUB PATCH v9 -->
+<!-- HUB PATCH v10 -->
 <script>
-// HUB PATCH v9
+// HUB PATCH v10
 
 window.loadFromSupabase = async function() {
   document.getElementById('statusLabel').textContent = 'Connecting…';
@@ -1783,6 +1793,15 @@ window.loadFromSupabase = async function() {
   }
   updateStats();
   renderList();
+};
+
+window.resolveSlug = function(c) {
+  if (!c) return '';
+  if (c.id) return c.id;
+  // Check in-memory companies array for canonical id
+  const found = (window.companies || []).find(x => x.name === c.name);
+  if (found?.id) return found.id;
+  return _slug(c.name);
 };
 
 window.loadTechStack = async function(slug, openRescan) {
@@ -1979,7 +1998,7 @@ window.saveAIResult = async function() {
 
   // Save press_links → intelligence table
   if (data.press_links?.length) {
-    const slug = _aiCompany ? (_aiCompany.id || _slug(_aiCompany.name)) : (data.company?.id || '');
+    let slug = resolveSlug(_aiCompany) || data.company?.id || '';
     if (slug) {
       try {
         await fetch(`${SB_URL}/rest/v1/intelligence?company_id=eq.${slug}&type=eq.press_links`, {
@@ -2003,7 +2022,7 @@ window.saveAIResult = async function() {
   // Reload data and re-open detail panel so enriched fields show immediately
   if (data.company?.id && _aiCompany) {
     const savedName = _aiCompany.name;
-    const savedSlug = _aiCompany.id || _slug(_aiCompany.name);
+    const savedSlug = resolveSlug(_aiCompany);
     // If tech_stack or products were in the save block, reload immediately without full page refresh
     if (data.company.tech_stack || data.company.products) {
       setTimeout(() => loadTechStack(savedSlug), 300);
@@ -2214,7 +2233,7 @@ window.doMerge = async function(dupSlug, canonSlug, canonName) {
       window._slug = _os;
     } else { _oc(c); }
     if (c) setTimeout(function(){
-      var slug = c.id || (window._slug && window._slug(c.name));
+      var slug = (window.resolveSlug && window.resolveSlug(c)) || c.id || (window._slug && window._slug(c.name));
       if (slug && window.loadTechStack) window.loadTechStack(slug, false);
     }, 200);
   };
