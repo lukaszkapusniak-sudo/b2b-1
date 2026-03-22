@@ -847,7 +847,7 @@ function openCompany(c) {
         <span id="press-count-badge" style="font-family:'IBM Plex Mono',monospace;font-size:9px;color:var(--t3);margin-left:4px"></span>
         <div style="margin-left:auto;display:flex;gap:4px">
           <button class="btn sm" onclick="loadIntelligence('${slug}')" title="Reload from DB">⟳ Refresh</button>
-          <button class="btn sm" onclick="openClaude('Run press-lookup skill for ${cname} — find articles, partnerships, interviews, hiring signals; save to Supabase intelligence table')" title="Find press with AI">Find ↗</button>
+          <button class="btn sm" onclick="openClaude('Press lookup for ${cname}: use web_search to find REAL recent news — press releases, partnership announcements, interviews, product launches, hiring signals from the last 2 years. Only include URLs you directly see in search results. If nothing relevant found, return empty press_links. NEVER guess or generate URLs. Save verified results to Supabase.')" title="Find press with AI">Find ↗</button>
         </div>
       </div>
       <div class="sec-body" id="press-body">
@@ -1430,8 +1430,13 @@ For contacts: search BROADLY — include VP/Head of Data, Programmatic, Partners
   "press_links": [{ url, title, date, source, about }]
 }
 For tech_stack: only include if you have real signals (page source, network requests, visible tools). Categories: crm, analytics, cmp, tag_management, cdp, dsp, ssp, dmp, identity, cdn, video, marketing_automation, other.
-For press_links: "about" should be one of: company, person, partnership, product, award. "date" format: "YYYY-MM". "source" is the publication name.
-CRITICAL URL RULE: Only include URLs you have DIRECTLY SEEN in search results or web pages during this session. NEVER generate or guess URLs — even plausible-looking paths are forbidden if not seen in a tool result. Zero hallucinated URLs is better than 10 broken ones.
+For press_links: "about" is one of: company, person, partnership, product, award. "date" format: "YYYY-MM". "source" is the publication name.
+PRESS LOOKUP RULES — MUST FOLLOW:
+1. ALWAYS use web_search to find real articles before adding any press_links.
+2. Only include URLs that appeared directly in your search results or fetched pages this session.
+3. If web search returns nothing relevant — return press_links: [] (empty). This is correct behaviour.
+4. NEVER generate, guess, or construct URLs from memory. Not even "plausible-looking" ones.
+5. A company with no recent press is fine. Zero real links beats 10 hallucinated ones.
 Only include fields you are confident about. Omit sections if no data found.`;
 
   try {
@@ -2346,13 +2351,11 @@ window.doMerge = async function(dupSlug, canonSlug, canonName) {
   }
 };
 
-// Patch openCompany
 (function(){
   var _oc = window.openCompany;
   if (!_oc) return;
   window.openCompany = function(c) {
-    window.currentCompany = c;
-    _oc(c);
+    window.currentCompany = c; _oc(c);
     if (c) {
       var slug = window.resolveSlug ? window.resolveSlug(c) : (c.id || (_slug && _slug(c.name)));
       if (slug) {
