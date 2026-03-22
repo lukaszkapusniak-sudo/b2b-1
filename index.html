@@ -636,6 +636,33 @@ function msToast(msg) {
   el.style.opacity = '1';
   setTimeout(() => { el.style.opacity = '0'; }, 2500);
 }
+
+// Helper for company-level Draft Email button
+function openMeeseeksCompany(el) {
+  const c = window.currentCompany || {};
+  const dsps = Array.isArray(c.dsps) ? c.dsps : [];
+  openMeeseeks({
+    company:     el.dataset.company || c.name || '',
+    dsps:        dsps,
+    description: c.description || '',
+    angle:       c.outreach_angle || ''
+  });
+}
+
+// Helper for contact card onclick — reads data-* attrs to avoid inline quote escaping
+function openMeeseeksFromContact(el) {
+  const c = window.currentCompany || {};
+  const dsps = Array.isArray(c.dsps) ? c.dsps : [];
+  openMeeseeks({
+    contactName: el.dataset.name || '',
+    title:       el.dataset.title || '',
+    email:       el.dataset.email || '',
+    company:     el.dataset.company || c.name || '',
+    dsps:        dsps,
+    description: c.description || '',
+    angle:       c.outreach_angle || ''
+  });
+}
 </script>
 
 <!-- CTX MENU -->
@@ -901,6 +928,7 @@ async function loadFromSupabase() {
 }
 
 function useSeed() {
+  window.useSeed = useSeed; // expose for patch
   companies = SEED.map(r => ({
     name: r.name, note: r.note||'', type: r.type||classify(r.note),
     category: r.category||null, region: r.region||null, hq_city: r.hq_city||null,
@@ -1044,7 +1072,8 @@ function openCompany(c) {
       <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:4px">
         ${ct.linkedin_url ? `<a class="ml" href="${ct.linkedin_url}" target="_blank">LinkedIn ↗</a>` : ''}
         ${ct.email ? `<a class="ml" href="https://mail.google.com/mail/u/0/#search/${encodeURIComponent(ct.email)}" target="_blank">Gmail ↗</a>` : ''}
-        <span class="ml" style="cursor:pointer;color:var(--g)" onclick="openMeeseeks({contactName:'${ct.full_name||''}',title:'${ct.title||''}',email:'${ct.email||''}',company:'${c.name}',dsps:${JSON.stringify(dsps)},description:'${(c.description||'').replace(/'/g,\"'\")}',angle:'${(c.outreach_angle||'').replace(/'/g,\"'\")}'})" style="cursor:pointer;color:var(--g)">Draft email ↗</span>
+        <span class="ml" style="cursor:pointer;color:var(--g)" onclick="openMeeseeksFromContact(this)"
+          data-name="${(ct.full_name||'').replace(/"/g,'&quot;')}" data-title="${(ct.title||'').replace(/"/g,'&quot;')}" data-email="${ct.email||''}" data-company="${c.name.replace(/"/g,'&quot;')}">Draft email ↗</span>
       </div>
       ${ct.notes ? `<div style="font-size:11px;color:var(--t3);margin-top:4px;line-height:1.5">${ct.notes.slice(0,120)}${ct.notes.length>120?'…':''}</div>` : ''}
     </div>`).join('')
@@ -1110,7 +1139,7 @@ function openCompany(c) {
       </div>
       <div style="display:flex;flex-direction:column;gap:4px;flex-shrink:0">
         <button class="btn p" onclick="openClaude('Research ${cname} — full contact report v3: decision makers, tech stack, case studies, activation path and ICP fit for onAudience data partnership', window.currentCompany)">Full report ↗</button>
-        <button class="btn" onclick="openMeeseeks({company:'${cname}',dsps:${JSON.stringify(dsps)},description:'${(c.description||'').replace(/'/g,\"'\")}',angle:'${(c.outreach_angle||'').replace(/'/g,\"'\")}'})">Draft email ↗</button>
+        <button class="btn" onclick="openMeeseeksCompany(this)" data-company="${cname.replace(/"/g,'&quot;')}">Draft email ↗</button>
       </div>
     </div>
 
@@ -1150,7 +1179,7 @@ function openCompany(c) {
       <div class="sec-body">
         <div style="font-size:12px;color:var(--t2);line-height:1.7">${c.outreach_angle || 'Research this company to identify outreach angle and ICP fit.'}</div>
         <div class="btn-row">
-          <button class="btn p" onclick="openMeeseeks({company:'${cname}',dsps:${JSON.stringify(dsps)},description:'${(c.description||'').replace(/'/g,\"'\")}',angle:'${(c.outreach_angle||'').replace(/'/g,\"'\")}'})">Draft email ↗</button>
+          <button class="btn p" onclick="openMeeseeksCompany(this)" data-company="${cname.replace(/"/g,'&quot;')}">Draft email ↗</button>
           <button class="btn" onclick="openClaude('Draft LinkedIn connection note and InMail for ${cname} — short, personalized for data partnership')">LinkedIn ↗</button>
           <button class="btn" onclick="openClaude('Find companies similar to ${cname} for onAudience programmatic data outreach — top 10 ranked by ICP fit')">Find similar ↗</button>
         </div>
