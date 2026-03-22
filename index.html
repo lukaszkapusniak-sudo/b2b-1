@@ -1557,7 +1557,7 @@ async function loadContacts(slug) {
         <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:4px">
           ${ct.linkedin_url ? `<a class="ml" href="${ct.linkedin_url}" target="_blank">LinkedIn ↗</a>` : ''}
           ${ct.email ? `<a class="ml" href="https://mail.google.com/mail/u/0/#search/${encodeURIComponent(ct.email)}" target="_blank">Gmail ↗</a>` : ''}
-          <span class="ml" style="cursor:pointer;color:var(--g)" onclick="openMeeseeks({contactName:ct.full_name||'',title:ct.title||'',email:ct.email||'',company:ct.company_name||cname,description:window.currentCompany?.description||'',angle:window.currentCompany?.outreach_angle||'',dsps:window.currentCompany?.dsps||[]})">Draft email ↗</span>
+          <span class="ml" style="cursor:pointer;color:var(--g)" onclick="openMeeseeksFromContact(this)" data-name="${(ct.full_name||'').replace(/"/g,'&quot;')}" data-title="${(ct.title||'').replace(/"/g,'&quot;')}" data-email="${ct.email||''}" data-company="${(ct.company_name||cname).replace(/"/g,'&quot;')}">Draft email ↗</span>
         </div>
         ${ct.notes ? `<div style="font-size:11px;color:var(--t3);margin-top:4px;line-height:1.5">${ct.notes}</div>` : ''}
       </div>`).join('');
@@ -2412,7 +2412,7 @@ window.loadContacts = async function(slug) {
         <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:4px">
           ${ct.linkedin_url ? `<a class="ml" href="${ct.linkedin_url}" target="_blank">LinkedIn ↗</a>` : ''}
           ${ct.email ? `<a class="ml" href="https://mail.google.com/mail/u/0/#search/${encodeURIComponent(ct.email)}" target="_blank">Gmail ↗</a>` : ''}
-          <span class="ml" style="cursor:pointer;color:var(--g)" onclick="openMeeseeks({contactName:ct.full_name||'',title:ct.title||'',email:ct.email||'',company:ct.company_name||cname,description:window.currentCompany?.description||'',angle:window.currentCompany?.outreach_angle||'',dsps:window.currentCompany?.dsps||[]})">Draft email ↗</span>
+          <span class="ml" style="cursor:pointer;color:var(--g)" onclick="openMeeseeksFromContact(this)" data-name="${(ct.full_name||'').replace(/"/g,'&quot;')}" data-title="${(ct.title||'').replace(/"/g,'&quot;')}" data-email="${ct.email||''}" data-company="${(ct.company_name||cname).replace(/"/g,'&quot;')}">Draft email ↗</span>
         </div>
         ${ct.notes ? `<div style="font-size:11px;color:var(--t3);margin-top:4px;line-height:1.5">${ct.notes}</div>` : ''}
       </div>`).join('');
