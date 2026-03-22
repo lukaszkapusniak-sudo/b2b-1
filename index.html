@@ -777,6 +777,24 @@ function msInit() {
   MS.selected = MS.personas[0];
   grid.querySelector('.ms-card').classList.add('active');
 }
+
+// Expose all Meeseeks functions to window (onclick handlers need global scope)
+window.msInit = msInit;
+window.msBuildTags = msBuildTags;
+window.msRenderTags = msRenderTags;
+window.msToggleTag = msToggleTag;
+window.msRenderContactPicker = msRenderContactPicker;
+window.msSelectContact = msSelectContact;
+window.msMaybeAddRelTags = msMaybeAddRelTags;
+window.openMeeseeks = openMeeseeks;
+window.openMeeseeksCompany = openMeeseeksCompany;
+window.openMeeseeksFromContact = openMeeseeksFromContact;
+window.closeMeeseeks = closeMeeseeks;
+window.generateMeeseeks = generateMeeseeks;
+window.regenerateMeeseeks = regenerateMeeseeks;
+window.copyMeeseeksEmail = copyMeeseeksEmail;
+window.saveMeeseeksDraft = saveMeeseeksDraft;
+window.msToast = msToast;
 </script>
 
 <!-- CTX MENU -->
