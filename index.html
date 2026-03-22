@@ -864,6 +864,7 @@ function openCompany(c) {
   if (c.name) {
     setTimeout(() => loadRelations(slug), 80);
     setTimeout(() => loadIntelligence(slug), 120);
+
   }
 }
 
@@ -932,6 +933,50 @@ async function loadRelations(slug) {
     if (badge) badge.textContent = `(${rels.length})`;
   } catch(e) {
     if (body) body.innerHTML = `<div style="font-size:11px;color:var(--t3)">Could not load relations</div>`;
+  }
+}
+
+/* ─────────────────────────────────────────
+   LOAD INTELLIGENCE (News & Press)
+───────────────────────────────────────── */
+async function loadIntelligence(slug) {
+  const body  = document.getElementById('press-body');
+  const badge = document.getElementById('press-count-badge');
+  if (!body) return;
+  try {
+    const res = await fetch(
+      `${SB_URL}/rest/v1/intelligence?company_id=eq.${slug}&type=eq.press_links&select=*&limit=1`,
+      { headers: { apikey: SB_KEY, Authorization: `Bearer ${SB_KEY}` } }
+    );
+    const rows = await res.json();
+    if (!Array.isArray(rows) || !rows.length || !rows[0].content) {
+      body.innerHTML = '<div style="font-family:\'IBM Plex Mono\',monospace;font-size:10px;color:var(--t3);text-transform:uppercase">No press records — use Find ↗ to research</div>';
+      if (badge) badge.textContent = '';
+      return;
+    }
+    const links = Array.isArray(rows[0].content) ? rows[0].content : [];
+    if (!links.length) {
+      body.innerHTML = '<div style="font-family:\'IBM Plex Mono\',monospace;font-size:10px;color:var(--t3);text-transform:uppercase">No press records — use Find ↗ to research</div>';
+      if (badge) badge.textContent = '';
+      return;
+    }
+    const typeIcon = { company:'🏢', person:'👤', partnership:'🤝', product:'📦', award:'🏆' };
+    body.innerHTML = links.map(l => `
+      <div style="display:flex;align-items:flex-start;gap:8px;padding:5px 0;border-bottom:1px solid var(--rule3)">
+        <span style="font-size:13px;flex-shrink:0;margin-top:1px">${typeIcon[l.about] || '📰'}</span>
+        <div style="flex:1;min-width:0">
+          <a href="${l.url}" target="_blank" rel="noopener"
+             style="font-size:12px;font-weight:500;color:var(--g);text-decoration:none;display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis"
+             title="${(l.title||'').replace(/"/g,'&quot;')}">${l.title || l.url}</a>
+          <div style="font-family:'IBM Plex Mono',monospace;font-size:9px;color:var(--t3);margin-top:2px">
+            ${l.date ? `<span>${l.date}</span>` : ''}
+            ${l.source ? `<span style="margin-left:6px">${l.source}</span>` : ''}
+          </div>
+        </div>
+      </div>`).join('');
+    if (badge) badge.textContent = `(${links.length})`;
+  } catch(e) {
+    body.innerHTML = `<div style="font-size:11px;color:var(--t3)">Could not load press data</div>`;
   }
 }
 
