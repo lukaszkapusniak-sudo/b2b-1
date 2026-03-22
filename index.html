@@ -312,6 +312,332 @@ body.ai-open .body .center{transition:none}
   </div><!-- /body -->
 </div><!-- /app -->
 
+<!-- MEESEEKS EMAIL COMPOSER MODAL -->
+<div id="meeseeks-overlay" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.55);z-index:3000;align-items:center;justify-content:center;backdrop-filter:blur(6px)" onclick="if(event.target===this)closeMeeseeks()">
+  <div id="meeseeks-box" style="background:var(--surf);border:1px solid var(--rule);border-radius:4px;width:min(860px,96vw);max-height:90vh;display:flex;flex-direction:column;box-shadow:var(--sh);overflow:hidden">
+
+    <!-- Header -->
+    <div style="display:flex;align-items:center;gap:8px;padding:10px 14px;border-bottom:1px solid var(--rule);flex-shrink:0">
+      <span style="font-size:14px">✉</span>
+      <span style="font-family:'IBM Plex Mono',monospace;font-size:10px;font-weight:500;text-transform:uppercase;letter-spacing:.07em;color:var(--t1)">Meeseeks Composer</span>
+      <span id="ms-contact-badge" style="font-family:'IBM Plex Mono',monospace;font-size:9px;color:var(--t3);margin-left:2px"></span>
+      <div style="margin-left:auto;display:flex;gap:5px">
+        <button class="btn sm" onclick="regenerateMeeseeks()" id="ms-regen-btn" style="display:none">↻ Regen</button>
+        <button class="btn sm" onclick="closeMeeseeks()">✕</button>
+      </div>
+    </div>
+
+    <!-- Body: left form + right output -->
+    <div style="display:flex;flex:1;overflow:hidden;min-height:0">
+
+      <!-- LEFT: persona + context -->
+      <div id="ms-left" style="width:300px;flex-shrink:0;border-right:1px solid var(--rule);overflow-y:auto;padding:12px;display:flex;flex-direction:column;gap:10px">
+
+        <!-- Persona grid -->
+        <div>
+          <div style="font-family:'IBM Plex Mono',monospace;font-size:9px;text-transform:uppercase;letter-spacing:.07em;color:var(--t3);margin-bottom:6px">Pick a Meeseek</div>
+          <div id="ms-persona-grid" style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:3px"></div>
+        </div>
+
+        <!-- Contact fields -->
+        <div style="display:flex;flex-direction:column;gap:5px">
+          <div style="font-family:'IBM Plex Mono',monospace;font-size:9px;text-transform:uppercase;letter-spacing:.07em;color:var(--t3);margin-bottom:2px">Contact</div>
+          <input id="ms-contact" placeholder="Contact name" style="height:26px;padding:0 8px;border:1px solid var(--rule);border-radius:2px;font-size:12px;background:var(--surf2);color:var(--t1);outline:none;font-family:'IBM Plex Sans',sans-serif"/>
+          <input id="ms-title" placeholder="Title / Role" style="height:26px;padding:0 8px;border:1px solid var(--rule);border-radius:2px;font-size:12px;background:var(--surf2);color:var(--t1);outline:none;font-family:'IBM Plex Sans',sans-serif"/>
+          <input id="ms-email" placeholder="Email (optional)" style="height:26px;padding:0 8px;border:1px solid var(--rule);border-radius:2px;font-size:12px;background:var(--surf2);color:var(--t1);outline:none;font-family:'IBM Plex Mono',monospace"/>
+          <input id="ms-company" placeholder="Company" style="height:26px;padding:0 8px;border:1px solid var(--rule);border-radius:2px;font-size:12px;background:var(--surf2);color:var(--t1);outline:none;font-family:'IBM Plex Sans',sans-serif"/>
+          <input id="ms-dsps" placeholder="DSPs / Platforms (e.g. TTD, DV360)" style="height:26px;padding:0 8px;border:1px solid var(--rule);border-radius:2px;font-size:12px;background:var(--surf2);color:var(--t1);outline:none;font-family:'IBM Plex Sans',sans-serif"/>
+        </div>
+
+        <!-- Context -->
+        <div style="display:flex;flex-direction:column;gap:5px">
+          <div style="font-family:'IBM Plex Mono',monospace;font-size:9px;text-transform:uppercase;letter-spacing:.07em;color:var(--t3);margin-bottom:2px">Context</div>
+          <textarea id="ms-desc" placeholder="About them — what they do, recent news, tech stack…" style="height:72px;padding:6px 8px;border:1px solid var(--rule);border-radius:2px;font-size:11px;background:var(--surf2);color:var(--t1);outline:none;resize:vertical;font-family:'IBM Plex Sans',sans-serif;line-height:1.5"></textarea>
+          <textarea id="ms-angle" placeholder="Outreach angle — our hook for this specific company" style="height:58px;padding:6px 8px;border:1px solid var(--rule);border-radius:2px;font-size:11px;background:var(--surf2);color:var(--t1);outline:none;resize:vertical;font-family:'IBM Plex Sans',sans-serif;line-height:1.5"></textarea>
+        </div>
+
+        <!-- Generate button -->
+        <button id="ms-generate-btn" class="btn p" style="width:100%;height:32px;font-size:10px" onclick="generateMeeseeks()">✉ Say What?</button>
+      </div>
+
+      <!-- RIGHT: output -->
+      <div id="ms-right" style="flex:1;display:flex;flex-direction:column;overflow:hidden">
+
+        <!-- Empty state -->
+        <div id="ms-empty" style="flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;color:var(--t4);gap:8px">
+          <div style="font-size:32px">✉</div>
+          <div style="font-family:'IBM Plex Mono',monospace;font-size:10px;text-transform:uppercase;letter-spacing:.07em">Pick a persona · click Say What?</div>
+        </div>
+
+        <!-- Result -->
+        <div id="ms-result" style="display:none;flex:1;flex-direction:column;overflow:hidden">
+          <!-- Subject + To row -->
+          <div style="padding:10px 14px;border-bottom:1px solid var(--rule);flex-shrink:0;display:flex;flex-direction:column;gap:4px">
+            <div style="display:flex;align-items:center;gap:8px">
+              <span style="font-family:'IBM Plex Mono',monospace;font-size:9px;color:var(--t3);text-transform:uppercase;width:44px;flex-shrink:0">To</span>
+              <input id="ms-to" style="flex:1;height:24px;padding:0 6px;border:1px solid var(--rule);border-radius:2px;font-family:'IBM Plex Mono',monospace;font-size:10px;background:var(--surf2);color:var(--t1);outline:none" placeholder="recipient@company.com"/>
+            </div>
+            <div style="display:flex;align-items:center;gap:8px">
+              <span style="font-family:'IBM Plex Mono',monospace;font-size:9px;color:var(--t3);text-transform:uppercase;width:44px;flex-shrink:0">Subject</span>
+              <input id="ms-subject" style="flex:1;height:24px;padding:0 6px;border:1px solid var(--rule);border-radius:2px;font-family:'IBM Plex Mono',monospace;font-size:10px;background:var(--surf2);color:var(--t1);outline:none" placeholder="Subject…"/>
+            </div>
+          </div>
+          <!-- Body -->
+          <div style="flex:1;overflow-y:auto;padding:12px 14px;position:relative">
+            <div id="ms-skel" style="display:none">
+              <div style="height:10px;background:var(--surf3);border-radius:2px;margin-bottom:8px;width:80%;animation:pulse 1.2s infinite"></div>
+              <div style="height:10px;background:var(--surf3);border-radius:2px;margin-bottom:8px;width:100%;animation:pulse 1.2s infinite"></div>
+              <div style="height:10px;background:var(--surf3);border-radius:2px;margin-bottom:8px;width:90%;animation:pulse 1.2s infinite"></div>
+              <div style="height:10px;background:var(--surf3);border-radius:2px;margin-bottom:8px;width:60%;animation:pulse 1.2s infinite"></div>
+            </div>
+            <textarea id="ms-body" style="width:100%;height:100%;min-height:200px;border:none;outline:none;resize:none;font-size:12px;line-height:1.7;background:transparent;color:var(--t1);font-family:'IBM Plex Sans',sans-serif"></textarea>
+          </div>
+          <!-- Footer actions -->
+          <div style="padding:8px 14px;border-top:1px solid var(--rule);display:flex;gap:6px;align-items:center;flex-shrink:0">
+            <button class="btn p sm" onclick="saveMeeseeksDraft()">💾 Save Gmail draft</button>
+            <button class="btn sm" onclick="copyMeeseeksEmail()">Copy</button>
+            <span id="ms-toast" style="font-family:'IBM Plex Mono',monospace;font-size:9px;color:var(--g);opacity:0;transition:opacity .3s"></span>
+            <span id="ms-persona-label" style="margin-left:auto;font-family:'IBM Plex Mono',monospace;font-size:9px;color:var(--t3)"></span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<style>
+@keyframes pulse{0%,100%{opacity:.5}50%{opacity:1}}
+#ms-persona-grid .ms-card{padding:5px 4px;border:1px solid var(--rule);border-radius:2px;cursor:pointer;transition:all .12s;text-align:center;background:var(--surf2)}
+#ms-persona-grid .ms-card:hover{background:var(--surf3)}
+#ms-persona-grid .ms-card.active{border-color:var(--g);background:var(--gb)}
+#ms-persona-grid .ms-card .ms-icon{font-size:14px;line-height:1;margin-bottom:2px}
+#ms-persona-grid .ms-card .ms-name{font-family:'IBM Plex Mono',monospace;font-size:7px;text-transform:uppercase;letter-spacing:.04em;color:var(--t3);line-height:1.2}
+#ms-persona-grid .ms-card.active .ms-name{color:var(--g);font-weight:600}
+#ms-persona-grid .ms-card .ms-tag{font-family:'IBM Plex Mono',monospace;font-size:6px;color:var(--t4);letter-spacing:.03em;margin-top:1px}
+</style>
+<script>
+/* ══════════════════════════════════════════
+   MEESEEKS COMPOSER
+══════════════════════════════════════════ */
+const MS = {
+  personas: [
+    { id:'steve',    icon:'🍎', name:'Steve',    tag:'Vision',
+      style:'Visionary simplicity. One core truth. Makes the prospect feel they\'re about to miss a defining moment. No features — only transformation.' },
+    { id:'barack',   icon:'🌅', name:'Barack',   tag:'Inspire',
+      style:'Builds from shared truth to bigger possibility. Inclusive, measured cadence, hopeful close. Never oversells.' },
+    { id:'margaret', icon:'🗝', name:'Margaret', tag:'Conviction',
+      style:'No hedging. States the position once, defends it on principle. Expects a decision. Conviction without apology.' },
+    { id:'winston',  icon:'🎩', name:'Winston',  tag:'Gravitas',
+      style:'Short declarative sentences. Uses contrast and rhythm. Weighty framing. Makes the stakes feel historic.' },
+    { id:'david',    icon:'✍️', name:'David',    tag:'Ogilvy',
+      style:'Research-first. Leads with a specific, compelling fact. Clear benefit in headline. Never clever for its own sake.' },
+    { id:'jeff',     icon:'📦', name:'Jeff',     tag:'Relentless',
+      style:'Customer-obsessed framing. Long-term thinking. Data-point to anchor, then the ask. Systematic, no fluff.' },
+    { id:'gary',     icon:'📣', name:'Gary',     tag:'Direct',
+      style:'Blunt, high-energy, no BS. Calls out the obvious opportunity. Short sentences, punchy. Hustle energy.' },
+    { id:'maya',     icon:'🕊', name:'Maya',     tag:'Poetic',
+      style:'Dignified warmth. Elevates the ask with grace. Every word intentional. Makes the recipient feel seen.' },
+    { id:'elon',     icon:'🚀', name:'Elon',     tag:'Audacious',
+      style:'First-principles framing. Challenges assumptions. Big claim, backed by specifics. Slightly irreverent.' },
+    { id:'oprah',    icon:'💫', name:'Oprah',    tag:'Empathy',
+      style:'Deeply personal connection first. Story-led. Warmth that disarms. Makes the prospect feel this was written only for them.' },
+  ],
+  selected: null,
+  context: {}
+};
+
+function msInit() {
+  const grid = document.getElementById('ms-persona-grid');
+  if (!grid || grid.dataset.built) return;
+  grid.dataset.built = '1';
+  MS.personas.forEach(p => {
+    const card = document.createElement('div');
+    card.className = 'ms-card';
+    card.dataset.id = p.id;
+    card.title = p.style;
+    card.innerHTML = `<div class="ms-icon">${p.icon}</div><div class="ms-name">${p.name}</div><div class="ms-tag">${p.tag}</div>`;
+    card.addEventListener('click', () => {
+      grid.querySelectorAll('.ms-card').forEach(c => c.classList.remove('active'));
+      card.classList.add('active');
+      MS.selected = p;
+    });
+    grid.appendChild(card);
+  });
+  // Default: Steve
+  MS.selected = MS.personas[0];
+  grid.querySelector('.ms-card').classList.add('active');
+}
+
+function openMeeseeks(ctx) {
+  msInit();
+  // ctx: { contactName, title, email, company, dsps, description, angle }
+  ctx = ctx || {};
+  MS.context = ctx;
+  document.getElementById('ms-contact').value = ctx.contactName || '';
+  document.getElementById('ms-title').value   = ctx.title || '';
+  document.getElementById('ms-email').value   = ctx.email || '';
+  document.getElementById('ms-company').value = ctx.company || '';
+  document.getElementById('ms-dsps').value    = Array.isArray(ctx.dsps) ? ctx.dsps.join(', ') : (ctx.dsps || '');
+  document.getElementById('ms-desc').value    = ctx.description || ctx.note || '';
+  document.getElementById('ms-angle').value   = ctx.angle || '';
+  // Badge
+  const badge = document.getElementById('ms-contact-badge');
+  badge.textContent = ctx.contactName ? `— ${ctx.contactName}${ctx.company ? ' @ '+ctx.company : ''}` : (ctx.company || '');
+  // Reset output
+  document.getElementById('ms-empty').style.display = 'flex';
+  document.getElementById('ms-result').style.display = 'none';
+  document.getElementById('ms-regen-btn').style.display = 'none';
+  document.getElementById('ms-to').value = ctx.email || '';
+  document.getElementById('ms-subject').value = '';
+  document.getElementById('ms-body').value = '';
+  // Show
+  document.getElementById('meeseeks-overlay').style.display = 'flex';
+}
+
+function closeMeeseeks() {
+  document.getElementById('meeseeks-overlay').style.display = 'none';
+}
+
+async function generateMeeseeks() {
+  const apiKey = localStorage.getItem('oa_api_key');
+  if (!apiKey) {
+    // Fall back to main drawer API key
+    const k = localStorage.getItem('claudeApiKey') || localStorage.getItem('anthropic_api_key');
+    if (!k) { msToast('No API key — set one in the AI drawer (🔑)'); return; }
+    localStorage.setItem('oa_api_key', k);
+  }
+  const key = localStorage.getItem('oa_api_key') || localStorage.getItem('claudeApiKey') || localStorage.getItem('anthropic_api_key');
+  if (!key) { msToast('No API key — set one in the AI drawer (🔑)'); return; }
+
+  const persona = MS.selected || MS.personas[0];
+  const contact  = document.getElementById('ms-contact').value.trim();
+  const title    = document.getElementById('ms-title').value.trim();
+  const email    = document.getElementById('ms-email').value.trim();
+  const company  = document.getElementById('ms-company').value.trim();
+  const dsps     = document.getElementById('ms-dsps').value.trim();
+  const desc     = document.getElementById('ms-desc').value.trim();
+  const angle    = document.getElementById('ms-angle').value.trim();
+
+  if (!company && !contact) { msToast('Add at least a company name'); return; }
+
+  // Show skeleton
+  const genBtn = document.getElementById('ms-generate-btn');
+  genBtn.disabled = true; genBtn.textContent = '⏳ Writing…';
+  document.getElementById('ms-empty').style.display = 'none';
+  document.getElementById('ms-result').style.display = 'flex';
+  document.getElementById('ms-skel').style.display = 'block';
+  document.getElementById('ms-body').style.display = 'none';
+  document.getElementById('ms-body').value = '';
+  document.getElementById('ms-regen-btn').style.display = 'none';
+  document.getElementById('ms-persona-label').textContent = '';
+
+  if (email) document.getElementById('ms-to').value = email;
+
+  const systemPrompt = `You are writing a cold outreach email on behalf of Łukasz from onAudience — a European DMP and audience data company selling GDPR-compliant behavioral, demographic, B2B, purchase intent, and CTV audience segments to programmatic buyers.
+
+Writing persona: ${persona.name} (${persona.tag}). Style: ${persona.style}
+
+Rules:
+- Max 150 words body
+- Never open with "I hope this finds you well" or any hollow opener
+- Open with a specific, genuine observation about their company or role
+- One clear value prop: what onAudience data does for their specific use case
+- Mention shared DSP/platform integration if known
+- Sign off as Łukasz, onAudience
+- Output format — respond with ONLY valid JSON, no markdown fences:
+{"subject":"...","body":"..."}`;
+
+  const userMsg = `Write a cold outreach email.
+${contact ? 'Recipient: '+contact : ''}
+${title ? 'Role: '+title : ''}
+${company ? 'Company: '+company : ''}
+${dsps ? 'DSP/Platforms: '+dsps : ''}
+${desc ? 'About them: '+desc : ''}
+${angle ? 'Outreach angle: '+angle : ''}`;
+
+  try {
+    const resp = await fetch('https://api.anthropic.com/v1/messages', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'x-api-key': key, 'anthropic-version': '2023-06-01' },
+      body: JSON.stringify({
+        model: 'claude-sonnet-4-20250514',
+        max_tokens: 600,
+        system: systemPrompt,
+        messages: [{ role: 'user', content: userMsg }]
+      })
+    });
+    const data = await resp.json();
+    const raw = data.content?.[0]?.text || '';
+    let subject = '', body = '';
+    try {
+      const clean = raw.replace(/^```json\s*/,'').replace(/```\s*$/,'').trim();
+      const parsed = JSON.parse(clean);
+      subject = parsed.subject || '';
+      body    = parsed.body    || raw;
+    } catch(_) {
+      // Fallback: try to parse subject from first line
+      const lines = raw.split('\n').filter(Boolean);
+      subject = lines[0].replace(/^subject:\s*/i,'').replace(/^["']/,'').replace(/["']$/,'');
+      body    = lines.slice(1).join('\n').trim();
+    }
+    document.getElementById('ms-subject').value = subject;
+    document.getElementById('ms-body').value    = body;
+    document.getElementById('ms-skel').style.display = 'none';
+    document.getElementById('ms-body').style.display = '';
+    document.getElementById('ms-regen-btn').style.display = 'inline-flex';
+    document.getElementById('ms-persona-label').textContent = `${persona.icon} ${persona.name}`;
+  } catch(e) {
+    document.getElementById('ms-skel').style.display = 'none';
+    document.getElementById('ms-body').style.display = '';
+    document.getElementById('ms-body').value = 'Error: ' + e.message;
+  } finally {
+    genBtn.disabled = false; genBtn.textContent = '✉ Say What?';
+  }
+}
+
+function regenerateMeeseeks() { generateMeeseeks(); }
+
+function copyMeeseeksEmail() {
+  const sub  = document.getElementById('ms-subject').value;
+  const body = document.getElementById('ms-body').value;
+  navigator.clipboard.writeText('Subject: ' + sub + '\n\n' + body)
+    .then(() => msToast('Copied to clipboard ✓'));
+}
+
+async function saveMeeseeksDraft() {
+  const to      = document.getElementById('ms-to').value.trim();
+  const subject = document.getElementById('ms-subject').value.trim();
+  const body    = document.getElementById('ms-body').value.trim();
+  if (!subject && !body) { msToast('Nothing to save yet'); return; }
+  // Signal hub to create Gmail draft via parent postMessage (if embedded)
+  // Or trigger directly if gmail_create_draft is available (MCP)
+  window.parent?.postMessage({ type: 'SAVE_GMAIL_DRAFT', payload: { to, subject, body } }, '*');
+  // Also store pending draft so hub can pick it up
+  window._pendingGmailDraft = { to, subject, body };
+  msToast('Draft sent to Gmail…');
+  // Dispatch event for hub listener
+  window.dispatchEvent(new CustomEvent('meeseeks_draft', { detail: { to, subject, body } }));
+}
+
+// Hub listener: picks up draft requests and creates Gmail draft via API
+window.addEventListener('meeseeks_draft', async (e) => {
+  const { to, subject, body } = e.detail;
+  // The hub itself can't call Gmail MCP directly from JS — user must confirm
+  // Show a confirmation toast with a link to Gmail compose
+  const gmailUrl = `https://mail.google.com/mail/u/0/?view=cm&fs=1&to=${encodeURIComponent(to)}&su=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+  // Open Gmail compose pre-filled
+  window.open(gmailUrl, '_blank');
+  msToast('Opening Gmail compose ↗');
+});
+
+function msToast(msg) {
+  const el = document.getElementById('ms-toast');
+  if (!el) return;
+  el.textContent = msg;
+  el.style.opacity = '1';
+  setTimeout(() => { el.style.opacity = '0'; }, 2500);
+}
+</script>
+
 <!-- CTX MENU -->
 <div id="ctxMenu" class="ctx-menu" style="display:none"></div>
 
@@ -718,7 +1044,7 @@ function openCompany(c) {
       <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:4px">
         ${ct.linkedin_url ? `<a class="ml" href="${ct.linkedin_url}" target="_blank">LinkedIn ↗</a>` : ''}
         ${ct.email ? `<a class="ml" href="https://mail.google.com/mail/u/0/#search/${encodeURIComponent(ct.email)}" target="_blank">Gmail ↗</a>` : ''}
-        <span class="ml" style="cursor:pointer;color:var(--g)" onclick="openClaude('Draft personalized outreach email to ${ct.full_name||'this contact'} at ${c.name} — their role is ${ct.title||'unknown'}. Value-led and curiosity variants for onAudience data partnership.')">Draft email ↗</span>
+        <span class="ml" style="cursor:pointer;color:var(--g)" onclick="openMeeseeks({contactName:'${ct.full_name||''}',title:'${ct.title||''}',email:'${ct.email||''}',company:'${c.name}',dsps:${JSON.stringify(dsps)},description:'${(c.description||'').replace(/'/g,\"'\")}',angle:'${(c.outreach_angle||'').replace(/'/g,\"'\")}'})" style="cursor:pointer;color:var(--g)">Draft email ↗</span>
       </div>
       ${ct.notes ? `<div style="font-size:11px;color:var(--t3);margin-top:4px;line-height:1.5">${ct.notes.slice(0,120)}${ct.notes.length>120?'…':''}</div>` : ''}
     </div>`).join('')
@@ -784,7 +1110,7 @@ function openCompany(c) {
       </div>
       <div style="display:flex;flex-direction:column;gap:4px;flex-shrink:0">
         <button class="btn p" onclick="openClaude('Research ${cname} — full contact report v3: decision makers, tech stack, case studies, activation path and ICP fit for onAudience data partnership', window.currentCompany)">Full report ↗</button>
-        <button class="btn" onclick="openClaude('Draft personalized outreach email and LinkedIn message for ${cname} — onAudience data partnership, value-led and curiosity variants', window.currentCompany)">Draft email ↗</button>
+        <button class="btn" onclick="openMeeseeks({company:'${cname}',dsps:${JSON.stringify(dsps)},description:'${(c.description||'').replace(/'/g,\"'\")}',angle:'${(c.outreach_angle||'').replace(/'/g,\"'\")}'})">Draft email ↗</button>
       </div>
     </div>
 
@@ -824,7 +1150,7 @@ function openCompany(c) {
       <div class="sec-body">
         <div style="font-size:12px;color:var(--t2);line-height:1.7">${c.outreach_angle || 'Research this company to identify outreach angle and ICP fit.'}</div>
         <div class="btn-row">
-          <button class="btn p" onclick="openClaude('Draft personalized outreach email to ${cname} — value-led and curiosity variants for onAudience data partnership')">Draft email ↗</button>
+          <button class="btn p" onclick="openMeeseeks({company:'${cname}',dsps:${JSON.stringify(dsps)},description:'${(c.description||'').replace(/'/g,\"'\")}',angle:'${(c.outreach_angle||'').replace(/'/g,\"'\")}'})">Draft email ↗</button>
           <button class="btn" onclick="openClaude('Draft LinkedIn connection note and InMail for ${cname} — short, personalized for data partnership')">LinkedIn ↗</button>
           <button class="btn" onclick="openClaude('Find companies similar to ${cname} for onAudience programmatic data outreach — top 10 ranked by ICP fit')">Find similar ↗</button>
         </div>
@@ -1068,7 +1394,7 @@ async function loadContacts(slug) {
         <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:4px">
           ${ct.linkedin_url ? `<a class="ml" href="${ct.linkedin_url}" target="_blank">LinkedIn ↗</a>` : ''}
           ${ct.email ? `<a class="ml" href="https://mail.google.com/mail/u/0/#search/${encodeURIComponent(ct.email)}" target="_blank">Gmail ↗</a>` : ''}
-          <span class="ml" style="cursor:pointer;color:var(--g)" onclick="openClaude('Draft personalized outreach email to ${ct.full_name||'this contact'} at ${(ct.company_name||cname)} — their role is ${(ct.title||'unknown')}. Value-led and curiosity variants for onAudience data partnership.')">Draft email ↗</span>
+          <span class="ml" style="cursor:pointer;color:var(--g)" onclick="openMeeseeks({contactName:ct.full_name||'',title:ct.title||'',email:ct.email||'',company:ct.company_name||cname,description:window.currentCompany?.description||'',angle:window.currentCompany?.outreach_angle||'',dsps:window.currentCompany?.dsps||[]})">Draft email ↗</span>
         </div>
         ${ct.notes ? `<div style="font-size:11px;color:var(--t3);margin-top:4px;line-height:1.5">${ct.notes}</div>` : ''}
       </div>`).join('');
@@ -1920,7 +2246,7 @@ window.loadContacts = async function(slug) {
         <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:4px">
           ${ct.linkedin_url ? `<a class="ml" href="${ct.linkedin_url}" target="_blank">LinkedIn ↗</a>` : ''}
           ${ct.email ? `<a class="ml" href="https://mail.google.com/mail/u/0/#search/${encodeURIComponent(ct.email)}" target="_blank">Gmail ↗</a>` : ''}
-          <span class="ml" style="cursor:pointer;color:var(--g)" onclick="openClaude('Draft personalized outreach email to ${ct.full_name||'this contact'} at ${(ct.company_name||cname)} — their role is ${(ct.title||'unknown')}. Value-led and curiosity variants for onAudience data partnership.')">Draft email ↗</span>
+          <span class="ml" style="cursor:pointer;color:var(--g)" onclick="openMeeseeks({contactName:ct.full_name||'',title:ct.title||'',email:ct.email||'',company:ct.company_name||cname,description:window.currentCompany?.description||'',angle:window.currentCompany?.outreach_angle||'',dsps:window.currentCompany?.dsps||[]})">Draft email ↗</span>
         </div>
         ${ct.notes ? `<div style="font-size:11px;color:var(--t3);margin-top:4px;line-height:1.5">${ct.notes}</div>` : ''}
       </div>`).join('');
@@ -2352,8 +2678,7 @@ window.doMerge = async function(dupSlug, canonSlug, canonName) {
 };
 
 (function(){
-  var _oc = window.openCompany;
-  if (!_oc) return;
+  var _oc = window.openCompany; if (!_oc) return;
   window.openCompany = function(c) {
     window.currentCompany = c; _oc(c);
     if (c) {
