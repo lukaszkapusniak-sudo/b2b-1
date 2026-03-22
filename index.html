@@ -810,7 +810,10 @@ function openCompany(c) {
 
     <div class="sec">
       <div class="sec-hdr"><span>⚙️</span><span class="sec-hdr-label">Tech Stack</span>
-        <button class="btn sm" style="margin-left:auto" onclick="loadTechStack('${slug}', true)">↺ Rescan</button>
+        <div style="margin-left:auto;display:flex;gap:4px">
+          <button class="btn sm" onclick="loadTechStack('${slug}', false)" title="Reload from DB">⟳ Fetch</button>
+          <button class="btn sm" onclick="loadTechStack('${slug}', true)" title="Re-scan website with AI">↺ Rescan</button>
+        </div>
       </div>
       <div class="sec-body" id="ts-body">
         ${tsHtml || `<div class="no-rel">No tech stack scanned yet</div>`}
@@ -1713,20 +1716,465 @@ updateStats();
 renderList();
 loadFromSupabase();
 </script>
-<!-- DB PATCH LOADER — fetches and applies JS fixes stored in app_config -->
+<!-- HUB PATCH — inline overrides for missing/fixed functions -->
 <script>
-(async () => {
+window.loadFromSupabase = async function() {
+  document.getElementById('statusLabel').textContent = 'Connecting…';
   try {
-    const SB = 'https://nyzkkqqjnkctcmxoirdj.supabase.co';
-    const KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im55emtrcXFqbmtjdGNteG9pcmRqIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzM4NzMxMzYsImV4cCI6MjA4OTQ0OTEzNn0.jhAq_C68klOp4iTyj9HmsyyvoxsOI6ACld7t_87TAk0';
-    const res = await fetch(`${SB}/rest/v1/app_config?key=eq.js_patch&select=value`, { headers: { apikey: KEY, Authorization: `Bearer ${KEY}` } });
-    const rows = await res.json();
-    if (rows?.[0]?.value) {
-      // eslint-disable-next-line no-eval
-      (0, eval)(rows[0].value);
-      console.log('[hub] DB patch applied, len:', rows[0].value.length);
+    const resp = await Promise.race([
+      fetch(`${SB_URL}/rest/v1/companies?select=*&order=name.asc`, {
+        headers: { apikey: SB_KEY, Authorization: `Bearer ${SB_KEY}` }
+      }),
+      new Promise((_,r) => setTimeout(() => r(new Error('timeout')), 8000))
+    ]);
+    if (!resp.ok) throw new Error(resp.status);
+    const rows = await resp.json();
+
+    // Also load contacts
+    const cresp = await fetch(`${SB_URL}/rest/v1/contacts?select=*&order=full_name.asc`, {
+      headers: { apikey: SB_KEY, Authorization: `Bearer ${SB_KEY}` }
+    });
+    contacts = cresp.ok ? await cresp.json() : [...SEED_CONTACTS];
+
+    companies = rows.map(r => ({
+      id: r.id,
+      name: r.name, note: r.note||'', type: r.type || classify(r.note),
+      category: r.category, region: r.region, hq_city: r.hq_city,
+      size: r.size, icp: r.icp, website: r.website, linkedin_slug: r.linkedin_slug,
+      updated_at: r.updated_at, description: r.description,
+      founded_year: r.founded_year, funding: r.funding,
+      tcf_vendor_id: r.tcf_vendor_id, outreach_angle: r.outreach_angle,
+      tech_stack: r.tech_stack, products: r.products, dsps: r.dsps,
+      revenue_est: r.revenue_est, parent_company: r.parent_company,
+      relationship_owner: r.relationship_owner, deal_stage: r.deal_stage,
+      next_action: r.next_action, signals: r.signals, press_links: r.press_links,
+      crunchbase_url: r.crunchbase_url, last_enriched_at: r.last_enriched_at
+    }));
+
+    const dot = document.getElementById('statusDot');
+    dot.className = 'dot-live';
+    document.getElementById('statusLabel').textContent = `● Live · ${companies.length}co`;
+  } catch (e) {
+    useSeed();
+    document.getElementById('statusLabel').textContent = `○ Seed · ${companies.length}co`;
+  }
+  updateStats();
+  renderList();
+}
+
+window.loadTechStack = async function(slug, openRescan) {
+  const tsBody = document.getElementById('ts-body');
+  const prodSection = document.getElementById('products-section');
+  if (!tsBody) return;
+
+  try {
+    const r = await fetch(
+      `${SB_URL}/rest/v1/companies?id=eq.${slug}&select=tech_stack,products,last_enriched_at`,
+      { headers: { apikey: SB_KEY, Authorization: `Bearer ${SB_KEY}` } }
+    );
+    const rows = await r.json();
+    if (!rows?.length) return;
+
+    const co = rows[0];
+
+    // Render tech stack
+    const tsItems = Array.isArray(co.tech_stack) && co.tech_stack.length ? co.tech_stack : [];
+    if (tsItems.length) {
+      tsBody.innerHTML = `
+        <div style="margin-bottom:6px">
+          ${tsItems.map(t => `
+            <div class="ts-row">
+              <span class="ts-cat">${t.category||'tool'}</span>
+              <span class="ts-tool">${t.tool||t}</span>
+              <span class="ts-signal">${t.signal||''}</span>
+              <span class="${t.confidence==='confirmed'?'conf-ok':'conf-est'}">${t.confidence||'probable'}</span>
+            </div>`).join('')}
+        </div>
+        ${co.last_enriched_at ? `<div style="font-family:'IBM Plex Mono',monospace;font-size:9px;color:var(--t4);margin-top:4px">Scanned ${new Date(co.last_enriched_at).toLocaleDateString()}</div>` : ''}`;
+
+      // Update the in-memory company object so re-opens don't need another fetch
+      const c = companies.find(x => (x.id||_slug(x.name)) === slug);
+      if (c) { c.tech_stack = co.tech_stack; c.last_enriched_at = co.last_enriched_at; }
+    } else if (openRescan) {
+      // Triggered by Rescan button — open Claude to run the skill
+      const c = companies.find(x => (x.id||_slug(x.name)) === slug);
+      const name = c?.name || slug;
+      openClaude(`Run tech-lookup skill on ${name} — scan website for full tech stack and products page, save results to Supabase`);
+      return;
     }
-  } catch(e) { console.warn('[hub] DB patch failed:', e.message); }
+
+    // Render products if present
+    if (prodSection && co.products?.products?.length) {
+      const prods = co.products.products;
+      prodSection.innerHTML = `
+      <div class="sec">
+        <div class="sec-hdr"><span>📦</span><span class="sec-hdr-label">Products</span>
+          ${co.products.pricing_model ? `<span style="font-family:'IBM Plex Mono',monospace;font-size:9px;color:var(--t3);margin-left:auto">${co.products.pricing_model}</span>` : ''}
+        </div>
+        <div class="sec-body">
+          ${prods.map(p=>`<div class="prod-row">
+            <div class="prod-name">${p.name||'—'}</div>
+            <div class="prod-desc">${p.description||''}</div>
+            <div class="prod-for">${p.target_user||''}</div>
+            ${p.features?.length ? `<div style="margin-top:4px">${p.features.map(f=>`<span class="seg-pill">${f}</span>`).join('')}</div>` : ''}
+          </div>`).join('')}
+          ${co.products.integrations_advertised?.length ? `
+            <div style="margin-top:10px;font-family:'IBM Plex Mono',monospace;font-size:9px;text-transform:uppercase;letter-spacing:.06em;color:var(--t3);margin-bottom:4px">Integrations advertised</div>
+            ${co.products.integrations_advertised.map(i=>`<span class="seg-pill">${i}</span>`).join('')}` : ''}
+          ${co.products.positioning?.length ? `
+            <div style="margin-top:8px;font-size:11px;color:var(--t2);line-height:1.6;border-left:2px solid var(--g);padding-left:8px">${co.products.positioning.join(' · ')}</div>` : ''}
+        </div>
+      </div>`;
+
+      // Update in-memory
+      const c = companies.find(x => (x.id||_slug(x.name)) === slug);
+      if (c) c.products = co.products;
+    } else if (prodSection && !co.products?.products?.length) {
+      prodSection.innerHTML = '';
+    }
+
+  } catch(e) {
+    if (tsBody && !tsBody.textContent.trim()) {
+      tsBody.innerHTML = '<div class="no-rel">No tech stack scanned yet</div>';
+    }
+  }
+}
+
+window.saveAIResult = async function() {
+  const saveBtn = document.getElementById('ai-save-btn');
+  const statusEl = document.getElementById('ai-save-status');
+
+  // Extract save-data JSON block
+  const match = _aiRawText.match(/```save-data\s*([\s\S]*?)```/);
+  if (!match) { statusEl.textContent = '✗ No structured data found'; return; }
+
+  let data;
+  try { data = JSON.parse(match[1].trim()); }
+  catch(e) { statusEl.textContent = '✗ JSON parse error: ' + e.message; return; }
+
+  saveBtn.disabled = true;
+  setAIStatus('saving');
+  statusEl.textContent = 'Saving…';
+
+  const results = [];
+  const headers = { 'Content-Type': 'application/json', apikey: SB_KEY, Authorization: `Bearer ${SB_KEY}`, Prefer: 'resolution=merge-duplicates,return=minimal' };
+
+  // Canonical ID overrides — AI sometimes generates wrong slugs for known companies
+  const ID_OVERRIDES = {
+    'onaudience-ltd': 'onaudience',
+    'onaudience_ltd': 'onaudience',
+    'on-audience': 'onaudience',
+    'on-audience-ltd': 'onaudience',
+  };
+
+  // Save company
+  if (data.company?.id) {
+    const co = { ...data.company };
+    // Apply canonical ID override if known
+    if (ID_OVERRIDES[co.id]) co.id = ID_OVERRIDES[co.id];
+    // Sanitize types
+    if (co.dsps && !Array.isArray(co.dsps)) co.dsps = [co.dsps];
+    // Don't overwrite existing data with empty arrays — only save if has content
+    if (Array.isArray(co.tech_stack) && !co.tech_stack.length) delete co.tech_stack;
+    if (co.products && typeof co.products === 'object' && !co.products.products?.length) delete co.products;
+    // Strip null/undefined fields to avoid overwriting existing DB values
+    Object.keys(co).forEach(k => { if (co[k] === null || co[k] === undefined || co[k] === '') delete co[k]; });
+    if (co.size !== undefined) { const n = parseInt(co.size); co.size = isNaN(n) ? null : n; }
+    if (co.icp !== undefined) { const n = parseInt(co.icp); co.icp = isNaN(n) ? null : n; }
+    if (co.founded_year !== undefined) { const n = parseInt(co.founded_year); co.founded_year = isNaN(n) ? null : n; }
+    const validTypes = ['client','partner','prospect','nogo','poc'];
+    if (co.type && !validTypes.includes(co.type)) co.type = 'prospect';
+    try {
+      // Check by ID first, then by name — catches AI using wrong slug for existing company
+      let existingData = [];
+      const byId = await fetch(`${SB_URL}/rest/v1/companies?id=eq.${co.id}&select=id,name,type`, {
+        headers: { apikey: SB_KEY, Authorization: `Bearer ${SB_KEY}` }
+      });
+      existingData = await byId.json();
+      if (!existingData.length) {
+        // Also check by name — catches slug mismatches
+        const byName = await fetch(`${SB_URL}/rest/v1/companies?name=eq.${encodeURIComponent(co.name)}&select=id,name,type`, {
+          headers: { apikey: SB_KEY, Authorization: `Bearer ${SB_KEY}` }
+        });
+        const byNameData = await byName.json();
+        if (byNameData.length) {
+          existingData = byNameData;
+          co.id = byNameData[0].id; // use canonical id from DB
+        }
+      }
+      if (existingData.length > 0) {
+        const ex = existingData[0];
+        const confirmed = window.confirm(
+          `Company already exists in DB:\n\n"${ex.name}" (${ex.type})\n\nOverwrite with AI result (type: ${co.type}, ICP: ${co.icp})?\n\nOK = Update  |  Cancel = Skip`
+        );
+        if (!confirmed) {
+          results.push(`Company ${co.name}: ⏭ skipped (existing)`);
+          // Skip to contacts
+        } else {
+          const r = await fetch(`${SB_URL}/rest/v1/companies`, { method: 'POST', headers, body: JSON.stringify(co) });
+          results.push(`Company ${co.name}: ${r.ok ? '✅ updated' : '❌ '+r.status}`);
+        }
+      } else {
+        const r = await fetch(`${SB_URL}/rest/v1/companies`, { method: 'POST', headers, body: JSON.stringify(co) });
+        results.push(`Company ${co.name}: ${r.ok ? '✅ created' : '❌ '+r.status}`);
+      }
+    } catch(e) { results.push(`Company error: ${e.message}`); }
+  }
+
+  // Save contacts
+  for (const ct of (data.contacts || [])) {
+    if (!ct.id) continue;
+    try {
+      const r = await fetch(`${SB_URL}/rest/v1/contacts`, {
+        method: 'POST', headers,
+        body: JSON.stringify({ ...ct, updated_at: new Date().toISOString() })
+      });
+      results.push(`Contact ${ct.full_name}: ${r.ok ? '✅' : '❌ '+r.status}`);
+    } catch(e) { results.push(`Contact error: ${e.message}`); }
+  }
+
+  // Save relations
+  for (const rel of (data.relations || [])) {
+    if (!rel.from_company || !rel.to_company) continue;
+    try {
+      const r = await fetch(`${SB_URL}/rest/v1/company_relations`, {
+        method: 'POST',
+        headers: { ...headers, Prefer: 'resolution=ignore-duplicates,return=minimal' },
+        body: JSON.stringify(rel)
+      });
+      results.push(`Relation ${rel.from_company}→${rel.to_company}: ${r.ok ? '✅' : '❌ '+r.status}`);
+    } catch(e) { results.push(`Relation error: ${e.message}`); }
+  }
+
+  // Save press_links → intelligence table
+  if (data.press_links?.length) {
+    const slug = _aiCompany ? (_aiCompany.id || _slug(_aiCompany.name)) : (data.company?.id || '');
+    if (slug) {
+      try {
+        await fetch(`${SB_URL}/rest/v1/intelligence?company_id=eq.${slug}&type=eq.press_links`, {
+          method: 'DELETE', headers
+        });
+        const r = await fetch(`${SB_URL}/rest/v1/intelligence`, {
+          method: 'POST', headers,
+          body: JSON.stringify({ company_id: slug, type: 'press_links', content: data.press_links, source: 'ai_drawer' })
+        });
+        results.push(`Press (${data.press_links.length}): ${r.ok ? '✅' : '❌ '+r.status}`);
+        // Reload press section in panel
+        if (slug) setTimeout(() => loadIntelligence(slug), 400);
+      } catch(e) { results.push(`Press error: ${e.message}`); }
+    }
+  }
+
+  setAIStatus('done');
+  saveBtn.disabled = false;
+  statusEl.textContent = results.join(' · ') || 'Nothing to save';
+
+  // Reload data and re-open detail panel so enriched fields show immediately
+  if (data.company?.id && _aiCompany) {
+    const savedName = _aiCompany.name;
+    const savedSlug = _aiCompany.id || _slug(_aiCompany.name);
+    // If tech_stack or products were in the save block, reload immediately without full page refresh
+    if (data.company.tech_stack || data.company.products) {
+      setTimeout(() => loadTechStack(savedSlug), 300);
+    } else {
+      loadFromSupabase().then(() => {
+        const fresh = companies.find(c => c.name === savedName);
+        if (fresh) setTimeout(() => openCompany(fresh), 100);
+      });
+    }
+  }
+}
+
+window.loadRelations = async function(slug) {
+  const body  = document.getElementById('rel-body');
+  const badge = document.getElementById('rel-count-badge');
+  if (!body) return;
+  try {
+    const res  = await fetch(
+      `${SB_URL}/rest/v1/company_relations?or=(from_company.eq.${slug},to_company.eq.${slug})&select=*`,
+      { headers: { apikey: SB_KEY, Authorization: `Bearer ${SB_KEY}` } }
+    );
+    const rels = await res.json();
+    if (!Array.isArray(rels) || !rels.length) {
+      body.innerHTML = '<div class="no-rel">No relations recorded</div>';
+      if (badge) badge.textContent = '';
+      return;
+    }
+    const coMap = {};
+    companies.forEach(x => { if (x.name) coMap[_slug(x.name)] = x; });
+    const ti = { data_partner:'🤝', dsp_integration:'📡', marketplace_listed:'🛒',
+                 tech_integration:'⚙️', client_of:'💰', acquired_by:'🏢',
+                 subsidiary_of:'🏢', competes_with:'⚔️', co_sell:'🤲', reseller:'🔄' };
+    const tl = { data_partner:'Data Partner', dsp_integration:'DSP Integration',
+                 marketplace_listed:'Marketplace Listed', tech_integration:'Tech Integration',
+                 client_of:'Client Of', acquired_by:'Acquired By',
+                 subsidiary_of:'Subsidiary Of', competes_with:'Competes With',
+                 co_sell:'Co-Sell', reseller:'Reseller' };
+    const groups = {};
+    rels.forEach(r => {
+      groups[r.relation_type] = groups[r.relation_type] || [];
+      const isSrc = r.from_company === slug;
+      const oid   = isSrc ? r.to_company : r.from_company;
+      const co    = coMap[oid];
+      groups[r.relation_type].push({
+        oid, name: co?.name || oid,
+        arrow: r.direction === 'bidirectional' ? '⇄' : (isSrc ? '→' : '←'),
+        scls: r.strength === 'confirmed' ? 'tc' : 'tpr',
+        strength: r.strength, notes: r.notes, has: !!co
+      });
+    });
+    body.innerHTML = Object.entries(groups).map(([tp, items]) =>
+      `<div style="margin-bottom:10px">
+        <div style="font-family:'IBM Plex Mono',monospace;font-size:9px;text-transform:uppercase;letter-spacing:.06em;color:var(--t3);margin-bottom:4px;display:flex;align-items:center;gap:5px">
+          <span>${ti[tp]||'•'}</span><span>${tl[tp]||tp}</span>
+          <span style="margin-left:auto;background:var(--surf3);border-radius:2px;padding:0 5px">${items.length}</span>
+        </div>
+        ${items.map(it => `<div style="display:flex;align-items:flex-start;gap:8px;padding:5px 0;border-bottom:1px solid var(--rule3)">
+          <span style="font-family:'IBM Plex Mono',monospace;font-size:13px;color:var(--g);flex-shrink:0;margin-top:1px">${it.arrow}</span>
+          <div style="flex:1;min-width:0">
+            <div style="display:flex;align-items:center;gap:6px">
+              ${it.has
+                ? `<span style="font-size:12px;font-weight:500;color:var(--g);cursor:pointer" onclick="openCompany(companies.find(x=>_slug(x.name)==='${it.oid}'))">${it.name}</span>`
+                : `<span style="font-size:12px;font-weight:500;color:var(--t1)">${it.name}</span>`}
+              <span class="tag ${it.scls}" style="margin-left:auto;flex-shrink:0">${it.strength}</span>
+            </div>
+            ${it.notes ? `<div style="font-size:11px;color:var(--t3);margin-top:2px;line-height:1.4">${it.notes}</div>` : ''}
+          </div></div>`).join('')}
+      </div>`
+    ).join('');
+    if (badge) badge.textContent = `(${rels.length})`;
+  } catch(e) {
+    if (body) body.innerHTML = `<div style="font-size:11px;color:var(--t3)">Could not load relations</div>`;
+  }
+}
+
+window.loadIntelligence = async function(slug) {
+  const body  = document.getElementById('press-body');
+  const badge = document.getElementById('press-count-badge');
+  if (!body) return;
+  try {
+    const res = await fetch(
+      `${SB_URL}/rest/v1/intelligence?company_id=eq.${slug}&type=eq.press_links&select=*&limit=1`,
+      { headers: { apikey: SB_KEY, Authorization: `Bearer ${SB_KEY}` } }
+    );
+    const rows = await res.json();
+    if (!Array.isArray(rows) || !rows.length || !rows[0].content) {
+      body.innerHTML = '<div style="font-family:\'IBM Plex Mono\',monospace;font-size:10px;color:var(--t3);text-transform:uppercase">No press records — use Find ↗ to research</div>';
+      if (badge) badge.textContent = '';
+      return;
+    }
+    const links = Array.isArray(rows[0].content) ? rows[0].content : [];
+    if (!links.length) {
+      body.innerHTML = '<div style="font-family:\'IBM Plex Mono\',monospace;font-size:10px;color:var(--t3);text-transform:uppercase">No press records — use Find ↗ to research</div>';
+      if (badge) badge.textContent = '';
+      return;
+    }
+    const typeIcon = { company:'🏢', person:'👤', partnership:'🤝', product:'📦', award:'🏆' };
+    body.innerHTML = links.map(l => `
+      <div style="display:flex;align-items:flex-start;gap:8px;padding:5px 0;border-bottom:1px solid var(--rule3)">
+        <span style="font-size:13px;flex-shrink:0;margin-top:1px">${typeIcon[l.about] || '📰'}</span>
+        <div style="flex:1;min-width:0">
+          <a href="${l.url}" target="_blank" rel="noopener"
+             style="font-size:12px;font-weight:500;color:var(--g);text-decoration:none;display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis"
+             title="${(l.title||'').replace(/"/g,'&quot;')}">${l.title || l.url}</a>
+          <div style="font-family:'IBM Plex Mono',monospace;font-size:9px;color:var(--t3);margin-top:2px">
+            ${l.date ? `<span>${l.date}</span>` : ''}
+            ${l.source ? `<span style="margin-left:6px">${l.source}</span>` : ''}
+          </div>
+        </div>
+      </div>`).join('');
+    if (badge) badge.textContent = `(${links.length})`;
+  } catch(e) {
+    body.innerHTML = `<div style="font-size:11px;color:var(--t3)">Could not load press data</div>`;
+  }
+}
+
+window.renderMergeSuggestions = function(currentSlug) {
+  const q = (document.getElementById('merge-search')?.value || '').toLowerCase().trim();
+  const box = document.getElementById('merge-suggestions');
+  if (!box) return;
+  if (!q || q.length < 2) { box.innerHTML = ''; return; }
+
+  const matches = companies
+    .filter(c => (c.id || _slug(c.name)) !== currentSlug && c.name.toLowerCase().includes(q))
+    .slice(0, 8);
+
+  if (!matches.length) {
+    box.innerHTML = `<div style="font-family:'IBM Plex Mono',monospace;font-size:9px;color:var(--t3);padding:4px 0">No matches</div>`;
+    return;
+  }
+
+  box.innerHTML = matches.map(m => {
+    const mslug = m.id || _slug(m.name);
+    const [bg, fg] = av(m.name);
+    return `<div onclick="confirmMerge('${currentSlug}','${mslug}',${JSON.stringify(m.name)},${JSON.stringify(window.currentCompany?.name||'')})"
+      style="display:flex;align-items:center;gap:8px;padding:5px 8px;border-radius:2px;cursor:pointer;transition:background .1s"
+      onmouseover="this.style.background='var(--surf3)'" onmouseout="this.style.background=''">
+      <div style="width:20px;height:20px;border-radius:2px;background:${bg};border:1px solid ${fg}40;color:${fg};
+                  font-family:'IBM Plex Mono',monospace;font-size:7px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0">
+        ${m.name.replace(/[^A-Za-z ]/g,'').split(' ').map(w=>w[0]||'').slice(0,2).join('').toUpperCase()||'?'}
+      </div>
+      <div style="flex:1;min-width:0">
+        <div style="font-size:12px;font-weight:500;color:var(--t1)">${m.name}</div>
+        <div style="font-family:'IBM Plex Mono',monospace;font-size:9px;color:var(--t3)">${m.category||m.type||''} · ${m.hq_city||m.region||'—'}</div>
+      </div>
+      <span class="tag ${tagCls(m.type)}">${tagLbl(m.type)}</span>
+    </div>`;
+  }).join('');
+}
+
+window.confirmMerge = function(dupSlug, canonSlug, canonName, dupName) {
+  const msg = `Merge "${dupName}" INTO "${canonName}"?\n\n` +
+    `This will:\n• Move all contacts → ${canonName}\n• Move all relations → ${canonName}\n• Move all intelligence → ${canonName}\n• DELETE "${dupName}"\n\nThis cannot be undone.`;
+  if (!window.confirm(msg)) return;
+  doMerge(dupSlug, canonSlug, canonName);
+}
+
+window.doMerge = async function(dupSlug, canonSlug, canonName) {
+  const statusEl = document.getElementById('merge-suggestions');
+  if (statusEl) statusEl.innerHTML = `<div style="font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--t3);padding:4px 0">Merging…</div>`;
+
+  try {
+    const r = await fetch(
+      `${SB_URL}/rest/v1/rpc/merge_company`,
+      {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', apikey: SB_KEY, Authorization: `Bearer ${SB_KEY}` },
+        body: JSON.stringify({ duplicate_id: dupSlug, canonical_id: canonSlug })
+      }
+    );
+    const result = await r.json();
+    const msg = typeof result === 'string' ? result : JSON.stringify(result);
+
+    if (statusEl) statusEl.innerHTML = `<div style="font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--cc);padding:4px 0">${msg}</div>`;
+
+    // Reload list and open the canonical company
+    await loadFromSupabase();
+    const canonical = companies.find(c => (c.id || _slug(c.name)) === canonSlug);
+    if (canonical) setTimeout(() => openCompany(canonical), 100);
+
+  } catch(e) {
+    if (statusEl) statusEl.innerHTML = `<div style="font-family:'IBM Plex Mono',monospace;font-size:10px;color:#e05;padding:4px 0">Error: ${e.message}</div>`;
+  }
+}
+
+// Patch openCompany: use c.id as slug + auto-reload tech stack
+(function(){
+  const _oc = window.openCompany;
+  if(!_oc) return;
+  window.openCompany = function(c) {
+    window.currentCompany = c;
+    if (c && c.id && window._slug) {
+      const _os = window._slug;
+      window._slug = function(n){ return n===c.name ? c.id : _os(n); };
+      _oc(c);
+      window._slug = _os;
+    } else { _oc(c); }
+    if (c) setTimeout(function(){
+      const slug = c.id || (window._slug && window._slug(c.name));
+      if (slug && window.loadTechStack) window.loadTechStack(slug, false);
+    }, 200);
+  };
 })();
 </script>
 </body>
