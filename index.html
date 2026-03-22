@@ -1401,8 +1401,13 @@ async function saveAIResult() {
   // Save company
   if (data.company?.id) {
     const co = { ...data.company };
-    // Ensure arrays for jsonb fields
+    // Sanitize types
     if (co.dsps && !Array.isArray(co.dsps)) co.dsps = [co.dsps];
+    if (co.size !== undefined) { const n = parseInt(co.size); co.size = isNaN(n) ? null : n; }
+    if (co.icp !== undefined) { const n = parseInt(co.icp); co.icp = isNaN(n) ? null : n; }
+    if (co.founded_year !== undefined) { const n = parseInt(co.founded_year); co.founded_year = isNaN(n) ? null : n; }
+    const validTypes = ['client','partner','prospect','nogo','poc'];
+    if (co.type && !validTypes.includes(co.type)) co.type = 'prospect';
     try {
       const r = await fetch(`${SB_URL}/rest/v1/companies`, {
         method: 'POST', headers,
