@@ -1421,63 +1421,211 @@ async function loadRelations(slug) {
   const body  = document.getElementById('rel-body');
   const badge = document.getElementById('rel-count-badge');
   if (!body) return;
+
+  // ── Relation type metadata ──────────────────────────────
+  const TI = { data_partner:'🤝', dsp_integration:'📡', marketplace_listed:'🛒',
+               tech_integration:'⚙️', client_of:'💰', acquired_by:'🏢',
+               subsidiary_of:'🏢', competes_with:'⚔️', co_sell:'🤲', reseller:'🔄' };
+  const TL = { data_partner:'Data Partner', dsp_integration:'DSP Integration',
+               marketplace_listed:'Marketplace Listed', tech_integration:'Tech Integration',
+               client_of:'Client Of', acquired_by:'Acquired By',
+               subsidiary_of:'Subsidiary Of', competes_with:'Competes With',
+               co_sell:'Co-Sell', reseller:'Reseller' };
+
+  // ── DSP slug → display name map for greedy inference ───
+  const DSP_SLUGS = {
+    'thetradedesk':'The Trade Desk','ttd':'The Trade Desk',
+    'google-dv360':'DV360','dv360':'DV360',
+    'amazon-dsp':'Amazon DSP','amazon':'Amazon DSP',
+    'xandr':'Xandr','microsoft-advertising':'Xandr',
+    'liveramp':'LiveRamp','stackadapt':'StackAdapt',
+    'mediasmart':'MediaSmart','madhive':'Madhive',
+    'mntn':'MNTN','pubmatic':'PubMatic','equativ':'Equativ',
+    'adform':'Adform','appnexus':'Xandr','yahoo':'Yahoo',
+    'basis':'Basis','mediamathmatic':'MediaMath'
+  };
+
+  // ── Marketplace slug → display name ────────────────────
+  const MKT_SLUGS = {
+    'thetradedesk':'TTD Data Marketplace','liveramp':'LiveRamp Data Store',
+    'eyeota':'Eyeota / Dun & Bradstreet','lotame':'Lotame LDX',
+    'audigent':'Audigent Curation','pubmatic':'PubMatic Data Marketplace',
+    'equativ':'Equativ Data Marketplace','adform':'Adform Data Marketplace',
+    'id5':'ID5 Network'
+  };
+
   try {
-    const res  = await fetch(
+    // ── 1. Fetch stored relations from DB ─────────────────
+    const res = await fetch(
       `${SB_URL}/rest/v1/company_relations?or=(from_company.eq.${slug},to_company.eq.${slug})&select=*`,
       { headers: { apikey: SB_KEY, Authorization: `Bearer ${SB_KEY}` } }
     );
-    const rels = await res.json();
-    if (!Array.isArray(rels) || !rels.length) {
+    const storedRels = await res.json();
+
+    // ── 2. Build coMap for name resolution ────────────────
+    const coMap = {};
+    companies.forEach(x => { if (x.name) coMap[_slug(x.name)] = x; });
+
+    // ── 3. Greedy inference from company fields ───────────
+    const inferredRels = [];
+    const c = companies.find(x => _slug(x.name) === slug);
+
+    if (c) {
+      const storedPairs = new Set(
+        (Array.isArray(storedRels) ? storedRels : [])
+          .map(r => `${r.from_company}|${r.to_company}|${r.relation_type}`)
+      );
+
+      const addInferred = (from, to, type, label, icon) => {
+        const key = `${from}|${to}|${type}`;
+        if (!storedPairs.has(key)) {
+          const isSrc = from === slug;
+          const oid = isSrc ? to : from;
+          const co = coMap[oid];
+          inferredRels.push({
+            relation_type: type, from_company: from, to_company: to,
+            direction: 'unidirectional', strength: 'inferred', source: 'greedy',
+            notes: label, _icon: icon || TI[type] || '•',
+            _isSrc: isSrc, _oid: oid, _name: co?.name || oid, _has: !!co
+          });
+        }
+      };
+
+      // DSPs array → dsp_integration relations
+      const dsps = Array.isArray(c.dsps) ? c.dsps : (typeof c.dsps === 'string' ? JSON.parse(c.dsps || '[]') : []);
+      dsps.forEach(d => {
+        const dSlug = d.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
+        const known = DSP_SLUGS[dSlug] || d;
+        const dspCoSlug = companies.find(x => x.name === known || _slug(x.name) === dSlug)
+          ? _slug(companies.find(x => x.name === known || _slug(x.name) === dSlug).name)
+          : dSlug;
+        addInferred(slug, dspCoSlug, 'dsp_integration', `Integrated via ${known} DSP`, '📡');
+      });
+
+      // tech_stack → tech_integration / marketplace_listed
+      const stack = Array.isArray(c.tech_stack) ? c.tech_stack
+        : (typeof c.tech_stack === 'string' && c.tech_stack
+           ? (() => { try { return JSON.parse(c.tech_stack); } catch { return []; } })()
+           : []);
+      stack.forEach(t => {
+        if (!t || !t.tool) return;
+        const tSlug = _slug(t.tool);
+        const cat = (t.category || '').toLowerCase();
+        if (cat.includes('marketplace') || cat.includes('data store') || MKT_SLUGS[tSlug]) {
+          addInferred(slug, tSlug, 'marketplace_listed',
+            `Listed on ${t.tool} data marketplace (from tech stack)`, '🛒');
+        } else if (cat.includes('dsp') || cat.includes('demand')) {
+          addInferred(slug, tSlug, 'dsp_integration',
+            `DSP integration detected via tech stack: ${t.tool}`, '📡');
+        } else if (cat.includes('cdp') || cat.includes('dmp') || cat.includes('identity')
+                || cat.includes('clean room') || cat.includes('ssp')) {
+          addInferred(slug, tSlug, 'tech_integration',
+            `Integration detected via tech stack: ${t.tool} (${t.category || ''})`, '⚙️');
+        }
+      });
+
+      // products.integrations_advertised → tech_integration
+      const prods = c.products
+        ? (typeof c.products === 'string'
+           ? (() => { try { return JSON.parse(c.products); } catch { return {}; } })()
+           : c.products)
+        : {};
+      const intgs = prods.integrations_advertised || [];
+      intgs.forEach(intg => {
+        const iSlug = _slug(typeof intg === 'string' ? intg : (intg.name || ''));
+        if (!iSlug) return;
+        const label = typeof intg === 'string' ? intg : (intg.name || iSlug);
+        if (MKT_SLUGS[iSlug]) {
+          addInferred(slug, iSlug, 'marketplace_listed',
+            `Advertised integration with ${label} (from products page)`, '🛒');
+        } else {
+          addInferred(slug, iSlug, 'tech_integration',
+            `Advertised integration: ${label} (from products page)`, '⚙️');
+        }
+      });
+    }
+
+    // ── 4. Merge stored + inferred ────────────────────────
+    const allRels = [...(Array.isArray(storedRels) ? storedRels : []), ...inferredRels];
+    const totalCount = allRels.length;
+
+    if (!totalCount) {
       body.innerHTML = '<div class="no-rel">No relations recorded</div>';
       if (badge) badge.textContent = '';
       return;
     }
-    const coMap = {};
-    companies.forEach(x => { if (x.name) coMap[_slug(x.name)] = x; });
-    const ti = { data_partner:'🤝', dsp_integration:'📡', marketplace_listed:'🛒',
-                 tech_integration:'⚙️', client_of:'💰', acquired_by:'🏢',
-                 subsidiary_of:'🏢', competes_with:'⚔️', co_sell:'🤲', reseller:'🔄' };
-    const tl = { data_partner:'Data Partner', dsp_integration:'DSP Integration',
-                 marketplace_listed:'Marketplace Listed', tech_integration:'Tech Integration',
-                 client_of:'Client Of', acquired_by:'Acquired By',
-                 subsidiary_of:'Subsidiary Of', competes_with:'Competes With',
-                 co_sell:'Co-Sell', reseller:'Reseller' };
+
+    // ── 5. Group and render ───────────────────────────────
     const groups = {};
-    rels.forEach(r => {
-      groups[r.relation_type] = groups[r.relation_type] || [];
-      const isSrc = r.from_company === slug;
-      const oid   = isSrc ? r.to_company : r.from_company;
+    allRels.forEach(r => {
+      const isSrc = r._isSrc !== undefined ? r._isSrc : (r.from_company === slug);
+      const oid   = r._oid  !== undefined ? r._oid   : (isSrc ? r.to_company : r.from_company);
       const co    = coMap[oid];
-      groups[r.relation_type].push({
-        oid, name: co?.name || oid,
+      const name  = r._name || co?.name || oid;
+      const isInferred = r.source === 'greedy';
+      const tp = r.relation_type;
+      groups[tp] = groups[tp] || [];
+      groups[tp].push({
+        oid, name,
         arrow: r.direction === 'bidirectional' ? '⇄' : (isSrc ? '→' : '←'),
-        scls: r.strength === 'confirmed' ? 'tc' : 'tpr',
-        strength: r.strength, notes: r.notes, has: !!co
+        scls: r.strength === 'confirmed' ? 'tc' : (isInferred ? 'tn' : 'tpr'),
+        strength: r.strength,
+        notes: r.notes,
+        has: r._has !== undefined ? r._has : !!co,
+        inferred: isInferred
       });
     });
+
+    // Sort: stored first within each group
+    Object.values(groups).forEach(items =>
+      items.sort((a, b) => (a.inferred ? 1 : 0) - (b.inferred ? 1 : 0))
+    );
+
+    const storedCount = Array.isArray(storedRels) ? storedRels.length : 0;
+    const infCount = inferredRels.length;
+
     body.innerHTML = Object.entries(groups).map(([tp, items]) =>
       `<div style="margin-bottom:10px">
         <div style="font-family:'IBM Plex Mono',monospace;font-size:9px;text-transform:uppercase;letter-spacing:.06em;color:var(--t3);margin-bottom:4px;display:flex;align-items:center;gap:5px">
-          <span>${ti[tp]||'•'}</span><span>${tl[tp]||tp}</span>
+          <span>${TI[tp]||'•'}</span><span>${TL[tp]||tp}</span>
           <span style="margin-left:auto;background:var(--surf3);border-radius:2px;padding:0 5px">${items.length}</span>
         </div>
         ${items.map(it => `<div style="display:flex;align-items:flex-start;gap:8px;padding:5px 0;border-bottom:1px solid var(--rule3)">
-          <span style="font-family:'IBM Plex Mono',monospace;font-size:13px;color:var(--g);flex-shrink:0;margin-top:1px">${it.arrow}</span>
+          <span style="font-family:'IBM Plex Mono',monospace;font-size:13px;color:${it.inferred ? 'var(--t3)' : 'var(--g)'};flex-shrink:0;margin-top:1px">${it.arrow}</span>
           <div style="flex:1;min-width:0">
-            <div style="display:flex;align-items:center;gap:6px">
+            <div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap">
               ${it.has
                 ? `<span style="font-size:12px;font-weight:500;color:var(--g);cursor:pointer" onclick="openCompany(companies.find(x=>_slug(x.name)==='${it.oid}'))">${it.name}</span>`
                 : `<span style="font-size:12px;font-weight:500;color:var(--t1)">${it.name}</span>`}
               <span class="tag ${it.scls}" style="margin-left:auto;flex-shrink:0">${it.strength}</span>
+              ${it.inferred ? '<span class="tag tn" style="font-size:7px;opacity:.7">inferred</span>' : ''}
             </div>
             ${it.notes ? `<div style="font-size:11px;color:var(--t3);margin-top:2px;line-height:1.4">${it.notes}</div>` : ''}
           </div></div>`).join('')}
       </div>`
-    ).join('');
-    if (badge) badge.textContent = `(${rels.length})`;
+    ).join('') + (infCount > 0
+      ? `<div style="font-family:'IBM Plex Mono',monospace;font-size:9px;color:var(--t3);margin-top:8px;padding-top:6px;border-top:1px solid var(--rule2)">
+          ${storedCount} stored · ${infCount} inferred from DSPs / tech stack / products
+          <span style="float:right;cursor:pointer;color:var(--g)" onclick="saveInferredRelations('${slug}')">Save inferred ↗</span>
+         </div>`
+      : '');
+
+    if (badge) badge.textContent = `(${totalCount})`;
+
   } catch(e) {
-    if (body) body.innerHTML = `<div style="font-size:11px;color:var(--t3)">Could not load relations</div>`;
+    body.innerHTML = `<div style="font-size:11px;color:var(--t3)">Error: ${e.message}</div>`;
+    console.error('loadRelations:', e);
   }
+}
+
+async function saveInferredRelations(slug) {
+  // Collect only inferred relations from the current render state
+  // Re-run inference and batch-upsert to Supabase
+  const c = companies.find(x => _slug(x.name) === slug);
+  if (!c) return;
+  // Simple: open Claude with a prompt to store them
+  const prompt = `Save inferred relations for ${c.name} to the onAudience Supabase company_relations table based on their DSPs and tech stack`;
+  if (window.openClaude) window.openClaude(prompt);
 }
 
 /* ─────────────────────────────────────────
