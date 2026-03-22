@@ -521,6 +521,20 @@ async function msMaybeAddRelTags() {
   msRenderTags();
 }
 
+
+function msRenderTags() {
+  const el = document.getElementById('ms-tags');
+  if (!el) return;
+  el.innerHTML = (MS.tags || []).map(t =>
+    `<span onclick="msToggleTag('${t.id}')" style="display:inline-flex;align-items:center;gap:3px;padding:2px 8px;border:1px solid ${t.on?'var(--gr)':'var(--rule)'};border-radius:2px;font-family:'IBM Plex Mono',monospace;font-size:9px;cursor:pointer;background:${t.on?'var(--gb)':'var(--surf2)'};color:${t.on?'var(--g)':'var(--t3)'};transition:all .1s;user-select:none" data-tag-id="${t.id}">${t.label}</span>`
+  ).join('');
+}
+
+function msToggleTag(id) {
+  const t = (MS.tags || []).find(x => x.id === id);
+  if (t) { t.on = !t.on; msRenderTags(); }
+}
+
 function msRenderContactPicker(contacts) {
   const disp = document.getElementById('ms-contact-display');
   const picker = document.getElementById('ms-contact-picker');
