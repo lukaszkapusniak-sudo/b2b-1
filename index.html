@@ -728,7 +728,7 @@ function openCompany(c) {
   const dspPills = dsps.length ? dsps.map(d=>`<span class="seg-pill">${d}</span>`).join('') : '<span style="color:var(--t3);font-size:11px">—</span>';
 
   // Tech stack section — full table
-  const tsItems = Array.isArray(c.tech_stack) ? c.tech_stack : [];
+  const tsItems = Array.isArray(c.tech_stack) && c.tech_stack.length ? c.tech_stack : [];
   const tsHtml = tsItems.length ? `
     <div style="margin-bottom:6px">
       ${tsItems.map(t => `
@@ -1430,6 +1430,11 @@ async function saveAIResult() {
     if (ID_OVERRIDES[co.id]) co.id = ID_OVERRIDES[co.id];
     // Sanitize types
     if (co.dsps && !Array.isArray(co.dsps)) co.dsps = [co.dsps];
+    // Don't overwrite existing data with empty arrays — only save if has content
+    if (Array.isArray(co.tech_stack) && !co.tech_stack.length) delete co.tech_stack;
+    if (co.products && typeof co.products === 'object' && !co.products.products?.length) delete co.products;
+    // Strip null/undefined fields to avoid overwriting existing DB values
+    Object.keys(co).forEach(k => { if (co[k] === null || co[k] === undefined || co[k] === '') delete co[k]; });
     if (co.size !== undefined) { const n = parseInt(co.size); co.size = isNaN(n) ? null : n; }
     if (co.icp !== undefined) { const n = parseInt(co.icp); co.icp = isNaN(n) ? null : n; }
     if (co.founded_year !== undefined) { const n = parseInt(co.founded_year); co.founded_year = isNaN(n) ? null : n; }
