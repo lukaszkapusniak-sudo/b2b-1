@@ -589,7 +589,7 @@ function closeMeeseeks() {
 }
 
 async function generateMeeseeks() {
-  const key = localStorage.getItem('oa_api_key') || localStorage.getItem('claudeApiKey') || localStorage.getItem('anthropic_api_key');
+  const key = localStorage.getItem('oa_claude_key') || localStorage.getItem('oa_api_key') || localStorage.getItem('claudeApiKey') || localStorage.getItem('anthropic_api_key');
   if (!key) { msToast('No API key — set one in the AI drawer (🔑)'); return; }
 
   const persona  = MS.selected || MS.personas[0];
