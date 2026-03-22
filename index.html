@@ -1302,6 +1302,7 @@ function copyAIResult() {
 async function runAI() {
   const prompt = document.getElementById('ai-prompt-ta').value.trim();
   if (!prompt) return;
+  window._lastPrompt = prompt;  // store for context-bleed detection in saveAIResult
 
   // Check for API key
   const apiKey = getApiKey();
@@ -1330,7 +1331,7 @@ async function runAI() {
   // Build system context
   const company = _aiCompany;
   const systemCtx = `You are an expert sales intelligence assistant for onAudience — a European DMP and audience data company.
-${company ? `Current company context: ${company.name} (${company.category||'AdTech'}, ${company.region||'?'}, ICP ${company.icp||'?'}/10).
+${company ? `Reference company (context only — do NOT include in save-data unless you specifically researched it): ${company.name} (${company.category||'AdTech'}, ${company.region||'?'}, ICP ${company.icp||'?'}/10).
 Description: ${company.description||'N/A'}
 Note: ${company.note||'N/A'}
 Outreach angle: ${company.outreach_angle||'N/A'}` : ''}
@@ -1549,15 +1550,23 @@ async function saveAIResult() {
       }
       if (existingData.length > 0) {
         const ex = existingData[0];
-        const confirmed = window.confirm(
-          `Company already exists in DB:\n\n"${ex.name}" (${ex.type})\n\nOverwrite with AI result (type: ${co.type}, ICP: ${co.icp})?\n\nOK = Update  |  Cancel = Skip`
-        );
-        if (!confirmed) {
-          results.push(`Company ${co.name}: ⏭ skipped (existing)`);
-          // Skip to contacts
+        // Context-bleed guard: if Claude saved the reference/context company instead of the one it researched
+        const contextId = _aiCompany ? (_aiCompany.id || _slug(_aiCompany.name)) : null;
+        const isContextCompany = contextId && (co.id === contextId || ex.id === contextId);
+        const promptLower = (window._lastPrompt || '').toLowerCase();
+        const nameLower = (co.name || '').toLowerCase().split(' ')[0];
+        if (isContextCompany && nameLower && !promptLower.includes(nameLower)) {
+          results.push(`Company ${co.name}: ⏭ auto-skipped (context bleed — not the researched company)`);
         } else {
-          const r = await fetch(`${SB_URL}/rest/v1/companies`, { method: 'POST', headers, body: JSON.stringify(co) });
-          results.push(`Company ${co.name}: ${r.ok ? '✅ updated' : '❌ '+r.status}`);
+          const confirmed = window.confirm(
+            `Company already exists in DB:\n\n"${ex.name}" (${ex.type})\n\nOverwrite with AI result (type: ${co.type}, ICP: ${co.icp})?\n\nOK = Update  |  Cancel = Skip`
+          );
+          if (!confirmed) {
+            results.push(`Company ${co.name}: ⏭ skipped (existing)`);
+          } else {
+            const r = await fetch(`${SB_URL}/rest/v1/companies`, { method: 'POST', headers, body: JSON.stringify(co) });
+            results.push(`Company ${co.name}: ${r.ok ? '✅ updated' : '❌ '+r.status}`);
+          }
         }
       } else {
         const r = await fetch(`${SB_URL}/rest/v1/companies`, { method: 'POST', headers, body: JSON.stringify(co) });
@@ -1716,8 +1725,10 @@ updateStats();
 renderList();
 loadFromSupabase();
 </script>
-<!-- HUB PATCH — inline overrides for missing/fixed functions -->
+<!-- HUB PATCH v6 — inline overrides -->
 <script>
+// HUB PATCH v6 — auto-generated from main script
+
 window.loadFromSupabase = async function() {
   document.getElementById('statusLabel').textContent = 'Connecting…';
   try {
@@ -1904,15 +1915,23 @@ window.saveAIResult = async function() {
       }
       if (existingData.length > 0) {
         const ex = existingData[0];
-        const confirmed = window.confirm(
-          `Company already exists in DB:\n\n"${ex.name}" (${ex.type})\n\nOverwrite with AI result (type: ${co.type}, ICP: ${co.icp})?\n\nOK = Update  |  Cancel = Skip`
-        );
-        if (!confirmed) {
-          results.push(`Company ${co.name}: ⏭ skipped (existing)`);
-          // Skip to contacts
+        // Context-bleed guard: if Claude saved the reference/context company instead of the one it researched
+        const contextId = _aiCompany ? (_aiCompany.id || _slug(_aiCompany.name)) : null;
+        const isContextCompany = contextId && (co.id === contextId || ex.id === contextId);
+        const promptLower = (window._lastPrompt || '').toLowerCase();
+        const nameLower = (co.name || '').toLowerCase().split(' ')[0];
+        if (isContextCompany && nameLower && !promptLower.includes(nameLower)) {
+          results.push(`Company ${co.name}: ⏭ auto-skipped (context bleed — not the researched company)`);
         } else {
-          const r = await fetch(`${SB_URL}/rest/v1/companies`, { method: 'POST', headers, body: JSON.stringify(co) });
-          results.push(`Company ${co.name}: ${r.ok ? '✅ updated' : '❌ '+r.status}`);
+          const confirmed = window.confirm(
+            `Company already exists in DB:\n\n"${ex.name}" (${ex.type})\n\nOverwrite with AI result (type: ${co.type}, ICP: ${co.icp})?\n\nOK = Update  |  Cancel = Skip`
+          );
+          if (!confirmed) {
+            results.push(`Company ${co.name}: ⏭ skipped (existing)`);
+          } else {
+            const r = await fetch(`${SB_URL}/rest/v1/companies`, { method: 'POST', headers, body: JSON.stringify(co) });
+            results.push(`Company ${co.name}: ${r.ok ? '✅ updated' : '❌ '+r.status}`);
+          }
         }
       } else {
         const r = await fetch(`${SB_URL}/rest/v1/companies`, { method: 'POST', headers, body: JSON.stringify(co) });
