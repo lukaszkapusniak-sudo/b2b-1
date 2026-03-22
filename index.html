@@ -556,6 +556,38 @@ function openMeeseeks(ctx) {
   document.getElementById('meeseeks-overlay').style.display = 'flex';
 }
 
+function msToast(msg) {
+  const el = document.getElementById('ms-toast');
+  if (!el) return;
+  el.textContent = msg;
+  el.style.opacity = '1';
+  clearTimeout(window._msToastTimer);
+  window._msToastTimer = setTimeout(() => { el.style.opacity = '0'; }, 2500);
+}
+
+function copyMeeseeksEmail() {
+  const sub  = document.getElementById('ms-subject')?.value || '';
+  const body = document.getElementById('ms-body')?.value || '';
+  navigator.clipboard.writeText('Subject: ' + sub + '\n\n' + body)
+    .then(() => msToast('Copied ✓'));
+}
+
+async function saveMeeseeksDraft() {
+  const to      = document.getElementById('ms-to')?.value.trim() || '';
+  const subject = document.getElementById('ms-subject')?.value.trim() || '';
+  const body    = document.getElementById('ms-body')?.value.trim() || '';
+  if (!subject && !body) { msToast('Nothing to save yet'); return; }
+  const gmailUrl = `https://mail.google.com/mail/u/0/?view=cm&fs=1&to=${encodeURIComponent(to)}&su=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+  window.open(gmailUrl, '_blank');
+  msToast('Opening Gmail ↗');
+}
+
+function regenerateMeeseeks() { generateMeeseeks(); }
+
+function closeMeeseeks() {
+  document.getElementById('meeseeks-overlay').style.display = 'none';
+}
+
 async function generateMeeseeks() {
   const key = localStorage.getItem('oa_api_key') || localStorage.getItem('claudeApiKey') || localStorage.getItem('anthropic_api_key');
   if (!key) { msToast('No API key — set one in the AI drawer (🔑)'); return; }
