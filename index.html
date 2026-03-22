@@ -7,643 +7,1542 @@
 <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@300;400;500;600&family=IBM+Plex+Sans:wght@300;400;500;600&display=swap" rel="stylesheet"/>
 <style>
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
-[data-theme="light"]{--bg:#F4F2EC;--surf:#FFFFFF;--surf2:#F8F6F0;--surf3:#EFEDE6;--surf4:#E8E6DE;--rule:rgba(0,0,0,0.09);--rule2:rgba(0,0,0,0.05);--rule3:rgba(0,0,0,0.03);--t1:#0C0C0A;--t2:#5C5C56;--t3:#9A9990;--t4:#C8C6BC;--g:#178066;--gd:#0F6E56;--gb:rgba(23,128,102,0.08);--gr:rgba(23,128,102,0.28);--cc:#146B3A;--cb:#E4F5EC;--cr:rgba(20,107,58,0.28);--pc:#1A4F8A;--pb:#E6EEFA;--pr:rgba(26,79,138,0.28);--prc:#7A4200;--prb:#FEF2E0;--prr:rgba(122,66,0,0.28);--nc:#6B6B64;--nb:#EFEDE6;--nr:rgba(107,107,100,0.28);--poc:#4B2D9E;--pob:#EDE8FD;--por:rgba(75,45,158,0.28);--sh:0 1px 2px rgba(0,0,0,0.06),0 4px 12px rgba(0,0,0,0.04)}
-[data-theme="dark"]{--bg:#0C0C0A;--surf:#141412;--surf2:#1C1C1A;--surf3:#242421;--surf4:#2E2E2B;--rule:rgba(255,255,255,0.08);--rule2:rgba(255,255,255,0.05);--rule3:rgba(255,255,255,0.03);--t1:#F0EFE8;--t2:#8A8A82;--t3:#555550;--t4:#38382E;--g:#1FA882;--gd:#178066;--gb:rgba(31,168,130,0.1);--gr:rgba(31,168,130,0.3);--cc:#4ADE80;--cb:rgba(74,222,128,0.1);--cr:rgba(74,222,128,0.25);--pc:#60A5FA;--pb:rgba(96,165,250,0.1);--pr:rgba(96,165,250,0.25);--prc:#FBBF24;--prb:rgba(251,191,36,0.1);--prr:rgba(251,191,36,0.25);--nc:#55554E;--nb:rgba(85,85,78,0.15);--nr:rgba(85,85,78,0.25);--poc:#C084FC;--pob:rgba(192,132,252,0.1);--por:rgba(192,132,252,0.25);--sh:0 1px 3px rgba(0,0,0,0.5),0 6px 20px rgba(0,0,0,0.35)}
-html,body{height:100%;background:var(--bg);color:var(--t1);font-family:'IBM Plex Sans',system-ui,sans-serif;font-size:13px;line-height:1.5;transition:background .25s,color .25s}
-::-webkit-scrollbar{width:3px;height:3px}::-webkit-scrollbar-thumb{background:var(--surf4);border-radius:2px}
-.topnav{background:var(--surf);border-bottom:1px solid var(--rule);display:flex;align-items:center;height:42px;padding:0 18px;gap:0;position:sticky;top:0;z-index:100}
+[data-theme="light"]{
+  --bg:#F4F2EC;--surf:#FFFFFF;--surf2:#F8F6F0;--surf3:#EFEDE6;--surf4:#E8E6DE;
+  --rule:rgba(0,0,0,0.09);--rule2:rgba(0,0,0,0.05);--rule3:rgba(0,0,0,0.03);
+  --t1:#0C0C0A;--t2:#5C5C56;--t3:#9A9990;--t4:#C8C6BC;
+  --g:#178066;--gd:#0F6E56;--gb:rgba(23,128,102,0.08);--gr:rgba(23,128,102,0.28);
+  --cc:#146B3A;--cb:#E4F5EC;--cr:rgba(20,107,58,0.28);
+  --pc:#1A4F8A;--pb:#E6EEFA;--pr:rgba(26,79,138,0.28);
+  --prc:#7A4200;--prb:#FEF2E0;--prr:rgba(122,66,0,0.28);
+  --nc:#6B6B64;--nb:#EFEDE6;--nr:rgba(107,107,100,0.28);
+  --poc:#4B2D9E;--pob:#EDE8FD;--por:rgba(75,45,158,0.28);
+  --sh:0 1px 2px rgba(0,0,0,0.06),0 4px 12px rgba(0,0,0,0.04);
+}
+[data-theme="dark"]{
+  --bg:#0C0C0A;--surf:#141412;--surf2:#1C1C1A;--surf3:#242421;--surf4:#2E2E2B;
+  --rule:rgba(255,255,255,0.08);--rule2:rgba(255,255,255,0.05);--rule3:rgba(255,255,255,0.03);
+  --t1:#F0EFE8;--t2:#8A8A82;--t3:#555550;--t4:#38382E;
+  --g:#1FA882;--gd:#178066;--gb:rgba(31,168,130,0.1);--gr:rgba(31,168,130,0.3);
+  --cc:#4ADE80;--cb:rgba(74,222,128,0.1);--cr:rgba(74,222,128,0.25);
+  --pc:#60A5FA;--pb:rgba(96,165,250,0.1);--pr:rgba(96,165,250,0.25);
+  --prc:#FBBF24;--prb:rgba(251,191,36,0.1);--prr:rgba(251,191,36,0.25);
+  --nc:#55554E;--nb:rgba(85,85,78,0.15);--nr:rgba(85,85,78,0.25);
+  --poc:#C084FC;--pob:rgba(192,132,252,0.1);--por:rgba(192,132,252,0.25);
+  --sh:0 1px 3px rgba(0,0,0,0.5),0 6px 20px rgba(0,0,0,0.35);
+}
+[data-theme="dark"] body::before{
+  content:'';position:fixed;inset:0;pointer-events:none;z-index:0;
+  background-image:linear-gradient(rgba(255,255,255,.016) 1px,transparent 1px),
+    linear-gradient(90deg,rgba(255,255,255,.016) 1px,transparent 1px);
+  background-size:40px 40px;
+}
+html,body{height:100%;background:var(--bg);color:var(--t1);
+  font-family:'IBM Plex Sans',sans-serif;font-size:13px;line-height:1.5;
+  transition:background .25s,color .25s}
+::-webkit-scrollbar{width:3px;height:3px}
+::-webkit-scrollbar-thumb{background:var(--surf4);border-radius:2px}
+
+/* APP SHELL */
+.app{display:flex;flex-direction:column;height:100vh;overflow:hidden;position:relative;z-index:1}
+
+/* NAV */
+.nav{background:var(--surf);border-bottom:1px solid var(--rule);display:flex;align-items:center;height:42px;padding:0 14px;gap:10px;flex-shrink:0}
 .nav-logo{width:26px;height:26px;background:var(--g);border-radius:4px;display:flex;align-items:center;justify-content:center;font-family:'IBM Plex Mono',monospace;font-weight:600;font-size:9px;color:#fff;letter-spacing:-0.5px;flex-shrink:0}
-.nav-brand{font-family:'IBM Plex Mono',monospace;font-size:10px;font-weight:500;letter-spacing:.06em;text-transform:uppercase;margin-left:10px;padding-right:14px;border-right:1px solid var(--rule);color:var(--t1);white-space:nowrap}
-.nav-sub{color:var(--t3);font-weight:400}
-.nav-right{margin-left:auto;display:flex;align-items:center;gap:7px}
-.synced{display:flex;align-items:center;gap:5px;font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--t3);padding:2px 8px;border:1px solid var(--rule);border-radius:2px}
-.dot{width:5px;height:5px;border-radius:50%;background:#22C55E}
+.nav-title{font-family:'IBM Plex Mono',monospace;font-size:10px;font-weight:500;letter-spacing:.06em;text-transform:uppercase;padding-right:12px;border-right:1px solid var(--rule);color:var(--t1);white-space:nowrap}
+.nav-title span{color:var(--t3);font-weight:400}
+.nav-status{display:flex;align-items:center;gap:5px;font-family:'IBM Plex Mono',monospace;font-size:9px;color:var(--t3)}
+.status-dot{width:6px;height:6px;border-radius:50%;background:var(--t4);transition:background .3s}
+.status-dot.live{background:#22C55E}
+.nav-right{margin-left:auto;display:flex;align-items:center;gap:6px}
+.btn{height:26px;padding:0 10px;border:1px solid var(--rule);border-radius:2px;font-family:'IBM Plex Mono',monospace;font-size:9px;font-weight:500;text-transform:uppercase;letter-spacing:.06em;cursor:pointer;background:var(--surf2);color:var(--t2);transition:all .15s;white-space:nowrap}
+.btn:hover{background:var(--surf3);color:var(--t1)}
+.btn.p{background:var(--g);color:#fff;border-color:var(--g)}
+.btn.p:hover{background:var(--gd)}
+.btn.sm{height:22px;padding:0 7px;font-size:8px}
 .theme-btn{width:26px;height:26px;border:1px solid var(--rule);border-radius:2px;background:var(--surf2);cursor:pointer;font-size:12px;display:flex;align-items:center;justify-content:center;transition:background .15s;color:var(--t2)}
 .theme-btn:hover{background:var(--surf3)}
-.stats-bar{background:var(--surf);border-bottom:1px solid var(--rule);display:grid;grid-template-columns:repeat(7,1fr)}
-.sc{padding:9px 14px 8px;border-right:1px solid var(--rule);cursor:pointer;transition:background .15s}
+
+/* STATS BAR */
+.stats-bar{background:var(--surf);border-bottom:1px solid var(--rule);display:grid;grid-template-columns:repeat(7,1fr);flex-shrink:0}
+.sc{padding:8px 12px 7px;border-right:1px solid var(--rule);cursor:pointer;transition:background .15s;user-select:none}
 .sc:last-child{border-right:none}
 .sc:hover{background:var(--surf2)}
 .sc.active{background:var(--gb);border-bottom:2px solid var(--g)}
-.sn{font-family:'IBM Plex Mono',monospace;font-size:20px;font-weight:300;letter-spacing:-1px;line-height:1;color:var(--t1)}
-.sl{font-family:'IBM Plex Mono',monospace;font-size:8px;text-transform:uppercase;letter-spacing:.08em;color:var(--t3);margin-top:3px}
-.search-bar{background:var(--surf);border-bottom:1px solid var(--rule);padding:7px 14px;display:flex;align-items:center;gap:8px;flex-wrap:wrap}
-.sbox{position:relative;flex:1;min-width:180px}
-.sico{position:absolute;left:8px;top:50%;transform:translateY(-50%);color:var(--t3);font-family:'IBM Plex Mono',monospace;font-size:10px;pointer-events:none}
-.sinp{width:100%;height:28px;padding:0 8px 0 24px;border:1px solid var(--rule);border-radius:2px;background:var(--surf2);color:var(--t1);font-family:'IBM Plex Mono',monospace;font-size:11px;outline:none;transition:border-color .15s}
-.sinp::placeholder{color:var(--t3)}.sinp:focus{border-color:var(--gr)}
-.fpills{display:flex;gap:4px;flex-wrap:wrap}
-.fp{height:22px;padding:0 9px;border:1px solid var(--rule);border-radius:2px;font-family:'IBM Plex Mono',monospace;font-size:9px;text-transform:uppercase;letter-spacing:.05em;cursor:pointer;background:transparent;color:var(--t3);transition:all .12s;white-space:nowrap}
-.fp:hover:not(.active){background:var(--surf3);color:var(--t1)}
-.fp.active{background:var(--t1);color:var(--surf);border-color:var(--t1)}
-.main{display:flex;height:calc(100vh - 42px - 38px - 33px - 43px)}
-.panel-left{width:320px;flex-shrink:0;border-right:1px solid var(--rule);background:var(--surf);display:flex;flex-direction:column;overflow:hidden}
-.list-meta{padding:4px 10px;border-bottom:1px solid var(--rule2);display:flex;justify-content:space-between;flex-shrink:0}
-.list-meta span{font-family:'IBM Plex Mono',monospace;font-size:9px;color:var(--t3)}
-.co-list{overflow-y:auto;flex:1}
-.co-row{display:flex;align-items:center;gap:8px;padding:6px 10px;border-bottom:1px solid var(--rule3);cursor:pointer;transition:background .1s;user-select:none}
-.co-row:hover{background:var(--surf2)}
-.co-row.selected{background:var(--gb);border-left:2px solid var(--g);padding-left:8px}
-.co-av{width:28px;height:28px;border-radius:3px;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-family:'IBM Plex Mono',monospace;font-size:9px;font-weight:600;border:1px solid transparent}
-.co-info-sm{flex:1;min-width:0}
-.co-name-sm{font-size:12px;font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.co-meta-sm{font-family:'IBM Plex Mono',monospace;font-size:9px;color:var(--t3);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin-top:1px}
-.co-right-sm{display:flex;align-items:center;gap:4px;flex-shrink:0}
-.icp-num{font-family:'IBM Plex Mono',monospace;font-size:9px;color:var(--t4);min-width:14px;text-align:right}
-.tech-pill{font-family:'IBM Plex Mono',monospace;font-size:7px;padding:1px 4px;border-radius:2px;background:var(--pb);color:var(--pc);border:1px solid var(--pr);white-space:nowrap;flex-shrink:0}
-.press-pill{font-family:'IBM Plex Mono',monospace;font-size:7px;padding:1px 4px;border-radius:2px;background:var(--prb);color:var(--prc);border:1px solid var(--prr);white-space:nowrap;flex-shrink:0}
-.tag{font-family:'IBM Plex Mono',monospace;font-size:8px;font-weight:500;text-transform:uppercase;letter-spacing:.06em;padding:1px 5px;border-radius:2px;border:1px solid;white-space:nowrap}
+.sc-num{font-family:'IBM Plex Mono',monospace;font-size:20px;font-weight:300;letter-spacing:-1px;line-height:1;color:var(--t1)}
+.sc-lbl{font-family:'IBM Plex Mono',monospace;font-size:8px;text-transform:uppercase;letter-spacing:.08em;color:var(--t3);margin-top:2px}
+
+/* TAG */
+.tag{font-family:'IBM Plex Mono',monospace;font-size:8px;font-weight:500;text-transform:uppercase;letter-spacing:.06em;padding:1px 5px;border-radius:2px;border:1px solid;white-space:nowrap;flex-shrink:0}
 .tc{color:var(--cc);background:var(--cb);border-color:var(--cr)}
 .tp{color:var(--pc);background:var(--pb);border-color:var(--pr)}
 .tpr{color:var(--prc);background:var(--prb);border-color:var(--prr)}
 .tn{color:var(--nc);background:var(--nb);border-color:var(--nr)}
 .tpo{color:var(--poc);background:var(--pob);border-color:var(--por)}
-.panel-right{flex:1;overflow-y:auto;background:var(--surf2);padding:12px}
-.banner{background:var(--surf);border:1px solid var(--rule);border-radius:3px;padding:14px 16px;display:flex;align-items:flex-start;gap:12px;margin-bottom:6px;box-shadow:var(--sh)}
-.co-logo{width:40px;height:40px;border-radius:3px;background:var(--g);display:flex;align-items:center;justify-content:center;font-family:'IBM Plex Mono',monospace;font-size:11px;font-weight:600;color:#fff;flex-shrink:0;letter-spacing:-0.5px}
-.co-hdr-info{flex:1;min-width:0}
-.co-hdr-name{font-size:16px;font-weight:500;color:var(--t1);display:flex;align-items:center;gap:7px;flex-wrap:wrap}
+
+/* PANELS */
+.panels{display:flex;flex:1;overflow:hidden}
+
+/* LEFT */
+.left{width:320px;flex-shrink:0;border-right:1px solid var(--rule);background:var(--surf);display:flex;flex-direction:column;overflow:hidden}
+.tab-bar{display:flex;border-bottom:1px solid var(--rule);flex-shrink:0}
+.tab{flex:1;height:32px;display:flex;align-items:center;justify-content:center;gap:5px;font-family:'IBM Plex Mono',monospace;font-size:9px;font-weight:500;text-transform:uppercase;letter-spacing:.06em;color:var(--t3);cursor:pointer;border-bottom:2px solid transparent;transition:all .15s}
+.tab:hover{background:var(--surf2);color:var(--t1)}
+.tab.active{color:var(--g);border-bottom-color:var(--g)}
+.search-row{display:flex;gap:6px;padding:8px;flex-shrink:0;border-bottom:1px solid var(--rule2)}
+.sinp{flex:1;height:28px;padding:0 8px;border:1px solid var(--rule);border-radius:2px;background:var(--surf2);color:var(--t1);font-family:'IBM Plex Mono',monospace;font-size:11px;outline:none;transition:border-color .15s}
+.sinp::placeholder{color:var(--t3)}
+.sinp:focus{border-color:var(--gr)}
+.fp-row{display:flex;gap:4px;padding:6px 8px;flex-wrap:wrap;flex-shrink:0;border-bottom:1px solid var(--rule2)}
+.fp{height:20px;padding:0 8px;border:1px solid var(--rule);border-radius:2px;font-family:'IBM Plex Mono',monospace;font-size:8px;text-transform:uppercase;letter-spacing:.05em;cursor:pointer;background:transparent;color:var(--t3);transition:all .12s;white-space:nowrap}
+.fp:hover:not(.active){background:var(--surf3);color:var(--t1)}
+.fp.active{background:var(--t1);color:var(--surf);border-color:var(--t1)}
+.list-meta{padding:4px 10px;border-bottom:1px solid var(--rule3);flex-shrink:0;display:flex;justify-content:space-between}
+.list-meta span{font-family:'IBM Plex Mono',monospace;font-size:9px;color:var(--t3)}
+.co-list{overflow-y:auto;flex:1}
+
+/* COMPANY ROW */
+.co-row{display:flex;align-items:center;gap:8px;padding:6px 10px;border-bottom:1px solid var(--rule3);cursor:pointer;transition:background .1s;user-select:none}
+.co-row:hover{background:var(--surf2)}
+.co-row.selected{background:var(--gb);border-left:2px solid var(--g);padding-left:8px}
+.av{width:28px;height:28px;border-radius:3px;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-family:'IBM Plex Mono',monospace;font-size:9px;font-weight:600;border:1px solid transparent}
+.rn{font-size:12px;font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;color:var(--t1)}
+.rno{font-family:'IBM Plex Mono',monospace;font-size:9px;color:var(--t3);margin-top:1px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.co-right{display:flex;align-items:center;gap:4px;flex-shrink:0}
+.icp-n{font-family:'IBM Plex Mono',monospace;font-size:9px;color:var(--t4);min-width:14px;text-align:right}
+
+/* CONTACTS TAB */
+.ct-row-li{display:flex;align-items:center;gap:8px;padding:7px 10px;border-bottom:1px solid var(--rule3);cursor:pointer;transition:background .1s}
+.ct-row-li:hover{background:var(--surf2)}
+.ct-av-sm{width:28px;height:28px;border-radius:50%;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-family:'IBM Plex Mono',monospace;font-size:9px;font-weight:700;background:var(--pb);color:var(--pc);border:1px solid var(--pr)}
+.ct-name-sm{font-size:12px;font-weight:500;color:var(--t1)}
+.ct-role-sm{font-family:'IBM Plex Mono',monospace;font-size:9px;color:var(--t3);margin-top:1px}
+.ct-co-sm{font-family:'IBM Plex Mono',monospace;font-size:8px;color:var(--t4)}
+
+/* CENTER */
+.center{flex:1;overflow-y:auto;background:var(--surf2);position:relative}
+
+/* EMPTY STATE */
+.empty-state{padding:24px;max-width:600px;margin:0 auto}
+.es-title{font-family:'IBM Plex Mono',monospace;font-size:11px;font-weight:500;text-transform:uppercase;letter-spacing:.08em;color:var(--t3);margin-bottom:14px}
+.qa-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.qa-card{background:var(--surf);border:1px solid var(--rule);border-radius:3px;padding:14px;cursor:pointer;transition:border-color .15s,background .15s}
+.qa-card:hover{border-color:var(--gr);background:var(--gb)}
+.qa-icon{font-size:16px;margin-bottom:6px}
+.qa-title{font-size:13px;font-weight:500;color:var(--t1);margin-bottom:2px}
+.qa-desc{font-family:'IBM Plex Mono',monospace;font-size:9px;color:var(--t3)}
+
+/* COMPANY PANEL */
+.co-panel{padding:14px;max-width:720px}
+.co-banner{background:var(--surf);border:1px solid var(--rule);border-radius:3px;padding:14px 16px;display:flex;align-items:flex-start;gap:12px;margin-bottom:8px;box-shadow:var(--sh)}
+.co-logo{width:40px;height:40px;border-radius:3px;display:flex;align-items:center;justify-content:center;font-family:'IBM Plex Mono',monospace;font-size:12px;font-weight:600;color:#fff;flex-shrink:0}
+.co-hdr{flex:1;min-width:0}
+.co-hdr-name{font-size:16px;font-weight:500;display:flex;align-items:center;gap:7px;flex-wrap:wrap}
 .co-domain{font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--t3)}
 .co-sub{font-size:11px;color:var(--t2);margin-top:3px}
-.icp-row{display:flex;align-items:center;gap:10px;margin-top:6px}
-.stars{color:var(--g);font-size:13px;letter-spacing:1px}
-.icp-reason{font-family:'IBM Plex Mono',monospace;font-size:9px;color:var(--t3)}
-.section{background:var(--surf);border:1px solid var(--rule);border-radius:3px;overflow:hidden;margin-bottom:6px;box-shadow:var(--sh)}
-.sec-hdr{background:var(--surf2);padding:6px 12px;border-bottom:1px solid var(--rule);display:flex;align-items:center;gap:6px}
-.sec-label{font-family:'IBM Plex Mono',monospace;font-size:9px;font-weight:500;text-transform:uppercase;letter-spacing:.08em;color:var(--t3)}
+.icp-row{display:flex;align-items:center;gap:8px;margin-top:5px}
+.stars{color:var(--g);font-family:'IBM Plex Mono',monospace;font-size:12px;letter-spacing:1px}
+.icp-lbl{font-family:'IBM Plex Mono',monospace;font-size:9px;color:var(--t3)}
+.sec{background:var(--surf);border:1px solid var(--rule);border-radius:3px;overflow:hidden;margin-bottom:8px;box-shadow:var(--sh)}
+.sec-hdr{background:var(--surf2);padding:6px 12px;border-bottom:1px solid var(--rule);display:flex;align-items:center;gap:6px;cursor:pointer;user-select:none}
+.sec-hdr-label{font-family:'IBM Plex Mono',monospace;font-size:9px;font-weight:500;text-transform:uppercase;letter-spacing:.08em;color:var(--t3)}
 .sec-body{padding:10px 12px}
 table.info{width:100%;border-collapse:collapse;font-size:12px}
 table.info tr td{padding:4px 0;vertical-align:top;border-bottom:1px solid var(--rule3)}
 table.info tr:last-child td{border-bottom:none}
-table.info tr td:first-child{font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--t3);width:110px;padding-right:12px;text-transform:uppercase;letter-spacing:.04em}
-.note{background:var(--surf2);border-left:2px solid var(--g);padding:8px 12px;font-size:11px;color:var(--t2);margin-top:6px;line-height:1.6}
-.btn{height:24px;padding:0 10px;border:1px solid var(--rule);border-radius:2px;font-family:'IBM Plex Mono',monospace;font-size:9px;font-weight:500;text-transform:uppercase;letter-spacing:.06em;cursor:pointer;background:var(--surf2);color:var(--t2);transition:all .15s}
-.btn:hover{background:var(--surf3);color:var(--t1)}
-.btn.primary{background:var(--g);color:#fff;border-color:var(--g)}
-.btn.primary:hover{background:var(--gd)}
+table.info tr td:first-child{font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--t3);width:120px;padding-right:10px;text-transform:uppercase;letter-spacing:.04em}
+.note-bar{background:var(--surf2);border-left:2px solid var(--g);padding:8px 12px;font-size:11px;color:var(--t2);margin-top:8px;line-height:1.6}
 .btn-row{display:flex;gap:5px;flex-wrap:wrap;margin-top:8px}
+.contact-card{background:var(--surf2);border:1px solid var(--rule);border-radius:3px;padding:10px 12px;margin-bottom:5px}
+.contact-card:last-child{margin-bottom:0}
+.ct-av-r{width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-family:'IBM Plex Mono',monospace;font-size:8px;font-weight:700;background:var(--pb);color:var(--pc);border:1px solid var(--pr);flex-shrink:0}
+table.info2{width:100%;border-collapse:collapse;font-size:11px}
+table.info2 tr td{padding:3px 0;vertical-align:top;border-bottom:1px solid var(--rule3)}
+table.info2 tr:last-child td{border-bottom:none}
+table.info2 tr td:first-child{font-family:'IBM Plex Mono',monospace;font-size:9px;color:var(--t3);width:70px;text-transform:uppercase;letter-spacing:.04em}
+.code-pill{font-family:'IBM Plex Mono',monospace;font-size:10px;background:var(--surf3);border:1px solid var(--rule);border-radius:2px;padding:1px 5px;color:var(--t1)}
 a.ml{font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--g);text-decoration:none}
 a.ml:hover{text-decoration:underline}
-.tech-grid{display:flex;flex-wrap:wrap;gap:5px;margin-top:4px}
-.tech-item{font-family:'IBM Plex Mono',monospace;font-size:9px;padding:2px 6px;border-radius:2px;border:1px solid var(--rule);background:var(--surf2);color:var(--t2)}
-.tech-item.analytics{background:var(--cb);color:var(--cc);border-color:var(--cr)}
-.tech-item.advertising{background:var(--pob);color:var(--poc);border-color:var(--por)}
-.tech-item.crm{background:var(--prb);color:var(--prc);border-color:var(--prr)}
-.tech-item.identity{background:var(--pb);color:var(--pc);border-color:var(--pr)}
-.tech-item.cmp{background:var(--nb);color:var(--nc);border-color:var(--nr)}
-.dsp-badges{display:flex;flex-wrap:wrap;gap:4px}
-.dsp-badge{font-family:'IBM Plex Mono',monospace;font-size:8px;padding:1px 6px;border-radius:2px;background:var(--gb);color:var(--g);border:1px solid var(--gr)}
-.press-link{display:flex;flex-direction:column;padding:7px 0;border-bottom:1px solid var(--rule3)}
-.press-link:last-child{border-bottom:none}
-.press-title{font-size:12px;font-weight:500;color:var(--t1);margin-bottom:2px}
-.press-meta{font-family:'IBM Plex Mono',monospace;font-size:9px;color:var(--t3);display:flex;gap:8px;flex-wrap:wrap}
-.press-summary{font-size:11px;color:var(--t2);margin-top:3px;line-height:1.5}
-.press-type{font-family:'IBM Plex Mono',monospace;font-size:7px;padding:1px 4px;border-radius:2px;border:1px solid var(--rule);color:var(--t3);text-transform:uppercase}
-.ctx-menu{position:fixed;background:var(--surf);border:1px solid var(--rule);border-radius:4px;padding:5px;z-index:9999;min-width:230px;box-shadow:var(--sh)}
-.ctx-label{font-size:11px;color:var(--t2);padding:5px 10px 3px;font-weight:500}
-.ctx-sep{height:1px;background:var(--rule);margin:4px 0}
-.ctx-item{display:flex;align-items:center;gap:8px;padding:6px 10px;font-size:12px;color:var(--t1);border-radius:2px;cursor:pointer;transition:background .1s}
-.ctx-item:hover{background:var(--surf2)}
-.ctx-icon{font-size:13px;width:16px;text-align:center}
-.empty-panel{display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:300px;color:var(--t3)}
-.empty-panel .big{font-family:'IBM Plex Mono',monospace;font-size:40px;font-weight:200;letter-spacing:-2px;margin-bottom:8px;color:var(--t4)}
-.empty-panel .sub{font-family:'IBM Plex Mono',monospace;font-size:10px;text-transform:uppercase;letter-spacing:.08em}
+.no-rel{background:var(--surf2);border:1px solid var(--rule);border-radius:3px;padding:8px 12px;font-family:'IBM Plex Mono',monospace;font-size:9px;color:var(--t3);text-transform:uppercase;letter-spacing:.05em}
+.close-btn{width:26px;height:26px;border:1px solid var(--rule);border-radius:2px;background:transparent;cursor:pointer;font-size:14px;color:var(--t3);display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:background .15s}
+.close-btn:hover{background:var(--surf3);color:var(--t1)}
 
-/* ── TASK RUNNER ─────────────────────────────────────────────────────────── */
-/* Toast bar — bottom-right corner, stacks vertically */
-#toast-stack{position:fixed;bottom:18px;right:18px;display:flex;flex-direction:column;gap:8px;z-index:8000;pointer-events:none}
-.toast{pointer-events:all;display:flex;align-items:center;gap:10px;min-width:300px;max-width:400px;background:var(--surf);border:1px solid var(--rule);border-radius:4px;padding:10px 14px;box-shadow:var(--sh);transition:opacity .3s,transform .3s;animation:toastIn .2s ease}
-@keyframes toastIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
-.toast.done{border-left:3px solid var(--g)}
-.toast.error{border-left:3px solid #E24B4A}
-.toast.running{border-left:3px solid var(--poc)}
-.toast-icon{font-size:14px;flex-shrink:0}
-.toast-body{flex:1;min-width:0}
-.toast-title{font-size:12px;font-weight:500;color:var(--t1);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.toast-sub{font-family:'IBM Plex Mono',monospace;font-size:9px;color:var(--t3);margin-top:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.toast-actions{display:flex;gap:5px;flex-shrink:0}
-.toast-btn{height:20px;padding:0 8px;border:1px solid var(--rule);border-radius:2px;font-family:'IBM Plex Mono',monospace;font-size:8px;cursor:pointer;background:var(--surf2);color:var(--t2);transition:background .1s;text-transform:uppercase;letter-spacing:.04em}
-.toast-btn:hover{background:var(--surf3);color:var(--t1)}
-.toast-btn.primary{background:var(--g);color:#fff;border-color:var(--g)}
-.toast-close{width:16px;height:16px;border:none;background:none;cursor:pointer;color:var(--t3);font-size:14px;line-height:1;padding:0;flex-shrink:0;display:flex;align-items:center;justify-content:center}
-.toast-close:hover{color:var(--t1)}
+/* OVERVIEW 2-COL */
+.overview-grid{display:grid;grid-template-columns:1fr 1fr;gap:0;align-items:start}
+.overview-col{padding:0}
+.overview-divider{width:1px;background:var(--rule);margin:0 14px;align-self:stretch}
+.ts-label{font-family:'IBM Plex Mono',monospace;font-size:8px;font-weight:500;text-transform:uppercase;letter-spacing:.08em;color:var(--t3);margin-bottom:7px}
+.ts-pills{display:flex;flex-wrap:wrap;gap:4px}
+.ts-pill{font-family:'IBM Plex Mono',monospace;font-size:9px;padding:2px 7px;border-radius:2px;border:1px solid;white-space:nowrap}
+/* DSP tier */
+.ts-dsp{color:#1A4F8A;background:#E6EEFA;border-color:rgba(26,79,138,0.28)}
+/* DMP/CDP */
+.ts-cdp{color:#4B2D9E;background:#EDE8FD;border-color:rgba(75,45,158,0.28)}
+/* Marketplace/Identity */
+.ts-id{color:#146B3A;background:#E4F5EC;border-color:rgba(20,107,58,0.28)}
+/* Clean room / data infra */
+.ts-infra{color:#7A4200;background:#FEF2E0;border-color:rgba(122,66,0,0.28)}
+/* Neutral/unknown */
+.ts-other{color:var(--nc);background:var(--nb);border-color:var(--nr)}
+.ts-empty{font-family:'IBM Plex Mono',monospace;font-size:9px;color:var(--t4);font-style:italic}
 
-/* Spinner */
+/* WEBSITE TECH SCAN */
+.wt-loading{display:flex;align-items:center;gap:8px;font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--t3)}
+.wt-spinner{width:10px;height:10px;border:2px solid var(--rule);border-top-color:var(--g);border-radius:50%;animation:spin .7s linear infinite;flex-shrink:0}
 @keyframes spin{to{transform:rotate(360deg)}}
-.spinner{width:12px;height:12px;border:1.5px solid var(--rule);border-top-color:var(--poc);border-radius:50%;animation:spin .7s linear infinite;flex-shrink:0}
+.wt-error{font-family:'IBM Plex Mono',monospace;font-size:9px;color:var(--t3);padding:6px 0}
+.wt-group{margin-bottom:10px}
+.wt-group:last-child{margin-bottom:0}
+.wt-group-label{font-family:'IBM Plex Mono',monospace;font-size:8px;font-weight:500;text-transform:uppercase;letter-spacing:.08em;color:var(--t3);margin-bottom:5px;display:flex;align-items:center;gap:5px}
+.wt-pills{display:flex;flex-wrap:wrap;gap:4px}
+.wt-pill{font-family:'IBM Plex Mono',monospace;font-size:9px;padding:2px 7px;border-radius:2px;border:1px solid;white-space:nowrap;cursor:default}
+/* by category */
+.wt-analytics{color:#1A4F8A;background:#E6EEFA;border-color:rgba(26,79,138,0.28)}
+.wt-ads{color:#7A4200;background:#FEF2E0;border-color:rgba(122,66,0,0.28)}
+.wt-retargeting{color:#4B2D9E;background:#EDE8FD;border-color:rgba(75,45,158,0.28)}
+.wt-crm{color:#146B3A;background:#E4F5EC;border-color:rgba(20,107,58,0.28)}
+.wt-cdp{color:#993556;background:#FCEEF4;border-color:rgba(153,53,86,0.28)}
+.wt-tag{color:var(--nc);background:var(--nb);border-color:var(--nr)}
+.wt-other{color:var(--nc);background:var(--nb);border-color:var(--nr)}
+.wt-cache-note{font-family:'IBM Plex Mono',monospace;font-size:8px;color:var(--t4);margin-top:8px}
 
-/* Result drawer — slides up from bottom of center panel */
-#result-drawer{position:fixed;bottom:0;left:320px;right:0;max-height:55vh;background:var(--surf);border-top:1px solid var(--rule);box-shadow:0 -4px 24px rgba(0,0,0,.12);z-index:7000;display:none;flex-direction:column}
-#result-drawer.open{display:flex}
-.drawer-hdr{display:flex;align-items:center;gap:8px;padding:8px 14px;border-bottom:1px solid var(--rule);flex-shrink:0;background:var(--surf2)}
-.drawer-hdr-title{font-family:'IBM Plex Mono',monospace;font-size:10px;font-weight:500;text-transform:uppercase;letter-spacing:.06em;color:var(--t2);flex:1}
-.drawer-close{width:22px;height:22px;border:1px solid var(--rule);border-radius:2px;background:none;cursor:pointer;color:var(--t3);font-size:12px;display:flex;align-items:center;justify-content:center}
-.drawer-close:hover{background:var(--surf3);color:var(--t1)}
-.drawer-body{overflow-y:auto;flex:1;padding:12px 16px;font-size:12px;color:var(--t1);line-height:1.7}
-.drawer-body pre{font-family:'IBM Plex Mono',monospace;font-size:11px;white-space:pre-wrap;word-break:break-word;color:var(--t2)}
-/* Streaming cursor blink */
-@keyframes blink{0%,100%{opacity:1}50%{opacity:0}}
-.cursor{display:inline-block;width:7px;height:12px;background:var(--poc);vertical-align:text-bottom;animation:blink .9s infinite;margin-left:2px}
-/* Btn loading state */
-.btn.loading{opacity:.6;cursor:wait;pointer-events:none}
-.btn.loading::after{content:'';display:inline-block;width:8px;height:8px;border:1.5px solid currentColor;border-top-color:transparent;border-radius:50%;animation:spin .6s linear infinite;margin-left:5px;vertical-align:middle}
+/* ACTION LOG */
+#actionLog{position:fixed;bottom:0;left:320px;right:0;background:var(--surf);border-top:1px solid var(--rule);z-index:500;max-height:120px;overflow-y:auto;display:none}
+#actionLog.vis{display:block}
+.alog-hdr{display:flex;align-items:center;justify-content:space-between;padding:4px 12px;border-bottom:1px solid var(--rule2)}
+.alog-hdr span{font-family:'IBM Plex Mono',monospace;font-size:8px;text-transform:uppercase;letter-spacing:.08em;color:var(--t3)}
+.alog-entry{display:flex;align-items:center;gap:8px;padding:3px 12px;border-bottom:1px solid var(--rule3);font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--t2)}
+.alog-entry:last-child{border-bottom:none}
+.alog-ts{color:var(--t4);flex-shrink:0;min-width:48px}
+.alog-ico{flex-shrink:0}
+.alog-act{color:var(--g);font-weight:500}
+.alog-co{color:var(--t2)}
+
+/* CONTEXT MENU */
+#ctxMenu{position:fixed;background:var(--surf);border:1px solid var(--rule);border-radius:3px;padding:5px;z-index:9998;min-width:220px;box-shadow:var(--sh);display:none}
+.ctx-lbl{font-family:'IBM Plex Mono',monospace;font-size:9px;color:var(--t3);padding:4px 10px 3px;text-transform:uppercase;letter-spacing:.05em}
+.ctx-sep{height:1px;background:var(--rule);margin:4px 0}
+.ctx-item{display:flex;align-items:center;gap:8px;padding:7px 10px;font-size:12px;color:var(--t1);border-radius:2px;cursor:pointer;transition:background .1s}
+.ctx-item:hover{background:var(--surf2)}
+.ctx-ico{font-size:12px;width:16px;text-align:center}
+
+/* CONTACT DRAWER */
+#drawer{position:fixed;top:0;right:-400px;width:380px;height:100vh;background:var(--surf);border-left:1px solid var(--rule);z-index:9997;overflow-y:auto;transition:right .25s ease;box-shadow:-4px 0 20px rgba(0,0,0,0.1)}
+#drawer.open{right:0}
+#drawerOverlay{position:fixed;inset:0;background:rgba(0,0,0,0.2);z-index:9996;display:none}
+#drawerOverlay.vis{display:block}
+.drawer-nav{display:flex;align-items:center;gap:8px;padding:12px 14px;border-bottom:1px solid var(--rule)}
+.drawer-title{flex:1;font-size:14px;font-weight:500}
+
+/* RESEARCH MODAL */
+#researchOverlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:10000;align-items:center;justify-content:center;backdrop-filter:blur(4px)}
+#researchOverlay.vis{display:flex}
+.modal-box{background:var(--surf);border:1px solid var(--rule);border-radius:4px;padding:20px;max-width:480px;width:90%;box-shadow:var(--sh)}
+.modal-box h2{font-size:15px;font-weight:500;margin-bottom:6px}
+.modal-box p{font-size:12px;color:var(--t2);margin-bottom:12px}
+.modal-ta{width:100%;height:80px;padding:8px 10px;border:1px solid var(--rule);border-radius:2px;font-size:13px;background:var(--surf2);color:var(--t1);resize:vertical;outline:none;font-family:inherit;line-height:1.5}
+.modal-ta:focus{border-color:var(--gr)}
+.modal-actions{display:flex;gap:6px;justify-content:flex-end;margin-top:10px}
 </style>
 </head>
 <body>
+<div class="app">
 
-<nav class="topnav">
-  <div class="nav-logo">oA</div>
-  <span class="nav-brand">Sales Intelligence Hub <span class="nav-sub">/ onAudience</span></span>
-  <div class="nav-right">
-    <div class="synced"><div class="dot"></div><span id="syncLabel" style="font-family:'IBM Plex Mono',monospace;font-size:10px">Loading…</span></div>
-    <button class="theme-btn" onclick="toggleTheme()" id="themeBtn" title="Toggle theme">🌙</button>
+  <!-- NAV -->
+  <nav class="nav">
+    <div class="nav-logo">oA</div>
+    <span class="nav-title">Sales Intelligence Hub <span>/ onAudience</span></span>
+    <div class="nav-status">
+      <div class="status-dot" id="statusDot"></div>
+      <span id="statusText">Loading…</span>
+    </div>
+    <div class="nav-right">
+<button class="btn p" onclick="trackAction('🔍','Opened research modal','');openResearch()">+ Research</button>
+      <button class="btn" onclick="trackAction('⭐','Top picks clicked','');openClaude('Show me the top 5 highest-priority prospects in the onAudience database that we should contact this week')">Top picks ↗</button>
+      <button class="theme-btn" onclick="toggleTheme()" id="themeBtn">🌙</button>
+    </div>
+  </nav>
+
+  <!-- STATS BAR -->
+  <div class="stats-bar">
+    <div class="sc active" id="sc-all" onclick="setFilter('all',this)">
+      <div class="sc-num" id="st-all">—</div><div class="sc-lbl">All</div>
+    </div>
+    <div class="sc" id="sc-client" onclick="setFilter('client',this)">
+      <div class="sc-num" id="st-client">—</div><div class="sc-lbl">Clients</div>
+    </div>
+    <div class="sc" id="sc-poc" onclick="setFilter('poc',this)">
+      <div class="sc-num" id="st-poc">—</div><div class="sc-lbl">POC</div>
+    </div>
+    <div class="sc" id="sc-partner" onclick="setFilter('partner',this)">
+      <div class="sc-num" id="st-partner">—</div><div class="sc-lbl">Partners</div>
+    </div>
+    <div class="sc" id="sc-prospect" onclick="setFilter('prospect',this)">
+      <div class="sc-num" id="st-prospect">—</div><div class="sc-lbl">Prospects</div>
+    </div>
+    <div class="sc" id="sc-nogo" onclick="setFilter('nogo',this)">
+      <div class="sc-num" id="st-nogo">—</div><div class="sc-lbl">No Outreach</div>
+    </div>
+    <div class="sc" id="sc-fresh" onclick="setFilter('fresh',this)">
+      <div class="sc-num" id="st-fresh">—</div><div class="sc-lbl">Fresh Meat 🥩</div>
+    </div>
   </div>
-</nav>
 
-<div class="stats-bar">
-  <div class="sc active" onclick="setFilter('all',this)"><div class="sn" id="st-all">—</div><div class="sl">All</div></div>
-  <div class="sc" onclick="setFilter('client',this)"><div class="sn" id="st-client">—</div><div class="sl">Clients</div></div>
-  <div class="sc" onclick="setFilter('poc',this)"><div class="sn" id="st-poc">—</div><div class="sl">POC</div></div>
-  <div class="sc" onclick="setFilter('partner',this)"><div class="sn" id="st-partner">—</div><div class="sl">Partners</div></div>
-  <div class="sc" onclick="setFilter('prospect',this)"><div class="sn" id="st-prospect">—</div><div class="sl">Prospects</div></div>
-  <div class="sc" onclick="setFilter('enriched',this)"><div class="sn" id="st-enriched">—</div><div class="sl">Has Tech Stack</div></div>
-  <div class="sc" onclick="setFilter('nogo',this)"><div class="sn" id="st-nogo">—</div><div class="sl">No Outreach</div></div>
+  <!-- PANELS -->
+  <div class="panels">
+
+    <!-- LEFT: Companies / Contacts -->
+    <div class="left">
+      <div class="tab-bar">
+        <div class="tab active" id="tab-companies" onclick="switchTab('companies')">🏢 Companies</div>
+        <div class="tab" id="tab-contacts" onclick="switchTab('contacts')">👤 Contacts</div>
+      </div>
+      <div class="search-row">
+        <input class="sinp" id="searchQ" placeholder="Search…" oninput="renderList()"/>
+        <button class="btn p sm" onclick="doSearchResearch()">↗</button>
+      </div>
+      <div class="fp-row" id="fpRow">
+        <button class="fp active" id="fp-all" onclick="setFilter('all',this)">All</button>
+        <button class="fp" id="fp-client" onclick="setFilter('client',this)">Client</button>
+        <button class="fp" id="fp-partner" onclick="setFilter('partner',this)">Partner</button>
+        <button class="fp" id="fp-prospect" onclick="setFilter('prospect',this)">Prospect</button>
+        <button class="fp" id="fp-poc" onclick="setFilter('poc',this)">POC</button>
+        <button class="fp" id="fp-nogo" onclick="setFilter('nogo',this)">No outreach</button>
+      </div>
+      <div class="list-meta"><span id="listMeta">—</span><span id="listMeta2">click to open</span></div>
+      <div class="co-list" id="coList"></div>
+    </div>
+
+    <!-- CENTER -->
+    <div class="center" id="center">
+      <!-- empty state rendered by JS -->
+    </div>
+
+  </div>
 </div>
 
-<div class="search-bar">
-  <div class="sbox">
-    <span class="sico">⌕</span>
-    <input class="sinp" id="searchQ" placeholder="Search name, category, DSP, region, HQ…" oninput="renderList()"/>
+<!-- CONTEXT MENU -->
+<div id="ctxMenu"></div>
+
+<!-- DRAWER OVERLAY -->
+<div id="drawerOverlay" onclick="closeDrawer()"></div>
+
+<!-- CONTACT DRAWER -->
+<div id="drawer">
+  <div class="drawer-nav">
+    <span class="drawer-title" id="drawerTitle">Contact</span>
+    <button class="close-btn" onclick="closeDrawer()">✕</button>
   </div>
-  <div class="fpills">
-    <button class="fp active" id="fp-all" onclick="setFilter('all',this)">All</button>
-    <button class="fp" id="fp-poc" onclick="setFilter('poc',this)">Active deal</button>
-    <button class="fp" id="fp-client" onclick="setFilter('client',this)">Clients</button>
-    <button class="fp" id="fp-partner" onclick="setFilter('partner',this)">Partners</button>
-    <button class="fp" id="fp-prospect" onclick="setFilter('prospect',this)">Prospects</button>
-    <button class="fp" id="fp-enriched" onclick="setFilter('enriched',this)">Has tech stack</button>
-    <button class="fp" id="fp-nogo" onclick="setFilter('nogo',this)">No outreach</button>
+  <div id="drawerBody" style="padding:14px"></div>
+</div>
+
+<!-- ACTION LOG -->
+<div id="actionLog">
+  <div class="alog-hdr">
+    <span>⚡ Action Log</span>
+    <button class="btn sm" onclick="clearLog()" style="height:18px;font-size:7px">Clear</button>
+  </div>
+  <div id="actionLogEntries"></div>
+</div>
+
+<!-- PANEL MODAL -->
+<div id="panelModal" onclick="if(event.target===this){closePanelModal()}"
+  style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:9999;align-items:center;justify-content:center">
+  <div style="width:900px;max-width:96vw;height:88vh;border-radius:4px;overflow:hidden;border:1px solid var(--rule);box-shadow:var(--sh);display:flex;flex-direction:column">
+    <div style="background:var(--surf);border-bottom:1px solid var(--rule);display:flex;align-items:center;padding:0 14px;height:36px;flex-shrink:0;gap:8px">
+      <span style="font-family:'IBM Plex Mono',monospace;font-size:9px;font-weight:500;text-transform:uppercase;letter-spacing:.06em;color:var(--t3)" id="panelTitle">Panel</span>
+      <div style="margin-left:auto;display:flex;gap:6px">
+        <button class="btn sm" onclick="window.open(document.getElementById('panelIframe').src,'_blank')">Open tab ↗</button>
+        <button class="btn sm" onclick="closePanelModal()">✕ Close</button>
+      </div>
+    </div>
+    <iframe id="panelIframe" src="" style="flex:1;border:none;background:var(--surf2)"></iframe>
   </div>
 </div>
 
-<div class="main">
-  <div class="panel-left">
-    <div class="list-meta"><span id="listMeta">Loading…</span><span>right-click for actions</span></div>
-    <div class="co-list" id="coList"></div>
+<!-- RESEARCH MODAL -->
+<div id="researchOverlay">
+  <div class="modal-box">
+    <h2 id="modalTitle">Research a company</h2>
+    <p id="modalDesc">Enter company name to open a full contact report in Claude.</p>
+    <textarea class="modal-ta" id="modalInput" placeholder="Company name…"></textarea>
+    <div class="modal-actions">
+      <button class="btn" onclick="closeResearch()">Cancel</button>
+      <button class="btn p" onclick="submitResearch()">Open in Claude ↗</button>
+    </div>
   </div>
-  <div class="panel-right" id="detail">
-    <div class="empty-panel"><div class="big">←</div><div class="sub">Select a company</div></div>
-  </div>
-</div>
-
-<div id="ctxMenu" class="ctx-menu" style="display:none"></div>
-
-<!-- Toast stack -->
-<div id="toast-stack"></div>
-
-<!-- Result drawer -->
-<div id="result-drawer">
-  <div class="drawer-hdr">
-    <span class="drawer-hdr-title" id="drawer-title">Result</span>
-    <button class="btn toast-btn" id="drawer-copy-btn" onclick="drawerCopy()" style="margin-right:4px">Copy</button>
-    <button class="drawer-close" onclick="drawerClose()">✕</button>
-  </div>
-  <div class="drawer-body" id="drawer-body"></div>
 </div>
 
 <script>
-const SB = 'https://nyzkkqqjnkctcmxoirdj.supabase.co/rest/v1';
-const KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im55emtrcXFqbmtjdGNteG9pcmRqIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzM4NzMxMzYsImV4cCI6MjA4OTQ0OTEzNn0.jhAq_C68klOp4iTyj9HmsyyvoxsOI6ACld7t_87TAk0';
-const H = {apikey:KEY, Authorization:'Bearer '+KEY};
+/* ── SEED DATA (from Supabase snapshot March 21 2026) ── */
+const SEED = [
+  ['6sense','Intent data, predictive scoring, AI-driven ABM. $210M revenue, 1500+ employees.','prospect','ABM / Revenue AI / Intent Data','US (SF)',1500,7,'6sense.com','6sense'],
+  ['Acxiom','Data / identity resolution, IPG owned, 4247 employees','prospect','Data / Identity','US',4247,5,'www.acxiom.com','acxiom'],
+  ['AdAdvisor by Neustar','','prospect',null,null,1159,null,'home.neustar','neustar-inc'],
+  ['AddThis','','prospect',null,null,250,null,'www.addthis.com','addthis'],
+  ['Adform','integrated partner / DSP Europe','partner','DSP / Ad Tech','EU',838,null,'site.adform.com','adform'],
+  ['Admixer','no outreach','nogo',null,null,null,null,null,null],
+  ['AdNear','','prospect',null,null,457,null,'www.near.co','near'],
+  ['Adobe','partner — DMP integration','partner',null,null,null,null,null,null],
+  ['adsquare','Mobile/location data specialist, Germany, 75 employees','prospect','Mobile Data','EU',75,8,'adsquare.com','adsquare-gmbh'],
+  ['Adtonos','client','client',null,null,null,null,null,null],
+  ['advanced AUDIENCE','Audience data provider, Germany, 33 employees','prospect','Data Provider','EU',33,7,'www.advanced-audience.com','advanced-audience'],
+  ['Aidata','','prospect',null,null,10,null,'www.aidata.com','aidata'],
+  ['Alikeaudience','client','client','Data Provider / AI Audiences','APAC',36,null,'www.alikeaudience.com','alikeaudience'],
+  ['Amazon','partner','partner',null,null,null,null,null,null],
+  ['AmeriLINK','','prospect',null,null,250,null,'www.aichotels.com','amerilink-international-corp'],
+  ['Aniview','no outreach — failed deal','nogo',null,null,null,null,null,null],
+  ['Anzu','POC client','poc','In-Game Advertising','EU',150,null,'anzu.io','anzu.io'],
+  ['AppJolt','','prospect',null,null,150,null,null,null],
+  ['Area 23','US pharma creative agency — TTD/DV360/Amazon DSP. Clients: Pfizer, Sanofi, AZ, Eli Lilly, Novartis, Biogen.','prospect','Creative Agency / Pharma','US',600,9,'area23.com','area-23'],
+  ['Audience Center','','prospect',null,null,22,null,'audiencecenter.google.com','audienceio'],
+  ['Audience Network','internal — group company','nogo',null,null,null,null,null,null],
+  ['Audience Partners','US audience data platform, 75 employees','prospect','Data Provider','US',75,6,'www.audiencepartners.com','audience-partners'],
+  ['Audience360','','prospect',null,null,30,null,'www.audience360.com.au','audience360'],
+  ['AudienceRate','Active POC — DV360 collaboration thread with CEO Gianluca Leotta & BD Aaron Cesaro since Feb 2025. Integration tests running.','poc','Data Provider / CDP','EU',50,8,'audiencerate.com','audiencerate'],
+  ['Audiens','','prospect',null,null,750,null,'www.audiense.com','audiens'],
+  ['Audigent','partner / curation','partner',null,null,null,null,null,null],
+  ['Auditorius','Audience data platform, 53 employees','prospect','Data Provider','EU',53,7,'www.auditoria.ai','auditoriaai'],
+  ['Baifendian','','prospect',null,null,255,null,'www.baifendian.com','baifendian'],
+  ['Bango','prospect — via LiveRamp','prospect',null,null,null,null,null,null],
+  ['Banzai','','prospect',null,null,30,null,'www.banzai.io','banzai-inc.'],
+  ['Beintoo','prospect — to continue','prospect',null,null,null,null,null,null],
+  ['Beklever','prospect','prospect',null,null,null,null,null,null],
+  ['Belogic TR','partner','partner',null,null,null,null,null,null],
+  ['BeyondD','','prospect',null,null,450,null,'www.bynd.com','beyond-technology-consultancy'],
+  ['Bidberry / Carbon / Clickso','partner','partner',null,null,null,null,null,null],
+  ['Bidscube','no outreach — former client','nogo',null,null,null,null,null,null],
+  ['Bidtheatre','partner / DSP Scandinavia','partner',null,null,null,null,null,null],
+  ['Big Village','to check','prospect',null,null,null,null,null,null],
+  ['Biolumina','US pharma agency — TTD/DV360. Clients: Genentech, Roche, AstraZeneca, BMS.','prospect','Creative Agency / Pharma','US',200,7,'biolumina.com','biolumina'],
+  ['Bizo','','prospect',null,null,23,null,'bizo.com','bizo'],
+  ['BlueKai','Oracle acquired 2014 — now shut down','nogo','DMP','US',200,1,'www.bluekai.com','bluekai'],
+  ['Boomerang AI','Champion tracking + job change signals. $9M ARR, 60 employees.','prospect','Relationship Intelligence / Revenue AI','US',60,6,'getboomerang.ai','boomerangai'],
+  ['Bright Mountain Media','prospect — to continue','prospect',null,null,null,null,null,null],
+  ['Brilig','Data onboarding / matching, 30 employees','prospect','Data Onboarding','US',30,6,'brilligsys.com','brilig-systems'],
+  ['Bytedance (TikTok)','client — APAC only','client',null,null,null,null,null,null],
+  ['Captify UK','client | Acquired by Verve Group Sep 2025','client','Search Intelligence Platform','EU',155,null,'captifytechnologies.com','captify'],
+  ['CCI','','prospect',null,null,3858,null,'www.ccisystems.com','ccisystems'],
+  ['Claritas','prospect — to continue','prospect',null,null,null,null,null,null],
+  ['CleverDATA','Data platform / CDP, 32 employees','prospect','Data Provider / CDP','EU',32,6,'cleverdata-web.azurewebsites.net','clever-data'],
+  ['CleverOnDemand','','prospect',null,null,10,null,'www.cleverondemand.com','cleverman-inc'],
+  ['Clue','prospect — to continue','prospect',null,null,null,null,null,null],
+  ['ComRatings','','prospect',null,null,4,null,'comratings.aivexus.com','comratings'],
+  ['Criteo','partner — contact: Adrian','partner',null,null,null,null,null,null],
+  ['Crossmedia','','prospect',null,null,300,null,'www.xmedia.com','crossmediaus'],
+  ['CrossPixel','Data exchange, TTD/DV360 integrated, 13 employees','prospect','Data Exchange','US',13,7,'crosspixel.net','cross-pixel-media'],
+  ['Cxense','Publisher data and audience platform, 107 employees','prospect','Publisher Data','EU',107,7,'cxense.com',null],
+  ['Cxense (ASA)','','prospect',null,null,107,null,'www.cxense.com','cxense'],
+  ['Czech Publisher Exchange','Czech publisher data exchange, TTD and DV360 integrated, 10 employees','prospect','Publisher Exchange','EU',10,7,'cpex.cz',null],
+  ['Czech Publisher Exchange (CPEx)','','prospect',null,null,10,null,'www.cpex.cz','czech-publisher-exchange'],
+  ['Datalogix','','prospect',null,null,4,null,'www.datalogix.io','datalogix-io'],
+  ['DataXpand','','prospect',null,null,12,null,'www.dataxpander.com','dataxpander'],
+  ['dataXtrade','Data exchange platform, 270 employees','prospect','Data Exchange','EU',270,7,'www.dataxtrade.com','datax-ltd'],
+  ['Datomik','','prospect',null,null,5,null,'www.datomik.com','datanomik'],
+  ['Datonics','client','client','Data Provider','US',24,null,'www.datonics.com','datonics'],
+  ['Demandbase','ABM + pipeline AI platform. $253M revenue, 1000+ employees.','prospect','ABM / Account-Based GTM','US (SF)',1000,6,'demandbase.com','demandbase'],
+  ['Dentsu Thailand','prospect','prospect',null,null,null,null,null,null],
+  ['Despegar','','prospect',null,null,4908,null,'www.us.despegar.com','despegar'],
+  ['Digitas Health','US pharma agency — TTD/DV360. Clients: AstraZeneca, Pfizer, Roche, Novartis.','prospect','Digital Agency / Pharma','US',800,8,'digitashealth.com','digitas-health'],
+  ['Domain','','prospect',null,null,350,null,null,null],
+  ['DoubleVerify','Ad verification / measurement, 1197 employees','prospect','Ad Verification','US',1197,4,'doubleverify.com','doubleverify-inc'],
+  ['Draftboard','Warm intro mapping. $4.1M seed. CEO: Zach Roseman.','prospect','Relationship Intelligence / Warm Intro','US (NY)',15,6,'draftboard.com','draftboard'],
+  ['Dun & Bradstreet','B2B data giant, 7500 employees','prospect','B2B Data','US',7500,5,'www.dnb.com/en-us','dun-&-bradstreet'],
+  ['Dynata','no outreach — former client','nogo',null,null,null,null,null,null],
+  ['e-Viral','','prospect',null,null,4,null,null,'e-viral'],
+  ['Echo Analytics','POC client','poc','Location Data Analytics','EU',50,null,'echo-analytics.net','echo-analytics'],
+  ['Effective Measure','','prospect',null,null,26,null,'www.effectivemeasure.com','effective-measure'],
+  ['Emetriq','German data provider, Hamburg, 90 employees','prospect','Data Provider','EU',90,8,'www.emetriq.com','emetriq-gmbh'],
+  ['Entity X','client — Adrian','client',null,null,null,null,null,null],
+  ['Entrée Health','US pharma agency — TTD/DV360. Clients: AbbVie, BMS, Pfizer, Novartis.','prospect','Creative Agency / Pharma','US',100,6,'entreehealth.com','entree-health'],
+  ['Epsilon','partner — Matt deal','partner','Data / CRM','US',9565,null,'www.epsilon.com/us','epsilon'],
+  ['Equativ','partner / SSP curation','partner',null,null,null,null,null,null],
+  ['Eskimi','no outreach — bad timing','nogo',null,null,null,null,null,null],
+  ['eXelate','','prospect',null,null,15,null,'exalate.com','exelate'],
+  ['Experian','prospect — Karo/Maciek','prospect','Data / Credit Bureau','US',23300,null,'www.experian.com','experian'],
+  ['Eyeota','partner','partner','Data Provider / DMP','APAC',79,null,'www.eyeota.com','eyeota'],
+  ['Facetz','Data platform and audience targeting, 30 employees','prospect','Data Provider','EU',30,6,'facetz.app',null],
+  ['Factual','','prospect',null,null,509,null,'www.factual.work','factual-inc'],
+  ['FCB Health New York','US pharma agency — TTD/DV360. Clients: Pfizer, Sanofi, AstraZeneca, Biogen.','prospect','Creative Agency / Pharma','US',500,9,'fcbhealthny.com','fcb-health-new-york'],
+  ['FCBCure','US pharma agency — TTD/DV360. Clients: Novartis, Bayer, Pfizer.','prospect','Creative Agency / Pharma','US',150,7,'fcbcure.com','fcbcure'],
+  ['Foursquare','partner','partner','Location Data','US',526,null,'foursquare.com','location-foursquare'],
+  ['Fyllo','partner','partner',null,null,null,null,null,null],
+  ['GlobalDataResources','partner — NDR acquisition','partner',null,null,null,null,null,null],
+  ['Gong','Revenue AI / conversation intelligence. $584M raised, 2000+ employees.','prospect','Revenue Intelligence / Conversation AI','US (SF)',2000,7,'gong.io','gongio'],
+  ['Google','partner','partner',null,null,null,null,null,null],
+  ['Greater Than One','US pharma media agency — TTD/DV360/Amazon DSP. Acquired by Real Chemistry 2025.','prospect','Media Agency / Pharma','US',200,8,'realchemistry.com','greater-than-one'],
+  ['Havas PL','client / agency','client',null,null,null,null,null,null],
+  ['Havas Spain','prospect','prospect',null,null,null,null,null,null],
+  ['Hurriyet','','prospect',null,null,3000,null,'www.hurriyet.com.tr','hurriyet'],
+  ['Hybrid','partner','partner',null,null,null,null,null,null],
+  ['I Cumulus','','prospect',null,null,403,null,'www.cumulusmedia.com','icumulus'],
+  ['iBotta','','prospect',null,null,800,null,'home.ibotta.com','ibotta-inc-'],
+  ['ID5','partner / cookieless product','partner',null,null,null,null,null,null],
+  ['Intimate Merger','Japanese DMP / data provider, 75 employees','prospect','DMP / Data','APAC',75,7,'www.intimatemerger.com',null],
+  ['Intuizi','client — Adrian','client',null,null,null,null,null,null],
+  ['IPG Health','US pharma agency — TTD/DV360. Clients: Pfizer, Eli Lilly, Biogen, AbbVie, Novartis. Now Omnicom post-IPG merger Nov 2025.','prospect','Media Agency / Pharma','US',3000,8,'ipghealth.com','ipg-health'],
+  ['Kochava','partner / data provider','partner',null,null,null,null,null,null],
+  ['Krux','','prospect',null,null,39,null,'krux.digital','krux-digital'],
+  ['Leiki Oy Finland','','prospect',null,null,26,null,'www.doubleverify.com','leiki'],
+  ['Lifesight','no outreach — unwanted','nogo',null,null,null,null,null,null],
+  ['Liquid Advertising','prospect','prospect',null,null,null,null,null,null],
+  ['LiveRamp','partner / marketplace','partner','Data Marketplace / Identity','US',1300,null,'liveramp.com','liveramp'],
+  ['Lotame','no outreach — contract ended','nogo','DMP / Data Provider','US',137,null,'www.lotame.com','lotame'],
+  ['Madhive','prospect / DSP — Karolina','prospect',null,null,null,null,null,null],
+  ['Mastercard','partner','partner',null,null,null,null,null,null],
+  ['McCann Global Health','US pharma agency — TTD/DV360. Clients: Merck, Reckitt, Sanofi.','prospect','Creative Agency / Pharma','US',600,8,'mccannworldgroup.com','mccann-global-health'],
+  ['Medianation','no outreach','nogo',null,null,null,null,null,null],
+  ['MediaQuark','','prospect',null,null,2,null,'www.mediaquark.com','mediaquark'],
+  ['Mediasmart','no outreach — low revenue','nogo',null,null,null,null,null,null],
+  ['MediaWallah','partner / data exchange','partner',null,null,null,null,null,null],
+  ['Memob','client','client',null,null,null,null,null,null],
+  ['MeMob','client','client',null,null,null,null,null,null],
+  ['Meta','no outreach — via LiveRamp only','nogo',null,null,null,null,null,null],
+  ['Microsoft Advertising (Xandr)','partner','partner',null,null,null,null,null,null],
+  ['Mindset','Contextual / mindset data, 27 employees','prospect','Contextual Data','EU',27,6,'www.themindsetcompany.com','mindsetcare'],
+  ['Mindvalley','POC client — no renewal','poc',null,null,null,null,null,null],
+  ['MNTN','partner / DSP','partner',null,null,null,null,null,null],
+  ['Mobile.de','','prospect',null,null,750,null,'www.mobile.de','mobile-de-gmbh'],
+  ['Mobilewalla','client','client',null,null,null,null,null,null],
+  ['Moboost','client','client',null,null,null,null,null,null],
+  ['Multilocal','client — Adrian','client',null,null,null,null,null,null],
+  ['Nano Interactive','Cookieless contextual targeting, UK, 100 employees','prospect','Contextual / Data','EU',100,7,'www.nanointeractive.com','nanointeractive'],
+  ['National Research Group','to check','prospect',null,null,null,null,null,null],
+  ['Navegg','Brazilian DMP/data provider, 16 employees','prospect','Data Provider / DMP','LATAM',16,6,'www.navegg.com/en','navegg'],
+  ['Ncs','','prospect',null,null,13000,null,'www.ncscompanies.com','ncs-companies-llc'],
+  ['Neodata','Italian data provider and DMP, 32 employees','prospect','Data Provider','EU',32,7,'neodatagroup.ai','neodatagroup'],
+  ['Netsprint','Polish programmatic and data company, 30 employees. Highly relevant - Poland.','prospect','Data Provider / Ad Tech','EU',30,9,'en.netsprint.eu','netsprint'],
+  ['Nexxen','prospect','prospect',null,null,null,null,null,null],
+  ['Nielsen','no outreach','nogo',null,null,null,null,null,null],
+  ['nugg.ad','German audience data cooperative, 75 employees | Acquired by Zalando 2016','prospect','Publisher Data Coop','EU',75,8,'nugg.ad/en','nugg-s'],
+  ['Ogilvy Health','US pharma agency — TTD/DV360/Amazon DSP. Clients: J&J, Pfizer, Genentech, Ferring. Cannes Grand Prix 2024.','prospect','Creative Agency / Pharma','US',1000,9,'ogilvyhealth.com','ogilvy-health'],
+  ['OMD Thailand','prospect','prospect',null,null,null,null,null,null],
+  ['Omnicom Health Group','US pharma agency — TTD/DV360/Amazon DSP. 50+ health agencies post Omnicom-IPG merger 2025.','prospect','Media Agency / Pharma','US',5000,10,'omnicomhealthgroup.com','omnicom-health-group'],
+  ['OpenSignal','client','client',null,null,null,null,null,null],
+  ['OpenX','prospect','prospect',null,null,null,null,null,null],
+  ['Oracle','no outreach — closed ad division','nogo',null,null,null,null,null,null],
+  ['Patients & Purpose','US pharma agency — TTD/DV360. Clients: J&J, Merck, AbbVie, Boehringer Ingelheim.','prospect','Creative Agency / Pharma','US',200,8,'patientsandpurpose.com','patients-and-purpose'],
+  ['Pelmorex','','prospect',null,null,500,null,'www.pelmorex.com/en','pelmorexcorp'],
+  ['Permutive','client','client','Privacy-First Audience Platform','EU',109,null,'permutive.com','permutive'],
+  ['Placed.com','','prospect',null,null,75,null,'www.placed.com/ui/login','placed'],
+  ['Precisely','no outreach','nogo',null,null,null,null,null,null],
+  ['Prisma Media','','prospect',null,null,1477,null,'www.prismamedia.com','prisma-media'],
+  ['Publicis Health','US pharma holdco — TTD/DV360/Amazon DSP/Xandr.','prospect','Holding Co / Pharma','US',5000,8,'publicishealth.com','publicis-health'],
+  ['Publicis Health Media','US pharma agency — TTD/DV360/Amazon DSP/Xandr. Market-leading pharma media network US.','prospect','Media Agency / Pharma','US',500,10,'publicishealthmedia.com','publicis-health-media'],
+  ['Pubmatic','partner','partner',null,null,null,null,null,null],
+  ['PushSpring','','prospect',null,null,3,null,null,'pushspring-inc-'],
+  ['Qihoo','','prospect',null,null,5975,null,'www.360.cn/about/englishversion.html','qihoo-360'],
+  ['Razorfish Health','US pharma agency — TTD/DV360. Clients: AstraZeneca, Pfizer, Roche.','prospect','Digital Agency / Pharma','US',500,7,'razorfishhealth.com','razorfish-health'],
+  ['Razorpod','no outreach','nogo',null,null,null,null,null,null],
+  ['Real Chemistry','US pharma agency — TTD/DV360. Acquired Greater Than One 2025. Key contact: Abbie Burns.','prospect','Media Agency / Pharma','US',2000,9,'realchemistry.com','real-chemistry'],
+  ['Retargetly','LATAM data provider, DV360/TTD/Xandr/MediaMath integrated, 23 employees','prospect','Data Provider','LATAM',23,6,'retargetly.com','retargetly'],
+  ['Roq Ad','no outreach — cross-device','nogo',null,null,null,null,null,null],
+  ['RTB House','no business','nogo',null,null,null,null,null,null],
+  ['Saatchi & Saatchi Wellness','US pharma agency — TTD/DV360. Clients: GSK, Pfizer, Reckitt, Bayer.','prospect','Creative Agency / Pharma','US',300,7,'saatchiandwellness.com','saatchi-saatchi-wellness'],
+  ['SalesSpider','','prospect',null,null,175,null,'salespidermedia.com','sales-spider'],
+  ['Samba TV','prospect','prospect',null,null,null,null,null,null],
+  ['Scoota','prospect','prospect',null,null,null,null,null,null],
+  ['Scout24','','prospect',null,null,877,null,'www.scout24.com/en','scout24-se'],
+  ['Semantec','client','client',null,null,null,null,null,null],
+  ['Semasio','partner — acquired by Fyllo','partner','Contextual / DMP','EU',106,null,'www.semasio.com','semasio-global'],
+  ['Sharethrough','partner / data exchange','partner',null,null,null,null,null,null],
+  ['SIRdata','French GDPR-first data provider and DMP, 42 employees','prospect','Data Provider / DMP','EU',42,8,'www.sirdata.com','sirdata'],
+  ['SkimLinks','','prospect',null,null,112,null,'www.skimlinks.com','skimlinks'],
+  ['socialAudience','','prospect',null,null,15,null,'thesocialaudience.com','thesocialaudience'],
+  ['Sovrn','client — Adrian','client','Publisher Ad Tech / SSP','US',184,null,'sovrn.com','sovrn-holdings-inc-'],
+  ['Splicky DSP','prospect','prospect',null,null,null,null,null,null],
+  ['Sportradar','prospect — Karolina','prospect',null,null,null,null,null,null],
+  ['SSCG Media Group','US pharma agency — TTD/DV360/Amazon DSP. Programmatic trading desk for all OHG. Key contact: Far Hussain — WARM INTRO via Jan Piskorski.','prospect','Media Agency / Pharma','US',200,10,'sscgmedia.com','sscg-media-group'],
+  ['StackAdapt','DSP / Programmatic, 1700 employees','prospect','DSP / Programmatic','US',1700,9,'stackadapt.com','stackadapt'],
+  ['Synthesi','partner — to be','partner',null,null,null,null,null,null],
+  ['Taboola','prospect — via MSFT Curate','prospect',null,null,null,null,null,null],
+  ['TailTarget','','prospect',null,null,50,null,'www.tailtarget.com',null],
+  ['TalkingData','','prospect',null,null,234,null,'www.talkingdata.com/dmp.jsp?languagetype=en_us','talkingdata'],
+  ['Tapad','no fit','nogo',null,null,null,null,null,null],
+  ['TBWA\\WorldHealth','US pharma agency — TTD/DV360. Clients: Moderna, AstraZeneca, Bayer. Gold MM+M 2024.','prospect','Creative Agency / Pharma','US',400,8,'tbwaworldhealth.com','tbwa-worldhealth'],
+  ['The Adex','Data exchange / marketplace, 51 employees','prospect','Data Exchange','EU',51,7,'adexusa.com','adexusa'],
+  ['The Swarm','Go-To-Network platform — warm intro routing. $8M raised, HubSpot Ventures backed.','prospect','Relationship Intelligence / Network Mapping','US (SF Bay Area)',20,7,'theswarm.com','wearetheswarm'],
+  ['TheTradeDesk','partner','partner',null,null,null,null,null,null],
+  ['Ticketek','','prospect',null,null,260,null,'www.ticketek.com','ticketek'],
+  ['TicketekAU','','prospect',null,null,335,null,'premier.ticketek.com.au','ticketek'],
+  ['TikTok','partner — via Bytedance','partner',null,null,null,null,null,null],
+  ['TL1','internal — our company','nogo',null,null,null,null,null,null],
+  ['TradeMe','','prospect',null,null,750,null,'www.trademe.co.nz','trade-me'],
+  ['TransUnion','Credit / consumer data, 13200 employees','prospect','Data / Credit','US',13200,5,'www.transunion.com','transunion'],
+  ['Traveldesk Global','prospect','prospect',null,null,null,null,null,null],
+  ['True Data','client','client',null,null,null,null,null,null],
+  ['TruOptik','CTV / streaming audience data, 18 employees','prospect','CTV Data','US',18,7,'www.truoptik.com','truoptik'],
+  ['TruSignal','AI predictive scoring, people-based marketing, 21 employees','prospect','Data / AI','US',21,6,'www.trusignal.com','trusignal'],
+  ['Twine','','prospect',null,null,98,null,'www.twine.net','wearetwine'],
+  ['Twitch','no fit','nogo',null,null,null,null,null,null],
+  ['Twitter','no fit','nogo',null,null,null,null,null,null],
+  ['UserReport','Scandinavian publisher audience data, 33 employees','prospect','Data Provider','EU',33,7,'userreport.com','userreport'],
+  ['V12','','prospect',null,null,133,null,'v12marketing.com','v12marketing'],
+  ['VentiveIQ','prospect — Maciek + Adrian','prospect',null,null,null,null,null,null],
+  ['VerticalMass','','prospect',null,null,3,null,null,'vertical-mass'],
+  ['VistarMedia (T-Mobile)','prospect','prospect',null,null,null,null,null,null],
+  ['VisualDNA','','prospect',null,null,175,null,'www.visual-dna.net','visualdna'],
+  ['Weborama','prospect','prospect','Data Provider / DMP','EU',230,7,'weborama.com','weborama'],
+  ['Wowcher','client','client',null,null,null,null,null,null],
+  ['Wunderman Thompson Health','US pharma agency — TTD/DV360. Clients: Pfizer, Novartis, AstraZeneca.','prospect','Creative Agency / Pharma','US',1000,6,'vml.com','wunderman-thompson'],
+  ['xAd','','prospect',null,null,3500,null,'www.groundtruth.com','xad-inc'],
+  ['Zeotap','client','client','CDP / Data Provider','EU',175,null,'zeotap.com','zeotap'],
+  ['Zoopla','','prospect',null,null,700,null,'www.zoopla.co.uk','zoopla'],
+];
 
-let companies=[], contacts=[], intel=[], activeFilter='all', selectedId=null;
+const SEED_CONTACTS = [
+  {id:'elliot-smith-6sense',full_name:'Elliot Smith',title:'Head of Partnerships',company_name:'6sense',email:'esmith@6sense.com',linkedin_url:'',notes:'Atlanta GA. Email medium-confidence.'},
+  {id:'jason-zintak-6sense',full_name:'Jason Zintak',title:'CEO',company_name:'6sense',email:'jason.zintak@6sense.com',linkedin_url:'',notes:'CEO of 6sense.'},
+  {id:'adam-sorensen-adform',full_name:'Adam Sorensen',title:'CEO',company_name:'Adform',email:'adam.sorensen@adform.com',linkedin_url:'',notes:'CEO of Adform.'},
+  {id:'maria-botelho-adsquare',full_name:'Maria Botelho',title:'VP Global Partnerships',company_name:'adsquare',email:'maria.botelho@adsquare.com',linkedin_url:'https://www.linkedin.com/in/maria-botelho-306b5a131/',notes:'Primary contact for data partnerships. High confidence.'},
+  {id:'trygue-cafun-adsquare',full_name:'Trygue Cafun',title:'Account Manager Platform Partnerships',company_name:'adsquare',email:'trygue.cafun@adsquare.com',linkedin_url:'https://www.linkedin.com/in/tryguecafun/',notes:'Manages DSP/DMP/SSP platform partnerships globally.'},
+  {id:'tom-laband-adsquare',full_name:'Tom Laband',title:'CEO & Co-Founder',company_name:'adsquare',email:'tom.laband@adsquare.com',linkedin_url:'https://www.linkedin.com/in/tom-laband-75a08626/',notes:'CEO since founding 2013.'},
+  {id:'gianluca-leotta-audiencerate',full_name:'Gianluca Leotta',title:'CEO',company_name:'AudienceRate',email:'gl@audiencerate.com',linkedin_url:'',notes:'ACTIVE DEAL — ongoing thread since Feb 2025.'},
+  {id:'aaron-cesaro-audiencerate',full_name:'Aaron Cesaro',title:'Business Development',company_name:'AudienceRate',email:'aaron.cesaro@audiencerate.com',linkedin_url:'',notes:'Primary deal driver. Last email Apr 2025.'},
+  {id:'enrico-vecchio-audiencerate',full_name:'Enrico Vecchio',title:'CTO & Co-Founder',company_name:'AudienceRate',email:'enrico.vecchio@audiencerate.com',linkedin_url:'',notes:'CTO. Confirmed from Gmail thread.'},
+  {id:'marco-deltongo-audiencerate',full_name:'Marco Del Tongo',title:'Commercial Director',company_name:'AudienceRate',email:'marco.deltongo@audiencerate.com',linkedin_url:'',notes:'Commercial Director. Confirmed.'},
+  {id:'nicola-boschetti-audiencerate',full_name:'Nicola Boschetti',title:'Managing Director',company_name:'AudienceRate',email:'nicola.boschetti@audiencerate.com',linkedin_url:'',notes:'MD. Confirmed via Gmail.'},
+  {id:'amanda-negri-area23',full_name:'Amanda Negri',title:'Account Director',company_name:'Area 23',email:'amanda.negri@area23.com',linkedin_url:'https://www.linkedin.com/in/amanda-negri',notes:'2nd degree. Mutual: Pierre Diennet. Note: creative only, media routes through SSCG.'},
+  {id:'shyam-hn-boomerang-ai',full_name:'Shyam HN',title:'CEO & Co-Founder',company_name:'Boomerang AI',email:'shyam@getboomerang.ai',linkedin_url:'',notes:'CEO. $9M ARR in 18 months.'},
+  {id:'fiona-salmon-captify',full_name:'Fiona Salmon',title:'Global VP Partnerships',company_name:'Captify UK',email:'fiona.salmon@captify.co.uk',linkedin_url:'',notes:'Key partnerships contact.'},
+  {id:'david-pollet-crosspixel',full_name:'David Pollet',title:'CEO & Co-Founder',company_name:'CrossPixel',email:'david.pollet@crosspixel.net',linkedin_url:'',notes:'CEO CrossPixel.'},
+  {id:'mario-mayerthaler-dataxtrade',full_name:'Mario Mayerthaler',title:'CEO',company_name:'dataXtrade',email:'mario.mayerthaler@dataxtrade.com',linkedin_url:'',notes:'CEO dataXtrade.'},
+  {id:'vanessa-willett-demandbase',full_name:'Vanessa Willett',title:'VP Partnerships',company_name:'Demandbase',email:'vwillett@demandbase.com',linkedin_url:'',notes:'Launched Demandbase Partner Program 2024.'},
+  {id:'michael-wilczak-demandbase',full_name:'Michael Wilczak',title:'Chief Strategy & Development Officer',company_name:'Demandbase',email:'mwilczak@demandbase.com',linkedin_url:'',notes:'Owns partner ecosystem and growth.'},
+  {id:'zach-roseman-draftboard',full_name:'Zach Roseman',title:'Founder & CEO',company_name:'Draftboard',email:'zach@draftboard.com',linkedin_url:'',notes:'Ex-CEO Mosaic Group, ex-IAC.'},
+  {id:'stephan-jackel-emetriq',full_name:'Stephan Jäckel',title:'Managing Director',company_name:'Emetriq',email:'stephan.jackel@emetriq.com',linkedin_url:'',notes:'Telekom subsidiary. 100M+ user profiles.'},
+  {id:'uta-fey-emetriq',full_name:'Uta Fey',title:'Head of Data / Senior Partner Manager',company_name:'Emetriq',email:'uta.fey@emetriq.com',linkedin_url:'https://www.linkedin.com/in/uta-fey-b8222a82',notes:'Data specialist.'},
+  {id:'brian-condron-epsilon',full_name:'Brian Condron',title:'VP, Data Partnerships – PeopleCloud',company_name:'Epsilon',email:'brian.condron@epsilon.com',linkedin_url:'',notes:'PRIMARY data partnerships contact.'},
+  {id:'georgina-bankier-eyeota',full_name:'Georgina Bankier',title:'VP, Global Commercial & Platform Partnerships',company_name:'Eyeota',email:'georgina.bankier@eyeota.com',linkedin_url:'',notes:'PRIMARY partnerships contact at Eyeota.'},
+  {id:'margo-welkier-eyeota',full_name:'Margo Welkier',title:'Data Partnerships, Digital Audiences',company_name:'Eyeota',email:'margo.welkier@eyeota.com',linkedin_url:'',notes:'2nd degree — mutual: Joanna Burton, Krzysztof Czok.'},
+  {id:'eddie-obrien-gong',full_name:'Eddie O\'Brien',title:'SVP Partnerships',company_name:'Gong',email:'eddie.obrien@gong.io',linkedin_url:'',notes:'Owns Gong Collective.'},
+  {id:'yukio-mori-im',full_name:'Yukio Mori',title:'CEO',company_name:'Intimate Merger',email:'yukio.mori@intimatemerger.com',linkedin_url:'',notes:'CEO Intimate Merger.'},
+  {id:'travis-clinger-liveramp',full_name:'Travis Clinger',title:'Chief Connectivity & Ecosystem Officer',company_name:'LiveRamp',email:'travis.clinger@liveramp.com',linkedin_url:'',notes:'Top-level partnerships exec.'},
+  {id:'carl-white-nano',full_name:'Carl White',title:'Co-Founder & Group CEO',company_name:'Nano Interactive',email:'carl.white@nanointeractive.com',linkedin_url:'',notes:'Privacy-first targeting evangelist.'},
+  {id:'matthew-beck-nano',full_name:'Matthew Beck',title:'VP Strategy & Partnerships',company_name:'Nano Interactive',email:'matthew.beck@nanointeractive.com',linkedin_url:'',notes:'Primary contact for data partnerships.'},
+  {id:'paulo-cunha-navegg',full_name:'Paulo Cunha',title:'CEO',company_name:'Navegg',email:'paulo.cunha@navegg.com',linkedin_url:'',notes:'CEO Navegg, Brazilian DMP.'},
+  {id:'artur-banach-netsprint',full_name:'Artur Banach',title:'Chief Strategy Officer (ex-CEO)',company_name:'Netsprint',email:'artur.banach@netsprint.pl',linkedin_url:'',notes:'Ex-CEO, now CSO.'},
+  {id:'monika-bronowska-netsprint',full_name:'Monika Bronowska',title:'President / CEO',company_name:'Netsprint',email:'monika.bronowska@netsprint.pl',linkedin_url:'',notes:'Primary outreach target.'},
+  {id:'jay-stevens-permutive',full_name:'Jay Stevens',title:'Chief Commercial Officer',company_name:'Permutive',email:'jay.stevens@permutive.com',linkedin_url:'',notes:'Key commercial contact.'},
+  {id:'jordan-g-phm',full_name:'Jordan G.',title:'SVP Programmatic',company_name:'Publicis Health Media',email:'',linkedin_url:'',notes:'2nd degree. Full name hidden — needs Sales Navigator.'},
+  {id:'maria-coletta-phm',full_name:'Maria Coletta',title:'VP Programmatic',company_name:'Publicis Health Media',email:'maria.coletta@publicishealthmedia.com',linkedin_url:'https://www.linkedin.com/in/maria-coletta',notes:'WARM INTRO via Wojciech Dwojacki.'},
+  {id:'paul-reisner-phm',full_name:'Paul Reisner',title:'VP Investment, Programmatic',company_name:'Publicis Health Media',email:'paul.reisner@publicishealthmedia.com',linkedin_url:'',notes:'2nd degree. Mutual: Wojciech Dwojacki.'},
+  {id:'abbie-burns-real-chemistry',full_name:'Abbie Burns',title:'Senior Manager, Media Activation, Platforms & Partnerships',company_name:'Real Chemistry',email:'abbie.burns@realchemistry.com',linkedin_url:'https://www.linkedin.com/in/abbie-burns',notes:'WARM INTRO via Jan Piskorski.'},
+  {id:'maranatha-peterside-real-chemistry',full_name:'Maranatha Peterside',title:'Associate Director, Media Activation',company_name:'Real Chemistry',email:'maranatha.peterside@realchemistry.com',linkedin_url:'',notes:'2nd degree. Mutual: Jan Piskorski.'},
+  {id:'nicolas-livszyc-retargetly',full_name:'Nicolas Livszyc',title:'CEO & Co-Founder',company_name:'Retargetly',email:'nicolas.livszyc@retargetly.com',linkedin_url:'',notes:'CEO Retargetly, LATAM data leader.'},
+  {id:'benoit-oberle-sirdata',full_name:'Benoît Oberle',title:'Co-Founder & CEO',company_name:'SIRdata',email:'benoit.oberle@sirdata.com',linkedin_url:'https://www.linkedin.com/in/benoit-oberl%C3%A9-7807625/',notes:'20+ years adtech.'},
+  {id:'julien-trani-sirdata',full_name:'Julien TRANI',title:'Co-Founder & DG',company_name:'SIRdata',email:'julien.trani@sirdata.com',linkedin_url:'https://www.linkedin.com/in/julientrani',notes:'Active on LinkedIn.'},
+  {id:'gary-cohen-sirdata',full_name:'Gary Cohen',title:'Senior Publisher & Partnership Manager',company_name:'SIRdata',email:'gary.cohen@sirdata.com',linkedin_url:'',notes:'Primary partnerships contact.'},
+  {id:'walter-knapp-sovrn',full_name:'Walter Knapp',title:'CEO',company_name:'Sovrn',email:'walter.knapp@sovrn.com',linkedin_url:'',notes:'Previously COO of Federated Media.'},
+  {id:'far-hussain-sscg',full_name:'Far Hussain',title:'Associate Director, Programmatic',company_name:'SSCG Media Group',email:'far.hussain@sscgmedia.com',linkedin_url:'https://www.linkedin.com/in/far-hussain',notes:'WARM INTRO via Jan Piskorski + Karolina Milkowska.'},
+  {id:'debbie-renner-sscg',full_name:'Debbie Renner',title:'CEO',company_name:'SSCG Media Group',email:'debbie.renner@sscgmedia.com',linkedin_url:'',notes:'2nd degree. Mutual: Delphine Fabre-Hernoux.'},
+  {id:'nathan-gawel-stackadapt',full_name:'Nathan Gawel',title:'VP, Data Partnerships',company_name:'StackAdapt',email:'nathan@stackadapt.com',linkedin_url:'https://www.linkedin.com/in/nathan-gawel-06134a7/',notes:'Primary contact for data partnerships.'},
+  {id:'denis-loboda-stackadapt',full_name:'Denis Loboda',title:'Senior Director, Data',company_name:'StackAdapt',email:'denis.loboda@stackadapt.com',linkedin_url:'https://www.linkedin.com/in/denisloboda',notes:'Manages 200+ data provider relationships.'},
+  {id:'michael-shang-stackadapt',full_name:'Michael Shang',title:'SVP, Advertising Technologies',company_name:'StackAdapt',email:'michael@stackadapt.com',linkedin_url:'https://www.linkedin.com/in/shangmichael/',notes:'Formerly VP Partnerships.'},
+  {id:'vitaly-pecherskiy-stackadapt',full_name:'Vitaly Pecherskiy',title:'CEO & Co-founder',company_name:'StackAdapt',email:'vitaly@stackadapt.com',linkedin_url:'https://www.linkedin.com/in/vitaly-pecherskiy/',notes:'Co-founder & CEO.'},
+  {id:'david-connors-the-swarm',full_name:'David Connors',title:'Co-Founder & CEO',company_name:'The Swarm',email:'david@theswarm.com',linkedin_url:'',notes:'Ex-Sequoia Capital Director.'},
+  {id:'anders-bogs-userreport',full_name:'Anders Bogs',title:'CEO',company_name:'UserReport',email:'anders.bogs@userreport.com',linkedin_url:'',notes:'CEO UserReport.'},
+  {id:'alain-levy-weborama',full_name:'Alain Levy',title:'CEO',company_name:'Weborama',email:'alain.levy@weborama.com',linkedin_url:'',notes:'CEO of Weborama. Paris.'},
+  {id:'mykim-chikli-weborama',full_name:'Mykim Chikli',title:'CEO, Weborama EMEA',company_name:'Weborama',email:'mykim.chikli@weborama.com',linkedin_url:'',notes:'Key EU partnerships contact.'},
+  {id:'sathish-ks-zeotap',full_name:'Sathish KS',title:'Technical Lead / Data Solutions',company_name:'Zeotap',email:'sathish.ks@zeotap.com',linkedin_url:'',notes:'Confirmed via Gmail Jan 2025.'},
+  {id:'elad-simon-zeotap',full_name:'Elad Simon',title:'COO',company_name:'Zeotap',email:'elad.simon@zeotap.com',linkedin_url:'https://uk.linkedin.com/in/elad-simon',notes:'COO (Nov 2024). Active relationship.'},
+  {id:'matt-bennathan-zeotap',full_name:'Matt Bennathan',title:'Chief Commercial Officer, Zeotap Data',company_name:'Zeotap',email:'matt.bennathan@zeotap.com',linkedin_url:'',notes:'CCO Zeotap Data. Confirmed via Gmail Jan 2025.'},
+  {id:'daniel-heer-zeotap',full_name:'Daniel Heer',title:'Co-Founder & President',company_name:'Zeotap',email:'daniel.heer@zeotap.com',linkedin_url:'',notes:'Co-founder and President.'},
+];
 
-let theme=localStorage.getItem('oaTheme')||'light';
-document.documentElement.setAttribute('data-theme',theme);
-function toggleTheme(){
-  theme=theme==='light'?'dark':'light';
-  document.documentElement.setAttribute('data-theme',theme);
-  localStorage.setItem('oaTheme',theme);
-  document.getElementById('themeBtn').textContent=theme==='dark'?'☀️':'🌙';
-}
-document.getElementById('themeBtn').textContent=theme==='dark'?'☀️':'🌙';
+/* ── STATE ── */
+let companies = SEED.map(([n,note,t,cat,reg,sz,icp,web,li]) => ({
+  name:n, note:note||'', type:t||'prospect',
+  category:cat||null, region:reg||null, size:sz||null,
+  icp:icp||null, website:web||null, linkedin_slug:li||null,
+  updated_at: null
+}));
+let contacts = [...SEED_CONTACTS];
 
-async function loadData(){
-  try{
-    const t=setTimeout(()=>{ document.getElementById('syncLabel').textContent='⚠ Slow connection…'; },5000);
-    const [co,ct,it]=await Promise.all([
-      fetch(`${SB}/companies?select=*&order=icp.desc.nullslast,name.asc`,{headers:H}).then(r=>r.json()),
-      fetch(`${SB}/contacts?select=id,full_name,title,company_id,company_name,email`,{headers:H}).then(r=>r.json()),
-      fetch(`${SB}/intelligence?select=*`,{headers:H}).then(r=>r.json())
+let activeFilter = 'all';
+let activeTab = 'companies';
+let selectedCompany = null;
+let _drawerOpen = false;
+let _centerSaved = null;
+
+/* ── SUPABASE ── */
+const SB_URL = 'https://nyzkkqqjnkctcmxoirdj.supabase.co';
+const SB_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im55emtrcXFqbmtjdGNteG9pcmRqIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzM4NzMxMzYsImV4cCI6MjA4OTQ0OTEzNn0.jhAq_C68klOp4iTyj9HmsyyvoxsOI6ACld7t_87TAk0';
+
+async function loadLiveData() {
+  try {
+    const [cRes, ctRes] = await Promise.all([
+      fetch(`${SB_URL}/rest/v1/companies?select=*&order=name.asc`, {headers:{'apikey':SB_KEY,'Authorization':'Bearer '+SB_KEY}}),
+      fetch(`${SB_URL}/rest/v1/contacts?select=*&order=company_name.asc`, {headers:{'apikey':SB_KEY,'Authorization':'Bearer '+SB_KEY}})
     ]);
-    clearTimeout(t);
-    if(Array.isArray(co))companies=co;
-    if(Array.isArray(ct))contacts=ct;
-    if(Array.isArray(it))intel=it;
-    document.getElementById('syncLabel').textContent=`● Live · ${companies.length} co · ${contacts.length} ct`;
-    document.querySelector('.dot').style.background='#22C55E';
-  }catch(e){
-    document.getElementById('syncLabel').textContent='○ Offline — check connection';
-    document.querySelector('.dot').style.background='#EF4444';
+    if (!cRes.ok || !ctRes.ok) throw new Error(`API ${cRes.status}/${ctRes.status}`);
+    const [cData, ctData] = await Promise.all([cRes.json(), ctRes.json()]);
+    if (Array.isArray(cData) && cData.length) {
+      companies = cData.map(r => ({
+        name: r.name||'', note: r.note||'', type: r.type||'prospect',
+        category: r.category||null, region: r.region||null, size: r.size||null,
+        icp: r.icp||null, website: r.website||null, linkedin_slug: r.linkedin_slug||null,
+        updated_at: r.updated_at||null,
+        description: r.description||null, hq_city: r.hq_city||null,
+        founded_year: r.founded_year||null, funding: r.funding||null,
+        revenue_est: r.revenue_est||null, funding_stage: r.funding_stage||null,
+        acquisition_status: r.acquisition_status||null, parent_company: r.parent_company||null,
+        annual_revenue_usd: r.annual_revenue_usd||null,
+        crunchbase_url: r.crunchbase_url||null, g2_url: r.g2_url||null,
+        twitter_handle: r.twitter_handle||null,
+        priority: r.priority||0, outreach_angle: r.outreach_angle||null,
+        relationship_owner: r.relationship_owner||null, deal_stage: r.deal_stage||null,
+        deal_value_est: r.deal_value_est||null, next_action: r.next_action||null,
+        next_action_at: r.next_action_at||null, last_contacted_at: r.last_contacted_at||null,
+        dsps: r.dsps||[], tech_stack: r.tech_stack||[], signals: r.signals||[],
+        press_links: r.press_links||[], hiring_signals: r.hiring_signals||[],
+        competitors: r.competitors||[], offices: r.offices||[],
+        tech_stack_cache: r.tech_stack_cache||{}, last_enriched_at: r.last_enriched_at||null,
+      }));
+    }
+    if (Array.isArray(ctData) && ctData.length) contacts = ctData;
+    document.getElementById('statusDot').classList.add('live');
+    document.getElementById('statusText').textContent = `\u25cf Live \u00b7 ${companies.length}co \u00b7 ${contacts.length}ct`;
+  } catch(e) {
+    console.warn('[oA Hub] loadLiveData failed:', e.message);
+    document.getElementById('statusText').textContent = `\u25cb Seed \u00b7 ${companies.length}co`;
   }
-  updateStats();renderList();
-}
-
-function av(n){var p=[['#9FE1CB30','#0F6E56'],['#B5D4F430','#1A4F8A'],['#FAC77530','#7A4200'],['#C0DD9730','#3B6D11'],['#F4C0D130','#993556']];var h=0;for(var i=0;i<n.length;i++)h=(h*31+n.charCodeAt(i))&0xffff;return p[h%p.length]}
-function ini(n){return(n||'').replace(/[^A-Za-z ]/g,'').split(' ').filter(Boolean).map(function(w){return w[0]}).slice(0,2).join('').toUpperCase()||'?'}
-function tagCls(s){return{client:'tc',partner:'tp',prospect:'tpr',nogo:'tn',poc:'tpo'}[s]||'tpr'}
-function tagLbl(s){return{client:'Client',partner:'Partner',prospect:'Prospect',nogo:'No outreach',poc:'Active Deal'}[s]||s}
-function stars(n){var s=Math.min(5,Math.round((n||0)/2));return'★'.repeat(s)+'☆'.repeat(5-s)}
-function dom(url){if(!url)return'';try{return new URL(url.includes('://')?url:'https://'+url).hostname.replace('www.','')}catch(e){return url.split('/')[0]}}
-function dsps(c){return Array.isArray(c.dsps)?c.dsps:[]}
-function techStack(c){return Array.isArray(c.tech_stack)?c.tech_stack:[]}
-function pressLinks(c){var r=intel.find(function(i){return i.company_id===c.id&&i.type==='press_links'});return Array.isArray(r&&r.content)?r.content:[]}
-function techScan(c){return intel.find(function(i){return i.company_id===c.id&&i.type==='tech_scan'})||null}
-function coContacts(c){return contacts.filter(function(ct){return ct.company_id===c.id})}
-
-function updateStats(){
-  document.getElementById('st-all').textContent=companies.length;
-  document.getElementById('st-client').textContent=companies.filter(function(c){return c.type==='client'}).length;
-  document.getElementById('st-poc').textContent=companies.filter(function(c){return c.type==='poc'}).length;
-  document.getElementById('st-partner').textContent=companies.filter(function(c){return c.type==='partner'}).length;
-  document.getElementById('st-prospect').textContent=companies.filter(function(c){return c.type==='prospect'}).length;
-  document.getElementById('st-enriched').textContent=companies.filter(function(c){return techStack(c).length>0||dsps(c).length>0}).length;
-  document.getElementById('st-nogo').textContent=companies.filter(function(c){return c.type==='nogo'}).length;
-}
-
-function setFilter(f,el){
-  activeFilter=f;
-  document.querySelectorAll('.sc,.fp').forEach(function(b){b.classList.remove('active')});
-  var fp=document.getElementById('fp-'+f);if(fp)fp.classList.add('active');
-  var scIdx=['all','client','poc','partner','prospect','enriched','nogo'].indexOf(f);
-  var scs=document.querySelectorAll('.sc');if(scs[scIdx])scs[scIdx].classList.add('active');
+  updateStats();
   renderList();
+  if (selectedCompany) {
+    const liveIdx = companies.findIndex(c => c.name === selectedCompany);
+    if (liveIdx >= 0) openCompany(liveIdx);
+  }
 }
 
-function renderList(){
-  var q=(document.getElementById('searchQ').value||'').toLowerCase();
-  var filtered=companies.filter(function(c){
-    if(activeFilter==='enriched')return techStack(c).length>0||dsps(c).length>0;
-    if(activeFilter!=='all'&&c.type!==activeFilter)return false;
-    if(q){var hay=([c.name,c.category,c.region,c.note,c.hq_city].concat(dsps(c))).join(' ').toLowerCase();if(!hay.includes(q))return false;}
-    return true;
-  });
-  document.getElementById('listMeta').textContent=filtered.length+' of '+companies.length;
-  var list=document.getElementById('coList');
-  if(!filtered.length){list.innerHTML='<div style="padding:24px;text-align:center;font-family:IBM Plex Mono,monospace;font-size:10px;color:var(--t3)">No results</div>';return;}
-  list.innerHTML=filtered.map(function(c){
-    var bg=av(c.name)[0],fg=av(c.name)[1];
-    var sel=c.id===selectedId;
-    var dspList=dsps(c).slice(0,2);
-    var hastech=techStack(c).length>0;
-    var haspress=pressLinks(c).length>0;
-    var meta=dspList.length?dspList.join(' · '):(c.hq_city||c.category||c.note||'—');
-    return '<div class="co-row'+(sel?' selected':'')+'" data-id="'+c.id+'" onclick="openDetail(\''+c.id+'\')" oncontextmenu="showCtx(event,\''+c.id+'\');return false;">'
-      +'<div class="co-av" style="background:'+bg+';border-color:'+fg+'40;color:'+fg+'">'+ini(c.name)+'</div>'
-      +'<div class="co-info-sm"><div class="co-name-sm">'+c.name+'</div><div class="co-meta-sm">'+meta+'</div></div>'
-      +'<div class="co-right-sm">'
-      +(hastech?'<span class="tech-pill">TECH</span>':'')
-      +(haspress?'<span class="press-pill">PRESS</span>':'')
-      +'<span class="icp-num">'+(c.icp||'—')+'</span>'
-      +'<span class="tag '+tagCls(c.type)+'">'+tagLbl(c.type)+'</span>'
-      +'</div></div>';
+/* ── HELPERS ── */
+function _buildCoMap() {
+  const m = {};
+  companies.forEach((c,i) => { m[c.name.toLowerCase()] = i; });
+  return m;
+}
+function _findCompany(name) {
+  return companies.find(c => c.name.toLowerCase() === name.toLowerCase()) || null;
+}
+
+function classify(n) {
+  const s = (n||'').toLowerCase();
+  if (s.includes('no outreach')||s.includes('no fit')||s.includes('no business')||s.includes('internal')||s.includes('closed')||s.includes('unwanted')) return 'nogo';
+  if (s.includes('poc client')||s.includes('active poc')) return 'poc';
+  if (s.includes('client')) return 'client';
+  if (s.includes('partner')) return 'partner';
+  if (s.includes('prospect')||s.includes('to check')||s.includes('to continue')) return 'prospect';
+  return 'prospect';
+}
+
+function tagCls(t) { return {client:'tc',partner:'tp',prospect:'tpr',nogo:'tn',poc:'tpo'}[t]||'tpr'; }
+function tagLbl(t) { return {client:'Client',partner:'Partner',prospect:'Prospect',nogo:'No outreach',poc:'POC'}[t]||'Prospect'; }
+
+function av(name) {
+  const p=[['#9FE1CB30','#0F6E56'],['#B5D4F430','#1A4F8A'],['#FAC77530','#7A4200'],['#C0DD9730','#3B6D11'],['#F4C0D130','#993556']];
+  let h=0; for(let c of name) h=(h*31+c.charCodeAt(0))&0xffff;
+  return p[h%p.length];
+}
+function ini(n) {
+  return n.replace(/[^A-Za-z ]/g,'').split(' ').filter(Boolean).map(w=>w[0]).slice(0,2).join('').toUpperCase()||'?';
+}
+function stars(n) {
+  if (!n) return '';
+  return '★'.repeat(Math.min(5,Math.round(n/2)))+'☆'.repeat(Math.max(0,5-Math.min(5,Math.round(n/2))));
+}
+function isFresh(c) {
+  if (c.type !== 'prospect') return false;
+  const hasContact = contacts.some(ct => ct.company_name && ct.company_name.toLowerCase() === c.name.toLowerCase());
+  if (hasContact) return false;
+  if (!c.updated_at) return true;
+  const days = (Date.now() - new Date(c.updated_at).getTime()) / 86400000;
+  return days > 30;
+}
+/* ── ACTION LOG ── */
+const _actionLog = [];
+function trackAction(icon, action, context) {
+  const ts = new Date().toLocaleTimeString('en-GB',{hour:'2-digit',minute:'2-digit',second:'2-digit'});
+  const entry = {ts, icon, action, context};
+  _actionLog.unshift(entry);
+  console.log(`[oA Hub] ${ts} ${icon} ${action}${context ? ' → '+context : ''}`);
+  const log = document.getElementById('actionLog');
+  const entries = document.getElementById('actionLogEntries');
+  log.classList.add('vis');
+  const el = document.createElement('div');
+  el.className = 'alog-entry';
+  el.innerHTML = `<span class="alog-ts">${ts}</span><span class="alog-ico">${icon}</span><span class="alog-act">${action}</span>${context?`<span class="alog-co">→ ${context}</span>`:''}`;
+  entries.prepend(el);
+  if (entries.children.length > 50) entries.removeChild(entries.lastChild);
+}
+function clearLog() {
+  document.getElementById('actionLogEntries').innerHTML = '';
+  document.getElementById('actionLog').classList.remove('vis');
+}
+
+function openClaude(p, icon, action, context) {
+  if (icon) trackAction(icon, action, context||'');
+  window.open('https://claude.ai/new?q='+encodeURIComponent(p),'_blank');
+}
+
+/* ── TECH STACK PARSER ── */
+const TS_MAP = {
+  // DSPs
+  'ttd':'TTD','the trade desk':'TTD','dv360':'DV360','display & video 360':'DV360',
+  'amazon dsp':'Amazon DSP','xandr':'Xandr','stackadapt':'StackAdapt',
+  'mediamath':'MediaMath','yahoo dsp':'Yahoo DSP','basis':'Basis',
+  'madhive':'Madhive','mntn':'MNTN','splicky':'Splicky',
+  // Marketplaces / Identity
+  'liveramp':'LiveRamp','rampid':'RampID','uid2':'UID2','euid':'EUID',
+  'id5':'ID5','unified id':'UID2','panorama id':'Panorama ID',
+  // DMP / CDP
+  'lotame':'Lotame','salesforce cdp':'SF CDP','blueconic':'BlueConic',
+  'segment':'Segment','adobe':'Adobe','oracle data':'Oracle Data',
+  // Clean room / Infra
+  'snowflake':'Snowflake','habu':'Habu','infosum':'InfoSum',
+  'aws clean':'AWS Clean Rooms','clean room':'Clean Room',
+  // SSP
+  'magnite':'Magnite','pubmatic':'PubMatic','index exchange':'Index Exchange',
+  'equativ':'Equativ','sharethrough':'Sharethrough',
+  // Measurement
+  'doubleverify':'DoubleVerify','ias':'IAS','nielsen':'Nielsen',
+  // Data
+  'adform':'Adform',
+};
+const TS_TIER = {
+  'TTD':'dsp','DV360':'dsp','Amazon DSP':'dsp','Xandr':'dsp','StackAdapt':'dsp',
+  'MediaMath':'dsp','Yahoo DSP':'dsp','Basis':'dsp','Madhive':'dsp','MNTN':'dsp','Splicky':'dsp',
+  'LiveRamp':'id','RampID':'id','UID2':'id','EUID':'id','ID5':'id','Panorama ID':'id',
+  'Lotame':'cdp','SF CDP':'cdp','BlueConic':'cdp','Segment':'cdp','Adobe':'cdp',
+  'Snowflake':'infra','Habu':'infra','InfoSum':'infra','AWS Clean Rooms':'infra','Clean Room':'infra',
+  'Magnite':'other','PubMatic':'other','Index Exchange':'other','Equativ':'other','Sharethrough':'other',
+  'DoubleVerify':'other','IAS':'other','Nielsen':'other','Adform':'dsp',
+};
+
+function parseTechStack(note, category) {
+  const src = ((note||'')+(category||'')).toLowerCase();
+  const found = new Set();
+  for (const [kw, label] of Object.entries(TS_MAP)) {
+    if (src.includes(kw)) found.add(label);
+  }
+  return [...found];
+}
+
+function renderTechPills(stack) {
+  if (!stack.length) return `<span class="ts-empty">Not confirmed — research needed</span>`;
+  return stack.map(s => {
+    const tier = TS_TIER[s] || 'other';
+    return `<span class="ts-pill ts-${tier}">${s}</span>`;
   }).join('');
 }
 
-function openDetail(id){
-  selectedId=id;
-  document.querySelectorAll('.co-row').forEach(function(r){r.classList.toggle('selected',r.dataset.id===id)});
-  var c=companies.find(function(x){return x.id===id});
-  if(!c)return;
-  var fg=av(c.name)[1];
-  var ccts=coContacts(c);
-  var press=pressLinks(c);
-  var ts=techStack(c);
-  var scan=techScan(c);
-  var dspArr=dsps(c);
-  var website=c.website?dom(c.website):'';
-  var nameEsc=c.name.replace(/'/g,"\\'");
+/* ── WEB TECH SCANNER ── */
+const _wtCache = new Map(); // companyName → {groups, ts}
 
-  var dspHtml=dspArr.length
-    ?'<div class="dsp-badges">'+dspArr.map(function(d){return'<span class="dsp-badge">'+d+'</span>'}).join('')+'</div>'
-    :'<span style="color:var(--t3);font-size:11px">Not detected — run tech scan</span>';
-
-  var catMap={analytics:'analytics',tag_management:'',advertising:'advertising',retargeting:'advertising',crm:'crm',marketing_automation:'crm',identity:'identity',cmp:'cmp'};
-  var techHtml=ts.length
-    ?'<div class="tech-grid">'+ts.map(function(t){return'<span class="tech-item '+(catMap[t.category]||'')+'" title="'+(t.signal||'')+'">'+t.tool+'</span>'}).join('')+'</div>'
-    :'<span style="color:var(--t3);font-size:11px">No tech scan yet</span>';
-
-  var pressHtml=press.length
-    ?press.slice(0,6).map(function(p){
-        return'<div class="press-link">'
-          +'<div class="press-title"><a class="ml" href="'+p.url+'" target="_blank">'+p.title+'</a></div>'
-          +'<div class="press-meta"><span>'+(p.source||'')+'</span><span>'+(p.date||'')+'</span><span class="press-type">'+((p.link_type||'').replace(/_/g,' '))+'</span></div>'
-          +(p.summary?'<div class="press-summary">'+p.summary+'</div>':'')
-          +'</div>'}).join('')
-    :'<div style="color:var(--t3);font-size:11px;font-family:IBM Plex Mono,monospace;text-transform:uppercase;letter-spacing:.05em">No press links yet</div>';
-
-  var ctHtml=ccts.length
-    ?'<table class="info">'+ccts.map(function(ct){return'<tr><td>'+ct.full_name+'</td><td>'+(ct.title||'—')+'</td></tr>'}).join('')+'</table>'
-    +'<div class="btn-row"><button class="btn" onclick="openClaude(\'Find Head of Programmatic or Data Partnerships at '+nameEsc+' — LinkedIn, email, background\')">Find contacts ↗</button></div>'
-    :'<div style="color:var(--t3);font-size:11px;margin-bottom:8px">No contacts stored yet</div>'
-    +'<button class="btn" onclick="openClaude(\'Find Head of Programmatic or Data Partnerships at '+nameEsc+' — LinkedIn, email, background\')">Find contacts ↗</button>';
-
-  var signalsArr=Array.isArray(c.signals)?c.signals:[];
-  var signalsHtml=signalsArr.length
-    ?'<ul style="padding-left:14px;margin-top:4px">'+signalsArr.map(function(s){return'<li style="font-size:11px;color:var(--t2);margin-bottom:3px">'+s.description+(s.date?' <span style=\'font-family:IBM Plex Mono,monospace;font-size:9px;color:var(--t3)\'>'+s.date+'</span>':'')+'</li>'}).join('')+'</ul>'
-    :'';
-
-  document.getElementById('detail').innerHTML='<div style="max-width:680px">'
-
-  +'<div class="banner">'
-  +'<div class="co-logo">'+ini(c.name)+'</div>'
-  +'<div class="co-hdr-info">'
-  +'<div class="co-hdr-name">'+c.name+' <span class="tag '+tagCls(c.type)+'">'+tagLbl(c.type)+'</span>'+(website?'<a class="co-domain ml" href="https://'+website+'" target="_blank">'+website+'</a>':'')+'</div>'
-  +'<div class="co-sub">'+(c.category||'—')+(c.hq_city?' · '+c.hq_city:'')+(c.region?' · '+c.region:'')+'</div>'
-  +'<div class="icp-row"><span class="stars">'+stars(c.icp)+'</span><span class="icp-reason">'+(c.icp||'—')+'/10 ICP</span>'+(dspArr.length?'<span style="font-family:IBM Plex Mono,monospace;font-size:9px;color:var(--g)">'+dspArr.slice(0,3).join(' · ')+'</span>':'')+'</div>'
-  +'</div>'
-  +'<div style="display:flex;flex-direction:column;gap:4px;flex-shrink:0">'
-  +'<button class="btn primary" onclick="openClaude(\'Research '+nameEsc+' — full contact report with decision makers, tech stack, press, and outreach angle for onAudience data partnership\')">Full report ↗</button>'
-  +'<button class="btn" onclick="runAction(\'draft_email\',\'Draft email — '+nameEsc+'\',\'Draft a short personalized outreach email to '+nameEsc+' for onAudience data partnership. Lead with a specific hook. Max 120 words. Subject line + body.\',this)">Draft email</button>'
-  +'</div></div>'
-
-  +'<div class="section"><div class="sec-hdr"><span style="font-size:12px">🏢</span><span class="sec-label">Company overview</span></div>'
-  +'<div class="sec-body"><table class="info">'
-  +(c.description?'<tr><td>About</td><td>'+c.description+'</td></tr>':'')
-  +'<tr><td>Category</td><td>'+(c.category||'—')+'</td></tr>'
-  +'<tr><td>Region / HQ</td><td>'+([c.region,c.hq_city].filter(Boolean).join(' · ')||'—')+'</td></tr>'
-  +'<tr><td>Size</td><td>'+(c.size?c.size+' employees':'—')+'</td></tr>'
-  +'<tr><td>Founded</td><td>'+(c.founded_year||'—')+'</td></tr>'
-  +'<tr><td>Funding</td><td>'+(c.funding||'—')+'</td></tr>'
-  +(c.linkedin_slug?'<tr><td>LinkedIn</td><td><a class="ml" href="https://www.linkedin.com/company/'+c.linkedin_slug+'" target="_blank">Company profile ↗</a></td></tr>':'')
-  +(website?'<tr><td>Website</td><td><a class="ml" href="https://'+website+'" target="_blank">'+website+' ↗</a></td></tr>':'')
-  +'</table>'+(c.note?'<div class="note">'+c.note+'</div>':'')+signalsHtml+'</div></div>'
-
-  +'<div class="section"><div class="sec-hdr"><span style="font-size:12px">🔧</span><span class="sec-label">Tech stack</span>'
-  +(scan?'<span style="font-family:IBM Plex Mono,monospace;font-size:9px;color:var(--t3);margin-left:6px">scanned '+new Date(scan.created_at).toLocaleDateString()+'</span>':'')
-  +'<button class="btn" style="margin-left:auto" onclick="openClaude(\'Detect the full tech stack of '+nameEsc+' website using tech-lookup skill — analytics, advertising, CRM, DSP integrations. Save to Supabase.\')">Scan ↗</button></div>'
-  +'<div class="sec-body"><table class="info">'
-  +'<tr><td>DSPs</td><td>'+dspHtml+'</td></tr>'
-  +'<tr><td>Full stack</td><td>'+techHtml+'</td></tr>'
-  +'</table>'
-  +'<div class="btn-row"><button class="btn" onclick="runAction(\'activation\',\'Activation path — '+nameEsc+'\',\'What is the fastest activation path for '+nameEsc+' to use onAudience audience segments — based on their DSP stack: '+dspArr.join(", ")+'. Give a ranked list of 3 paths with time-to-revenue.\',this)">Activation path</button></div>'
-  +'</div></div>'
-
-  +'<div class="section"><div class="sec-hdr"><span style="font-size:12px">📰</span><span class="sec-label">Press & public knowledge</span>'
-  +'<span style="font-family:IBM Plex Mono,monospace;font-size:9px;color:var(--t3);margin-left:6px">'+press.length+' links</span>'
-  +'<button class="btn" style="margin-left:auto" onclick="openClaude(\'Find articles, interviews, conference talks, and press for '+nameEsc+' and their senior contacts. Use press-lookup skill and save to Supabase.\')">Find press ↗</button></div>'
-  +'<div class="sec-body">'+pressHtml+'</div></div>'
-
-  +'<div class="section"><div class="sec-hdr"><span style="font-size:12px">👤</span><span class="sec-label">Contacts</span>'
-  +'<span style="font-family:IBM Plex Mono,monospace;font-size:9px;color:var(--t3);margin-left:6px">'+ccts.length+'</span>'
-  +'</div><div class="sec-body">'+ctHtml+'</div></div>'
-
-  +'<div class="section"><div class="sec-hdr"><span style="font-size:12px">⚡</span><span class="sec-label">Actions</span></div>'
-  +'<div class="sec-body"><div class="btn-row">'
-  +'<button class="btn primary" onclick="openClaude(\'Research '+nameEsc+' — full contact report using contact report template v3\')">Full report ↗</button>'
-  +'<button class="btn" onclick="runAction(\'find_dms\',\'Find DMs — '+nameEsc+'\',\'Find Head of Programmatic or Data Partnerships at '+nameEsc+' — name, title, LinkedIn, estimated email\',this)">Find DMs</button>'
-  +'<button class="btn" onclick="runAction(\'draft_email\',\'Draft email — '+nameEsc+'\',\'Draft a short personalized outreach email to '+nameEsc+' for onAudience data partnership. Lead with a specific hook. Max 120 words. Subject line + body.\',this)">Draft email</button>'
-  +'<button class="btn" onclick="runAction(\'activation\',\'Activation path — '+nameEsc+'\',\'What is the fastest activation path for '+nameEsc+' to use onAudience audience segments — based on their DSP stack: '+dspArr.join(", ")+'. Give a ranked list of 3 paths with time-to-revenue.\',this)">Activation path</button>'
-  +'<button class="btn" onclick="openClaude(\'Detect the full tech stack of '+nameEsc+' website using tech-lookup skill\')">Tech scan ↗</button>'
-  +'<button class="btn" onclick="openClaude(\'Find press articles and conference talks about '+nameEsc+' using press-lookup skill\')">Find press ↗</button>'
-  +'<button class="btn" onclick="openClaude(\'Check Gmail for any prior contact with '+nameEsc+'\')">Gmail ↗</button>'
-  +'<button class="btn" onclick="runAction(\'find_similar\',\'Find similar — '+nameEsc+'\',\'Find 8 companies similar to '+nameEsc+' for onAudience programmatic data outreach. For each: name, category, region, why it fits, ICP score 1-10.\',this)">Find similar</button>'
-  +'</div></div></div>'
-
-  +'</div>';
-}
-
-function showCtx(e,id){
-  e.preventDefault();e.stopPropagation();
-  var c=companies.find(function(x){return x.id===id});if(!c)return;
-  var name=c.name;
-  var menu=document.getElementById('ctxMenu');
-  var actions=[
-    {icon:'🔍',text:'Full contact report',    bg:false, key:'',          prompt:'Research '+name+' — full contact report using contact report template v3'},
-    {icon:'👤',text:'Find decision makers',   bg:true,  key:'find_dms',  prompt:'Find Head of Programmatic or Data Partnerships at '+name+' — name, title, LinkedIn, estimated email'},
-    {icon:'✉', text:'Draft outreach email',   bg:true,  key:'draft_email',prompt:'Draft a short personalized outreach email to '+name+' for onAudience data partnership. Lead with a specific hook. Max 120 words. Subject line + body.'},
-    {icon:'💬',text:'LinkedIn message',        bg:true,  key:'draft_email',prompt:'Draft a short LinkedIn InMail to '+name+' for onAudience data partnership. Max 80 words. Be specific and personalized.'},
-    {icon:'🔧',text:'Detect tech stack',       bg:false, key:'',          prompt:'Detect the full tech stack of '+name+' website using tech-lookup skill. Save results to Supabase.'},
-    {icon:'📰',text:'Find press & articles',  bg:false, key:'',          prompt:'Find articles, interviews, conference talks about '+name+' and their senior contacts using press-lookup skill. Save to Supabase.'},
-    {icon:'🔗',text:'Find similar companies', bg:true,  key:'find_similar',prompt:'Find 8 companies similar to '+name+' for onAudience programmatic data outreach. For each: name, category, region, why it fits, ICP score 1-10.'},
-    {icon:'📧',text:'Check email history',    bg:false, key:'',          prompt:'Check Gmail for any previous contact with '+name+' — summarize relationship history'},
-  ];
-  if(c.type==='nogo')actions.push({icon:'⚠',text:'Why no outreach?', bg:true, key:'why_nogo', prompt:'Explain in 3 bullet points why '+name+' is marked no-outreach in onAudience database and what happened'});
-  if(c.type==='prospect')actions.push({icon:'🚀',text:'Prioritize this account',bg:true,key:'prioritize',prompt:'Should onAudience reach out to '+name+' now? Give a 3-point prioritization recommendation with the best angle.'});
-
-  menu.innerHTML='<div class="ctx-label">'+name+'</div><div class="ctx-sep"></div>'
-    +actions.map(function(a,i){
-      var bgDot = a.bg ? '<span style="font-family:IBM Plex Mono,monospace;font-size:7px;color:var(--t3);margin-left:auto;padding-left:8px">bg</span>' : '<span style="font-family:IBM Plex Mono,monospace;font-size:7px;color:var(--t3);margin-left:auto;padding-left:8px">↗</span>';
-      return'<div class="ctx-item" data-i="'+i+'" style="justify-content:space-between"><div style="display:flex;align-items:center;gap:8px"><span class="ctx-icon">'+a.icon+'</span>'+a.text+'</div>'+bgDot+'</div>';
-    }).join('');
-  menu.querySelectorAll('.ctx-item').forEach(function(el,i){
-    el.addEventListener('click',function(){
-      menu.style.display='none';
-      var a=actions[i];
-      if(a.bg){ runBg(a.text+' — '+name, a.prompt, null); }
-      else { openClaude(a.prompt); }
-    });
-  });
-  var x=Math.min(e.clientX,window.innerWidth-250);
-  var y=Math.min(e.clientY,window.innerHeight-380);
-  menu.style.left=x+'px';menu.style.top=y+'px';menu.style.display='block';
-}
-document.addEventListener('click',function(){document.getElementById('ctxMenu').style.display='none'});
-
-// ── TASK RUNNER ───────────────────────────────────────────────────────────────
-// Each task: {id, label, prompt, status:'queued|running|done|error', toastEl, result}
-var _tasks = {};
-var _taskSeq = 0;
-
-// Determine which actions run in background vs open Claude tab
-// Background: quick-output tasks (draft email, find contacts, activation path, similar)
-// Claude tab: complex multi-step tasks (full report, tech scan, press lookup, gmail)
-var BG_ACTIONS = {
-  'draft_email':    true,
-  'find_dms':       true,
-  'activation':     true,
-  'find_similar':   true,
-  'prioritize':     true,
-  'why_nogo':       true,
+const WT_CATEGORIES = {
+  analytics:    { label: 'Analytics',            icon: '📊', cls: 'wt-analytics'   },
+  ads:          { label: 'Ad pixels / DSP',      icon: '📢', cls: 'wt-ads'         },
+  retargeting:  { label: 'Retargeting / Social', icon: '🎯', cls: 'wt-retargeting' },
+  crm:          { label: 'CRM / Marketing',      icon: '📋', cls: 'wt-crm'         },
+  cdp:          { label: 'CDP / DMP / Data',     icon: '🗄️', cls: 'wt-cdp'         },
+  identity:     { label: 'Identity',             icon: '🔑', cls: 'wt-cdp'         },
+  tag:          { label: 'Tag management',       icon: '🏷️', cls: 'wt-tag'         },
+  cmp:          { label: 'CMP / Consent',        icon: '🏷️', cls: 'wt-tag'         },
+  other:        { label: 'Other Tech',           icon: '⚙️', cls: 'wt-other'       },
+};
+const WT_MODE_META = {
+  brand:        { label: 'Brand', note: 'Website = actual buying stack. Signals reliable.', accent: 'var(--cc)' },
+  agency:       { label: 'Agency', note: 'Website = own marketing only — not client infrastructure.', accent: 'var(--prc)' },
+  adtech:       { label: 'AdTech', note: 'DSP pixels = own marketing. Identity/infra = genuine.', accent: 'var(--pc)' },
+  dataprovider: { label: 'Data Co', note: 'CMP = own compliance only. Identity/Tealium = genuine.', accent: 'var(--pc)' },
+  publisher:    { label: 'Publisher', note: 'DSP pixels = demand partners. CMP = audience consent posture.', accent: 'var(--cc)' },
+  unknown:      { label: 'Unknown type', note: 'Interpret conservatively. Verify via secondary sources.', accent: 'var(--t3)' },
 };
 
-function runBg(label, prompt, btnEl) {
-  var id = 'task-' + (++_taskSeq);
-  // Mark button loading
-  if(btnEl){ btnEl.classList.add('loading'); btnEl.dataset.taskId = id; }
+/* ── DB CACHE HELPERS ── */
+const CACHE_TTL_HOURS = 168; // 7 days
 
-  // Create toast
-  var toast = document.createElement('div');
-  toast.className = 'toast running';
-  toast.id = 'toast-'+id;
-  toast.innerHTML = '<div class="spinner"></div>'
-    +'<div class="toast-body">'
-    +'<div class="toast-title">'+label+'</div>'
-    +'<div class="toast-sub" id="tsub-'+id+'">Starting…</div>'
-    +'</div>'
-    +'<div class="toast-actions"><button class="toast-close" onclick="dismissToast(\''+id+'\')">✕</button></div>';
-  document.getElementById('toast-stack').appendChild(toast);
-  _tasks[id] = {label:label, prompt:prompt, status:'running', toastEl:toast, result:'', btnEl:btnEl||null};
-
-  // Call Anthropic API with streaming
-  callClaudeStream(id, prompt);
-  return id;
+async function _dbCacheRead(companyId) {
+  try {
+    const r = await fetch(
+      `${SB_URL}/rest/v1/enrich_cache?company_id=eq.${encodeURIComponent(companyId)}&source=eq.web_tech&order=fetched_at.desc&limit=1`,
+      { headers: { apikey: SB_KEY, Authorization: 'Bearer ' + SB_KEY } }
+    );
+    if (!r.ok) return null;
+    const rows = await r.json();
+    if (!rows.length) return null;
+    const row = rows[0];
+    const ageHours = (Date.now() - new Date(row.fetched_at).getTime()) / 3600000;
+    if (ageHours > row.ttl_hours) return null; // stale
+    return row.data; // JSONB — the groups object
+  } catch { return null; }
 }
 
-async function callClaudeStream(id, prompt) {
-  var task = _tasks[id];
-  var sub = document.getElementById('tsub-'+id);
-  var charCount = 0;
-  var PROXY = 'https://nyzkkqqjnkctcmxoirdj.supabase.co/functions/v1/claude-proxy';
+async function _dbCacheWrite(companyId, groups) {
+  try {
+    await fetch(`${SB_URL}/rest/v1/enrich_cache`, {
+      method: 'POST',
+      headers: {
+        apikey: SB_KEY,
+        Authorization: 'Bearer ' + SB_KEY,
+        'Content-Type': 'application/json',
+        Prefer: 'resolution=merge-duplicates,return=minimal'
+      },
+      body: JSON.stringify({
+        company_id: companyId,
+        source: 'web_tech',
+        data: groups,
+        fetched_at: new Date().toISOString(),
+        ttl_hours: CACHE_TTL_HOURS
+      })
+    });
+    // also stamp last_enriched_at on the company record
+    await fetch(
+      `${SB_URL}/rest/v1/companies?id=eq.${encodeURIComponent(companyId)}`,
+      {
+        method: 'PATCH',
+        headers: {
+          apikey: SB_KEY,
+          Authorization: 'Bearer ' + SB_KEY,
+          'Content-Type': 'application/json',
+          Prefer: 'return=minimal'
+        },
+        body: JSON.stringify({
+          tech_stack_cache: groups,
+          last_enriched_at: new Date().toISOString()
+        })
+      }
+    );
+  } catch(e) { console.warn('[oA Hub] Cache write failed:', e.message); }
+}
+
+function _coIdFromName(name) {
+  // derive slug from name — mirrors store-data skill convention
+  return name.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '');
+}
+
+async function scanWebTech(companyName, domain, targetId) {
+  const el = document.getElementById(targetId);
+  if (!el) return;
+
+  const coId = _coIdFromName(companyName);
+
+  // 1. Session memory (instant)
+  if (_wtCache.has(companyName)) {
+    const cached = _wtCache.get(companyName);
+    el.innerHTML = renderWtGroups(cached.groups) +
+      `<div class="wt-cache-note">Session cache · ${cached.ts}</div>`;
+    return;
+  }
+
+  if (!domain) {
+    el.innerHTML = `<div class="wt-error">No website domain — add one to run scan.</div>`;
+    return;
+  }
+
+  // 2. DB cache (across sessions)
+  el.innerHTML = `<div class="wt-loading"><div class="wt-spinner"></div>Checking cache…</div>`;
+  const dbGroups = await _dbCacheRead(coId);
+  if (dbGroups) {
+    const ts = new Date().toLocaleTimeString('en-GB', {hour:'2-digit',minute:'2-digit'});
+    _wtCache.set(companyName, { groups: dbGroups, ts });
+    el.innerHTML = renderWtGroups(dbGroups) +
+      `<div class="wt-cache-note">DB cache · <7 days old · <button class="btn sm" style="display:inline-flex;height:16px;padding:0 5px;font-size:7px" onclick="trackAction('🔬','Tech rescan','${companyName.replace(/'/g,"\\'")}');_wtCache.delete('${companyName.replace(/'/g,"\\'")}');scanWebTech('${companyName.replace(/'/g,"\\'")}','${domain}','${targetId}',true)">Force rescan</button></div>`;
+    trackAction('💾', 'Tech loaded from DB cache', companyName);
+    return;
+  }
+
+  trackAction('🔬', 'Tech scan started', companyName);
+  el.innerHTML = `<div class="wt-loading"><div class="wt-spinner"></div>Scanning ${domain}…</div>`;
+
+  // determine company type for interpretation mode
+  const coData = companies.find(x => x.name === companyName);
+  const cat = ((coData && coData.category)||'').toLowerCase();
+  const mode = cat.includes('agency') || cat.includes('holding') ? 'agency'
+    : cat.includes('dsp') || cat.includes('ssp') || cat.includes('adtech') || cat.includes('programmatic') ? 'adtech'
+    : cat.includes('data provider') || cat.includes('dmp') || cat.includes('cdp') ? 'dataprovider'
+    : cat.includes('publisher') || cat.includes('media') ? 'publisher'
+    : cat.includes('brand') || cat.includes('advertiser') || cat.includes('retail') ? 'brand'
+    : 'unknown';
+
+  const modeNote = mode === 'agency'
+    ? `IMPORTANT: This is an AGENCY (${cat}). Their website tech reflects their own marketing/CRM, NOT their clients' media buying. CMP tools (OneTrust, Cookiebot) mean they meet their own legal obligations — nothing more. DSP pixels on their site are their own new-biz retargeting, not evidence their trading desk uses that DSP for clients. Mark CMP and retargeting signals clearly as "own marketing only" — do not present them as buying signals.`
+    : mode === 'adtech' || mode === 'dataprovider'
+    ? `This is an ADTECH/DATA company. DSP pixels likely reflect their own marketing retargeting. CMP tools are their own compliance posture — not a statement about whether their data exports are consent-verified. Only LiveRamp/ID5/Segment/Tealium are genuine integration signals.`
+    : mode === 'publisher'
+    ? `This is a PUBLISHER. DSP pixels = real demand partners. CMP = meaningful consent posture for their own audience data — this IS a valid signal for data partnership conversations.`
+    : mode === 'brand'
+    ? `This is a BRAND/ADVERTISER. All buying signals (TTD, DV360, Meta, LiveRamp) read at face value — their website IS their media buying stack.`
+    : `Company type unknown — use conservative interpretation. Flag all signals as needing verification.`;
+
+  const prompt = `You are a web technology analyst. Search for the technology stack used on the website ${domain}.
+
+${modeNote}
+
+Identify all third-party technologies: analytics, ad pixels, DSP tags, retargeting scripts, CRM/marketing automation, CDP/DMP platforms, consent management (CMP), tag managers, identity tools, and any programmatic advertising infrastructure.
+
+Respond ONLY with a valid JSON object. No markdown, no backticks, no explanation. Structure:
+{
+  "analytics": ["Google Analytics 4", "Hotjar"],
+  "ads": ["Google Ads", "The Trade Desk"],
+  "retargeting": ["LinkedIn Insight Tag", "Meta Pixel"],
+  "crm": ["HubSpot"],
+  "cdp": ["Segment", "Tealium"],
+  "identity": ["LiveRamp", "ID5"],
+  "tag": ["Google Tag Manager"],
+  "cmp": ["OneTrust"],
+  "other": ["Cloudflare", "Intercom"],
+  "mode": "${mode}",
+  "buying_signals": ["list only tools that are genuine buying/integration signals for a ${mode} — omit own-marketing-only tools"],
+  "gaps": ["list what website tech CANNOT tell us about this company's actual media buying / data usage"]
+}
+Only include tool categories that have at least one tool found. If you cannot access the site, return {"error": "Could not access site"}.`;
 
   try {
-    var resp = await fetch(PROXY, {
+    const resp = await fetch('https://api.anthropic.com/v1/messages', {
       method: 'POST',
-      headers: {'Content-Type':'application/json'},
+      headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
         model: 'claude-sonnet-4-20250514',
         max_tokens: 1000,
-        stream: true,
-        system: 'You are a sales intelligence assistant for onAudience, a programmatic audience data company. Give concise, actionable answers. Use plain text with minimal formatting — no markdown headers, keep lists short. Max 250 words unless the task requires more.',
-        messages: [{role:'user', content: prompt}]
+        tools: [{ type: 'web_search_20250305', name: 'web_search' }],
+        messages: [{ role: 'user', content: prompt }]
       })
     });
 
-    if(!resp.ok){ throw new Error('Proxy ' + resp.status); }
+    if (!resp.ok) throw new Error(`API ${resp.status}`);
+    const data = await resp.json();
 
-    var reader = resp.body.getReader();
-    var decoder = new TextDecoder();
-    var buffer = '';
-    var lastDraw = 0;
-    task.result = '';
+    // extract text block
+    const textBlocks = (data.content || []).filter(b => b.type === 'text');
+    const raw = textBlocks.map(b => b.text).join('');
 
-    while(true) {
-      var _r = await reader.read();
-      if(_r.done) break;
-      buffer += decoder.decode(_r.value, {stream:true});
-      var lines = buffer.split('\n');
-      buffer = lines.pop();
-      for(var i=0;i<lines.length;i++){
-        var line = lines[i].trim();
-        if(!line.startsWith('data:')) continue;
-        var data = line.slice(5).trim();
-        if(data === '[DONE]') continue;
-        try {
-          var ev = JSON.parse(data);
-          if(ev.type === 'content_block_delta' && ev.delta && ev.delta.text) {
-            task.result += ev.delta.text;
-            charCount += ev.delta.text.length;
-            if(sub) sub.textContent = charCount + ' chars…';
-            // Live-stream into drawer if open for this task (throttle ~60fps)
-            var now = Date.now();
-            if(now - lastDraw > 80) {
-              lastDraw = now;
-              var drawer = document.getElementById('result-drawer');
-              if(drawer.classList.contains('open') && drawer.dataset.taskId === id) {
-                var db = document.getElementById('drawer-body');
-                db.innerHTML = '<pre>' + esc(task.result) + '</pre><span class="cursor"></span>';
-                db.scrollTop = db.scrollHeight;
-              }
-            }
-          }
-        } catch(e){}
-      }
+    // strip any accidental markdown fences
+    const clean = raw.replace(/```json|```/g, '').trim();
+    const parsed = JSON.parse(clean);
+
+    if (parsed.error) {
+      el.innerHTML = `<div class="wt-error">⚠ ${parsed.error}</div>`;
+      trackAction('⚠', 'Tech scan failed', companyName);
+      return;
     }
 
-    // Done — update toast
-    task.status = 'done';
-    var toast = task.toastEl;
-    if(toast){
-      toast.className = 'toast done';
-      toast.innerHTML = '<span class="toast-icon">✓</span>'
-        +'<div class="toast-body">'
-        +'<div class="toast-title">'+task.label+'</div>'
-        +'<div class="toast-sub">Done · '+charCount+' chars</div>'
-        +'</div>'
-        +'<div class="toast-actions">'
-        +'<button class="toast-btn primary" onclick="showResult(\'+id+\')">View</button>'
-        +'<button class="toast-close" onclick="dismissToast(\'+id+\')">&#x2715;</button>'
-        +'</div>';
-      setTimeout(function(){ autoDismissToast(id); }, 8000);
+    // build groups — keep tool arrays + metadata fields
+    const groups = {};
+    for (const [k, v] of Object.entries(parsed)) {
+      if (Array.isArray(v) && v.length) groups[k] = v;
+      else if (!Array.isArray(v) && ['mode','buying_signals','gaps'].includes(k)) groups[k] = v;
     }
-    if(task.btnEl){ task.btnEl.classList.remove('loading'); }
-    // Final drawer update — remove cursor, open if not already
-    showResult(id);
+    // ensure mode always present
+    if (!groups.mode) groups.mode = mode;
 
-  } catch(err) {
-    task.status = 'error';
-    var toast = task.toastEl;
-    if(toast){
-      toast.className = 'toast error';
-      toast.innerHTML = '<span class="toast-icon">✗</span>'
-        +'<div class="toast-body">'
-        +'<div class="toast-title">'+task.label+'</div>'
-        +'<div class="toast-sub" title="'+err.message+'">'+err.message.slice(0,60)+'</div>'
-        +'</div>'
-        +'<div class="toast-actions">'
-        +'<button class="toast-btn" onclick="openClaudeTab(\'+id+\')">Try in Claude</button>'
-        +'<button class="toast-close" onclick="dismissToast(\'+id+\')">&#x2715;</button>'
-        +'</div>';
-    }
-    if(task.btnEl){ task.btnEl.classList.remove('loading'); }
-  }
-}
-function showResult(id) {
-  var task = _tasks[id];
-  if(!task) return;
-  document.getElementById('drawer-title').textContent = task.label;
-  // Render result — convert basic markdown to readable HTML
-  var html = task.status === 'running'
-    ? '<pre>' + esc(task.result) + '</pre><span class="cursor"></span>'
-    : '<pre>' + esc(task.result) + '</pre>';
-  document.getElementById('drawer-body').innerHTML = html;
-  document.getElementById('result-drawer').classList.add('open');
-  // Store current task id on drawer for copy
-  document.getElementById('result-drawer').dataset.taskId = id;
-}
+    const ts = new Date().toLocaleTimeString('en-GB', {hour:'2-digit',minute:'2-digit'});
+    _wtCache.set(companyName, { groups, ts });
 
-function drawerClose(){
-  document.getElementById('result-drawer').classList.remove('open');
-}
-function drawerCopy(){
-  var id = document.getElementById('result-drawer').dataset.taskId;
-  var task = id && _tasks[id];
-  if(task && task.result){ navigator.clipboard.writeText(task.result); }
-  var btn = document.getElementById('drawer-copy-btn');
-  btn.textContent = 'Copied!';
-  setTimeout(function(){ btn.textContent = 'Copy'; }, 1500);
-}
-function dismissToast(id){
-  var task = _tasks[id];
-  if(task && task.toastEl){ task.toastEl.remove(); }
-}
-function autoDismissToast(id){
-  var task = _tasks[id];
-  // Only auto-dismiss if drawer is currently showing this result (user already saw it)
-  var drawer = document.getElementById('result-drawer');
-  if(drawer.dataset.taskId === id || task.status !== 'done') return;
-  dismissToast(id);
-}
-function openClaudeTab(id){
-  var task = _tasks[id];
-  if(task) openClaude(task.prompt);
-  dismissToast(id);
-}
-function esc(s){ return (s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+    // persist to DB (fire-and-forget — don't block render)
+    _dbCacheWrite(coId, groups);
 
-// Original Claude tab opener — kept for complex tasks
-function openClaude(p){window.open('https://claude.ai/new?q='+encodeURIComponent(p),'_blank');}
+    el.innerHTML = renderWtGroups(groups) + `<div class="wt-cache-note">Live scan · ${ts} · saved to DB</div>`;
+    trackAction('✅', 'Tech scan complete', `${companyName} · ${Object.values(groups).flat().filter(Array.isArray).flat().length} tools found`);
 
-// Smart dispatch: run in background or open tab based on action type
-function runAction(actionKey, label, prompt, btnEl) {
-  if(BG_ACTIONS[actionKey]) {
-    runBg(label, prompt, btnEl);
-  } else {
-    openClaude(prompt);
+  } catch(e) {
+    console.error('[oA Hub] Tech scan error:', e);
+    el.innerHTML = `<div class="wt-error">⚠ Scan failed — ${e.message}. <button class="btn sm" onclick="scanWebTech('${companyName.replace(/'/g,"\\'")}','${domain}','${targetId}')">Retry</button></div>`;
+    trackAction('❌', 'Tech scan error', companyName);
   }
 }
 
-loadData();
+function renderWtGroups(groups) {
+  const mode = groups.mode || 'unknown';
+  const mm = WT_MODE_META[mode] || WT_MODE_META.unknown;
+  const buyingSignals = Array.isArray(groups.buying_signals) ? groups.buying_signals : [];
+  const gaps = Array.isArray(groups.gaps) ? groups.gaps : [];
+
+  const toolOrder = ['identity','ads','retargeting','cdp','analytics','crm','tag','cmp','other'];
+  const toolKeys = toolOrder.filter(k => Array.isArray(groups[k]) && groups[k].length)
+    .concat(Object.keys(groups).filter(k =>
+      !toolOrder.includes(k) && !['mode','buying_signals','gaps'].includes(k)
+      && Array.isArray(groups[k]) && groups[k].length
+    ));
+
+  if (!toolKeys.length) return `<div class="wt-error">No technologies detected.</div>`;
+
+  // mode banner
+  let html = `<div style="display:flex;align-items:center;gap:7px;margin-bottom:9px;padding:4px 8px;background:var(--surf2);border:1px solid var(--rule);border-radius:2px">
+    <span style="font-family:'IBM Plex Mono',monospace;font-size:8px;font-weight:500;color:${mm.accent};text-transform:uppercase;letter-spacing:.06em;flex-shrink:0">${mm.label}</span>
+    <span style="font-family:'IBM Plex Mono',monospace;font-size:8px;color:var(--t3)">${mm.note}</span>
+  </div>`;
+
+  // tool groups
+  html += toolKeys.map(cat => {
+    const meta = WT_CATEGORIES[cat] || { label: cat, icon: '⚙️', cls: 'wt-other' };
+    const isCmpCat = cat === 'cmp' || cat === 'tag';
+    const isAdCat  = cat === 'ads' || cat === 'retargeting';
+    let caveat = '';
+    if (isCmpCat && mode === 'agency')       caveat = ' — own legal obligation only';
+    else if (isCmpCat && mode === 'dataprovider') caveat = ' — own compliance, not data exports';
+    else if (isAdCat  && mode === 'agency')   caveat = ' — own new-biz retargeting';
+    else if (isAdCat  && (mode === 'adtech' || mode === 'dataprovider')) caveat = ' — own marketing';
+
+    const pills = groups[cat].map(t => {
+      const isSignal = buyingSignals.includes(t);
+      const dim = !isSignal && mode !== 'brand' && mode !== 'unknown';
+      return `<span class="wt-pill ${isSignal ? meta.cls : 'wt-other'}" style="${dim ? 'opacity:0.45' : ''}" title="${isSignal ? '✅ Genuine signal' : 'ℹ Own marketing / informational'}">${t}</span>`;
+    }).join('');
+
+    return `<div class="wt-group">
+      <div class="wt-group-label">${meta.icon} ${meta.label}${caveat ? `<span style="font-weight:400;letter-spacing:0;text-transform:none;color:var(--t4)">${caveat}</span>` : ''}</div>
+      <div class="wt-pills">${pills}</div>
+    </div>`;
+  }).join('');
+
+  // genuine signals block
+  if (buyingSignals.length) {
+    html += `<div style="margin-top:10px;padding:6px 8px;background:var(--gb);border:1px solid var(--gr);border-radius:2px">
+      <div style="font-family:'IBM Plex Mono',monospace;font-size:8px;font-weight:500;text-transform:uppercase;letter-spacing:.08em;color:var(--g);margin-bottom:5px">✅ Genuine signals</div>
+      <div class="wt-pills">${buyingSignals.map(s=>`<span class="wt-pill wt-crm">${s}</span>`).join('')}</div>
+    </div>`;
+  }
+
+  // gaps block
+  if (gaps.length) {
+    html += `<div style="margin-top:6px;padding:6px 8px;background:var(--surf2);border:1px solid var(--rule);border-radius:2px">
+      <div style="font-family:'IBM Plex Mono',monospace;font-size:8px;font-weight:500;text-transform:uppercase;letter-spacing:.08em;color:var(--t3);margin-bottom:4px">⚠ Website cannot answer</div>
+      <div style="font-family:'IBM Plex Mono',monospace;font-size:9px;color:var(--t2);line-height:1.7">${gaps.map(g=>`· ${g}`).join('<br>')}</div>
+    </div>`;
+  }
+
+  return html;
+}
+function updateStats() {
+  const byType = t => companies.filter(c=>c.type===t).length;
+  const freshCount = companies.filter(isFresh).length;
+  document.getElementById('st-all').textContent = companies.length;
+  document.getElementById('st-client').textContent = byType('client');
+  document.getElementById('st-poc').textContent = byType('poc');
+  document.getElementById('st-partner').textContent = byType('partner');
+  document.getElementById('st-prospect').textContent = byType('prospect');
+  document.getElementById('st-nogo').textContent = byType('nogo');
+  document.getElementById('st-fresh').textContent = freshCount;
+}
+
+/* ── FILTER ── */
+function setFilter(f, el) {
+  activeFilter = f;
+  // update stats bar
+  document.querySelectorAll('.sc').forEach(b => b.classList.remove('active'));
+  const scEl = document.getElementById('sc-'+f);
+  if (scEl) scEl.classList.add('active');
+  // update filter pills
+  document.querySelectorAll('.fp').forEach(b => b.classList.remove('active'));
+  const fpEl = document.getElementById('fp-'+f);
+  if (fpEl) fpEl.classList.add('active');
+  // if stats bar col clicked, sync pill
+  if (el && el.classList.contains('sc')) {
+    document.querySelectorAll('.fp').forEach(b => b.classList.remove('active'));
+    const fp2 = document.getElementById('fp-'+f);
+    if (fp2) fp2.classList.add('active'); else document.getElementById('fp-all').classList.add('active');
+  }
+  renderList();
+}
+
+/* ── LIST ── */
+function getFiltered() {
+  const q = (document.getElementById('searchQ').value||'').toLowerCase().trim();
+  return companies.filter(c => {
+    if (activeFilter === 'fresh') return isFresh(c);
+    if (activeFilter !== 'all' && c.type !== activeFilter) return false;
+    if (q) {
+      const hay = (c.name+' '+c.note+' '+(c.category||'')+' '+(c.region||'')).toLowerCase();
+      if (!hay.includes(q)) return false;
+    }
+    return true;
+  });
+}
+
+function renderList() {
+  if (activeTab === 'contacts') { renderContactsList(); return; }
+  const filtered = getFiltered();
+  document.getElementById('listMeta').textContent = `${filtered.length} of ${companies.length}`;
+  const html = filtered.map((c,i) => {
+    const [bg,fg] = av(c.name);
+    const sel = c.name === selectedCompany;
+    const ctCount = contacts.filter(ct => ct.company_name && ct.company_name.toLowerCase() === c.name.toLowerCase()).length;
+    return `<div class="co-row${sel?' selected':''}" data-co="${i}" onclick="openCompany(${companies.indexOf(c)})" oncontextmenu="showCtx(event,${companies.indexOf(c)});return false;">
+      <div class="av" style="background:${bg};border-color:${fg}30;color:${fg}">${ini(c.name)}</div>
+      <div style="flex:1;min-width:0">
+        <div class="rn">${c.name}</div>
+        <div class="rno">${c.note.length>52?c.note.slice(0,52)+'…':c.note||'—'}</div>
+      </div>
+      <div class="co-right">
+        ${c.priority>=2?'<span style="font-size:10px" title="Priority">🎯</span>':c.priority===1?'<span style="font-size:10px" title="Watch">👀</span>':''}
+        ${c.icp ? `<span class="icp-n">${c.icp}</span>` : ''}
+        <span class="tag ${tagCls(c.type)}">${tagLbl(c.type)}</span>
+      </div>
+    </div>`;
+  }).join('');
+  document.getElementById('coList').innerHTML = html || '<div style="padding:20px;text-align:center;font-family:IBM Plex Mono,monospace;font-size:10px;color:var(--t3)">No results</div>';
+}
+
+function renderContactsList() {
+  const q = (document.getElementById('searchQ').value||'').toLowerCase().trim();
+  const filtered = contacts.filter(ct => {
+    if (!q) return true;
+    return (ct.full_name+' '+ct.title+' '+ct.company_name).toLowerCase().includes(q);
+  });
+  document.getElementById('listMeta').textContent = `${filtered.length} contacts`;
+  document.getElementById('listMeta2').textContent = 'click to open';
+  const html = filtered.map((ct,i) => {
+    return `<div class="ct-row-li" onclick="openContactDrawer(${contacts.indexOf(ct)})">
+      <div class="ct-av-sm">${ini(ct.full_name)}</div>
+      <div style="flex:1;min-width:0">
+        <div class="ct-name-sm">${ct.full_name}</div>
+        <div class="ct-role-sm">${ct.title||'—'}</div>
+        <div class="ct-co-sm">${ct.company_name||'—'}</div>
+      </div>
+    </div>`;
+  }).join('');
+  document.getElementById('coList').innerHTML = html || '<div style="padding:20px;text-align:center;font-family:IBM Plex Mono,monospace;font-size:10px;color:var(--t3)">No contacts</div>';
+}
+
+function switchTab(t) {
+  activeTab = t;
+  document.getElementById('tab-companies').classList.toggle('active', t==='companies');
+  document.getElementById('tab-contacts').classList.toggle('active', t==='contacts');
+  document.getElementById('fpRow').style.display = t==='companies' ? '' : 'none';
+  renderList();
+}
+
+/* ── COMPANY PANEL ── */
+function openCompany(idx) {
+  const c = companies[idx];
+  if (!c) return;
+  selectedCompany = c.name;
+  trackAction('🏢', 'Opened company', c.name);
+  renderList();
+
+  const [bg,fg] = av(c.name);
+  const domain = c.website ? c.website.replace(/^https?:\/\/(www\.)?/,'').split('/')[0] : '';
+  const liUrl = c.linkedin_slug ? `https://www.linkedin.com/company/${c.linkedin_slug}` : null;
+
+  // contacts for this company
+  const coContacts = contacts.filter(ct => ct.company_name && ct.company_name.toLowerCase() === c.name.toLowerCase());
+
+  const ctHtml = coContacts.length ? coContacts.map(ct => `
+    <div class="contact-card">
+      <div style="display:flex;align-items:flex-start;gap:8px;margin-bottom:6px">
+        <div class="ct-av-r">${ini(ct.full_name)}</div>
+        <div style="flex:1;min-width:0">
+          <div style="font-size:12px;font-weight:500">${ct.full_name} ${(ct.mutual_connections||[]).length?'<span style="font-family:\'IBM Plex Mono\',monospace;font-size:8px;padding:1px 5px;border-radius:2px;border:1px solid var(--cr);color:var(--cc);background:var(--cb)">🤝 Warm intro</span>':''}</div>
+          <div style="font-family:'IBM Plex Mono',monospace;font-size:9px;color:var(--t3)">${ct.title||'—'}${ct.location?' · '+ct.location:''}</div>
+        </div>
+        <div style="display:flex;gap:4px;flex-shrink:0">
+          ${ct.linkedin_url ? `<a href="${ct.linkedin_url}" target="_blank" class="btn sm" style="text-decoration:none;display:flex;align-items:center" onclick="trackAction('in','Opened LinkedIn',\`${ct.full_name.replace(/`/g,"'")}\`)">in ↗</a>` : ''}
+          ${ct.email ? `<button class="btn sm" onclick="trackAction('✉','Copied email',\`${ct.full_name.replace(/`/g,"'")}\`);navigator.clipboard&&navigator.clipboard.writeText('${ct.email}')">Copy email</button>` : ''}
+        </div>
+      </div>
+      <table class="info2">
+        ${ct.email ? `<tr><td>Email</td><td><span class="code-pill">${ct.email}</span></td></tr>` : ''}
+        ${ct.notes ? `<tr><td>Notes</td><td style="font-size:11px;color:var(--t2);line-height:1.5">${ct.notes}</td></tr>` : ''}
+      </table>
+    </div>
+  `).join('') : `<div class="no-rel">No contacts researched yet</div>`;
+
+  // outreach angle — prefer DB field, fall back to type defaults
+  const angle = c.outreach_angle && c.outreach_angle.length > 5 ? c.outreach_angle
+    : c.type === 'poc' ? `🔥 Active deal — follow up on integration tests. Propose 90-day trial next steps.`
+    : c.type === 'client' ? `✅ Existing client — check CRM for upsell opportunities and contract renewal.`
+    : c.type === 'partner' ? `🤝 Active partner — explore data exchange expansion and new activation paths.`
+    : c.note && c.note.length > 20 ? c.note
+    : `Research ${c.name} further to identify specific hook and pain point for onAudience outreach.`;
+
+  // tech stack
+  const stack = parseTechStack(c.note, c.category);
+  const pillsHtml = renderTechPills(stack);
+
+  const cname = c.name.replace(/'/g,"\\'");
+
+  const html = `<div class="co-panel">
+    <div class="co-banner">
+      <div class="co-logo" style="background:${fg}">${ini(c.name)}</div>
+      <div class="co-hdr">
+        <div class="co-hdr-name">
+          ${c.name}
+          <span class="tag ${tagCls(c.type)}">${tagLbl(c.type)}</span>
+          ${domain ? `<a class="co-domain ml" href="https://${domain}" target="_blank" onclick="trackAction('🌐','Opened website','${cname}')">${domain}</a>` : ''}
+        </div>
+        <div class="co-sub">${[c.category, c.region, c.size?c.size+' emp':null].filter(Boolean).join(' · ')||'—'}</div>
+        ${c.icp ? `<div class="icp-row"><span class="stars">${stars(c.icp)}</span><span class="icp-lbl">${c.icp}/10 ICP</span></div>` : ''}
+      </div>
+      <div style="display:flex;flex-direction:column;gap:4px;flex-shrink:0">
+        <button class="btn p" onclick="trackAction('🔍','Full report','${cname}');openClaude('Research ${cname} for onAudience — full contact report: decision makers, tech stack, outreach angle and ICP fit')">Full report ↗</button>
+        <button class="btn" onclick="trackAction('✉','Draft email','${cname}');openClaude('Draft personalized outreach email to ${cname} for onAudience data partnership')">Draft email ↗</button>
+      </div>
+      <button class="close-btn" onclick="clearCenter()" style="align-self:flex-start">✕</button>
+    </div>
+
+    ${c.next_action ? `<div style="background:var(--prb);border:1px solid var(--prr);border-left:3px solid var(--prc);border-radius:2px;padding:8px 12px;margin-bottom:8px;display:flex;align-items:center;gap:10px">
+      <span style="font-size:12px">⏰</span>
+      <div style="flex:1;font-size:12px;color:var(--prc)">${c.next_action}</div>
+      ${c.next_action_at ? `<span style="font-family:'IBM Plex Mono',monospace;font-size:9px;color:var(--t3)">${new Date(c.next_action_at).toLocaleDateString('en-GB',{day:'2-digit',month:'short'})}</span>` : ''}
+    </div>` : ''}
+
+    <div class="sec">
+      <div class="sec-hdr"><span>🏢</span><span class="sec-hdr-label">Company Overview</span>
+        <button class="btn sm" style="margin-left:auto" id="wtRescan_${idx}" onclick="trackAction('🔬','Tech rescan','${cname}');_wtCache.delete('${cname}');scanWebTech('${cname}','${domain}','wtResult_${idx}')">↺ Rescan tech</button>
+      </div>
+      <div class="sec-body">
+        <div class="overview-grid">
+          <div class="overview-col">
+            <table class="info">
+              <tr><td>Category</td><td>${c.category||'—'}</td></tr>
+              <tr><td>Region</td><td>${[c.region, c.hq_city].filter(Boolean).join(', ')||'—'}</td></tr>
+              <tr><td>Employees</td><td>${c.size ? c.size.toLocaleString() : '—'}</td></tr>
+              ${c.founded_year ? `<tr><td>Founded</td><td>${c.founded_year}${c.acquisition_status&&c.acquisition_status!=='Independent'?` · <span style="color:var(--prc)">${c.acquisition_status}${c.parent_company?' → '+c.parent_company:''}</span>`:''}</td></tr>` : ''}
+              ${c.revenue_est||c.annual_revenue_usd ? `<tr><td>Revenue</td><td>${c.revenue_est||(c.annual_revenue_usd?'$'+(c.annual_revenue_usd/1e6).toFixed(1)+'M':'')||'—'}</td></tr>` : ''}
+              ${c.funding||c.funding_stage ? `<tr><td>Funding</td><td>${[c.funding_stage, c.funding].filter(Boolean).join(' · ')||'—'}</td></tr>` : ''}
+              ${c.relationship_owner ? `<tr><td>Owner</td><td style="font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--g);font-weight:500">${c.relationship_owner}</td></tr>` : ''}
+              ${c.deal_stage ? `<tr><td>Deal stage</td><td><span style="font-family:'IBM Plex Mono',monospace;font-size:9px;padding:1px 6px;border-radius:2px;border:1px solid var(--rule);background:var(--surf2)">${c.deal_stage}</span></td></tr>` : ''}
+              ${c.website ? `<tr><td>Website</td><td><a class="ml" href="https://${c.website.replace(/^https?:\/\//,'')}" target="_blank" onclick="trackAction('🌐','Opened website','${cname}')">${domain} ↗</a></td></tr>` : ''}
+              ${liUrl ? `<tr><td>LinkedIn</td><td><a class="ml" href="${liUrl}" target="_blank" onclick="trackAction('in','Opened LinkedIn','${cname}')">Company page ↗</a></td></tr>` : ''}
+              ${c.crunchbase_url ? `<tr><td>Crunchbase</td><td><a class="ml" href="${c.crunchbase_url}" target="_blank">Profile ↗</a></td></tr>` : ''}
+              ${c.icp ? `<tr><td>ICP Score</td><td><span class="stars">${stars(c.icp)}</span> ${c.icp}/10</td></tr>` : ''}
+              ${c.last_contacted_at ? `<tr><td>Last contact</td><td style="font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--t3)">${new Date(c.last_contacted_at).toLocaleDateString('en-GB',{day:'2-digit',month:'short',year:'numeric'})}</td></tr>` : ''}
+              ${c.updated_at ? `<tr><td>DB updated</td><td style="font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--t3)">${new Date(c.updated_at).toLocaleDateString('en-GB',{day:'2-digit',month:'short',year:'numeric'})}</td></tr>` : ''}
+              ${stack.length ? `<tr><td>Known stack</td><td><div class="ts-pills" style="padding-top:2px">${pillsHtml}</div></td></tr>` : ''}
+              ${(c.dsps||[]).length ? `<tr><td>DSPs</td><td><div class="ts-pills" style="padding-top:2px">${c.dsps.map(d=>'<span class="ts-pill ts-dsp">'+d+'</span>').join('')}</div></td></tr>` : ''}
+            </table>
+          </div>
+          <div style="width:1px;background:var(--rule);margin:0 14px;align-self:stretch"></div>
+          <div class="overview-col">
+            <div class="ts-label" style="margin-bottom:8px">🔬 Website Tech <span style="font-weight:300;letter-spacing:0;text-transform:none;font-size:8px;color:var(--t4)">${domain||'—'}</span></div>
+            <div id="wtResult_${idx}"><div class="wt-loading"><div class="wt-spinner"></div>Scanning…</div></div>
+          </div>
+        </div>
+        ${c.note ? `<div class="note-bar" style="margin-top:10px">${c.note}</div>` : ''}
+      </div>
+    </div>
+
+    <div class="sec">
+      <div class="sec-hdr">
+        <span>👤</span><span class="sec-hdr-label">Contacts (${coContacts.length})</span>
+        <button class="btn sm" style="margin-left:auto" onclick="trackAction('👤','Find contacts','${cname}');openClaude('Find Head of Programmatic or Data Partnerships at ${cname} — LinkedIn profile, email, background')">Find contacts ↗</button>
+      </div>
+      <div class="sec-body">${ctHtml}</div>
+    </div>
+
+    <div class="sec">
+      <div class="sec-hdr"><span>💡</span><span class="sec-hdr-label">Outreach Angle</span></div>
+      <div class="sec-body">
+        <div style="font-size:12px;color:var(--t2);line-height:1.7;margin-bottom:8px">${angle}</div>
+        <div class="btn-row">
+          <button class="btn p" onclick="trackAction('✉','Draft outreach email','${cname}');openClaude('Draft personalized outreach email to ${cname} for onAudience data partnership — value-led and curiosity variants')">Draft email ↗</button>
+          <button class="btn" onclick="trackAction('💬','Draft LinkedIn message','${cname}');openClaude('Draft LinkedIn connection note for ${cname} — short, personalized for data partnership')">LinkedIn ↗</button>
+          <button class="btn" onclick="trackAction('🔗','Find similar','${cname}');openClaude('Find companies similar to ${cname} for onAudience programmatic data outreach — ranked by ICP fit')">Find similar ↗</button>
+          <button class="btn" onclick="trackAction('📧','Check Gmail history','${cname}');openClaude('Check Gmail for any prior contact with ${cname} — summarize relationship history')">Gmail history ↗</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="sec">
+      <div class="sec-hdr"><span>🔗</span><span class="sec-hdr-label">Quick Links</span></div>
+      <div class="sec-body">
+        <table class="info">
+          <tr><td>People Search</td><td><a class="ml" href="https://www.linkedin.com/search/results/people/?keywords=${encodeURIComponent(c.name+' Head Programmatic Data Partnerships')}" target="_blank" onclick="trackAction('🔎','LinkedIn people search','${cname}')">Search LinkedIn ↗</a></td></tr>
+          ${liUrl ? `<tr><td>Company LI</td><td><a class="ml" href="${liUrl}" target="_blank" onclick="trackAction('in','Opened company LinkedIn','${cname}')">${liUrl} ↗</a></td></tr>` : ''}
+          ${c.website ? `<tr><td>Website</td><td><a class="ml" href="https://${c.website.replace(/^https?:\/\//,'')}" target="_blank" onclick="trackAction('🌐','Opened website','${cname}')">${c.website} ↗</a></td></tr>` : ''}
+        </table>
+      </div>
+    </div>
+  </div>`;
+
+  document.getElementById('center').innerHTML = html;
+  // trigger web tech scan after DOM is painted
+  requestAnimationFrame(() => scanWebTech(c.name, domain, `wtResult_${idx}`));
+}
+
+function clearCenter() {
+  selectedCompany = null;
+  renderList();
+  renderEmptyState();
+}
+
+function renderEmptyState() {
+  document.getElementById('center').innerHTML = `<div class="empty-state">
+    <div class="es-title">Quick Actions</div>
+    <div class="qa-grid">
+      <div class="qa-card" onclick="trackAction('🔍','QA: Company research','');openResearch()">
+        <div class="qa-icon">🔍</div>
+        <div class="qa-title">Company research</div>
+        <div class="qa-desc">Full contact report</div>
+      </div>
+      <div class="qa-card" onclick="trackAction('🎯','QA: Find prospects','');openClaude('Find new DSP, SSP, and media agency prospects for onAudience in EMEA — companies not in our database, strong programmatic data buying signals, ranked by ICP fit')">
+        <div class="qa-icon">🎯</div>
+        <div class="qa-title">Find prospects</div>
+        <div class="qa-desc">Search by criteria</div>
+      </div>
+      <div class="qa-card" onclick="trackAction('⭐','QA: Top picks','');openClaude('Show me the top 5 highest-priority prospects in the onAudience database that we should contact this week')">
+        <div class="qa-icon">⭐</div>
+        <div class="qa-title">Top picks this week</div>
+        <div class="qa-desc">Prioritized outreach</div>
+      </div>
+      <div class="qa-card" onclick="trackAction('🔗','QA: Find similar','');promptResearch('Find similar companies','Enter a reference company:','Find companies similar to [COMPANY] for onAudience programmatic data outreach — top 10 ranked by ICP fit')">
+        <div class="qa-icon">🔗</div>
+        <div class="qa-title">Find similar</div>
+        <div class="qa-desc">Lookalike discovery</div>
+      </div>
+      <div class="qa-card" onclick="trackAction('♻️','QA: Re-engage dormant','');openClaude('Which onAudience clients or partners have gone quiet (no contact in 90+ days) and should be re-engaged this quarter?')">
+        <div class="qa-icon">♻️</div>
+        <div class="qa-title">Re-engage dormant</div>
+        <div class="qa-desc">Warm up cold accounts</div>
+      </div>
+      <div class="qa-card" onclick="trackAction('📋','QA: Outreach Hub','');openClaude('Draft personalized outreach email for onAudience data partnership — email and LinkedIn variants')">
+        <div class="qa-icon">✉</div>
+        <div class="qa-title">Outreach Hub</div>
+        <div class="qa-desc">Sequences + tracking</div>
+      </div>
+    </div>
+  </div>`;
+}
+
+/* ── CONTACT DRAWER ── */
+function openContactDrawer(idx) {
+  const ct = contacts[idx];
+  if (!ct) return;
+  trackAction('👤', 'Opened contact', `${ct.full_name} @ ${ct.company_name}`);
+  document.getElementById('drawerTitle').textContent = ct.full_name;
+  document.getElementById('drawerBody').innerHTML = `
+    <div style="display:flex;align-items:center;gap:10px;margin-bottom:14px">
+      <div class="ct-av-r" style="width:40px;height:40px;font-size:12px">${ini(ct.full_name)}</div>
+      <div>
+        <div style="font-size:15px;font-weight:500">${ct.full_name}</div>
+        <div style="font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--t3)">${ct.title||'—'}</div>
+        <div style="font-family:'IBM Plex Mono',monospace;font-size:9px;color:var(--t4)">${ct.company_name||'—'}</div>
+      </div>
+    </div>
+    <table class="info2" style="margin-bottom:12px">
+      ${ct.email ? `<tr><td>Email</td><td><span class="code-pill">${ct.email}</span></td></tr>` : ''}
+      ${ct.linkedin_url ? `<tr><td>LinkedIn</td><td><a class="ml" href="${ct.linkedin_url}" target="_blank">Profile ↗</a></td></tr>` : ''}
+      ${ct.notes ? `<tr><td>Notes</td><td style="font-size:11px;color:var(--t2)">${ct.notes}</td></tr>` : ''}
+    </table>
+    <div class="btn-row">
+      ${ct.email ? `<button class="btn p" onclick="trackAction('✉','Draft email to contact',\`${ct.full_name.replace(/`/g,"'")}\`);openClaude('Draft personalized outreach email to ${ct.full_name.replace(/'/g,"\\'")} (${(ct.title||'').replace(/'/g,"\\'")} at ${(ct.company_name||'').replace(/'/g,"\\'")})')">Draft email ↗</button>` : ''}
+      ${ct.linkedin_url ? `<a class="btn" href="${ct.linkedin_url}" target="_blank" style="text-decoration:none;display:flex;align-items:center" onclick="trackAction('in','Opened LinkedIn',\`${ct.full_name.replace(/`/g,"'")}\`)">LinkedIn ↗</a>` : ''}
+      <button class="btn" onclick="trackAction('📧','Checked Gmail','${ct.full_name.replace(/'/g,"\\'")}');openClaude('Check Gmail for any emails to or from ${ct.full_name.replace(/'/g,"\\'")} at ${(ct.company_name||'').replace(/'/g,"\\'")}')">Gmail ↗</button>
+      <button class="btn" onclick="trackAction('🔍','Full research on contact','${ct.full_name.replace(/'/g,"\\'")}');openClaude('Research ${ct.full_name.replace(/'/g,"\\'")} (${(ct.title||'').replace(/'/g,"\\'")} at ${(ct.company_name||'').replace(/'/g,"\\'")})')">Full research ↗</button>
+    </div>
+  `;
+  document.getElementById('drawer').classList.add('open');
+  document.getElementById('drawerOverlay').classList.add('vis');
+  _drawerOpen = true;
+}
+function closeDrawer() {
+  document.getElementById('drawer').classList.remove('open');
+  document.getElementById('drawerOverlay').classList.remove('vis');
+  _drawerOpen = false;
+}
+
+/* ── CONTEXT MENU ── */
+function showCtx(e, idx) {
+  e.preventDefault(); e.stopPropagation();
+  const c = companies[idx];
+  const menu = document.getElementById('ctxMenu');
+  var actions = [
+    {ico:'🔍',lbl:'Full contact report',prompt:`Research ${c.name} — full contact report with decision makers, outreach angle, and ICP fit score for onAudience`},
+    {ico:'👤',lbl:'Find decision makers',prompt:`Find Head of Programmatic or Data Partnerships at ${c.name} — LinkedIn, email, background`},
+    {ico:'✉',lbl:'Draft outreach email',prompt:`Draft a personalized outreach email to ${c.name} — value-led and curiosity variants for onAudience data partnership`},
+    {ico:'💬',lbl:'LinkedIn message',prompt:`Draft a LinkedIn connection note and InMail for ${c.name} — short, personalized for data partnership`},
+    {ico:'🔗',lbl:'Find similar companies',prompt:`Find companies similar to ${c.name} for onAudience outreach — top 10 ranked by ICP fit`},
+    {ico:'📧',lbl:'Check email history',prompt:`Check Gmail for any previous contact with ${c.name} — summarize relationship history`},
+  ];
+  if (c.type === 'nogo') actions.push({ico:'⚠️',lbl:'Why no outreach?',prompt:`Explain why ${c.name} is marked no-outreach in onAudience database`});
+  if (c.type === 'prospect') actions.push({ico:'🚀',lbl:'Prioritize this account',prompt:`Build a prioritization case for ${c.name} — why should onAudience contact them this quarter?`});
+
+  menu.innerHTML = `<div class="ctx-lbl">${c.name}</div><div class="ctx-sep"></div>`
+    + actions.map((a,i) => `<div class="ctx-item" data-i="${i}"><span class="ctx-ico">${a.ico}</span>${a.lbl}</div>`).join('');
+  menu.querySelectorAll('.ctx-item').forEach((el,i) => {
+    el.addEventListener('click', () => {
+      menu.style.display='none';
+      trackAction(actions[i].ico, actions[i].lbl, c.name);
+      openClaude(actions[i].prompt);
+    });
+  });
+  const x = Math.min(e.clientX, window.innerWidth-240);
+  const y = Math.min(e.clientY, window.innerHeight-320);
+  menu.style.left = x+'px'; menu.style.top = y+'px'; menu.style.display = 'block';
+}
+document.addEventListener('click', () => { document.getElementById('ctxMenu').style.display='none'; });
+
+/* ── RESEARCH MODAL ── */
+let _modalTemplate = '';
+function openResearch() {
+  promptResearch('Research a company', 'Enter company name to generate a full contact report.', 'Research [COMPANY] for onAudience — full contact report: decision makers, tech stack, outreach angle, ICP fit');
+}
+function promptResearch(title, desc, tpl) {
+  _modalTemplate = tpl;
+  document.getElementById('modalTitle').textContent = title;
+  document.getElementById('modalDesc').textContent = desc;
+  document.getElementById('modalInput').value = '';
+  document.getElementById('researchOverlay').classList.add('vis');
+  setTimeout(() => document.getElementById('modalInput').focus(), 60);
+}
+function closeResearch() { document.getElementById('researchOverlay').classList.remove('vis'); }
+function submitResearch() {
+  const val = document.getElementById('modalInput').value.trim();
+  if (!val) return;
+  closeResearch();
+  trackAction('🔍', 'Research submitted', val);
+  openClaude(_modalTemplate.replace('[COMPANY]', val));
+}
+function doSearchResearch() {
+  const q = document.getElementById('searchQ').value.trim();
+  if (q) {
+    trackAction('🔍', 'Search research', q);
+    openClaude(`Research ${q} for onAudience — full contact report: decision makers, tech stack, outreach angle, ICP fit`);
+  } else openResearch();
+}
+
+/* ── THEME ── */
+let theme = localStorage.getItem('oaTheme') || 'light';
+document.documentElement.setAttribute('data-theme', theme);
+function toggleTheme() {
+  theme = theme === 'light' ? 'dark' : 'light';
+  document.documentElement.setAttribute('data-theme', theme);
+  localStorage.setItem('oaTheme', theme);
+  document.getElementById('themeBtn').textContent = theme === 'dark' ? '☀️' : '🌙';
+}
+document.getElementById('themeBtn').textContent = theme === 'dark' ? '☀️' : '🌙';
+
+/* ── DOMContentLoaded: init ── */
+document.addEventListener('DOMContentLoaded', () => {
+  const mi = document.getElementById('modalInput');
+  if (mi) mi.addEventListener('keydown', e => { if (e.key==='Enter'&&!e.shiftKey){e.preventDefault();submitResearch();} });
+  document.getElementById('researchOverlay').addEventListener('click', e => { if (e.target===document.getElementById('researchOverlay')) closeResearch(); });
+});
+
+/* ── PANELS (stub — no panel files deployed yet) ── */
+const PANELS = {};
+function openPanel(id, payload) {
+  console.log('[oA Hub] openPanel called for:', id, '— no panel file loaded');
+}
+function closePanelModal() {
+  document.getElementById('panelModal').style.display = 'none';
+  document.getElementById('panelIframe').src = '';
+}
+window.addEventListener('message', e => {
+  if (!e.data?.type) return;
+  if (e.data.type === 'THEME_SYNC') {
+    theme = e.data.payload?.theme || theme;
+    document.documentElement.setAttribute('data-theme', theme);
+    localStorage.setItem('oaTheme', theme);
+    document.getElementById('themeBtn').textContent = theme === 'dark' ? '\u2600\ufe0f' : '\ud83c\udf19';
+  }
+});
+
+/* ── BOOT ── */
+updateStats();
+renderList();
+renderEmptyState();
+loadLiveData();
 </script>
 </body>
 </html>
