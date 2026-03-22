@@ -498,9 +498,12 @@ async function msMaybeAddRelTags() {
   const slug = window.resolveSlug ? window.resolveSlug(c) : (c.id || c.name);
   if (!slug) return;
   try {
+    const _SB_URL = window.SB_URL;
+    const _SB_KEY = window.SB_KEY;
+    if (!_SB_URL || !_SB_KEY) return;
     const res = await fetch(
-      `${SB_URL}/rest/v1/company_relations?or=(from_company.eq.${slug},to_company.eq.${slug})&select=*`,
-      { headers: { apikey: SB_KEY, Authorization: `Bearer ${SB_KEY}` } }
+      `${_SB_URL}/rest/v1/company_relations?or=(from_company.eq.${slug},to_company.eq.${slug})&select=*`,
+      { headers: { apikey: _SB_KEY, Authorization: `Bearer ${_SB_KEY}` } }
     );
     const rels = await res.json();
     if (!Array.isArray(rels) || !rels.length) return;
@@ -752,6 +755,8 @@ function msInit() {
 ───────────────────────────────────────── */
 const SB_URL = 'https://nyzkkqqjnkctcmxoirdj.supabase.co';
 const SB_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im55emtrcXFqbmtjdGNteG9pcmRqIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzM4NzMxMzYsImV4cCI6MjA4OTQ0OTEzNn0.jhAq_C68klOp4iTyj9HmsyyvoxsOI6ACld7t_87TAk0';
+window.SB_URL = SB_URL;
+window.SB_KEY = SB_KEY;
 
 /* ─────────────────────────────────────────
    SEED DATA (offline fallback)
@@ -1410,14 +1415,14 @@ async function loadContacts(slug) {
   if (!body) return;
   try {
     const res = await fetch(
-      `${SB_URL}/rest/v1/contacts?or=(company_id.eq.${encodeURIComponent(slug)},company_name.ilike.${encodeURIComponent('*'+slug.replace(/-/g,' ')+'*')})&select=*&order=created_at.asc`,
+      `${SB_URL}/rest/v1/contacts?company_id=eq.${encodeURIComponent(slug)}&select=*&order=created_at.asc`,
       { headers: { apikey: SB_KEY, Authorization: `Bearer ${SB_KEY}` } }
     );
     const rows = await res.json();
     const cname = window.currentCompany?.name || '';
     // Also match by company name directly
     const res2 = await fetch(
-      `${SB_URL}/rest/v1/contacts?company_name=ilike.${encodeURIComponent(cname)}&select=*`,
+      `${SB_URL}/rest/v1/contacts?company_name=ilike.${encodeURIComponent('%25'+cname+'%25')}&select=*`,
       { headers: { apikey: SB_KEY, Authorization: `Bearer ${SB_KEY}` } }
     );
     const rows2 = await res2.json();
@@ -2262,14 +2267,14 @@ window.loadContacts = async function(slug) {
   if (!body) return;
   try {
     const res = await fetch(
-      `${SB_URL}/rest/v1/contacts?or=(company_id.eq.${encodeURIComponent(slug)},company_name.ilike.${encodeURIComponent('*'+slug.replace(/-/g,' ')+'*')})&select=*&order=created_at.asc`,
+      `${SB_URL}/rest/v1/contacts?company_id=eq.${encodeURIComponent(slug)}&select=*&order=created_at.asc`,
       { headers: { apikey: SB_KEY, Authorization: `Bearer ${SB_KEY}` } }
     );
     const rows = await res.json();
     const cname = window.currentCompany?.name || '';
     // Also match by company name directly
     const res2 = await fetch(
-      `${SB_URL}/rest/v1/contacts?company_name=ilike.${encodeURIComponent(cname)}&select=*`,
+      `${SB_URL}/rest/v1/contacts?company_name=ilike.${encodeURIComponent('%25'+cname+'%25')}&select=*`,
       { headers: { apikey: SB_KEY, Authorization: `Bearer ${SB_KEY}` } }
     );
     const rows2 = await res2.json();
