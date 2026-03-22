@@ -718,6 +718,7 @@ function openCompany(c) {
       <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:4px">
         ${ct.linkedin_url ? `<a class="ml" href="${ct.linkedin_url}" target="_blank">LinkedIn ↗</a>` : ''}
         ${ct.email ? `<a class="ml" href="https://mail.google.com/mail/u/0/#search/${encodeURIComponent(ct.email)}" target="_blank">Gmail ↗</a>` : ''}
+        <span class="ml" style="cursor:pointer;color:var(--g)" onclick="openClaude('Draft personalized outreach email to ${ct.full_name||'this contact'} at ${c.name} — their role is ${ct.title||'unknown'}. Value-led and curiosity variants for onAudience data partnership.')">Draft email ↗</span>
       </div>
       ${ct.notes ? `<div style="font-size:11px;color:var(--t3);margin-top:4px;line-height:1.5">${ct.notes.slice(0,120)}${ct.notes.length>120?'…':''}</div>` : ''}
     </div>`).join('')
@@ -825,9 +826,12 @@ function openCompany(c) {
     <div class="sec">
       <div class="sec-hdr"><span>👤</span><span class="sec-hdr-label">Contacts</span>
         <span style="font-family:'IBM Plex Mono',monospace;font-size:9px;color:var(--t3);margin-left:4px" id="ct-count-badge">${coContacts.length ? '('+coContacts.length+')' : ''}</span>
-        <button class="btn sm" style="margin-left:auto" onclick="openClaude('Find Head of Programmatic or Data Partnerships at ${cname} — LinkedIn profile, email, background, save to Supabase')">Find ↗</button>
+        <div style="margin-left:auto;display:flex;gap:4px">
+          <button class="btn sm" onclick="loadContacts('${slug}')" title="Reload contacts from DB">⟳ Refresh</button>
+          <button class="btn sm" onclick="openClaude('Find decision makers at ${cname} for onAudience data partnerships — search broadly: VP/Head of Data, Programmatic, Partnerships, Digital, or C-level (CDO, CMO, CTO). For each contact: full name, exact title, LinkedIn URL, estimated email, background note. Include both direct buyers and partnership gatekeepers. Save all to Supabase contacts.')" title="Find contacts with AI">Find ↗</button>
+        </div>
       </div>
-      <div class="sec-body">${ctHtml}</div>
+      <div class="sec-body" id="ct-body">${ctHtml}</div>
     </div>
 
     <div class="sec">
@@ -900,6 +904,7 @@ function openCompany(c) {
     setTimeout(() => loadRelations(slug), 80);
     setTimeout(() => loadIntelligence(slug), 120);
     setTimeout(() => loadTechStack(slug), 160);  // always refresh tech stack from DB
+    setTimeout(() => loadContacts(slug), 60);     // reload contacts from DB
 
   }
 }
@@ -1017,8 +1022,62 @@ async function loadIntelligence(slug) {
 }
 
 /* ─────────────────────────────────────────
-   TECH STACK LIVE RELOAD
+   CONTACTS LIVE RELOAD
 ───────────────────────────────────────── */
+async function loadContacts(slug) {
+  const body  = document.getElementById('ct-body');
+  const badge = document.getElementById('ct-count-badge');
+  if (!body) return;
+  try {
+    const res = await fetch(
+      `${SB_URL}/rest/v1/contacts?or=(company_id.eq.${encodeURIComponent(slug)},company_name.ilike.${encodeURIComponent('*'+slug.replace(/-/g,' ')+'*')})&select=*&order=created_at.asc`,
+      { headers: { apikey: SB_KEY, Authorization: `Bearer ${SB_KEY}` } }
+    );
+    const rows = await res.json();
+    const cname = window.currentCompany?.name || '';
+    // Also match by company name directly
+    const res2 = await fetch(
+      `${SB_URL}/rest/v1/contacts?company_name=ilike.${encodeURIComponent(cname)}&select=*`,
+      { headers: { apikey: SB_KEY, Authorization: `Bearer ${SB_KEY}` } }
+    );
+    const rows2 = await res2.json();
+    // Merge, deduplicate by id
+    const seen = new Set();
+    const all = [...(Array.isArray(rows)?rows:[]), ...(Array.isArray(rows2)?rows2:[])].filter(r => {
+      if (seen.has(r.id)) return false;
+      seen.add(r.id); return true;
+    });
+    if (!all.length) {
+      body.innerHTML = '<div style="font-family:\'IBM Plex Mono\',monospace;font-size:10px;color:var(--t3);text-transform:uppercase">No contacts found — use Find ↗ to research</div>';
+      if (badge) badge.textContent = '';
+      // Also update in-memory contacts array
+      return;
+    }
+    if (badge) badge.textContent = `(${all.length})`;
+    body.innerHTML = all.map(ct => `
+      <div class="contact-card">
+        <div style="display:flex;align-items:flex-start;gap:8px;margin-bottom:5px">
+          <div class="ct-av-lg">${ini(ct.full_name||'?')}</div>
+          <div style="flex:1;min-width:0">
+            <div style="font-size:12px;font-weight:500">${ct.full_name||'?'}</div>
+            <div style="font-family:'IBM Plex Mono',monospace;font-size:9px;color:var(--t3)">${ct.title||''}</div>
+          </div>
+          ${ct.outreach_status ? `<span class="tag tpr" style="flex-shrink:0">${ct.outreach_status}</span>` : ''}
+        </div>
+        ${ct.email ? `<div style="margin-bottom:3px"><span class="code-pill">${ct.email}</span>${ct.email_confidence ? ` <span class="conf-est">${ct.email_confidence}</span>` : ''}</div>` : ''}
+        <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:4px">
+          ${ct.linkedin_url ? `<a class="ml" href="${ct.linkedin_url}" target="_blank">LinkedIn ↗</a>` : ''}
+          ${ct.email ? `<a class="ml" href="https://mail.google.com/mail/u/0/#search/${encodeURIComponent(ct.email)}" target="_blank">Gmail ↗</a>` : ''}
+          <span class="ml" style="cursor:pointer;color:var(--g)" onclick="openClaude('Draft personalized outreach email to ${ct.full_name||'this contact'} at ${(ct.company_name||cname)} — their role is ${(ct.title||'unknown')}. Value-led and curiosity variants for onAudience data partnership.')">Draft email ↗</span>
+        </div>
+        ${ct.notes ? `<div style="font-size:11px;color:var(--t3);margin-top:4px;line-height:1.5">${ct.notes}</div>` : ''}
+      </div>`).join('');
+  } catch(e) {
+    if (body) body.innerHTML = `<div style="font-size:11px;color:var(--t3)">Could not load contacts: ${e.message}</div>`;
+  }
+}
+
+
 async function loadTechStack(slug, openRescan) {
   const tsBody = document.getElementById('ts-body');
   const prodSection = document.getElementById('products-section');
@@ -1366,6 +1425,7 @@ When you identify contacts, companies, relations, or press/news links to save, e
     "products": { "products": [{ "name": "", "description": "", "target_user": "", "features": [], "pricing_tier": "" }], "integrations_advertised": [], "positioning": [], "pricing_model": "", "scanned_at": "YYYY-MM-DD" }
   },
   "contacts": [{ id, full_name, title, company_name, company_id, email, linkedin_url, notes }],
+For contacts: search BROADLY — include VP/Head of Data, Programmatic, Partnerships, Digital, CDO, CMO, CTO, Business Development, Commercial. For holding companies also include regional leads (EMEA, CEE). Aim for 3–6 contacts per company. For each: generate id as "firstname-lastname-companyslug", email as best-guess pattern, notes with email confidence % and how found.
   "relations": [{ from_company, to_company, relation_type, direction, strength, source, notes }],
   "press_links": [{ url, title, date, source, about }]
 }
@@ -1608,6 +1668,12 @@ async function saveAIResult() {
       });
       results.push(`Contact ${ct.full_name}: ${r.ok ? '✅' : '❌ '+r.status}`);
     } catch(e) { results.push(`Contact error: ${e.message}`); }
+
+  // Reload contacts section if any were saved
+  if ((data.contacts||[]).length) {
+    const _cs = resolveSlug(_aiCompany);
+    if (_cs) setTimeout(() => loadContacts(_cs), 400);
+  }
   }
 
   // Save relations
@@ -1748,9 +1814,9 @@ updateStats();
 renderList();
 loadFromSupabase();
 </script>
-<!-- HUB PATCH v10 -->
+<!-- HUB PATCH v11 -->
 <script>
-// HUB PATCH v10
+// HUB PATCH v11
 
 window.loadFromSupabase = async function() {
   document.getElementById('statusLabel').textContent = 'Connecting…';
@@ -1803,6 +1869,59 @@ window.resolveSlug = function(c) {
   const found = (window.companies || []).find(x => x.name === c.name);
   if (found?.id) return found.id;
   return _slug(c.name);
+};
+
+window.loadContacts = async function(slug) {
+  const body  = document.getElementById('ct-body');
+  const badge = document.getElementById('ct-count-badge');
+  if (!body) return;
+  try {
+    const res = await fetch(
+      `${SB_URL}/rest/v1/contacts?or=(company_id.eq.${encodeURIComponent(slug)},company_name.ilike.${encodeURIComponent('*'+slug.replace(/-/g,' ')+'*')})&select=*&order=created_at.asc`,
+      { headers: { apikey: SB_KEY, Authorization: `Bearer ${SB_KEY}` } }
+    );
+    const rows = await res.json();
+    const cname = window.currentCompany?.name || '';
+    // Also match by company name directly
+    const res2 = await fetch(
+      `${SB_URL}/rest/v1/contacts?company_name=ilike.${encodeURIComponent(cname)}&select=*`,
+      { headers: { apikey: SB_KEY, Authorization: `Bearer ${SB_KEY}` } }
+    );
+    const rows2 = await res2.json();
+    // Merge, deduplicate by id
+    const seen = new Set();
+    const all = [...(Array.isArray(rows)?rows:[]), ...(Array.isArray(rows2)?rows2:[])].filter(r => {
+      if (seen.has(r.id)) return false;
+      seen.add(r.id); return true;
+    });
+    if (!all.length) {
+      body.innerHTML = '<div style="font-family:\'IBM Plex Mono\',monospace;font-size:10px;color:var(--t3);text-transform:uppercase">No contacts found — use Find ↗ to research</div>';
+      if (badge) badge.textContent = '';
+      // Also update in-memory contacts array
+      return;
+    }
+    if (badge) badge.textContent = `(${all.length})`;
+    body.innerHTML = all.map(ct => `
+      <div class="contact-card">
+        <div style="display:flex;align-items:flex-start;gap:8px;margin-bottom:5px">
+          <div class="ct-av-lg">${ini(ct.full_name||'?')}</div>
+          <div style="flex:1;min-width:0">
+            <div style="font-size:12px;font-weight:500">${ct.full_name||'?'}</div>
+            <div style="font-family:'IBM Plex Mono',monospace;font-size:9px;color:var(--t3)">${ct.title||''}</div>
+          </div>
+          ${ct.outreach_status ? `<span class="tag tpr" style="flex-shrink:0">${ct.outreach_status}</span>` : ''}
+        </div>
+        ${ct.email ? `<div style="margin-bottom:3px"><span class="code-pill">${ct.email}</span>${ct.email_confidence ? ` <span class="conf-est">${ct.email_confidence}</span>` : ''}</div>` : ''}
+        <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:4px">
+          ${ct.linkedin_url ? `<a class="ml" href="${ct.linkedin_url}" target="_blank">LinkedIn ↗</a>` : ''}
+          ${ct.email ? `<a class="ml" href="https://mail.google.com/mail/u/0/#search/${encodeURIComponent(ct.email)}" target="_blank">Gmail ↗</a>` : ''}
+          <span class="ml" style="cursor:pointer;color:var(--g)" onclick="openClaude('Draft personalized outreach email to ${ct.full_name||'this contact'} at ${(ct.company_name||cname)} — their role is ${(ct.title||'unknown')}. Value-led and curiosity variants for onAudience data partnership.')">Draft email ↗</span>
+        </div>
+        ${ct.notes ? `<div style="font-size:11px;color:var(--t3);margin-top:4px;line-height:1.5">${ct.notes}</div>` : ''}
+      </div>`).join('');
+  } catch(e) {
+    if (body) body.innerHTML = `<div style="font-size:11px;color:var(--t3)">Could not load contacts: ${e.message}</div>`;
+  }
 };
 
 window.loadTechStack = async function(slug, openRescan) {
@@ -1982,6 +2101,12 @@ window.saveAIResult = async function() {
       });
       results.push(`Contact ${ct.full_name}: ${r.ok ? '✅' : '❌ '+r.status}`);
     } catch(e) { results.push(`Contact error: ${e.message}`); }
+
+  // Reload contacts section if any were saved
+  if ((data.contacts||[]).length) {
+    const _cs = resolveSlug(_aiCompany);
+    if (_cs) setTimeout(() => loadContacts(_cs), 400);
+  }
   }
 
   // Save relations
@@ -2228,10 +2353,15 @@ window.doMerge = async function(dupSlug, canonSlug, canonName) {
   window.openCompany = function(c) {
     window.currentCompany = c;
     _oc(c);
-    if (c) setTimeout(function(){
+    if (c) {
       var slug = window.resolveSlug ? window.resolveSlug(c) : (c.id || (window._slug && window._slug(c.name)));
-      if (slug && window.loadTechStack) window.loadTechStack(slug, false);
-    }, 200);
+      if (slug) {
+        setTimeout(function(){ if (window.loadContacts) loadContacts(slug); }, 60);
+        setTimeout(function(){ if (window.loadRelations) loadRelations(slug); }, 80);
+        setTimeout(function(){ if (window.loadIntelligence) loadIntelligence(slug); }, 120);
+        setTimeout(function(){ if (window.loadTechStack) loadTechStack(slug, false); }, 160);
+      }
+    }
   };
 }());
 
