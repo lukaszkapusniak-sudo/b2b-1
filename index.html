@@ -697,7 +697,7 @@ async function generateMeeseeks() {
   document.getElementById('ms-persona-label').textContent = '';
   if (MS.contact.email) document.getElementById('ms-to').value = MS.contact.email;
 
-  const systemPrompt = `You are writing a cold outreach email on behalf of Łukasz from onAudience — a European DMP and audience data company selling GDPR-compliant behavioral, demographic, B2B, purchase intent, and CTV audience segments to programmatic buyers.
+  const systemPrompt = `You are writing a cold outreach email on behalf of Łukasz from onAudience. Current year: 2026. — a European DMP and audience data company selling GDPR-compliant behavioral, demographic, B2B, purchase intent, and CTV audience segments to programmatic buyers.
 
 Writing persona: ${persona.name} (${persona.tag}). Style: ${persona.style}
 
@@ -1340,7 +1340,7 @@ function openCompany(c) {
     </div>
 
     <div class="sec" id="sec-relations">
-      <div class="sec-hdr"><span>🔗</span><span class="sec-hdr-label">Relations</span>
+      <div class="sec-hdr"><span>🔗</span><span class="sec-hdr-label" id="rel-hdr-label" data-fresh="relations">Relations</span>
         <span id="rel-count-badge" style="font-family:'IBM Plex Mono',monospace;font-size:9px;color:var(--t3);margin-left:4px"></span>
         <button class="btn sm" style="margin-left:auto" onclick="openClaude('Find and save company relations for ${cname} to the onAudience Supabase database — data_partner, dsp_integration, marketplace_listed types')">Add ↗</button>
       </div>
@@ -1350,7 +1350,7 @@ function openCompany(c) {
     </div>
 
     <div class="sec">
-      <div class="sec-hdr"><span>💡</span><span class="sec-hdr-label">Outreach Angle</span></div>
+      <div class="sec-hdr"><span>💡</span><span class="sec-hdr-label" id="angle-hdr-label" data-fresh="company">Outreach Angle</span></div>
       <div class="sec-body">
         <div style="font-size:12px;color:var(--t2);line-height:1.7">${c.outreach_angle || 'Research this company to identify outreach angle and ICP fit.'}</div>
         <div class="btn-row">
@@ -1362,7 +1362,7 @@ function openCompany(c) {
     </div>
 
     <div class="sec">
-      <div class="sec-hdr"><span>👤</span><span class="sec-hdr-label">Contacts</span>
+      <div class="sec-hdr"><span>👤</span><span class="sec-hdr-label" id="ct-hdr-label" data-fresh="contacts">Contacts</span>
         <span style="font-family:'IBM Plex Mono',monospace;font-size:9px;color:var(--t3);margin-left:4px" id="ct-count-badge">${coContacts.length ? '('+coContacts.length+')' : ''}</span>
         <div style="margin-left:auto;display:flex;gap:4px">
           <button class="btn sm" onclick="loadContacts('${slug}')" title="Reload contacts from DB">⟳ Refresh</button>
@@ -1373,11 +1373,11 @@ function openCompany(c) {
     </div>
 
     <div class="sec">
-      <div class="sec-hdr"><span>📰</span><span class="sec-hdr-label">News &amp; Press</span>
+      <div class="sec-hdr"><span>📰</span><span class="sec-hdr-label" id="press-hdr-label" data-fresh="press">News &amp; Press</span>
         <span id="press-count-badge" style="font-family:'IBM Plex Mono',monospace;font-size:9px;color:var(--t3);margin-left:4px"></span>
         <div style="margin-left:auto;display:flex;gap:4px">
           <button class="btn sm" onclick="loadIntelligence('${slug}')" title="Reload from DB">⟳ Refresh</button>
-          <button class="btn sm" onclick="openClaude('Press lookup for ${cname}: use web_search to find REAL recent news — press releases, partnership announcements, interviews, product launches, hiring signals from the last 2 years. Only include URLs you directly see in search results. If nothing relevant found, return empty press_links. NEVER guess or generate URLs. Save verified results to Supabase.')" title="Find press with AI">Find ↗</button>
+          <button class="btn sm" onclick="openClaude('Press lookup for ${cname}: use web_search to find REAL recent news — press releases, partnership announcements, interviews, product launches, hiring signals from 2024–2026. Search queries should include 2026. Only include URLs you directly see in search results. If nothing relevant found, return empty press_links. NEVER guess or generate URLs. Save verified results to Supabase.')" title="Find press with AI">Find ↗</button>
         </div>
       </div>
       <div class="sec-body" id="press-body">
@@ -1386,7 +1386,7 @@ function openCompany(c) {
     </div>
 
     <div class="sec">
-      <div class="sec-hdr"><span>⚙️</span><span class="sec-hdr-label">Tech Stack</span>
+      <div class="sec-hdr"><span>⚙️</span><span class="sec-hdr-label" id="ts-hdr-label" data-fresh="tech_stack">Tech Stack</span>
         <div style="margin-left:auto;display:flex;gap:4px">
           <button class="btn sm" onclick="loadTechStack('${slug}', false)" title="Reload from DB">⟳ Fetch</button>
           <button class="btn sm" onclick="loadTechStack('${slug}', true)" title="Re-scan website with AI">↺ Rescan</button>
@@ -3098,6 +3098,324 @@ window.doMerge = async function(dupSlug, canonSlug, canonName) {
 
 window.SB_URL = _SB; window.SB_KEY = _SK;
 if (typeof window.loadFromSupabase === 'function') window.loadFromSupabase();
+
+/* ═══════════════════════════════════════════════════════════════
+   DATA FRESHNESS SYSTEM
+   Every section shows age + stale warning. MCP sources suggested
+   where live data is available.
+   ═══════════════════════════════════════════════════════════════ */
+
+const STALE_THRESHOLDS = {
+  contacts:   30,   // days — LinkedIn roles change
+  press:      14,   // days — news moves fast
+  tech_stack: 60,   // days — stack changes slowly
+  relations:  90,   // days — partnerships are stable
+  gmail:       7,   // days — email history needs weekly refresh
+  company:    60,   // days — description/size/funding
+};
+
+// MCP / connector suggestions per data type
+const DATA_SOURCES = {
+  contacts: {
+    primary:   'Supabase DB',
+    live:      '🔗 LinkedIn MCP',
+    tip:       'Connect LinkedIn MCP to fetch live titles, emails, and recent activity',
+    refresh:   'Find decision makers ↗',
+    col:       'enriched_contacts_at'
+  },
+  press: {
+    primary:   'Supabase intelligence table',
+    live:      '🌐 Web search (Claude)',
+    tip:       'Run "Press lookup ↗" to fetch live news via web search',
+    refresh:   'Press lookup ↗',
+    col:       'enriched_press_at'
+  },
+  tech_stack: {
+    primary:   'Supabase companies.tech_stack',
+    live:      '🌐 Claude in Chrome (tech-lookup skill)',
+    tip:       'Run "Rescan tech ↗" to crawl the company website live',
+    refresh:   'Rescan tech ↗',
+    col:       'enriched_tech_at'
+  },
+  gmail: {
+    primary:   'Supabase email_history',
+    live:      '📧 Gmail MCP (connected)',
+    tip:       'Gmail MCP is available — click "Check Gmail ↗" for real-time thread data',
+    refresh:   'Check Gmail ↗',
+    col:       'email_last_checked_at'
+  },
+  relations: {
+    primary:   'Supabase company_relations',
+    live:      '🌐 Web search (Claude)',
+    tip:       'Relations are manually curated — run full report to update',
+    refresh:   'Full report ↗',
+    col:       null
+  }
+};
+
+function dataAge(isoDate) {
+  if (!isoDate) return null;
+  return Math.floor((Date.now() - new Date(isoDate).getTime()) / 86400000);
+}
+
+function freshnessLabel(days, threshold) {
+  if (days === null) return { label: 'never', cls: 'stale', icon: '⚠' };
+  if (days === 0)    return { label: 'today',         cls: 'fresh',  icon: '●' };
+  if (days <= 7)     return { label: `${days}d ago`,  cls: 'fresh',  icon: '●' };
+  if (days <= threshold) return { label: `${days}d ago`, cls: 'ok', icon: '◑' };
+  return { label: `${days}d ago`, cls: 'stale', icon: '⚠' };
+}
+
+function renderFreshnessBadge(type, isoDate) {
+  const days = dataAge(isoDate);
+  const threshold = STALE_THRESHOLDS[type] || 30;
+  const { label, cls, icon } = freshnessLabel(days, threshold);
+  const src = DATA_SOURCES[type];
+  const color = cls === 'fresh' ? 'var(--cc)' : cls === 'ok' ? 'var(--prc)' : 'var(--t3)';
+  const title = src ? `Source: ${src.primary}\nLive: ${src.live}\n${src.tip}` : '';
+  return `<span title="${title}" style="font-family:IBM Plex Mono,monospace;font-size:8px;color:${color};margin-left:6px;cursor:help">${icon} ${label}</span>`;
+}
+
+// ── Patch each section header to show freshness ───────────────────────────
+
+// Store enrichment timestamps on the current company object when we load sections
+const _origLoadContacts = window.loadContacts;
+window.loadContacts = async function(slug) {
+  await _origLoadContacts(slug);
+  // After contacts load, check freshness from company record
+  const c = window.currentCompany;
+  const badge = document.getElementById('ct-fresh');
+  if (badge && c) badge.innerHTML = renderFreshnessBadge('contacts', c.enriched_contacts_at || c.updated_at);
+};
+
+const _origLoadIntelligence = window.loadIntelligence;
+window.loadIntelligence = async function(slug) {
+  await _origLoadIntelligence(slug);
+  const c = window.currentCompany;
+  const badge = document.getElementById('press-fresh');
+  if (badge && c) badge.innerHTML = renderFreshnessBadge('press', c.enriched_press_at || c.updated_at);
+};
+
+const _origLoadTechStack = window.loadTechStack;
+window.loadTechStack = async function(slug, openRescan) {
+  await _origLoadTechStack(slug, openRescan);
+  const c = window.currentCompany;
+  const badge = document.getElementById('ts-fresh');
+  if (badge && c) badge.innerHTML = renderFreshnessBadge('tech_stack', c.enriched_tech_at || c.updated_at);
+};
+
+// ── Gmail freshness: check actual last email date via Gmail MCP ──────────
+async function checkGmailFreshness(companyName, slug) {
+  const badge = document.getElementById('gmail-fresh');
+  if (!badge) return;
+
+  // Check Supabase email_history first
+  try {
+    const res = await fetch(
+      `${_SB}/rest/v1/email_history?company_id=eq.${encodeURIComponent(slug)}&order=date.desc&limit=1&select=date`,
+      { headers: { apikey: _SK, Authorization: `Bearer ${_SK}` } }
+    );
+    const rows = await res.json();
+    if (Array.isArray(rows) && rows[0]?.date) {
+      const days = dataAge(rows[0].date);
+      badge.innerHTML = renderFreshnessBadge('gmail', rows[0].date) +
+        `<span style="font-family:IBM Plex Mono,monospace;font-size:8px;color:var(--t3);margin-left:4px">· from DB</span>`;
+      return;
+    }
+  } catch(_) {}
+
+  // No DB record — suggest Gmail MCP
+  badge.innerHTML = `<span style="font-family:IBM Plex Mono,monospace;font-size:8px;color:var(--t3);margin-left:6px" title="Gmail MCP connected — click Check Gmail to fetch live">⚠ not checked · 📧 Gmail MCP available</span>`;
+}
+
+// ── Live Gmail check via MCP (called from "Check Gmail ↗" button) ─────────
+window.checkGmailLive = async function(companyName, slug) {
+  if (!companyName) return;
+  const body  = document.getElementById('gmail-body');
+  const fresh = document.getElementById('gmail-fresh');
+  const apiKey = localStorage.getItem('oa_claude_key');
+
+  if (!apiKey) {
+    if (body) body.innerHTML = '<div style="font-family:IBM Plex Mono,monospace;font-size:10px;color:var(--t3)">Set Claude API key in Settings to enable live Gmail check</div>';
+    if (window.openClaude) openClaude('Check Gmail for any previous contact with ' + companyName);
+    return;
+  }
+
+  if (body) body.innerHTML = '<div style="font-family:IBM Plex Mono,monospace;font-size:10px;color:var(--t3)">Checking Gmail via MCP…</div>';
+
+  const c = (window.companies||[]).find(x => typeof _slug === "function" && _slug(x.name)===slug);
+  const domain = c && c.website ? c.website.replace(/^https?:\/\/(www\.)?/,"").split("/")[0] : "";
+  const domainQuery = domain ? "from:" + domain + " OR to:" + domain : companyName;
+
+  try {
+    const resp = await fetch("https://api.anthropic.com/v1/messages", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "anthropic-dangerous-direct-browser-access": "true",
+        "x-api-key": apiKey
+      },
+      body: JSON.stringify({
+        model: "claude-sonnet-4-20250514",
+        max_tokens: 1000,
+        mcp_servers: [{ type: "url", url: "https://gmail.mcp.claude.com/mcp", name: "gmail" }],
+        system: "You are a sales intelligence assistant. Search Gmail and return ONLY valid JSON, no markdown, no preamble, no explanation.",
+        messages: [{
+          role: "user",
+          content: "Search Gmail for emails related to company: " + companyName + (domain ? " (domain: " + domain + ")" : "") + ". Use query: " + domainQuery + ". Get up to 10 most recent messages. Respond with ONLY valid JSON having these keys: thread_count (number), last_contact_date (ISO string), last_subject, last_from, last_direction (inbound or outbound), summary (2 sentences), threads (array with date, subject, from, direction, snippet)."
+        }]
+      })
+    });
+
+    const data = await resp.json();
+    const text = (data.content||[]).filter(function(b){return b.type==="text";}).map(function(b){return b.text;}).join("");
+    let result;
+    try {
+      result = JSON.parse(text.replace(/```json\n?|```/g,"").trim());
+    } catch(e) {
+      const match = text.match(/\{[\s\S]+\}/);
+      result = match ? JSON.parse(match[0]) : null;
+    }
+
+    if (!result) {
+      if (body) body.innerHTML = "<div style=\"font-family:IBM Plex Mono,monospace;font-size:10px;color:var(--t3)\">No threads found for " + companyName + "</div>";
+      return;
+    }
+
+    const daysSince = result.last_contact_date ? Math.floor((Date.now() - new Date(result.last_contact_date).getTime())/86400000) : null;
+    const statusColor = daysSince===null ? "var(--t3)" : daysSince>60 ? "var(--t3)" : daysSince>14 ? "var(--prc)" : "var(--cc)";
+
+    if (body) {
+      const threadsHtml = (result.threads||[]).slice(0,5).map(function(t) {
+        const dateStr = t.date ? new Date(t.date).toLocaleDateString("en-GB",{day:"2-digit",month:"short"}) : "—";
+        const dirBg = t.direction==="inbound" ? "background:var(--pb);color:var(--pc)" : "background:var(--cb);color:var(--cc)";
+        return "<div style=\"display:flex;gap:8px;padding:4px 0;border-bottom:1px solid var(--rule3);align-items:flex-start\">" +
+          "<span style=\"font-family:IBM Plex Mono,monospace;font-size:9px;color:var(--t3);flex-shrink:0;min-width:52px\">" + dateStr + "</span>" +
+          "<span style=\"font-family:IBM Plex Mono,monospace;font-size:8px;padding:1px 4px;border-radius:2px;flex-shrink:0;" + dirBg + "\">" + (t.direction==="inbound"?"IN":"OUT") + "</span>" +
+          "<div style=\"flex:1;min-width:0\">" +
+            "<div style=\"font-size:11px;font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis\">" + (t.subject||"—") + "</div>" +
+            "<div style=\"font-family:IBM Plex Mono,monospace;font-size:8px;color:var(--t3)\">" + (t.snippet||"") + "</div>" +
+          "</div></div>";
+      }).join("");
+
+      body.innerHTML =
+        (result.summary ? "<div style=\"font-size:12px;color:var(--t2);line-height:1.6;margin-bottom:8px\">" + result.summary + "</div>" : "") +
+        "<div style=\"display:flex;gap:12px;flex-wrap:wrap;margin-bottom:6px\">" +
+          "<span style=\"font-family:IBM Plex Mono,monospace;font-size:9px;color:var(--t3)\">THREADS <span style=\"color:var(--t1)\">" + (result.thread_count||"?") + "</span></span>" +
+          "<span style=\"font-family:IBM Plex Mono,monospace;font-size:9px;color:var(--t3)\">LAST <span style=\"color:" + statusColor + "\">" + (daysSince!==null ? daysSince+"d ago" : "—") + "</span></span>" +
+          "<span style=\"font-family:IBM Plex Mono,monospace;font-size:9px;color:var(--t3)\">DIRECTION <span style=\"color:var(--t1)\">" + (result.last_direction||"—") + "</span></span>" +
+        "</div>" +
+        threadsHtml +
+        "<div style=\"font-family:IBM Plex Mono,monospace;font-size:8px;color:var(--t3);margin-top:6px\">via Gmail MCP · " + new Date().toLocaleString() + "</div>";
+    }
+
+    // Save to email_history
+    if (result.threads && result.threads.length && slug) {
+      var SB = window._SB||window.SB_URL, SK = window._SK||window.SB_KEY;
+      if (SB && SK) {
+        var rows = (result.threads||[]).slice(0,10).map(function(t) {
+          return { company_id:slug, subject:t.subject||"", from_email:t.from||"", snippet:t.snippet||"", date:t.date||null, direction:t.direction||"unknown" };
+        });
+        fetch(SB + "/rest/v1/email_history", {
+          method: "POST",
+          headers: { apikey:SK, Authorization:"Bearer "+SK, "Content-Type":"application/json", Prefer:"resolution=merge-duplicates,return=minimal" },
+          body: JSON.stringify(rows)
+        }).catch(function(){});
+        // Update company email_last_checked_at
+        fetch(SB + "/rest/v1/companies?id=eq." + encodeURIComponent(slug), {
+          method: "PATCH",
+          headers: { apikey:SK, Authorization:"Bearer "+SK, "Content-Type":"application/json", Prefer:"return=minimal" },
+          body: JSON.stringify({ email_last_checked_at: new Date().toISOString() })
+        }).catch(function(){});
+      }
+    }
+
+    if (fresh) {
+      fresh.innerHTML = renderFreshnessBadge("gmail", result.last_contact_date||new Date().toISOString()) +
+        "<span style=\"font-family:IBM Plex Mono,monospace;font-size:8px;color:var(--t3);margin-left:4px\">\xb7 Gmail MCP live</span>";
+    }
+
+  } catch(e) {
+    if (body) body.innerHTML = "<div style=\"font-family:IBM Plex Mono,monospace;font-size:10px;color:var(--t3)\">Error: " + e.message + "</div>";
+  }
+};
+
+// ── Inject freshness spans into section headers after openCompany renders ─
+const _patchOpenCompany = window.openCompany;
+window.openCompany = function(c) {
+  _patchOpenCompany(c);
+  if (!c) return;
+  const slug = window.resolveSlug ? window.resolveSlug(c) : (c.id || (_slug && _slug(c.name)));
+
+  setTimeout(function() {
+    // Inject freshness badge placeholders into section headers
+    _injectFreshnessBadges(c);
+    // Check Gmail freshness from DB
+    if (slug) checkGmailFreshness(c.name, slug);
+  }, 200);
+};
+
+function _injectFreshnessBadges(c) {
+  // Map of section header text → fresh badge id + data type
+  const targets = [
+    { hdr: 'ct-hdr-label',     id: 'ct-fresh',    type: 'contacts',   date: c.enriched_contacts_at || c.updated_at },
+    { hdr: 'press-hdr-label',  id: 'press-fresh',  type: 'press',      date: c.enriched_press_at || c.updated_at },
+    { hdr: 'ts-hdr-label',     id: 'ts-fresh',     type: 'tech_stack', date: c.enriched_tech_at || c.updated_at },
+    { hdr: 'gmail-hdr-label',  id: 'gmail-fresh',  type: 'gmail',      date: null },
+    { hdr: 'rel-hdr-label',    id: 'rel-fresh',    type: 'relations',  date: c.updated_at },
+  ];
+
+  targets.forEach(({ hdr, id, type, date }) => {
+    // Find the section header element by id or by label text
+    let el = document.getElementById(hdr);
+    if (!el) {
+      // fallback: find by data-section attribute
+      el = document.querySelector(`[data-fresh="${type}"]`);
+    }
+    if (!el) return;
+
+    // Remove existing badge if any
+    const existing = el.querySelector('.fresh-badge');
+    if (existing) existing.remove();
+
+    // Append badge
+    const span = document.createElement('span');
+    span.className = 'fresh-badge';
+    span.id = id;
+    span.innerHTML = renderFreshnessBadge(type, date);
+    el.appendChild(span);
+  });
+}
+
+// ── Stale data tooltip on company rows ────────────────────────────────────
+// Add age indicator to company list rows
+const _origRenderList = window.renderList;
+if (_origRenderList) {
+  window.renderList = function() {
+    _origRenderList();
+    // After render, add staleness dots to rows older than 60 days
+    document.querySelectorAll('.co-row').forEach(row => {
+      const nameEl = row.querySelector('.co-name-sm');
+      if (!nameEl) return;
+      const name = nameEl.textContent.trim();
+      const co = (window.companies || []).find(x => x.name === name);
+      if (!co || !co.updated_at) return;
+      const days = dataAge(co.updated_at);
+      if (days > 60) {
+        const existing = row.querySelector('.stale-dot');
+        if (!existing) {
+          const dot = document.createElement('span');
+          dot.className = 'stale-dot';
+          dot.title = `Last updated ${days}d ago`;
+          dot.style.cssText = 'width:5px;height:5px;border-radius:50%;background:var(--t4);flex-shrink:0;margin-left:2px;display:inline-block';
+          const right = row.querySelector('.co-right-sm');
+          if (right) right.prepend(dot);
+        }
+      }
+    });
+  };
+}
+
 </script>
 </body>
 </html>
