@@ -860,6 +860,22 @@ function openCompany(c) {
     </div>
 
     <div class="sec">
+      <div class="sec-hdr"><span>🔀</span><span class="sec-hdr-label">Merge</span>
+        <span style="font-family:'IBM Plex Mono',monospace;font-size:9px;color:var(--t3);margin-left:6px">Combine this record into an existing company</span>
+      </div>
+      <div class="sec-body" style="padding:8px 12px">
+        <div style="display:flex;gap:6px;align-items:center;flex-wrap:wrap">
+          <input id="merge-search" type="text" placeholder="Type company name to merge into…"
+            style="flex:1;min-width:180px;height:26px;padding:0 8px;border:1px solid var(--rule);border-radius:2px;
+                   font-family:'IBM Plex Mono',monospace;font-size:10px;background:var(--surf2);color:var(--t1);outline:none"
+            oninput="renderMergeSuggestions('${slug}')" />
+          <button class="btn sm" onclick="document.getElementById('merge-search').value='';document.getElementById('merge-suggestions').innerHTML=''">✕</button>
+        </div>
+        <div id="merge-suggestions" style="margin-top:4px"></div>
+      </div>
+    </div>
+
+    <div class="sec">
       <div class="sec-hdr"><span>🔗</span><span class="sec-hdr-label">Quick Links</span></div>
       <div class="sec-body">
         <table class="info">
@@ -1514,6 +1530,79 @@ async function saveAIResult() {
     });
   }
 }
+
+/* ─────────────────────────────────────────
+   MERGE COMPANY
+───────────────────────────────────────── */
+function renderMergeSuggestions(currentSlug) {
+  const q = (document.getElementById('merge-search')?.value || '').toLowerCase().trim();
+  const box = document.getElementById('merge-suggestions');
+  if (!box) return;
+  if (!q || q.length < 2) { box.innerHTML = ''; return; }
+
+  const matches = companies
+    .filter(c => (c.id || _slug(c.name)) !== currentSlug && c.name.toLowerCase().includes(q))
+    .slice(0, 8);
+
+  if (!matches.length) {
+    box.innerHTML = `<div style="font-family:'IBM Plex Mono',monospace;font-size:9px;color:var(--t3);padding:4px 0">No matches</div>`;
+    return;
+  }
+
+  box.innerHTML = matches.map(m => {
+    const mslug = m.id || _slug(m.name);
+    const [bg, fg] = av(m.name);
+    return `<div onclick="confirmMerge('${currentSlug}','${mslug}',${JSON.stringify(m.name)},${JSON.stringify(window.currentCompany?.name||'')})"
+      style="display:flex;align-items:center;gap:8px;padding:5px 8px;border-radius:2px;cursor:pointer;transition:background .1s"
+      onmouseover="this.style.background='var(--surf3)'" onmouseout="this.style.background=''">
+      <div style="width:20px;height:20px;border-radius:2px;background:${bg};border:1px solid ${fg}40;color:${fg};
+                  font-family:'IBM Plex Mono',monospace;font-size:7px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0">
+        ${m.name.replace(/[^A-Za-z ]/g,'').split(' ').map(w=>w[0]||'').slice(0,2).join('').toUpperCase()||'?'}
+      </div>
+      <div style="flex:1;min-width:0">
+        <div style="font-size:12px;font-weight:500;color:var(--t1)">${m.name}</div>
+        <div style="font-family:'IBM Plex Mono',monospace;font-size:9px;color:var(--t3)">${m.category||m.type||''} · ${m.hq_city||m.region||'—'}</div>
+      </div>
+      <span class="tag ${tagCls(m.type)}">${tagLbl(m.type)}</span>
+    </div>`;
+  }).join('');
+}
+
+function confirmMerge(dupSlug, canonSlug, canonName, dupName) {
+  const msg = `Merge "${dupName}" INTO "${canonName}"?\n\n` +
+    `This will:\n• Move all contacts → ${canonName}\n• Move all relations → ${canonName}\n• Move all intelligence → ${canonName}\n• DELETE "${dupName}"\n\nThis cannot be undone.`;
+  if (!window.confirm(msg)) return;
+  doMerge(dupSlug, canonSlug, canonName);
+}
+
+async function doMerge(dupSlug, canonSlug, canonName) {
+  const statusEl = document.getElementById('merge-suggestions');
+  if (statusEl) statusEl.innerHTML = `<div style="font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--t3);padding:4px 0">Merging…</div>`;
+
+  try {
+    const r = await fetch(
+      `${SB_URL}/rest/v1/rpc/merge_company`,
+      {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', apikey: SB_KEY, Authorization: `Bearer ${SB_KEY}` },
+        body: JSON.stringify({ duplicate_id: dupSlug, canonical_id: canonSlug })
+      }
+    );
+    const result = await r.json();
+    const msg = typeof result === 'string' ? result : JSON.stringify(result);
+
+    if (statusEl) statusEl.innerHTML = `<div style="font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--cc);padding:4px 0">${msg}</div>`;
+
+    // Reload list and open the canonical company
+    await loadFromSupabase();
+    const canonical = companies.find(c => (c.id || _slug(c.name)) === canonSlug);
+    if (canonical) setTimeout(() => openCompany(canonical), 100);
+
+  } catch(e) {
+    if (statusEl) statusEl.innerHTML = `<div style="font-family:'IBM Plex Mono',monospace;font-size:10px;color:#e05;padding:4px 0">Error: ${e.message}</div>`;
+  }
+}
+
 function doResearch() {
   const q = document.getElementById('searchQ').value.trim();
   if (q) openClaude(`Research ${q} — full contact report v3: decision makers, tech stack, case studies, activation path and ICP fit for onAudience data partnership`);
