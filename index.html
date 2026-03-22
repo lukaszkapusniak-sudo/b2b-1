@@ -1420,7 +1420,7 @@ async function loadContacts(slug) {
   if (!body) return;
   try {
     const res = await fetch(
-      `${SB_URL}/rest/v1/contacts?company_id=eq.${encodeURIComponent(slug)}&select=*&order=created_at.asc`,
+      `${SB_URL}/rest/v1/contacts?company_id=eq.${encodeURIComponent(slug)}&select=*&order=full_name.asc`,
       { headers: { apikey: SB_KEY, Authorization: `Bearer ${SB_KEY}` } }
     );
     const rows = await res.json();
@@ -2275,7 +2275,7 @@ window.loadContacts = async function(slug) {
   if (!body) return;
   try {
     const res = await fetch(
-      `${_SB}/rest/v1/contacts?company_id=eq.${encodeURIComponent(slug)}&select=*&order=created_at.asc`,
+      `${_SB}/rest/v1/contacts?company_id=eq.${encodeURIComponent(slug)}&select=*&order=full_name.asc`,
       { headers: { apikey: _SK, Authorization: `Bearer ${_SK}` } }
     );
     const rows = await res.json();
