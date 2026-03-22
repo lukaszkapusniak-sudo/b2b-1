@@ -1622,5 +1622,21 @@ updateStats();
 renderList();
 loadFromSupabase();
 </script>
+<!-- DB PATCH LOADER — fetches and applies JS fixes stored in app_config -->
+<script>
+(async () => {
+  try {
+    const SB = 'https://nyzkkqqjnkctcmxoirdj.supabase.co';
+    const KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im55emtrcXFqbmtjdGNteG9pcmRqIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzM4NzMxMzYsImV4cCI6MjA4OTQ0OTEzNn0.jhAq_C68klOp4iTyj9HmsyyvoxsOI6ACld7t_87TAk0';
+    const res = await fetch(`${SB}/rest/v1/app_config?key=eq.js_patch&select=value`, { headers: { apikey: KEY, Authorization: `Bearer ${KEY}` } });
+    const rows = await res.json();
+    if (rows?.[0]?.value) {
+      // eslint-disable-next-line no-eval
+      (0, eval)(rows[0].value);
+      console.log('[hub] DB patch applied, len:', rows[0].value.length);
+    }
+  } catch(e) { console.warn('[hub] DB patch failed:', e.message); }
+})();
+</script>
 </body>
 </html>
