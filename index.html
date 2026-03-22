@@ -1726,8 +1726,9 @@ renderList();
 loadFromSupabase();
 </script>
 <!-- HUB PATCH v6 — inline overrides -->
+<!-- HUB PATCH v7 -->
 <script>
-// HUB PATCH v6 — auto-generated from main script
+// HUB PATCH v7 — explicit window assignments with semicolons
 
 window.loadFromSupabase = async function() {
   document.getElementById('statusLabel').textContent = 'Connecting…';
@@ -1771,7 +1772,7 @@ window.loadFromSupabase = async function() {
   }
   updateStats();
   renderList();
-}
+};
 
 window.loadTechStack = async function(slug, openRescan) {
   const tsBody = document.getElementById('ts-body');
@@ -1849,7 +1850,7 @@ window.loadTechStack = async function(slug, openRescan) {
       tsBody.innerHTML = '<div class="no-rel">No tech stack scanned yet</div>';
     }
   }
-}
+};
 
 window.saveAIResult = async function() {
   const saveBtn = document.getElementById('ai-save-btn');
@@ -2002,7 +2003,7 @@ window.saveAIResult = async function() {
       });
     }
   }
-}
+};
 
 window.loadRelations = async function(slug) {
   const body  = document.getElementById('rel-body');
@@ -2065,7 +2066,7 @@ window.loadRelations = async function(slug) {
   } catch(e) {
     if (body) body.innerHTML = `<div style="font-size:11px;color:var(--t3)">Could not load relations</div>`;
   }
-}
+};
 
 window.loadIntelligence = async function(slug) {
   const body  = document.getElementById('press-body');
@@ -2106,7 +2107,7 @@ window.loadIntelligence = async function(slug) {
   } catch(e) {
     body.innerHTML = `<div style="font-size:11px;color:var(--t3)">Could not load press data</div>`;
   }
-}
+};
 
 window.renderMergeSuggestions = function(currentSlug) {
   const q = (document.getElementById('merge-search')?.value || '').toLowerCase().trim();
@@ -2140,14 +2141,14 @@ window.renderMergeSuggestions = function(currentSlug) {
       <span class="tag ${tagCls(m.type)}">${tagLbl(m.type)}</span>
     </div>`;
   }).join('');
-}
+};
 
 window.confirmMerge = function(dupSlug, canonSlug, canonName, dupName) {
   const msg = `Merge "${dupName}" INTO "${canonName}"?\n\n` +
     `This will:\n• Move all contacts → ${canonName}\n• Move all relations → ${canonName}\n• Move all intelligence → ${canonName}\n• DELETE "${dupName}"\n\nThis cannot be undone.`;
   if (!window.confirm(msg)) return;
   doMerge(dupSlug, canonSlug, canonName);
-}
+};
 
 window.doMerge = async function(dupSlug, canonSlug, canonName) {
   const statusEl = document.getElementById('merge-suggestions');
@@ -2175,26 +2176,31 @@ window.doMerge = async function(dupSlug, canonSlug, canonName) {
   } catch(e) {
     if (statusEl) statusEl.innerHTML = `<div style="font-family:'IBM Plex Mono',monospace;font-size:10px;color:#e05;padding:4px 0">Error: ${e.message}</div>`;
   }
-}
+};
 
 // Patch openCompany: use c.id as slug + auto-reload tech stack
 (function(){
-  const _oc = window.openCompany;
-  if(!_oc) return;
+  var _oc = window.openCompany;
+  if (!_oc) return;
   window.openCompany = function(c) {
     window.currentCompany = c;
     if (c && c.id && window._slug) {
-      const _os = window._slug;
+      var _os = window._slug;
       window._slug = function(n){ return n===c.name ? c.id : _os(n); };
       _oc(c);
       window._slug = _os;
     } else { _oc(c); }
     if (c) setTimeout(function(){
-      const slug = c.id || (window._slug && window._slug(c.name));
+      var slug = c.id || (window._slug && window._slug(c.name));
       if (slug && window.loadTechStack) window.loadTechStack(slug, false);
     }, 200);
   };
-})();
+}());
+
+// Re-init after patch
+if (typeof window.loadFromSupabase === 'function') {
+  window.loadFromSupabase();
+}
 </script>
 </body>
 </html>
