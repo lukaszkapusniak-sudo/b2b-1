@@ -173,6 +173,26 @@ a.ml:hover{text-decoration:underline}
 .empty-big{font-family:'IBM Plex Mono',monospace;font-size:40px;font-weight:200;letter-spacing:-2px;margin-bottom:8px;color:var(--t4)}
 .empty-sub{font-family:'IBM Plex Mono',monospace;font-size:10px;text-transform:uppercase;letter-spacing:.08em}
 
+/* TECH STACK / PRODUCTS / PRESS */
+.ts-row{display:flex;align-items:flex-start;gap:8px;padding:5px 0;border-bottom:1px solid var(--rule3)}
+.ts-row:last-child{border-bottom:none}
+.ts-cat{font-family:"IBM Plex Mono",monospace;font-size:8px;text-transform:uppercase;letter-spacing:.05em;padding:1px 5px;border-radius:2px;background:var(--surf3);color:var(--t3);flex-shrink:0;margin-top:1px;width:70px;text-align:center}
+.ts-tool{font-size:12px;font-weight:500;flex:1}
+.ts-signal{font-family:"IBM Plex Mono",monospace;font-size:9px;color:var(--t3);flex:2;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.conf-ok{font-family:"IBM Plex Mono",monospace;font-size:8px;padding:1px 5px;border-radius:2px;background:var(--cb);color:var(--cc);border:1px solid var(--cr);flex-shrink:0}
+.conf-est{font-family:"IBM Plex Mono",monospace;font-size:8px;padding:1px 5px;border-radius:2px;background:var(--prb);color:var(--prc);border:1px solid var(--prr);flex-shrink:0}
+.press-row{display:flex;align-items:flex-start;gap:8px;padding:6px 0;border-bottom:1px solid var(--rule3)}
+.press-row:last-child{border-bottom:none}
+.press-type{font-family:"IBM Plex Mono",monospace;font-size:8px;text-transform:uppercase;letter-spacing:.04em;padding:1px 5px;border-radius:2px;background:var(--surf3);color:var(--t3);flex-shrink:0;margin-top:2px;min-width:52px;text-align:center}
+.press-title{font-size:12px;font-weight:500;color:var(--g);text-decoration:none;display:block}
+.press-title:hover{text-decoration:underline}
+.press-meta{font-family:"IBM Plex Mono",monospace;font-size:9px;color:var(--t3);margin-top:2px}
+.press-sum{font-size:11px;color:var(--t2);margin-top:3px;line-height:1.5}
+.prod-row{padding:6px 0;border-bottom:1px solid var(--rule3)}
+.prod-row:last-child{border-bottom:none}
+.prod-name{font-size:12px;font-weight:500;margin-bottom:3px}
+.prod-desc{font-size:11px;color:var(--t2);line-height:1.5}
+.prod-for{font-family:"IBM Plex Mono",monospace;font-size:8px;text-transform:uppercase;color:var(--t3);margin-top:3px}
 /* CTX MENU */
 .ctx-menu{position:fixed;background:var(--surf);border:1px solid var(--rule);border-radius:4px;padding:4px;z-index:9990;min-width:210px;box-shadow:var(--sh)}
 .ctx-lbl{font-family:'IBM Plex Mono',monospace;font-size:9px;text-transform:uppercase;letter-spacing:.06em;color:var(--t3);padding:5px 10px 3px}
@@ -180,6 +200,47 @@ a.ml:hover{text-decoration:underline}
 .ctx-item{display:flex;align-items:center;gap:8px;padding:7px 10px;font-size:12px;color:var(--t1);border-radius:2px;cursor:pointer;transition:background .1s}
 .ctx-item:hover{background:var(--surf2)}
 .ctx-ico{font-size:13px;width:16px;text-align:center}
+
+/* AI DRAWER */
+#ai-overlay{display:none;position:fixed;top:0;right:0;bottom:0;width:480px;z-index:2000;flex-direction:column;box-shadow:-4px 0 24px rgba(0,0,0,0.18)}
+#ai-overlay.vis{display:flex}
+#ai-box{background:var(--surf);border-left:1px solid var(--rule);width:100%;height:100%;display:flex;flex-direction:column;overflow:hidden}
+/* Progress strip at top of drawer */
+#ai-progress-strip{height:2px;background:var(--surf3);flex-shrink:0;overflow:hidden}
+#ai-progress-bar{height:100%;width:0%;background:var(--g);transition:width .3s ease;background:linear-gradient(90deg,var(--g),var(--gb) 50%,var(--g));background-size:200% 100%;animation:none}
+#ai-progress-bar.running{animation:progress-sweep 1.2s linear infinite;width:100%}
+@keyframes progress-sweep{0%{background-position:200% 0}100%{background-position:0% 0}}
+#ai-progress-bar.done{background:var(--g);width:100%;animation:none;transition:width .2s}
+#ai-progress-bar.error{background:var(--prc);width:100%;animation:none}
+/* Shrink body when drawer open */
+body.ai-open .body .center{transition:none}
+.ai-head{display:flex;align-items:center;gap:8px;padding:10px 14px;border-bottom:1px solid var(--rule);flex-shrink:0}
+.ai-head-title{font-family:'IBM Plex Mono',monospace;font-size:10px;font-weight:500;text-transform:uppercase;letter-spacing:.07em;color:var(--t1);flex:1}
+.ai-status{font-family:'IBM Plex Mono',monospace;font-size:9px;color:var(--t3);display:flex;align-items:center;gap:5px}
+.ai-spinner{width:7px;height:7px;border-radius:50%;border:1.5px solid var(--t4);border-top-color:var(--g);animation:spin .7s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+.ai-prompt-row{padding:8px 12px;border-bottom:1px solid var(--rule);flex-shrink:0}
+.ai-prompt-ta{width:100%;padding:6px 8px;border:1px solid var(--rule);border-radius:2px;background:var(--surf2);color:var(--t2);font-family:'IBM Plex Mono',monospace;font-size:10px;resize:none;outline:none;line-height:1.5;transition:border-color .15s}
+.ai-prompt-ta:focus{border-color:var(--gr);color:var(--t1)}
+.ai-result{flex:1;overflow-y:auto;padding:14px 16px;font-size:12px;line-height:1.7;color:var(--t2)}
+.ai-result::-webkit-scrollbar{width:3px}
+.ai-result::-webkit-scrollbar-thumb{background:var(--surf4);border-radius:2px}
+.ai-result h1,.ai-result h2,.ai-result h3{font-family:'IBM Plex Mono',monospace;font-size:10px;text-transform:uppercase;letter-spacing:.07em;color:var(--t3);margin:14px 0 5px;padding-bottom:4px;border-bottom:1px solid var(--rule2)}
+.ai-result strong{color:var(--t1);font-weight:500}
+.ai-result code{font-family:'IBM Plex Mono',monospace;font-size:10px;background:var(--surf3);padding:1px 4px;border-radius:2px;color:var(--t1)}
+.ai-result table{width:100%;border-collapse:collapse;margin:8px 0;font-size:11px}
+.ai-result th{font-family:'IBM Plex Mono',monospace;font-size:8px;text-transform:uppercase;letter-spacing:.06em;color:var(--t3);padding:5px 8px;border-bottom:1px solid var(--rule);text-align:left}
+.ai-result td{padding:5px 8px;border-bottom:1px solid var(--rule3);vertical-align:top}
+.ai-result tr:hover td{background:var(--surf2)}
+.ai-result ul,.ai-result ol{padding-left:16px;margin:4px 0}
+.ai-result li{margin:3px 0}
+.ai-result a{color:var(--g);text-decoration:none}
+.ai-result a:hover{text-decoration:underline}
+.ai-result hr{border:none;border-top:1px solid var(--rule);margin:12px 0}
+.ai-result .cursor{display:inline-block;width:7px;height:13px;background:var(--g);vertical-align:text-bottom;animation:blink-cur .7s infinite}
+@keyframes blink-cur{0%,49%{opacity:1}50%,100%{opacity:0}}
+.ai-foot{display:flex;align-items:center;gap:6px;padding:8px 12px;border-top:1px solid var(--rule);flex-shrink:0;flex-wrap:wrap}
+.ai-save-status{font-family:'IBM Plex Mono',monospace;font-size:9px;color:var(--t3);flex:1;min-width:0}
 </style>
 </head>
 <body>
@@ -254,7 +315,36 @@ a.ml:hover{text-decoration:underline}
 <!-- CTX MENU -->
 <div id="ctxMenu" class="ctx-menu" style="display:none"></div>
 
-<!-- RESEARCH MODAL -->
+<!-- AI DRAWER — outside .app, slides from right -->
+<div id="ai-overlay">
+  <div id="ai-box">
+    <div id="ai-progress-strip"><div id="ai-progress-bar"></div></div>
+    <div class="ai-head">
+      <span style="font-size:14px;color:var(--g)">✦</span>
+      <span class="ai-head-title" id="ai-title">Claude Intelligence</span>
+      <div class="ai-status" id="ai-status"></div>
+      <button class="btn sm" onclick="closeAI()" style="margin-left:8px;flex-shrink:0">✕</button>
+    </div>
+    <div class="ai-prompt-row">
+      <textarea class="ai-prompt-ta" id="ai-prompt-ta" rows="2" placeholder="Edit prompt before running…"></textarea>
+      <div style="display:flex;gap:5px;margin-top:5px">
+        <button class="btn p sm" id="ai-run-btn" onclick="runAI()">▶ Run</button>
+        <button class="btn sm" onclick="document.getElementById('ai-prompt-ta').select()">Select all</button>
+      </div>
+    </div>
+    <div class="ai-result" id="ai-result">
+      <div style="font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--t3);text-transform:uppercase;letter-spacing:.06em">Ready — press Run to execute</div>
+    </div>
+    <div class="ai-foot">
+      <span class="ai-save-status" id="ai-save-status"></span>
+      <button class="btn sm" id="ai-save-btn" onclick="saveAIResult()" style="display:none">💾 Save to DB</button>
+      <button class="btn sm" onclick="copyAIResult()">Copy</button>
+      <button class="btn sm" onclick="openInClaude()">Open in Claude ↗</button>
+    </div>
+  </div>
+</div>
+
+
 <div id="overlay" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:1000;align-items:center;justify-content:center;backdrop-filter:blur(4px)" onclick="if(event.target===this)closeModal()">
   <div style="background:var(--surf);border:1px solid var(--rule);border-radius:4px;padding:20px;max-width:480px;width:90%;box-shadow:var(--sh)">
     <div style="font-size:15px;font-weight:500;margin-bottom:8px" id="modalTitle">Research a company</div>
@@ -262,7 +352,7 @@ a.ml:hover{text-decoration:underline}
     <textarea id="modalInput" style="width:100%;height:80px;padding:8px 10px;border:1px solid var(--rule);border-radius:2px;font-size:12px;background:var(--surf2);color:var(--t1);resize:vertical;outline:none;font-family:'IBM Plex Sans',sans-serif;line-height:1.5" placeholder="Company name…"></textarea>
     <div style="display:flex;gap:6px;justify-content:flex-end;margin-top:10px">
       <button class="btn" onclick="closeModal()">Cancel</button>
-      <button class="btn p" onclick="submitModal()">Open in Claude ↗</button>
+      <button class="btn p" onclick="submitModal()">Run in Hub ↗</button>
     </div>
   </div>
 </div>
@@ -587,41 +677,56 @@ function renderList() {
 function openCompany(c) {
   if (!c) return;
   selectedName = c.name;
+  window.currentCompany = c;
   renderList();
 
   const [bg, fg] = av(c.name);
   const domain = c.website ? domainOf(c.website) : '';
   const liSlug = c.linkedin_slug || _slug(c.name);
+  const slug   = _slug(c.name);
   const cname  = c.name.replace(/'/g,"\\'");
 
-  // contacts for this company
-  const coContacts = contacts.filter(x => (x.company_name||'').toLowerCase() === c.name.toLowerCase());
-  let ctHtml = '';
-  if (coContacts.length) {
-    ctHtml = coContacts.map(ct => `
-      <div class="contact-card">
-        <div style="display:flex;align-items:flex-start;gap:8px;margin-bottom:6px">
-          <div class="ct-av-lg">${ini(ct.full_name||'?')}</div>
-          <div>
-            <div style="font-size:12px;font-weight:500">${ct.full_name||'?'}</div>
-            <div style="font-family:'IBM Plex Mono',monospace;font-size:9px;color:var(--t3)">${ct.title||''}</div>
-          </div>
+  // contacts — match by company_name (case-insensitive) OR company_id slug
+  const coContacts = contacts.filter(x =>
+    (x.company_name||'').toLowerCase() === c.name.toLowerCase() ||
+    (x.company_id||'') === slug
+  );
+  const ctHtml = coContacts.length ? coContacts.map(ct => `
+    <div class="contact-card">
+      <div style="display:flex;align-items:flex-start;gap:8px;margin-bottom:5px">
+        <div class="ct-av-lg">${ini(ct.full_name||'?')}</div>
+        <div style="flex:1;min-width:0">
+          <div style="font-size:12px;font-weight:500">${ct.full_name||'?'}</div>
+          <div style="font-family:'IBM Plex Mono',monospace;font-size:9px;color:var(--t3)">${ct.title||''}</div>
         </div>
-        ${ct.email ? `<div style="margin-bottom:3px"><span class="code-pill">${ct.email}</span></div>` : ''}
+        ${ct.outreach_status ? `<span class="tag tpr" style="flex-shrink:0">${ct.outreach_status}</span>` : ''}
+      </div>
+      ${ct.email ? `<div style="margin-bottom:3px"><span class="code-pill">${ct.email}</span>${ct.email_confidence ? ` <span class="conf-est">${ct.email_confidence}</span>` : ''}</div>` : ''}
+      <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:4px">
         ${ct.linkedin_url ? `<a class="ml" href="${ct.linkedin_url}" target="_blank">LinkedIn ↗</a>` : ''}
-        ${ct.notes ? `<div style="font-size:11px;color:var(--t3);margin-top:4px;line-height:1.5">${ct.notes}</div>` : ''}
-      </div>`).join('');
-  } else {
-    ctHtml = `<div class="no-rel">No contacts researched yet</div>`;
-  }
+        ${ct.email ? `<a class="ml" href="https://mail.google.com/mail/u/0/#search/${encodeURIComponent(ct.email)}" target="_blank">Gmail ↗</a>` : ''}
+      </div>
+      ${ct.notes ? `<div style="font-size:11px;color:var(--t3);margin-top:4px;line-height:1.5">${ct.notes.slice(0,120)}${ct.notes.length>120?'…':''}</div>` : ''}
+    </div>`).join('')
+    : `<div class="no-rel">No contacts researched yet</div>`;
 
-  // DSP pills
+  // DSPs
   const dsps = Array.isArray(c.dsps) ? c.dsps : (c.dsps ? [c.dsps] : []);
   const dspPills = dsps.length ? dsps.map(d=>`<span class="seg-pill">${d}</span>`).join('') : '<span style="color:var(--t3);font-size:11px">—</span>';
 
-  // Tech stack pills
-  const tsPills = Array.isArray(c.tech_stack) && c.tech_stack.length
-    ? c.tech_stack.map(t=>`<span class="seg-pill">${t.tool||t}</span>`).join('') : '';
+  // Tech stack section — full table
+  const tsItems = Array.isArray(c.tech_stack) ? c.tech_stack : [];
+  const tsHtml = tsItems.length ? `
+    <div style="margin-bottom:6px">
+      ${tsItems.map(t => `
+        <div class="ts-row">
+          <span class="ts-cat">${(t.category||'tool')}</span>
+          <span class="ts-tool">${t.tool||t}</span>
+          <span class="ts-signal">${t.signal||''}</span>
+          <span class="${t.confidence==='confirmed'?'conf-ok':'conf-est'}">${t.confidence||'probable'}</span>
+        </div>`).join('')}
+    </div>
+    ${c.last_enriched_at ? `<div style="font-family:'IBM Plex Mono',monospace;font-size:9px;color:var(--t4);margin-top:4px">Scanned ${new Date(c.last_enriched_at).toLocaleDateString()}</div>` : ''}` : '';
 
   // Products section
   let productsHtml = '';
@@ -629,17 +734,26 @@ function openCompany(c) {
     const prods = c.products.products;
     productsHtml = `
     <div class="sec">
-      <div class="sec-hdr"><span>📦</span><span class="sec-hdr-label">Products</span></div>
+      <div class="sec-hdr"><span>📦</span><span class="sec-hdr-label">Products</span>
+        ${c.products.pricing_model ? `<span style="font-family:'IBM Plex Mono',monospace;font-size:9px;color:var(--t3);margin-left:auto">${c.products.pricing_model}</span>` : ''}
+      </div>
       <div class="sec-body">
-        <table class="info">
-          ${prods.map(p=>`<tr><td>${p.name||'—'}</td><td>${p.description||'—'}${p.target_user?` <span style="font-family:'IBM Plex Mono',monospace;font-size:9px;color:var(--t3)">[${p.target_user}]</span>`:''}</td></tr>`).join('')}
-        </table>
-        ${c.products.integrations_advertised?.length ? `<div style="margin-top:8px;font-family:'IBM Plex Mono',monospace;font-size:9px;text-transform:uppercase;color:var(--t3);margin-bottom:4px">Integrations</div>${c.products.integrations_advertised.map(i=>`<span class="seg-pill">${i}</span>`).join('')}` : ''}
-        ${c.products.positioning?.length ? `<div style="margin-top:8px;font-size:11px;color:var(--t2)">${c.products.positioning.join(' · ')}</div>` : ''}
+        ${prods.map(p=>`<div class="prod-row">
+          <div class="prod-name">${p.name||'—'}</div>
+          <div class="prod-desc">${p.description||''}</div>
+          <div class="prod-for">${p.target_user||''}</div>
+          ${p.features?.length ? `<div style="margin-top:4px">${p.features.map(f=>`<span class="seg-pill">${f}</span>`).join('')}</div>` : ''}
+        </div>`).join('')}
+        ${c.products.integrations_advertised?.length ? `
+          <div style="margin-top:10px;font-family:'IBM Plex Mono',monospace;font-size:9px;text-transform:uppercase;letter-spacing:.06em;color:var(--t3);margin-bottom:4px">Integrations advertised</div>
+          ${c.products.integrations_advertised.map(i=>`<span class="seg-pill">${i}</span>`).join('')}` : ''}
+        ${c.products.positioning?.length ? `
+          <div style="margin-top:8px;font-size:11px;color:var(--t2);line-height:1.6;border-left:2px solid var(--g);padding-left:8px">${c.products.positioning.join(' · ')}</div>` : ''}
       </div>
     </div>`;
   }
 
+  // Build main panel HTML
   document.getElementById('center').innerHTML = `
   <div class="co-panel">
 
@@ -655,30 +769,38 @@ function openCompany(c) {
         ${c.icp ? `<div class="icp-row"><span class="stars">${stars(c.icp)}</span><span class="icp-reason">${c.icp}/10 ICP</span></div>` : ''}
       </div>
       <div style="display:flex;flex-direction:column;gap:4px;flex-shrink:0">
-        <button class="btn p" onclick="openClaude('Research ${cname} — full contact report v3: decision makers, tech stack, case studies, activation path and ICP fit for onAudience data partnership')">Full report ↗</button>
-        <button class="btn" onclick="openClaude('Draft personalized outreach email and LinkedIn message for ${cname} — onAudience data partnership, value-led and curiosity variants')">Draft email ↗</button>
+        <button class="btn p" onclick="openClaude('Research ${cname} — full contact report v3: decision makers, tech stack, case studies, activation path and ICP fit for onAudience data partnership', window.currentCompany)">Full report ↗</button>
+        <button class="btn" onclick="openClaude('Draft personalized outreach email and LinkedIn message for ${cname} — onAudience data partnership, value-led and curiosity variants', window.currentCompany)">Draft email ↗</button>
       </div>
     </div>
 
     <div class="sec">
-      <div class="sec-hdr"><span>🏢</span><span class="sec-hdr-label">Company Overview</span>
-        ${tsPills ? `<div style="margin-left:auto">${tsPills}</div>` : ''}
-      </div>
+      <div class="sec-hdr"><span>🏢</span><span class="sec-hdr-label">Company Overview</span></div>
       <div class="sec-body">
         <table class="info">
           <tr><td>Category</td><td>${c.category||'—'}</td></tr>
           <tr><td>Region / HQ</td><td>${[c.region,c.hq_city].filter(Boolean).join(' · ')||'—'}</td></tr>
           <tr><td>Employees</td><td>${c.size||'—'}</td></tr>
-          <tr><td>DB Updated</td><td>${c.updated_at ? new Date(c.updated_at).toLocaleDateString() : '—'}</td></tr>
-          ${c.description ? `<tr><td>Description</td><td>${c.description}</td></tr>` : ''}
           ${c.founded_year ? `<tr><td>Founded</td><td>${c.founded_year}</td></tr>` : ''}
+          ${c.description ? `<tr><td>Description</td><td style="font-size:11px;line-height:1.6">${c.description}</td></tr>` : ''}
           ${c.website ? `<tr><td>Website</td><td><a class="ml" href="${c.website.startsWith('http')?c.website:'https://'+c.website}" target="_blank">${domain} ↗</a></td></tr>` : ''}
           ${c.tcf_vendor_id ? `<tr><td>GVL / TCF</td><td><span class="code-pill">${c.tcf_vendor_id}</span></td></tr>` : ''}
-          ${c.funding ? `<tr><td>Funding</td><td style="font-size:11px">${c.funding.length>120?c.funding.slice(0,120)+'…':c.funding}</td></tr>` : ''}
+          ${c.funding ? `<tr><td>Funding</td><td style="font-size:11px">${c.funding.length>140?c.funding.slice(0,140)+'…':c.funding}</td></tr>` : ''}
+          ${c.parent_company ? `<tr><td>Parent</td><td>${c.parent_company}</td></tr>` : ''}
           ${dsps.length ? `<tr><td>DSPs</td><td>${dspPills}</td></tr>` : ''}
           ${liSlug ? `<tr><td>LinkedIn</td><td><a class="ml" href="https://www.linkedin.com/company/${liSlug}" target="_blank">Company page ↗</a></td></tr>` : ''}
+          <tr><td>DB Updated</td><td>${c.updated_at ? new Date(c.updated_at).toLocaleDateString() : '—'}</td></tr>
         </table>
         ${c.note ? `<div class="note-box">📋 ${c.note}</div>` : ''}
+      </div>
+    </div>
+
+    <div class="sec">
+      <div class="sec-hdr"><span>⚙️</span><span class="sec-hdr-label">Tech Stack</span>
+        <button class="btn sm" style="margin-left:auto" onclick="openClaude('Run tech-lookup skill on ${cname} — scan website for full tech stack, products page, save to Supabase')">↺ Rescan</button>
+      </div>
+      <div class="sec-body" id="ts-body">
+        ${tsHtml || `<div class="no-rel">No tech stack scanned yet</div>`}
       </div>
     </div>
 
@@ -686,8 +808,8 @@ function openCompany(c) {
 
     <div class="sec">
       <div class="sec-hdr"><span>👤</span><span class="sec-hdr-label">Contacts</span>
-        ${coContacts.length ? `<span style="font-family:'IBM Plex Mono',monospace;font-size:9px;color:var(--t3);margin-left:4px">(${coContacts.length})</span>` : ''}
-        <button class="btn sm" style="margin-left:auto" onclick="openClaude('Find Head of Programmatic or Data Partnerships at ${cname} — LinkedIn profile, email, background, save to Supabase')">Find contacts ↗</button>
+        <span style="font-family:'IBM Plex Mono',monospace;font-size:9px;color:var(--t3);margin-left:4px" id="ct-count-badge">${coContacts.length ? '('+coContacts.length+')' : ''}</span>
+        <button class="btn sm" style="margin-left:auto" onclick="openClaude('Find Head of Programmatic or Data Partnerships at ${cname} — LinkedIn profile, email, background, save to Supabase')">Find ↗</button>
       </div>
       <div class="sec-body">${ctHtml}</div>
     </div>
@@ -707,9 +829,19 @@ function openCompany(c) {
     <div class="sec" id="sec-relations">
       <div class="sec-hdr"><span>🔗</span><span class="sec-hdr-label">Relations</span>
         <span id="rel-count-badge" style="font-family:'IBM Plex Mono',monospace;font-size:9px;color:var(--t3);margin-left:4px"></span>
-        <button class="btn sm" style="margin-left:auto" onclick="openClaude('Find and add company relations for ${cname} to the onAudience Supabase database')">Add ↗</button>
+        <button class="btn sm" style="margin-left:auto" onclick="openClaude('Find and save company relations for ${cname} to the onAudience Supabase database — data_partner, dsp_integration, marketplace_listed types')">Add ↗</button>
       </div>
       <div class="sec-body" id="rel-body">
+        <div style="font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--t3)">Loading…</div>
+      </div>
+    </div>
+
+    <div class="sec">
+      <div class="sec-hdr"><span>📰</span><span class="sec-hdr-label">News &amp; Press</span>
+        <span id="press-count-badge" style="font-family:'IBM Plex Mono',monospace;font-size:9px;color:var(--t3);margin-left:4px"></span>
+        <button class="btn sm" style="margin-left:auto" onclick="openClaude('Run press-lookup skill for ${cname} — find articles, partnerships, interviews, hiring signals; save to Supabase intelligence table')">Find ↗</button>
+      </div>
+      <div class="sec-body" id="press-body">
         <div style="font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--t3)">Loading…</div>
       </div>
     </div>
@@ -721,16 +853,21 @@ function openCompany(c) {
           <tr><td>People search</td><td><a class="ml" href="https://www.linkedin.com/search/results/people/?keywords=${encodeURIComponent(c.name+' Head Programmatic Data Partnerships')}" target="_blank">Search LinkedIn ↗</a></td></tr>
           ${liSlug ? `<tr><td>Company LI</td><td><a class="ml" href="https://www.linkedin.com/company/${liSlug}" target="_blank">linkedin.com/company/${liSlug} ↗</a></td></tr>` : ''}
           ${c.website ? `<tr><td>Website</td><td><a class="ml" href="${c.website.startsWith('http')?c.website:'https://'+c.website}" target="_blank">${domain} ↗</a></td></tr>` : ''}
-          ${c.crunchbase_url ? `<tr><td>Crunchbase</td><td><a class="ml" href="${c.crunchbase_url}" target="_blank">Crunchbase ↗</a></td></tr>` : `<tr><td>Crunchbase</td><td><a class="ml" href="https://www.crunchbase.com/organization/${liSlug||_slug(c.name)}" target="_blank">Crunchbase ↗</a></td></tr>`}
-          <tr><td>Gmail search</td><td><a class="ml" href="https://mail.google.com/mail/u/0/#search/${encodeURIComponent(domain||c.name)}" target="_blank">Search Gmail ↗</a></td></tr>
+          <tr><td>Crunchbase</td><td><a class="ml" href="${c.crunchbase_url||'https://www.crunchbase.com/organization/'+(liSlug||slug)}" target="_blank">Crunchbase ↗</a></td></tr>
+          <tr><td>Gmail</td><td><a class="ml" href="https://mail.google.com/mail/u/0/#search/${encodeURIComponent(domain||c.name)}" target="_blank">Search Gmail ↗</a></td></tr>
         </table>
       </div>
     </div>
 
   </div>`;
 
-  if (c.name) setTimeout(() => loadRelations(_slug(c.name)), 80);
+  if (c.name) {
+    setTimeout(() => loadRelations(slug), 80);
+    setTimeout(() => loadIntelligence(slug), 120);
+  }
 }
+
+
 
 /* ─────────────────────────────────────────
    RELATIONS
@@ -830,7 +967,7 @@ function showCtx(e, enc, type) {
     + actions.map((a,i) => `<div class="ctx-item" data-i="${i}"><span class="ctx-ico">${a.icon}</span>${a.text}</div>`).join('');
 
   menu.querySelectorAll('.ctx-item').forEach((el, i) => {
-    el.addEventListener('click', () => { menu.style.display='none'; openClaude(actions[i].prompt); });
+    el.addEventListener('click', () => { menu.style.display='none'; openClaude(actions[i].prompt, window.currentCompany); });
   });
 
   const x = Math.min(e.clientX, window.innerWidth - 230);
@@ -858,7 +995,7 @@ function submitModal() {
   const val = document.getElementById('modalInput').value.trim();
   if (!val) return;
   closeModal();
-  openClaude(_modalTemplate.replace('[COMPANY]', val));
+  openClaude(_modalTemplate.replace('[COMPANY]', val), null);
 }
 document.addEventListener('DOMContentLoaded', () => {
   const mi = document.getElementById('modalInput');
@@ -866,10 +1003,278 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
 /* ─────────────────────────────────────────
-   UTILS
+   AI POPUP ENGINE
 ───────────────────────────────────────── */
-function openClaude(prompt) {
+let _aiRawText = '';
+let _aiCurrentPrompt = '';
+let _aiCompany = null;
+let _aiAbort = null;
+
+function openClaude(prompt, company) {
+  _aiCurrentPrompt = prompt;
+  _aiCompany = company || window.currentCompany || null;
+  _aiRawText = '';
+
+  // Derive title from prompt
+  const title = prompt.length > 60 ? prompt.slice(0, 60) + '…' : prompt;
+  document.getElementById('ai-title').textContent = title;
+  document.getElementById('ai-prompt-ta').value = prompt;
+  document.getElementById('ai-result').innerHTML = '<div style="font-family:\'IBM Plex Mono\',monospace;font-size:10px;color:var(--t3);text-transform:uppercase;letter-spacing:.06em">Ready — press Run to execute</div>';
+  document.getElementById('ai-status').innerHTML = '';
+  document.getElementById('ai-save-btn').style.display = 'none';
+  document.getElementById('ai-save-status').textContent = '';
+  setProgressBar('');
+  document.getElementById('ai-overlay').classList.add('vis');
+  document.body.classList.add('ai-open');
+
+  // Auto-run
+  runAI();
+}
+
+function closeAI() {
+  if (_aiAbort) { _aiAbort.abort(); _aiAbort = null; }
+  document.getElementById('ai-overlay').classList.remove('vis');
+  document.body.classList.remove('ai-open');
+}
+
+function openInClaude() {
+  const prompt = document.getElementById('ai-prompt-ta').value.trim() || _aiCurrentPrompt;
   window.open('https://claude.ai/new?q=' + encodeURIComponent(prompt), '_blank');
+}
+
+function copyAIResult() {
+  const txt = _aiRawText || document.getElementById('ai-result').innerText;
+  navigator.clipboard.writeText(txt).then(() => {
+    const btn = event.target;
+    btn.textContent = '✓ Copied'; setTimeout(() => btn.textContent = 'Copy', 1500);
+  });
+}
+
+async function runAI() {
+  const prompt = document.getElementById('ai-prompt-ta').value.trim();
+  if (!prompt) return;
+  _aiCurrentPrompt = prompt;
+  _aiRawText = '';
+
+  if (_aiAbort) _aiAbort.abort();
+  _aiAbort = new AbortController();
+
+  const runBtn = document.getElementById('ai-run-btn');
+  runBtn.disabled = true; runBtn.textContent = '⏳ Running';
+  document.getElementById('ai-save-btn').style.display = 'none';
+  document.getElementById('ai-save-status').textContent = '';
+
+  const resultEl = document.getElementById('ai-result');
+  resultEl.innerHTML = '<span class="cursor"></span>';
+
+  setAIStatus('running');
+
+  // Build system context
+  const company = _aiCompany;
+  const systemCtx = `You are an expert sales intelligence assistant for onAudience — a European DMP and audience data company.
+${company ? `Current company context: ${company.name} (${company.category||'AdTech'}, ${company.region||'?'}, ICP ${company.icp||'?'}/10).
+Description: ${company.description||'N/A'}
+Note: ${company.note||'N/A'}
+Outreach angle: ${company.outreach_angle||'N/A'}` : ''}
+
+Output well-structured markdown. For contact reports, include all sections from the v3 template.
+When you identify contacts, companies, or relations to save, end your response with a JSON block wrapped in \`\`\`save-data ... \`\`\` containing:
+{
+  "company": { id, name, type, category, region, hq_city, size, icp, website, linkedin_slug, description, founded_year, outreach_angle, tcf_vendor_id, dsps },
+  "contacts": [{ id, full_name, title, company_name, company_id, email, linkedin_url, notes }],
+  "relations": [{ from_company, to_company, relation_type, direction, strength, source, notes }]
+}
+Only include fields you are confident about. Omit sections if no data found.`;
+
+  try {
+    const resp = await fetch('https://api.anthropic.com/v1/messages', {
+      method: 'POST',
+      signal: _aiAbort.signal,
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        model: 'claude-sonnet-4-20250514',
+        max_tokens: 4096,
+        stream: true,
+        system: systemCtx,
+        messages: [{ role: 'user', content: prompt }]
+      })
+    });
+
+    if (!resp.ok) throw new Error(`API ${resp.status}`);
+
+    const reader = resp.body.getReader();
+    const dec = new TextDecoder();
+    let buffer = '';
+
+    while (true) {
+      const { done, value } = await reader.read();
+      if (done) break;
+      buffer += dec.decode(value, { stream: true });
+      const lines = buffer.split('\n');
+      buffer = lines.pop();
+      for (const line of lines) {
+        if (!line.startsWith('data: ')) continue;
+        const data = line.slice(6).trim();
+        if (data === '[DONE]') continue;
+        try {
+          const ev = JSON.parse(data);
+          if (ev.type === 'content_block_delta' && ev.delta?.text) {
+            _aiRawText += ev.delta.text;
+            renderAIResult(_aiRawText, true);
+          }
+        } catch {}
+      }
+    }
+
+    renderAIResult(_aiRawText, false);
+    setAIStatus('done');
+
+    // Check for save-data block
+    if (_aiRawText.includes('```save-data')) {
+      document.getElementById('ai-save-btn').style.display = 'inline-flex';
+      document.getElementById('ai-save-status').textContent = '✦ Structured data detected — ready to save';
+    }
+
+  } catch (err) {
+    if (err.name === 'AbortError') { setAIStatus(''); return; }
+    resultEl.innerHTML = `<div style="color:var(--prc);font-family:'IBM Plex Mono',monospace;font-size:10px">Error: ${err.message}</div>`;
+    setAIStatus('error');
+  } finally {
+    runBtn.disabled = false; runBtn.textContent = '▶ Run';
+    _aiAbort = null;
+  }
+}
+
+function setProgressBar(state) {
+  const bar = document.getElementById('ai-progress-bar');
+  if (!bar) return;
+  bar.className = '';
+  if (state === 'running') bar.classList.add('running');
+  else if (state === 'done')  bar.classList.add('done');
+  else if (state === 'error') bar.classList.add('error');
+  else if (state === 'saving') bar.classList.add('running');
+}
+
+function setAIStatus(state) {
+  const el = document.getElementById('ai-status');
+  setProgressBar(state);
+  if (state === 'running') el.innerHTML = '<div class="ai-spinner"></div><span>Running…</span>';
+  else if (state === 'done')  el.innerHTML = '<span style="color:var(--cc)">✓ Done</span>';
+  else if (state === 'error') el.innerHTML = '<span style="color:var(--prc)">✗ Error</span>';
+  else if (state === 'saving') el.innerHTML = '<div class="ai-spinner"></div><span>Saving…</span>';
+  else el.innerHTML = '';
+}
+
+function renderAIResult(md, streaming) {
+  const el = document.getElementById('ai-result');
+  // Simple markdown → HTML (no external deps)
+  let html = md
+    .replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')
+    // code blocks (hide save-data blocks)
+    .replace(/```save-data[\s\S]*?```/g, '<div style="font-family:\'IBM Plex Mono\',monospace;font-size:9px;color:var(--t3);padding:4px 6px;background:var(--surf2);border-radius:2px;border:1px solid var(--rule);margin-top:6px">📦 Structured save data detected (click Save to DB)</div>')
+    .replace(/```(\w*)\n?([\s\S]*?)```/g, (_,lang,code) => `<pre style="background:var(--surf2);border:1px solid var(--rule);border-radius:2px;padding:8px;overflow-x:auto;font-family:'IBM Plex Mono',monospace;font-size:10px;margin:6px 0">${code.trim()}</pre>`)
+    // headings
+    .replace(/^#### (.+)$/gm, '<h3>$1</h3>')
+    .replace(/^### (.+)$/gm, '<h3>$1</h3>')
+    .replace(/^## (.+)$/gm, '<h2>$1</h2>')
+    .replace(/^# (.+)$/gm, '<h1>$1</h1>')
+    // bold/italic
+    .replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>')
+    .replace(/\*(.+?)\*/g, '<em>$1</em>')
+    // inline code
+    .replace(/`([^`]+)`/g, '<code>$1</code>')
+    // hr
+    .replace(/^---+$/gm, '<hr>')
+    // table rows (basic)
+    .replace(/^\|(.+)\|$/gm, row => {
+      const cells = row.split('|').slice(1,-1).map(c => c.trim());
+      if (cells.every(c => /^[-:]+$/.test(c))) return '';
+      const tag = cells[0] && cells[0].startsWith('<strong>') ? 'th' : 'td';
+      return '<tr>' + cells.map(c => `<${tag}>${c}</${tag}>`).join('') + '</tr>';
+    })
+    .replace(/((<tr>.*<\/tr>\n?)+)/gs, m => `<table>${m}</table>`)
+    // lists
+    .replace(/^[-*] (.+)$/gm, '<li>$1</li>')
+    .replace(/^(\d+)\. (.+)$/gm, '<li>$2</li>')
+    .replace(/(<li>.*<\/li>\n?)+/gs, m => `<ul>${m}</ul>`)
+    // links
+    .replace(/\[([^\]]+)\]\(([^)]+)\)/g, '<a href="$2" target="_blank">$1</a>')
+    // paragraphs
+    .replace(/\n\n+/g, '</p><p>')
+    .replace(/^(?!<[htupola])/gm, '');
+
+  html = '<p>' + html + '</p>';
+  if (streaming) html += '<span class="cursor"></span>';
+  el.innerHTML = html;
+  if (streaming) el.scrollTop = el.scrollHeight;
+}
+
+async function saveAIResult() {
+  const saveBtn = document.getElementById('ai-save-btn');
+  const statusEl = document.getElementById('ai-save-status');
+
+  // Extract save-data JSON block
+  const match = _aiRawText.match(/```save-data\s*([\s\S]*?)```/);
+  if (!match) { statusEl.textContent = '✗ No structured data found'; return; }
+
+  let data;
+  try { data = JSON.parse(match[1].trim()); }
+  catch(e) { statusEl.textContent = '✗ JSON parse error: ' + e.message; return; }
+
+  saveBtn.disabled = true;
+  setAIStatus('saving');
+  statusEl.textContent = 'Saving…';
+
+  const results = [];
+  const headers = { 'Content-Type': 'application/json', apikey: SB_KEY, Authorization: `Bearer ${SB_KEY}`, Prefer: 'resolution=merge-duplicates,return=minimal' };
+
+  // Save company
+  if (data.company?.id) {
+    const co = { ...data.company };
+    // Ensure arrays for jsonb fields
+    if (co.dsps && !Array.isArray(co.dsps)) co.dsps = [co.dsps];
+    try {
+      const r = await fetch(`${SB_URL}/rest/v1/companies`, {
+        method: 'POST', headers,
+        body: JSON.stringify(co)
+      });
+      results.push(`Company ${co.name}: ${r.ok ? '✅' : '❌ '+r.status}`);
+    } catch(e) { results.push(`Company error: ${e.message}`); }
+  }
+
+  // Save contacts
+  for (const ct of (data.contacts || [])) {
+    if (!ct.id) continue;
+    try {
+      const r = await fetch(`${SB_URL}/rest/v1/contacts`, {
+        method: 'POST', headers,
+        body: JSON.stringify({ ...ct, updated_at: new Date().toISOString() })
+      });
+      results.push(`Contact ${ct.full_name}: ${r.ok ? '✅' : '❌ '+r.status}`);
+    } catch(e) { results.push(`Contact error: ${e.message}`); }
+  }
+
+  // Save relations
+  for (const rel of (data.relations || [])) {
+    if (!rel.from_company || !rel.to_company) continue;
+    try {
+      const r = await fetch(`${SB_URL}/rest/v1/company_relations`, {
+        method: 'POST',
+        headers: { ...headers, Prefer: 'resolution=ignore-duplicates,return=minimal' },
+        body: JSON.stringify(rel)
+      });
+      results.push(`Relation ${rel.from_company}→${rel.to_company}: ${r.ok ? '✅' : '❌ '+r.status}`);
+    } catch(e) { results.push(`Relation error: ${e.message}`); }
+  }
+
+  setAIStatus('done');
+  saveBtn.disabled = false;
+  statusEl.textContent = results.join(' · ') || 'Nothing to save';
+
+  // Reload company data if we saved the current company
+  if (data.company?.id && _aiCompany) {
+    setTimeout(() => loadFromSupabase(), 500);
+  }
 }
 function doResearch() {
   const q = document.getElementById('searchQ').value.trim();
