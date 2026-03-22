@@ -810,14 +810,14 @@ function openCompany(c) {
 
     <div class="sec">
       <div class="sec-hdr"><span>⚙️</span><span class="sec-hdr-label">Tech Stack</span>
-        <button class="btn sm" style="margin-left:auto" onclick="openClaude('Run tech-lookup skill on ${cname} — scan website for full tech stack, products page, save to Supabase')">↺ Rescan</button>
+        <button class="btn sm" style="margin-left:auto" onclick="loadTechStack('${slug}', true)">↺ Rescan</button>
       </div>
       <div class="sec-body" id="ts-body">
         ${tsHtml || `<div class="no-rel">No tech stack scanned yet</div>`}
       </div>
     </div>
 
-    ${productsHtml}
+    <div id="products-section">${productsHtml}</div>
 
     <div class="sec">
       <div class="sec-hdr"><span>👤</span><span class="sec-hdr-label">Contacts</span>
@@ -893,6 +893,7 @@ function openCompany(c) {
   if (c.name) {
     setTimeout(() => loadRelations(slug), 80);
     setTimeout(() => loadIntelligence(slug), 120);
+    setTimeout(() => loadTechStack(slug), 160);  // always refresh tech stack from DB
 
   }
 }
@@ -1006,6 +1007,87 @@ async function loadIntelligence(slug) {
     if (badge) badge.textContent = `(${links.length})`;
   } catch(e) {
     body.innerHTML = `<div style="font-size:11px;color:var(--t3)">Could not load press data</div>`;
+  }
+}
+
+/* ─────────────────────────────────────────
+   TECH STACK LIVE RELOAD
+───────────────────────────────────────── */
+async function loadTechStack(slug, openRescan) {
+  const tsBody = document.getElementById('ts-body');
+  const prodSection = document.getElementById('products-section');
+  if (!tsBody) return;
+
+  try {
+    const r = await fetch(
+      `${SB_URL}/rest/v1/companies?id=eq.${slug}&select=tech_stack,products,last_enriched_at`,
+      { headers: { apikey: SB_KEY, Authorization: `Bearer ${SB_KEY}` } }
+    );
+    const rows = await r.json();
+    if (!rows?.length) return;
+
+    const co = rows[0];
+
+    // Render tech stack
+    const tsItems = Array.isArray(co.tech_stack) && co.tech_stack.length ? co.tech_stack : [];
+    if (tsItems.length) {
+      tsBody.innerHTML = `
+        <div style="margin-bottom:6px">
+          ${tsItems.map(t => `
+            <div class="ts-row">
+              <span class="ts-cat">${t.category||'tool'}</span>
+              <span class="ts-tool">${t.tool||t}</span>
+              <span class="ts-signal">${t.signal||''}</span>
+              <span class="${t.confidence==='confirmed'?'conf-ok':'conf-est'}">${t.confidence||'probable'}</span>
+            </div>`).join('')}
+        </div>
+        ${co.last_enriched_at ? `<div style="font-family:'IBM Plex Mono',monospace;font-size:9px;color:var(--t4);margin-top:4px">Scanned ${new Date(co.last_enriched_at).toLocaleDateString()}</div>` : ''}`;
+
+      // Update the in-memory company object so re-opens don't need another fetch
+      const c = companies.find(x => (x.id||_slug(x.name)) === slug);
+      if (c) { c.tech_stack = co.tech_stack; c.last_enriched_at = co.last_enriched_at; }
+    } else if (openRescan) {
+      // Triggered by Rescan button — open Claude to run the skill
+      const c = companies.find(x => (x.id||_slug(x.name)) === slug);
+      const name = c?.name || slug;
+      openClaude(`Run tech-lookup skill on ${name} — scan website for full tech stack and products page, save results to Supabase`);
+      return;
+    }
+
+    // Render products if present
+    if (prodSection && co.products?.products?.length) {
+      const prods = co.products.products;
+      prodSection.innerHTML = `
+      <div class="sec">
+        <div class="sec-hdr"><span>📦</span><span class="sec-hdr-label">Products</span>
+          ${co.products.pricing_model ? `<span style="font-family:'IBM Plex Mono',monospace;font-size:9px;color:var(--t3);margin-left:auto">${co.products.pricing_model}</span>` : ''}
+        </div>
+        <div class="sec-body">
+          ${prods.map(p=>`<div class="prod-row">
+            <div class="prod-name">${p.name||'—'}</div>
+            <div class="prod-desc">${p.description||''}</div>
+            <div class="prod-for">${p.target_user||''}</div>
+            ${p.features?.length ? `<div style="margin-top:4px">${p.features.map(f=>`<span class="seg-pill">${f}</span>`).join('')}</div>` : ''}
+          </div>`).join('')}
+          ${co.products.integrations_advertised?.length ? `
+            <div style="margin-top:10px;font-family:'IBM Plex Mono',monospace;font-size:9px;text-transform:uppercase;letter-spacing:.06em;color:var(--t3);margin-bottom:4px">Integrations advertised</div>
+            ${co.products.integrations_advertised.map(i=>`<span class="seg-pill">${i}</span>`).join('')}` : ''}
+          ${co.products.positioning?.length ? `
+            <div style="margin-top:8px;font-size:11px;color:var(--t2);line-height:1.6;border-left:2px solid var(--g);padding-left:8px">${co.products.positioning.join(' · ')}</div>` : ''}
+        </div>
+      </div>`;
+
+      // Update in-memory
+      const c = companies.find(x => (x.id||_slug(x.name)) === slug);
+      if (c) c.products = co.products;
+    } else if (prodSection && !co.products?.products?.length) {
+      prodSection.innerHTML = '';
+    }
+
+  } catch(e) {
+    if (tsBody && !tsBody.textContent.trim()) {
+      tsBody.innerHTML = '<div class="no-rel">No tech stack scanned yet</div>';
+    }
   }
 }
 
@@ -1528,11 +1610,16 @@ async function saveAIResult() {
   // Reload data and re-open detail panel so enriched fields show immediately
   if (data.company?.id && _aiCompany) {
     const savedName = _aiCompany.name;
-    loadFromSupabase().then(() => {
-      // Re-open the company by name to show freshly fetched data
-      const fresh = companies.find(c => c.name === savedName);
-      if (fresh) setTimeout(() => openCompany(fresh), 100);
-    });
+    const savedSlug = _aiCompany.id || _slug(_aiCompany.name);
+    // If tech_stack or products were in the save block, reload immediately without full page refresh
+    if (data.company.tech_stack || data.company.products) {
+      setTimeout(() => loadTechStack(savedSlug), 300);
+    } else {
+      loadFromSupabase().then(() => {
+        const fresh = companies.find(c => c.name === savedName);
+        if (fresh) setTimeout(() => openCompany(fresh), 100);
+      });
+    }
   }
 }
 
