@@ -1371,6 +1371,7 @@ When you identify contacts, companies, relations, or press/news links to save, e
 }
 For tech_stack: only include if you have real signals (page source, network requests, visible tools). Categories: crm, analytics, cmp, tag_management, cdp, dsp, ssp, dmp, identity, cdn, video, marketing_automation, other.
 For press_links: "about" should be one of: company, person, partnership, product, award. "date" format: "YYYY-MM". "source" is the publication name.
+CRITICAL URL RULE: Only include URLs you have DIRECTLY SEEN in search results or web pages during this session. NEVER generate or guess URLs — even plausible-looking paths are forbidden if not seen in a tool result. Zero hallucinated URLs is better than 10 broken ones.
 Only include fields you are confident about. Omit sections if no data found.`;
 
   try {
@@ -2226,14 +2227,9 @@ window.doMerge = async function(dupSlug, canonSlug, canonName) {
   if (!_oc) return;
   window.openCompany = function(c) {
     window.currentCompany = c;
-    if (c && c.id && window._slug) {
-      var _os = window._slug;
-      window._slug = function(n){ return n===c.name ? c.id : _os(n); };
-      _oc(c);
-      window._slug = _os;
-    } else { _oc(c); }
+    _oc(c);
     if (c) setTimeout(function(){
-      var slug = (window.resolveSlug && window.resolveSlug(c)) || c.id || (window._slug && window._slug(c.name));
+      var slug = window.resolveSlug ? window.resolveSlug(c) : (c.id || (window._slug && window._slug(c.name)));
       if (slug && window.loadTechStack) window.loadTechStack(slug, false);
     }, 200);
   };
