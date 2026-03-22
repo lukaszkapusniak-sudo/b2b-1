@@ -855,7 +855,10 @@ function openCompany(c) {
     <div class="sec">
       <div class="sec-hdr"><span>📰</span><span class="sec-hdr-label">News &amp; Press</span>
         <span id="press-count-badge" style="font-family:'IBM Plex Mono',monospace;font-size:9px;color:var(--t3);margin-left:4px"></span>
-        <button class="btn sm" style="margin-left:auto" onclick="openClaude('Run press-lookup skill for ${cname} — find articles, partnerships, interviews, hiring signals; save to Supabase intelligence table')">Find ↗</button>
+        <div style="margin-left:auto;display:flex;gap:4px">
+          <button class="btn sm" onclick="loadIntelligence('${slug}')" title="Reload from DB">⟳ Refresh</button>
+          <button class="btn sm" onclick="openClaude('Run press-lookup skill for ${cname} — find articles, partnerships, interviews, hiring signals; save to Supabase intelligence table')" title="Find press with AI">Find ↗</button>
+        </div>
       </div>
       <div class="sec-body" id="press-body">
         <div style="font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--t3)">Loading…</div>
@@ -1734,9 +1737,9 @@ updateStats();
 renderList();
 loadFromSupabase();
 </script>
-<!-- HUB PATCH v8 -->
+<!-- HUB PATCH v9 -->
 <script>
-// HUB PATCH v8
+// HUB PATCH v9
 
 window.loadFromSupabase = async function() {
   document.getElementById('statusLabel').textContent = 'Connecting…';
