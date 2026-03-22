@@ -1335,11 +1335,15 @@ Outreach angle: ${company.outreach_angle||'N/A'}` : ''}
 Output well-structured markdown. For contact reports, include all sections from the v3 template.
 When you identify contacts, companies, relations, or press/news links to save, end your response with a JSON block wrapped in \`\`\`save-data ... \`\`\` containing:
 {
-  "company": { id, name, type, category, region, hq_city, size, icp, website, linkedin_slug, description, founded_year, outreach_angle, tcf_vendor_id, dsps },
+  "company": { id, name, type, category, region, hq_city, size, icp, website, linkedin_slug, description, founded_year, outreach_angle, tcf_vendor_id, dsps,
+    "tech_stack": [{ "tool": "HubSpot", "category": "crm", "signal": "how detected", "confidence": "confirmed|probable" }],
+    "products": { "products": [{ "name": "", "description": "", "target_user": "", "features": [], "pricing_tier": "" }], "integrations_advertised": [], "positioning": [], "pricing_model": "", "scanned_at": "YYYY-MM-DD" }
+  },
   "contacts": [{ id, full_name, title, company_name, company_id, email, linkedin_url, notes }],
   "relations": [{ from_company, to_company, relation_type, direction, strength, source, notes }],
   "press_links": [{ url, title, date, source, about }]
 }
+For tech_stack: only include if you have real signals (page source, network requests, visible tools). Categories: crm, analytics, cmp, tag_management, cdp, dsp, ssp, dmp, identity, cdn, video, marketing_automation, other.
 For press_links: "about" should be one of: company, person, partnership, product, award. "date" format: "YYYY-MM". "source" is the publication name.
 Only include fields you are confident about. Omit sections if no data found.`;
 
