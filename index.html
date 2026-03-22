@@ -330,8 +330,8 @@ body.ai-open .body .center{transition:none}
     <!-- Body: left form + right output -->
     <div style="display:flex;flex:1;overflow:hidden;min-height:0">
 
-      <!-- LEFT: persona + context -->
-      <div id="ms-left" style="width:300px;flex-shrink:0;border-right:1px solid var(--rule);overflow-y:auto;padding:12px;display:flex;flex-direction:column;gap:10px">
+      <!-- LEFT: persona + context tags -->
+      <div id="ms-left" style="width:280px;flex-shrink:0;border-right:1px solid var(--rule);overflow-y:auto;padding:12px;display:flex;flex-direction:column;gap:10px">
 
         <!-- Persona grid -->
         <div>
@@ -339,25 +339,21 @@ body.ai-open .body .center{transition:none}
           <div id="ms-persona-grid" style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:3px"></div>
         </div>
 
-        <!-- Contact fields -->
-        <div style="display:flex;flex-direction:column;gap:5px">
-          <div style="font-family:'IBM Plex Mono',monospace;font-size:9px;text-transform:uppercase;letter-spacing:.07em;color:var(--t3);margin-bottom:2px">Contact</div>
-          <input id="ms-contact" placeholder="Contact name" style="height:26px;padding:0 8px;border:1px solid var(--rule);border-radius:2px;font-size:12px;background:var(--surf2);color:var(--t1);outline:none;font-family:'IBM Plex Sans',sans-serif"/>
-          <input id="ms-title" placeholder="Title / Role" style="height:26px;padding:0 8px;border:1px solid var(--rule);border-radius:2px;font-size:12px;background:var(--surf2);color:var(--t1);outline:none;font-family:'IBM Plex Sans',sans-serif"/>
-          <input id="ms-email" placeholder="Email (optional)" style="height:26px;padding:0 8px;border:1px solid var(--rule);border-radius:2px;font-size:12px;background:var(--surf2);color:var(--t1);outline:none;font-family:'IBM Plex Mono',monospace"/>
-          <input id="ms-company" placeholder="Company" style="height:26px;padding:0 8px;border:1px solid var(--rule);border-radius:2px;font-size:12px;background:var(--surf2);color:var(--t1);outline:none;font-family:'IBM Plex Sans',sans-serif"/>
-          <input id="ms-dsps" placeholder="DSPs / Platforms (e.g. TTD, DV360)" style="height:26px;padding:0 8px;border:1px solid var(--rule);border-radius:2px;font-size:12px;background:var(--surf2);color:var(--t1);outline:none;font-family:'IBM Plex Sans',sans-serif"/>
+        <!-- Contact display (read-only) -->
+        <div id="ms-contact-display" style="display:none;background:var(--surf2);border:1px solid var(--rule);border-radius:2px;padding:7px 9px">
+          <div id="ms-contact-name" style="font-size:12px;font-weight:500;color:var(--t1)"></div>
+          <div id="ms-contact-role" style="font-family:'IBM Plex Mono',monospace;font-size:9px;color:var(--t3);margin-top:1px"></div>
         </div>
 
-        <!-- Context -->
-        <div style="display:flex;flex-direction:column;gap:5px">
-          <div style="font-family:'IBM Plex Mono',monospace;font-size:9px;text-transform:uppercase;letter-spacing:.07em;color:var(--t3);margin-bottom:2px">Context</div>
-          <textarea id="ms-desc" placeholder="About them — what they do, recent news, tech stack…" style="height:72px;padding:6px 8px;border:1px solid var(--rule);border-radius:2px;font-size:11px;background:var(--surf2);color:var(--t1);outline:none;resize:vertical;font-family:'IBM Plex Sans',sans-serif;line-height:1.5"></textarea>
-          <textarea id="ms-angle" placeholder="Outreach angle — our hook for this specific company" style="height:58px;padding:6px 8px;border:1px solid var(--rule);border-radius:2px;font-size:11px;background:var(--surf2);color:var(--t1);outline:none;resize:vertical;font-family:'IBM Plex Sans',sans-serif;line-height:1.5"></textarea>
+        <!-- Context tags -->
+        <div>
+          <div style="font-family:'IBM Plex Mono',monospace;font-size:9px;text-transform:uppercase;letter-spacing:.07em;color:var(--t3);margin-bottom:6px">Context <span style="color:var(--t4);font-size:8px;text-transform:none;letter-spacing:0">— click to toggle</span></div>
+          <div id="ms-tags" style="display:flex;flex-wrap:wrap;gap:4px"></div>
+          <div id="ms-no-tags" style="display:none;font-family:'IBM Plex Mono',monospace;font-size:9px;color:var(--t4)">No context tags — open a company first</div>
         </div>
 
         <!-- Generate button -->
-        <button id="ms-generate-btn" class="btn p" style="width:100%;height:32px;font-size:10px" onclick="generateMeeseeks()">✉ Say What?</button>
+        <button id="ms-generate-btn" class="btn p" style="width:100%;height:32px;font-size:10px;margin-top:auto" onclick="generateMeeseeks()">✉ Say What?</button>
       </div>
 
       <!-- RIGHT: output -->
@@ -406,6 +402,12 @@ body.ai-open .body .center{transition:none}
 </div>
 <style>
 @keyframes pulse{0%,100%{opacity:.5}50%{opacity:1}}
+.ms-tag{font-family:'IBM Plex Mono',monospace;font-size:9px;padding:3px 7px;border:1px solid var(--rule);border-radius:2px;cursor:pointer;transition:all .12s;color:var(--t3);background:var(--surf2);user-select:none;line-height:1.4}
+.ms-tag:hover{color:var(--t1);background:var(--surf3)}
+.ms-tag.on{color:var(--g);background:var(--gb);border-color:var(--gr);font-weight:500}
+.ms-tag.cat-dsp.on{color:var(--pc);background:var(--pb);border-color:var(--pr)}
+.ms-tag.cat-rel.on{color:var(--poc);background:var(--pob);border-color:var(--por)}
+.ms-tag.cat-press.on{color:var(--prc);background:var(--prb);border-color:var(--prr)}
 #ms-persona-grid .ms-card{padding:5px 4px;border:1px solid var(--rule);border-radius:2px;cursor:pointer;transition:all .12s;text-align:center;background:var(--surf2)}
 #ms-persona-grid .ms-card:hover{background:var(--surf3)}
 #ms-persona-grid .ms-card.active{border-color:var(--g);background:var(--gb)}
@@ -416,8 +418,228 @@ body.ai-open .body .center{transition:none}
 </style>
 <script>
 /* ══════════════════════════════════════════
-   MEESEEKS COMPOSER
+   MEESEEKS — TAG STATE
 ══════════════════════════════════════════ */
+MS.tags = [];       // { id, label, value, cat, on }
+MS.contact = {};    // { name, title, email, company }
+
+function msBuildTags(ctx) {
+  const tags = [];
+  const c = window.currentCompany || {};
+
+  // Company name — always on
+  const company = ctx.company || c.name || '';
+  if (company) tags.push({ id:'company', label: company, value: company, cat:'company', on: true });
+
+  // Contact name + role (from ctx, read-only display — not a tag)
+  MS.contact = {
+    name:    ctx.contactName || '',
+    title:   ctx.title       || '',
+    email:   ctx.email       || '',
+    company: company
+  };
+
+  // DSPs
+  const dsps = Array.isArray(c.dsps) ? c.dsps : (ctx.dsps || []);
+  dsps.forEach(d => tags.push({ id:'dsp-'+d, label: d, value: 'DSP: '+d, cat:'dsp', on: true }));
+
+  // Tech stack tools (top 5)
+  const ts = Array.isArray(c.tech_stack) ? c.tech_stack.slice(0,5) : [];
+  ts.forEach(t => {
+    const tool = t.tool || t;
+    tags.push({ id:'ts-'+tool, label: tool, value: 'Uses: '+tool, cat:'tech', on: false });
+  });
+
+  // Outreach angle — split into sentences as individual tags
+  const angle = c.outreach_angle || ctx.angle || '';
+  if (angle) tags.push({ id:'angle', label: '💡 hook', value: angle, cat:'angle', on: true });
+
+  // Description — short summary tag
+  const desc = c.description || ctx.description || '';
+  if (desc) tags.push({ id:'desc', label: '🏢 about', value: desc, cat:'desc', on: true });
+
+  // Category
+  if (c.category) tags.push({ id:'cat', label: c.category, value: 'Category: '+c.category, cat:'desc', on: false });
+
+  // Region / HQ
+  const region = [c.hq_city, c.region].filter(Boolean).join(', ');
+  if (region) tags.push({ id:'region', label: '📍 '+region, value: 'HQ: '+region, cat:'desc', on: false });
+
+  // Relations (loaded async — added when available)
+  MS._pendingRelTags = true;
+
+  MS.tags = tags;
+}
+
+function msRenderTags() {
+  const container = document.getElementById('ms-tags');
+  const noTags    = document.getElementById('ms-no-tags');
+  if (!container) return;
+  if (!MS.tags.length) {
+    container.innerHTML = '';
+    if (noTags) noTags.style.display = 'block';
+    return;
+  }
+  if (noTags) noTags.style.display = 'none';
+  container.innerHTML = MS.tags.map((t,i) =>
+    `<span class="ms-tag cat-${t.cat}${t.on?' on':''}" data-i="${i}" onclick="msToggleTag(${i})">${t.label}</span>`
+  ).join('');
+}
+
+function msToggleTag(i) {
+  MS.tags[i].on = !MS.tags[i].on;
+  msRenderTags();
+}
+
+async function msMaybeAddRelTags() {
+  if (!MS._pendingRelTags) return;
+  const c = window.currentCompany;
+  if (!c) return;
+  const slug = window.resolveSlug ? window.resolveSlug(c) : (c.id || c.name);
+  if (!slug) return;
+  try {
+    const res = await fetch(
+      `${SB_URL}/rest/v1/company_relations?or=(from_company.eq.${slug},to_company.eq.${slug})&select=*`,
+      { headers: { apikey: SB_KEY, Authorization: `Bearer ${SB_KEY}` } }
+    );
+    const rels = await res.json();
+    if (!Array.isArray(rels) || !rels.length) return;
+    const relNames = rels.map(r => r.from_company === slug ? r.to_company : r.from_company).slice(0,4);
+    relNames.forEach(name => {
+      if (!MS.tags.find(t => t.id === 'rel-'+name)) {
+        MS.tags.push({ id:'rel-'+name, label:'🔗 '+name, value:'Related: '+name, cat:'rel', on: false });
+      }
+    });
+    MS._pendingRelTags = false;
+    msRenderTags();
+  } catch(_) {}
+}
+
+function openMeeseeks(ctx) {
+  msInit();
+  ctx = ctx || {};
+  msBuildTags(ctx);
+  msRenderTags();
+  setTimeout(msMaybeAddRelTags, 300);
+
+  // Contact display
+  const disp = document.getElementById('ms-contact-display');
+  const nameEl = document.getElementById('ms-contact-name');
+  const roleEl = document.getElementById('ms-contact-role');
+  if (MS.contact.name) {
+    nameEl.textContent = MS.contact.name;
+    roleEl.textContent = MS.contact.title || '';
+    disp.style.display = 'block';
+  } else {
+    disp.style.display = 'none';
+  }
+
+  // Badge
+  const badge = document.getElementById('ms-contact-badge');
+  badge.textContent = MS.contact.name
+    ? `— ${MS.contact.name}${MS.contact.company ? ' @ '+MS.contact.company : ''}`
+    : (ctx.company || '');
+
+  // Reset output
+  document.getElementById('ms-empty').style.display = 'flex';
+  document.getElementById('ms-result').style.display = 'none';
+  document.getElementById('ms-regen-btn').style.display = 'none';
+  document.getElementById('ms-to').value = MS.contact.email || '';
+  document.getElementById('ms-subject').value = '';
+  document.getElementById('ms-body').value = '';
+
+  document.getElementById('meeseeks-overlay').style.display = 'flex';
+}
+
+async function generateMeeseeks() {
+  const key = localStorage.getItem('oa_api_key') || localStorage.getItem('claudeApiKey') || localStorage.getItem('anthropic_api_key');
+  if (!key) { msToast('No API key — set one in the AI drawer (🔑)'); return; }
+
+  const persona  = MS.selected || MS.personas[0];
+  const company  = MS.contact.company || (window.currentCompany?.name || '');
+  const activeTags = MS.tags.filter(t => t.on).map(t => t.value);
+
+  if (!company && !activeTags.length) { msToast('No context — open a company first'); return; }
+
+  const genBtn = document.getElementById('ms-generate-btn');
+  genBtn.disabled = true; genBtn.textContent = '⏳ Writing…';
+  document.getElementById('ms-empty').style.display = 'none';
+  document.getElementById('ms-result').style.display = 'flex';
+  document.getElementById('ms-skel').style.display = 'block';
+  document.getElementById('ms-body').style.display = 'none';
+  document.getElementById('ms-body').value = '';
+  document.getElementById('ms-regen-btn').style.display = 'none';
+  document.getElementById('ms-persona-label').textContent = '';
+  if (MS.contact.email) document.getElementById('ms-to').value = MS.contact.email;
+
+  const systemPrompt = `You are writing a cold outreach email on behalf of Łukasz from onAudience — a European DMP and audience data company selling GDPR-compliant behavioral, demographic, B2B, purchase intent, and CTV audience segments to programmatic buyers.
+
+Writing persona: ${persona.name} (${persona.tag}). Style: ${persona.style}
+
+Rules:
+- Max 150 words body
+- Never open with "I hope this finds you well" or any hollow opener
+- Open with a specific genuine observation about the company or person
+- One clear value prop: what onAudience data does for their specific use case
+- Sign off as Łukasz, onAudience
+- Output ONLY valid JSON, no markdown: {"subject":"...","body":"..."}`;
+
+  const contextLines = activeTags.join('\n');
+  const contactLine = MS.contact.name
+    ? `Recipient: ${MS.contact.name}${MS.contact.title ? ', '+MS.contact.title : ''}`
+    : '';
+
+  const userMsg = `Write a cold outreach email.
+${contactLine}
+${contextLines}`;
+
+  try {
+    const resp = await fetch('https://api.anthropic.com/v1/messages', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'x-api-key': key, 'anthropic-version': '2023-06-01' },
+      body: JSON.stringify({ model: 'claude-sonnet-4-20250514', max_tokens: 600, system: systemPrompt, messages: [{ role: 'user', content: userMsg }] })
+    });
+    const data = await resp.json();
+    const raw = data.content?.[0]?.text || '';
+    let subject = '', body = '';
+    try {
+      const parsed = JSON.parse(raw.replace(/^```json\s*/,'').replace(/```\s*$/,'').trim());
+      subject = parsed.subject || ''; body = parsed.body || raw;
+    } catch(_) {
+      const lines = raw.split('\n').filter(Boolean);
+      subject = lines[0].replace(/^subject:\s*/i,'').replace(/^["']/,'').replace(/["']$/,'');
+      body = lines.slice(1).join('\n').trim();
+    }
+    document.getElementById('ms-subject').value = subject;
+    document.getElementById('ms-body').value    = body;
+    document.getElementById('ms-skel').style.display = 'none';
+    document.getElementById('ms-body').style.display = '';
+    document.getElementById('ms-regen-btn').style.display = 'inline-flex';
+    document.getElementById('ms-persona-label').textContent = `${persona.icon} ${persona.name}`;
+  } catch(e) {
+    document.getElementById('ms-skel').style.display = 'none';
+    document.getElementById('ms-body').style.display = '';
+    document.getElementById('ms-body').value = 'Error: ' + e.message;
+  } finally {
+    genBtn.disabled = false; genBtn.textContent = '✉ Say What?';
+  }
+}
+
+// Helper for company-level Draft Email button
+function openMeeseeksCompany(el) {
+  const c = window.currentCompany || {};
+  openMeeseeks({ company: el.dataset.company || c.name || '' });
+}
+
+// Helper for contact card onclick — reads data-* attrs to avoid inline quote escaping
+function openMeeseeksFromContact(el) {
+  openMeeseeks({
+    contactName: el.dataset.name  || '',
+    title:       el.dataset.title || '',
+    email:       el.dataset.email || '',
+    company:     el.dataset.company || (window.currentCompany?.name || '')
+  });
+}
 const MS = {
   personas: [
     { id:'steve',    icon:'🍎', name:'Steve',    tag:'Vision',
@@ -465,203 +687,6 @@ function msInit() {
   // Default: Steve
   MS.selected = MS.personas[0];
   grid.querySelector('.ms-card').classList.add('active');
-}
-
-function openMeeseeks(ctx) {
-  msInit();
-  // ctx: { contactName, title, email, company, dsps, description, angle }
-  ctx = ctx || {};
-  MS.context = ctx;
-  document.getElementById('ms-contact').value = ctx.contactName || '';
-  document.getElementById('ms-title').value   = ctx.title || '';
-  document.getElementById('ms-email').value   = ctx.email || '';
-  document.getElementById('ms-company').value = ctx.company || '';
-  document.getElementById('ms-dsps').value    = Array.isArray(ctx.dsps) ? ctx.dsps.join(', ') : (ctx.dsps || '');
-  document.getElementById('ms-desc').value    = ctx.description || ctx.note || '';
-  document.getElementById('ms-angle').value   = ctx.angle || '';
-  // Badge
-  const badge = document.getElementById('ms-contact-badge');
-  badge.textContent = ctx.contactName ? `— ${ctx.contactName}${ctx.company ? ' @ '+ctx.company : ''}` : (ctx.company || '');
-  // Reset output
-  document.getElementById('ms-empty').style.display = 'flex';
-  document.getElementById('ms-result').style.display = 'none';
-  document.getElementById('ms-regen-btn').style.display = 'none';
-  document.getElementById('ms-to').value = ctx.email || '';
-  document.getElementById('ms-subject').value = '';
-  document.getElementById('ms-body').value = '';
-  // Show
-  document.getElementById('meeseeks-overlay').style.display = 'flex';
-}
-
-function closeMeeseeks() {
-  document.getElementById('meeseeks-overlay').style.display = 'none';
-}
-
-async function generateMeeseeks() {
-  const apiKey = localStorage.getItem('oa_api_key');
-  if (!apiKey) {
-    // Fall back to main drawer API key
-    const k = localStorage.getItem('claudeApiKey') || localStorage.getItem('anthropic_api_key');
-    if (!k) { msToast('No API key — set one in the AI drawer (🔑)'); return; }
-    localStorage.setItem('oa_api_key', k);
-  }
-  const key = localStorage.getItem('oa_api_key') || localStorage.getItem('claudeApiKey') || localStorage.getItem('anthropic_api_key');
-  if (!key) { msToast('No API key — set one in the AI drawer (🔑)'); return; }
-
-  const persona = MS.selected || MS.personas[0];
-  const contact  = document.getElementById('ms-contact').value.trim();
-  const title    = document.getElementById('ms-title').value.trim();
-  const email    = document.getElementById('ms-email').value.trim();
-  const company  = document.getElementById('ms-company').value.trim();
-  const dsps     = document.getElementById('ms-dsps').value.trim();
-  const desc     = document.getElementById('ms-desc').value.trim();
-  const angle    = document.getElementById('ms-angle').value.trim();
-
-  if (!company && !contact) { msToast('Add at least a company name'); return; }
-
-  // Show skeleton
-  const genBtn = document.getElementById('ms-generate-btn');
-  genBtn.disabled = true; genBtn.textContent = '⏳ Writing…';
-  document.getElementById('ms-empty').style.display = 'none';
-  document.getElementById('ms-result').style.display = 'flex';
-  document.getElementById('ms-skel').style.display = 'block';
-  document.getElementById('ms-body').style.display = 'none';
-  document.getElementById('ms-body').value = '';
-  document.getElementById('ms-regen-btn').style.display = 'none';
-  document.getElementById('ms-persona-label').textContent = '';
-
-  if (email) document.getElementById('ms-to').value = email;
-
-  const systemPrompt = `You are writing a cold outreach email on behalf of Łukasz from onAudience — a European DMP and audience data company selling GDPR-compliant behavioral, demographic, B2B, purchase intent, and CTV audience segments to programmatic buyers.
-
-Writing persona: ${persona.name} (${persona.tag}). Style: ${persona.style}
-
-Rules:
-- Max 150 words body
-- Never open with "I hope this finds you well" or any hollow opener
-- Open with a specific, genuine observation about their company or role
-- One clear value prop: what onAudience data does for their specific use case
-- Mention shared DSP/platform integration if known
-- Sign off as Łukasz, onAudience
-- Output format — respond with ONLY valid JSON, no markdown fences:
-{"subject":"...","body":"..."}`;
-
-  const userMsg = `Write a cold outreach email.
-${contact ? 'Recipient: '+contact : ''}
-${title ? 'Role: '+title : ''}
-${company ? 'Company: '+company : ''}
-${dsps ? 'DSP/Platforms: '+dsps : ''}
-${desc ? 'About them: '+desc : ''}
-${angle ? 'Outreach angle: '+angle : ''}`;
-
-  try {
-    const resp = await fetch('https://api.anthropic.com/v1/messages', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json', 'x-api-key': key, 'anthropic-version': '2023-06-01' },
-      body: JSON.stringify({
-        model: 'claude-sonnet-4-20250514',
-        max_tokens: 600,
-        system: systemPrompt,
-        messages: [{ role: 'user', content: userMsg }]
-      })
-    });
-    const data = await resp.json();
-    const raw = data.content?.[0]?.text || '';
-    let subject = '', body = '';
-    try {
-      const clean = raw.replace(/^```json\s*/,'').replace(/```\s*$/,'').trim();
-      const parsed = JSON.parse(clean);
-      subject = parsed.subject || '';
-      body    = parsed.body    || raw;
-    } catch(_) {
-      // Fallback: try to parse subject from first line
-      const lines = raw.split('\n').filter(Boolean);
-      subject = lines[0].replace(/^subject:\s*/i,'').replace(/^["']/,'').replace(/["']$/,'');
-      body    = lines.slice(1).join('\n').trim();
-    }
-    document.getElementById('ms-subject').value = subject;
-    document.getElementById('ms-body').value    = body;
-    document.getElementById('ms-skel').style.display = 'none';
-    document.getElementById('ms-body').style.display = '';
-    document.getElementById('ms-regen-btn').style.display = 'inline-flex';
-    document.getElementById('ms-persona-label').textContent = `${persona.icon} ${persona.name}`;
-  } catch(e) {
-    document.getElementById('ms-skel').style.display = 'none';
-    document.getElementById('ms-body').style.display = '';
-    document.getElementById('ms-body').value = 'Error: ' + e.message;
-  } finally {
-    genBtn.disabled = false; genBtn.textContent = '✉ Say What?';
-  }
-}
-
-function regenerateMeeseeks() { generateMeeseeks(); }
-
-function copyMeeseeksEmail() {
-  const sub  = document.getElementById('ms-subject').value;
-  const body = document.getElementById('ms-body').value;
-  navigator.clipboard.writeText('Subject: ' + sub + '\n\n' + body)
-    .then(() => msToast('Copied to clipboard ✓'));
-}
-
-async function saveMeeseeksDraft() {
-  const to      = document.getElementById('ms-to').value.trim();
-  const subject = document.getElementById('ms-subject').value.trim();
-  const body    = document.getElementById('ms-body').value.trim();
-  if (!subject && !body) { msToast('Nothing to save yet'); return; }
-  // Signal hub to create Gmail draft via parent postMessage (if embedded)
-  // Or trigger directly if gmail_create_draft is available (MCP)
-  window.parent?.postMessage({ type: 'SAVE_GMAIL_DRAFT', payload: { to, subject, body } }, '*');
-  // Also store pending draft so hub can pick it up
-  window._pendingGmailDraft = { to, subject, body };
-  msToast('Draft sent to Gmail…');
-  // Dispatch event for hub listener
-  window.dispatchEvent(new CustomEvent('meeseeks_draft', { detail: { to, subject, body } }));
-}
-
-// Hub listener: picks up draft requests and creates Gmail draft via API
-window.addEventListener('meeseeks_draft', async (e) => {
-  const { to, subject, body } = e.detail;
-  // The hub itself can't call Gmail MCP directly from JS — user must confirm
-  // Show a confirmation toast with a link to Gmail compose
-  const gmailUrl = `https://mail.google.com/mail/u/0/?view=cm&fs=1&to=${encodeURIComponent(to)}&su=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
-  // Open Gmail compose pre-filled
-  window.open(gmailUrl, '_blank');
-  msToast('Opening Gmail compose ↗');
-});
-
-function msToast(msg) {
-  const el = document.getElementById('ms-toast');
-  if (!el) return;
-  el.textContent = msg;
-  el.style.opacity = '1';
-  setTimeout(() => { el.style.opacity = '0'; }, 2500);
-}
-
-// Helper for company-level Draft Email button
-function openMeeseeksCompany(el) {
-  const c = window.currentCompany || {};
-  const dsps = Array.isArray(c.dsps) ? c.dsps : [];
-  openMeeseeks({
-    company:     el.dataset.company || c.name || '',
-    dsps:        dsps,
-    description: c.description || '',
-    angle:       c.outreach_angle || ''
-  });
-}
-
-// Helper for contact card onclick — reads data-* attrs to avoid inline quote escaping
-function openMeeseeksFromContact(el) {
-  const c = window.currentCompany || {};
-  const dsps = Array.isArray(c.dsps) ? c.dsps : [];
-  openMeeseeks({
-    contactName: el.dataset.name || '',
-    title:       el.dataset.title || '',
-    email:       el.dataset.email || '',
-    company:     el.dataset.company || c.name || '',
-    dsps:        dsps,
-    description: c.description || '',
-    angle:       c.outreach_angle || ''
-  });
 }
 </script>
 
