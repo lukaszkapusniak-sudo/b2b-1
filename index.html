@@ -809,29 +809,14 @@ function openCompany(c) {
       </div>
     </div>
 
-    <div class="sec">
-      <div class="sec-hdr"><span>⚙️</span><span class="sec-hdr-label">Tech Stack</span>
-        <div style="margin-left:auto;display:flex;gap:4px">
-          <button class="btn sm" onclick="loadTechStack('${slug}', false)" title="Reload from DB">⟳ Fetch</button>
-          <button class="btn sm" onclick="loadTechStack('${slug}', true)" title="Re-scan website with AI">↺ Rescan</button>
-        </div>
+    <div class="sec" id="sec-relations">
+      <div class="sec-hdr"><span>🔗</span><span class="sec-hdr-label">Relations</span>
+        <span id="rel-count-badge" style="font-family:'IBM Plex Mono',monospace;font-size:9px;color:var(--t3);margin-left:4px"></span>
+        <button class="btn sm" style="margin-left:auto" onclick="openClaude('Find and save company relations for ${cname} to the onAudience Supabase database — data_partner, dsp_integration, marketplace_listed types')">Add ↗</button>
       </div>
-      <div class="sec-body" id="ts-body">
-        ${tsHtml || `<div class="no-rel">No tech stack scanned yet</div>`}
+      <div class="sec-body" id="rel-body">
+        <div style="font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--t3)">Loading…</div>
       </div>
-    </div>
-
-    <div id="products-section">${productsHtml}</div>
-
-    <div class="sec">
-      <div class="sec-hdr"><span>👤</span><span class="sec-hdr-label">Contacts</span>
-        <span style="font-family:'IBM Plex Mono',monospace;font-size:9px;color:var(--t3);margin-left:4px" id="ct-count-badge">${coContacts.length ? '('+coContacts.length+')' : ''}</span>
-        <div style="margin-left:auto;display:flex;gap:4px">
-          <button class="btn sm" onclick="loadContacts('${slug}')" title="Reload contacts from DB">⟳ Refresh</button>
-          <button class="btn sm" onclick="openClaude('Find decision makers at ${cname} for onAudience data partnerships — search broadly: VP/Head of Data, Programmatic, Partnerships, Digital, or C-level (CDO, CMO, CTO). For each contact: full name, exact title, LinkedIn URL, estimated email, background note. Include both direct buyers and partnership gatekeepers. Save all to Supabase contacts.')" title="Find contacts with AI">Find ↗</button>
-        </div>
-      </div>
-      <div class="sec-body" id="ct-body">${ctHtml}</div>
     </div>
 
     <div class="sec">
@@ -846,14 +831,15 @@ function openCompany(c) {
       </div>
     </div>
 
-    <div class="sec" id="sec-relations">
-      <div class="sec-hdr"><span>🔗</span><span class="sec-hdr-label">Relations</span>
-        <span id="rel-count-badge" style="font-family:'IBM Plex Mono',monospace;font-size:9px;color:var(--t3);margin-left:4px"></span>
-        <button class="btn sm" style="margin-left:auto" onclick="openClaude('Find and save company relations for ${cname} to the onAudience Supabase database — data_partner, dsp_integration, marketplace_listed types')">Add ↗</button>
+    <div class="sec">
+      <div class="sec-hdr"><span>👤</span><span class="sec-hdr-label">Contacts</span>
+        <span style="font-family:'IBM Plex Mono',monospace;font-size:9px;color:var(--t3);margin-left:4px" id="ct-count-badge">${coContacts.length ? '('+coContacts.length+')' : ''}</span>
+        <div style="margin-left:auto;display:flex;gap:4px">
+          <button class="btn sm" onclick="loadContacts('${slug}')" title="Reload contacts from DB">⟳ Refresh</button>
+          <button class="btn sm" onclick="openClaude('Find decision makers at ${cname} for onAudience data partnerships — search broadly: VP/Head of Data, Programmatic, Partnerships, Digital, or C-level (CDO, CMO, CTO). For each contact: full name, exact title, LinkedIn URL, estimated email, background note. Include both direct buyers and partnership gatekeepers. Save all to Supabase contacts.')" title="Find contacts with AI">Find ↗</button>
+        </div>
       </div>
-      <div class="sec-body" id="rel-body">
-        <div style="font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--t3)">Loading…</div>
-      </div>
+      <div class="sec-body" id="ct-body">${ctHtml}</div>
     </div>
 
     <div class="sec">
@@ -868,6 +854,20 @@ function openCompany(c) {
         <div style="font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--t3)">Loading…</div>
       </div>
     </div>
+
+    <div class="sec">
+      <div class="sec-hdr"><span>⚙️</span><span class="sec-hdr-label">Tech Stack</span>
+        <div style="margin-left:auto;display:flex;gap:4px">
+          <button class="btn sm" onclick="loadTechStack('${slug}', false)" title="Reload from DB">⟳ Fetch</button>
+          <button class="btn sm" onclick="loadTechStack('${slug}', true)" title="Re-scan website with AI">↺ Rescan</button>
+        </div>
+      </div>
+      <div class="sec-body" id="ts-body">
+        ${tsHtml || `<div class="no-rel">No tech stack scanned yet</div>`}
+      </div>
+    </div>
+
+    <div id="products-section">${productsHtml}</div>
 
     <div class="sec">
       <div class="sec-hdr"><span>🔀</span><span class="sec-hdr-label">Merge</span>
@@ -2354,7 +2354,7 @@ window.doMerge = async function(dupSlug, canonSlug, canonName) {
     window.currentCompany = c;
     _oc(c);
     if (c) {
-      var slug = window.resolveSlug ? window.resolveSlug(c) : (c.id || (window._slug && window._slug(c.name)));
+      var slug = window.resolveSlug ? window.resolveSlug(c) : (c.id || (_slug && _slug(c.name)));
       if (slug) {
         setTimeout(function(){ if (window.loadContacts) loadContacts(slug); }, 60);
         setTimeout(function(){ if (window.loadRelations) loadRelations(slug); }, 80);
@@ -2365,8 +2365,7 @@ window.doMerge = async function(dupSlug, canonSlug, canonName) {
   };
 }());
 
-// Re-init
-if (typeof window.loadFromSupabase === 'function') { window.loadFromSupabase(); }
+if (typeof window.loadFromSupabase === 'function') window.loadFromSupabase();
 </script>
 </body>
 </html>
