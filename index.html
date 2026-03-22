@@ -1409,11 +1409,27 @@ async function saveAIResult() {
     const validTypes = ['client','partner','prospect','nogo','poc'];
     if (co.type && !validTypes.includes(co.type)) co.type = 'prospect';
     try {
-      const r = await fetch(`${SB_URL}/rest/v1/companies`, {
-        method: 'POST', headers,
-        body: JSON.stringify(co)
+      // Check if company already exists
+      const existing = await fetch(`${SB_URL}/rest/v1/companies?id=eq.${co.id}&select=id,name,type`, {
+        headers: { apikey: SB_KEY, Authorization: `Bearer ${SB_KEY}` }
       });
-      results.push(`Company ${co.name}: ${r.ok ? '✅' : '❌ '+r.status}`);
+      const existingData = await existing.json();
+      if (existingData.length > 0) {
+        const ex = existingData[0];
+        const confirmed = window.confirm(
+          `Company already exists in DB:\n\n"${ex.name}" (${ex.type})\n\nOverwrite with AI result (type: ${co.type}, ICP: ${co.icp})?\n\nOK = Update  |  Cancel = Skip`
+        );
+        if (!confirmed) {
+          results.push(`Company ${co.name}: ⏭ skipped (existing)`);
+          // Skip to contacts
+        } else {
+          const r = await fetch(`${SB_URL}/rest/v1/companies`, { method: 'POST', headers, body: JSON.stringify(co) });
+          results.push(`Company ${co.name}: ${r.ok ? '✅ updated' : '❌ '+r.status}`);
+        }
+      } else {
+        const r = await fetch(`${SB_URL}/rest/v1/companies`, { method: 'POST', headers, body: JSON.stringify(co) });
+        results.push(`Company ${co.name}: ${r.ok ? '✅ created' : '❌ '+r.status}`);
+      }
     } catch(e) { results.push(`Company error: ${e.message}`); }
   }
 
