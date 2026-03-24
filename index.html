@@ -250,17 +250,7 @@ textarea.mc-tf:focus{border-color:var(--g)}.mc-tf::placeholder{color:var(--t4)}
 .mc-out-elon   .mc-badge{background:#000}
 .mc-out-oprah  .mc-email{font-family:'IBM Plex Sans',sans-serif;font-size:22px;line-height:2.1;font-weight:400;letter-spacing:.012em}
 .mc-out-oprah  .mc-badge{background:#8b4513}
-/* key modal */
-#mcKeyOverlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:10500;align-items:center;justify-content:center;backdrop-filter:blur(4px)}
-#mcKeyOverlay.vis{display:flex}
-.mc-kbox{background:var(--surf);border:1px solid var(--rule);border-radius:4px;padding:20px;max-width:440px;width:90%;box-shadow:var(--sh)}
-.mc-kbox h2{font-family:'IBM Plex Mono',monospace;font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:.08em;margin-bottom:8px}
-.mc-kbox p{font-size:11px;color:var(--t3);margin-bottom:12px;line-height:1.6}
-.mc-kbox input{width:100%;padding:8px 10px;border:1px solid var(--rule);border-radius:2px;font-family:'IBM Plex Mono',monospace;font-size:10px;background:var(--surf2);color:var(--t1);outline:none;transition:border-color .15s}
-.mc-kbox input:focus{border-color:var(--g)}
-.mc-kfoot{display:flex;gap:6px;justify-content:flex-end;margin-top:12px}
-.mc-kb{height:26px;padding:0 12px;border:1px solid var(--rule);border-radius:2px;font-family:'IBM Plex Mono',monospace;font-size:9px;font-weight:500;text-transform:uppercase;letter-spacing:.06em;cursor:pointer;background:var(--surf2);color:var(--t2);transition:all .15s}
-.mc-kb:hover{background:var(--surf3)}.mc-kb.p{background:var(--g);color:#fff;border-color:var(--g)}.mc-kb.p:hover{background:var(--gd)}
+/* (key modal removed — API calls use built-in auth) */
 </style>
 </head>
 <body>
@@ -379,7 +369,6 @@ textarea.mc-tf:focus{border-color:var(--g)}.mc-tf::placeholder{color:var(--t4)}
     <span class="mc-title">Meeseeks <span class="mc-sub">/ Composer</span></span>
     <span class="mc-persona-badge" id="mcNavBadge">STEVE</span>
     <div style="margin-left:auto;display:flex;align-items:center;gap:6px">
-      <button class="mc-key-btn" id="mcKeyBtn" onclick="mcOpenKey()">🔑 Key</button>
       <button class="mc-close" onclick="closeComposer()">✕</button>
     </div>
   </div>
@@ -437,19 +426,6 @@ textarea.mc-tf:focus{border-color:var(--g)}.mc-tf::placeholder{color:var(--t4)}
   </div>
 </div>
 
-<!-- API KEY MODAL -->
-<div id="mcKeyOverlay">
-  <div class="mc-kbox">
-    <h2>Anthropic API Key</h2>
-    <p>Stored locally in this browser. Used only for the Meeseeks composer and background actions (angle generation, AI contact finder).</p>
-    <input type="password" id="mcKeyInput" placeholder="sk-ant-…"/>
-    <div class="mc-kfoot">
-      <button class="mc-kb" onclick="mcClearKey()">Clear</button>
-      <button class="mc-kb" onclick="mcCloseKey()">Cancel</button>
-      <button class="mc-kb p" onclick="mcSaveKey()">Save</button>
-    </div>
-  </div>
-</div>
 
 <script>
 /* ══════════════════════════════════════
@@ -632,18 +608,16 @@ function closePanel(){currentCompany=null;document.getElementById('coPanel').sty
 /* ══════════════════════════════════════
    BACKGROUND ACTIONS
 ══════════════════════════════════════ */
-function mcGetApiKey(){return localStorage.getItem('oaApiKey')||'';}
 
 async function bgGenerateAngle(){
   const c=currentCompany;if(!c)return;
-  const key=mcGetApiKey();if(!key){mcOpenKey();return;}
   const card=document.getElementById('ib-angle-card'),btn=document.getElementById('ib-angle-btn');
   if(card){card.className='ib-angle';card.innerHTML=`<div class="ib-angle-lbl"><span class="bg-running">✦ Generating…</span></div>`;}
   if(btn)btn.style.display='none';
   const tags=getCoTags(c).join(', ');
   const techArr=(Array.isArray(c.tech_stack)?c.tech_stack:[]).slice(0,6).map(t=>t.tool||t).join(', ');
   try{
-    const res=await fetch('https://api.anthropic.com/v1/messages',{method:'POST',headers:{'Content-Type':'application/json','x-api-key':key,'anthropic-version':'2023-06-01'},body:JSON.stringify({model:'claude-sonnet-4-20250514',max_tokens:350,system:`You are a senior B2B data partnership sales specialist at onAudience, a European first-party audience data company. Write a concise, specific outreach angle (3–5 sentences) for approaching this company. Focus on what onAudience data solves for their business model, timing signals, and clearest value hook. No bullet points. Flowing prose only.`,messages:[{role:'user',content:`Company: ${c.name}\nType: ${c.type}\nCategory: ${c.category||'unknown'}\nNote: ${c.note||''}\nDescription: ${c.description||''}\nTech: ${techArr}\nDSPs: ${JSON.stringify(c.dsps||[])}\nSignals: ${tags}`}]})});
+    const res=await fetch('https://api.anthropic.com/v1/messages',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({model:'claude-sonnet-4-20250514',max_tokens:350,system:`You are a senior B2B data partnership sales specialist at onAudience, a European first-party audience data company. Write a concise, specific outreach angle (3–5 sentences) for approaching this company. Focus on what onAudience data solves for their business model, timing signals, and clearest value hook. No bullet points. Flowing prose only.`,messages:[{role:'user',content:`Company: ${c.name}\nType: ${c.type}\nCategory: ${c.category||'unknown'}\nNote: ${c.note||''}\nDescription: ${c.description||''}\nTech: ${techArr}\nDSPs: ${JSON.stringify(c.dsps||[])}\nSignals: ${tags}`}]})});
     const data=await res.json();
     const angle=(data.content||[]).filter(b=>b.type==='text').map(b=>b.text).join('').trim();
     if(!angle)throw new Error('empty');
@@ -656,12 +630,11 @@ async function bgGenerateAngle(){
 
 async function bgFindDMs(){
   const c=currentCompany;if(!c)return;
-  const key=mcGetApiKey();if(!key){mcOpenKey();return;}
   const body=document.getElementById('ib-ct-body');if(!body)return;
   body.innerHTML=`<div class="ib-loading" style="text-align:left">Finding decision makers at ${c.name}…</div>`;
   const tags=getCoTags(c).join(', ');
   try{
-    const res=await fetch('https://api.anthropic.com/v1/messages',{method:'POST',headers:{'Content-Type':'application/json','x-api-key':key,'anthropic-version':'2023-06-01'},body:JSON.stringify({model:'claude-sonnet-4-20250514',max_tokens:700,system:`You are a B2B sales researcher. Return ONLY a raw JSON array — no markdown, no explanation. Each element: {"full_name":"string","title":"string","linkedin_url":"string","reason":"string (1 sentence why relevant for data partnerships)"}. Construct linkedin_url as: https://www.linkedin.com/search/results/people/?keywords=FIRSTNAME+LASTNAME+COMPANY`,messages:[{role:'user',content:`Find 3–5 decision makers at ${c.name} (${c.category||'ad tech'}) relevant for data partnership discussions with onAudience.\nFocus: Head/VP/Director of Programmatic, Data Partnerships, Product, or Platform.\nContext: ${c.note||''} Tags: ${tags}`}]})});
+    const res=await fetch('https://api.anthropic.com/v1/messages',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({model:'claude-sonnet-4-20250514',max_tokens:700,system:`You are a B2B sales researcher. Return ONLY a raw JSON array — no markdown, no explanation. Each element: {"full_name":"string","title":"string","linkedin_url":"string","reason":"string (1 sentence why relevant for data partnerships)"}. Construct linkedin_url as: https://www.linkedin.com/search/results/people/?keywords=FIRSTNAME+LASTNAME+COMPANY`,messages:[{role:'user',content:`Find 3–5 decision makers at ${c.name} (${c.category||'ad tech'}) relevant for data partnership discussions with onAudience.\nFocus: Head/VP/Director of Programmatic, Data Partnerships, Product, or Platform.\nContext: ${c.note||''} Tags: ${tags}`}]})});
     const data=await res.json();const raw=(data.content||[]).filter(b=>b.type==='text').map(b=>b.text).join('').replace(/```json|```/g,'').trim();const dms=JSON.parse(raw);
     if(!Array.isArray(dms)||!dms.length)throw new Error('none found');
     // also pre-load into composer state
@@ -801,7 +774,6 @@ function mcRenderPicker(loadingMsg){
 function mcPickContact(i){mcSelectedIdx=mcSelectedIdx===i?-1:i;mcRenderPicker();}
 
 async function mcGenerate(){
-  const key=mcGetApiKey();if(!key){mcOpenKey();return;}
   const persona=MC_PERSONAS.find(p=>p.id===mcActivePId)||MC_PERSONAS[0];
   const company=mcPayload.company||'the company';
   const cts=mcAllContacts();const ct=mcSelectedIdx>=0?cts[mcSelectedIdx]:null;
@@ -814,12 +786,12 @@ async function mcGenerate(){
   document.getElementById('mcEmpty').style.display='none';document.getElementById('mcOutContent').style.display='none';document.getElementById('mcOutActs').style.display='none';document.getElementById('mcOutLabel').textContent='Generating…';
   const prompt=`Write a cold outreach email FROM a sales person at onAudience TO ${contactName}${contactTitle?' ('+contactTitle+')':''} at ${company}.\n\nonAudience: European first-party audience data company. 500M+ profiles, demographic+behavioral+purchase-intent segments across 30+ EU countries, Web + Mobile + CTV coverage, GDPR-compliant, TCF v2.0 certified. Direct integrations with major DSPs.\n\nCompany signals: ${tags.length?tags.join(', '):'n/a'}\nCompany context: ${ctx||'n/a'}\nOutreach angle: ${angle||'n/a'}\n\nRespond with:\nSUBJECT: [subject line]\n---\n[email body only — no sign-off name]\n\nKeep it 3–4 short paragraphs. End with a low-friction CTA.`;
   try{
-    const res=await fetch('https://api.anthropic.com/v1/messages',{method:'POST',headers:{'Content-Type':'application/json','x-api-key':key,'anthropic-version':'2023-06-01'},body:JSON.stringify({model:'claude-sonnet-4-20250514',max_tokens:700,system:persona.system,messages:[{role:'user',content:prompt}]})});
+    const res=await fetch('https://api.anthropic.com/v1/messages',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({model:'claude-sonnet-4-20250514',max_tokens:700,system:persona.system,messages:[{role:'user',content:prompt}]})});
     const data=await res.json();if(data.error)throw new Error(data.error.message||'API error');
     const raw=(data.content||[]).filter(b=>b.type==='text').map(b=>b.text).join('').trim();
     let subject='',body=raw;const sm=raw.match(/^SUBJECT:\s*(.+?)(?:\n---|\n\n)/is);if(sm){subject=sm[1].trim();body=raw.replace(/^SUBJECT:.+?\n(?:---\n)?/is,'').trim();}
     mcLastEmail=body;mcRenderOutput(persona,subject,body,contactName,company);
-  }catch(e){document.getElementById('mcEmpty').style.display='none';const oc=document.getElementById('mcOutContent');oc.style.display='block';oc.innerHTML=`<div class="mc-wrap"><div class="mc-error">Error: ${e.message}\n\nCheck your API key (🔑 Key button above).</div></div>`;document.getElementById('mcOutLabel').textContent='Error';}
+  }catch(e){document.getElementById('mcEmpty').style.display='none';const oc=document.getElementById('mcOutContent');oc.style.display='block';oc.innerHTML=`<div class="mc-wrap"><div class="mc-error">Error: ${e.message}</div></div>`;document.getElementById('mcOutLabel').textContent='Error';}
   btn.disabled=false;btn.innerHTML=`<span>✉</span><span>Generate Email</span>`;
 }
 
@@ -837,19 +809,11 @@ function mcRenderOutput(persona,subject,body,contact,company){
 
 function mcCopy(){const el=document.querySelector('.mc-email');if(!el)return;const txt=el.innerText||el.textContent||'';navigator.clipboard.writeText(txt).then(()=>{const btn=event.target;btn.textContent='Copied!';setTimeout(()=>btn.textContent='Copy',1600);}).catch(()=>{});}
 
-/* ── API KEY ── */
-function mcOpenKey(){document.getElementById('mcKeyInput').value=mcGetApiKey();document.getElementById('mcKeyOverlay').classList.add('vis');setTimeout(()=>document.getElementById('mcKeyInput').focus(),60);}
-function mcCloseKey(){document.getElementById('mcKeyOverlay').classList.remove('vis');}
-function mcSaveKey(){const v=document.getElementById('mcKeyInput').value.trim();if(v)localStorage.setItem('oaApiKey',v);mcCloseKey();mcUpdateKeyBtn();}
-function mcClearKey(){localStorage.removeItem('oaApiKey');mcCloseKey();mcUpdateKeyBtn();}
-function mcUpdateKeyBtn(){const b=document.getElementById('mcKeyBtn');b.className='mc-key-btn'+(mcGetApiKey()?' set':'');b.textContent=mcGetApiKey()?'🔑 Key ✓':'🔑 Key';}
-document.getElementById('mcKeyInput').addEventListener('keydown',e=>{if(e.key==='Enter')mcSaveKey();});
-document.getElementById('mcKeyOverlay').addEventListener('click',e=>{if(e.target===document.getElementById('mcKeyOverlay'))mcCloseKey();});
-
 /* ══════════════════════════════════════
    INIT
 ══════════════════════════════════════ */
-setStatus(false);renderStats();renderList();loadFromSupabase();mcRenderPersonas();mcUpdateKeyBtn();
+function mcGetApiKey(){return'';} // no-op — API calls use built-in auth
+setStatus(false);renderStats();renderList();loadFromSupabase();mcRenderPersonas();
 </script>
 </body>
 </html>
