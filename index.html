@@ -266,6 +266,25 @@ a.ml:hover{text-decoration:underline}
 .drawer-body{overflow-y:auto;flex:1;padding:12px 14px}
 .drawer-close{margin-left:auto;background:none;border:none;font-size:16px;cursor:pointer;color:var(--t3)}
 .drawer-close:hover{color:var(--t1)}
+
+/* ── Advanced filter panel ── */
+.fxpanel{background:var(--surf);border-bottom:1px solid var(--rule2);padding:7px 10px 9px;display:none;flex-shrink:0}
+.fxpanel.open{display:block}
+.fxrow{display:flex;align-items:flex-start;gap:8px;margin-bottom:5px}
+.fxrow:last-child{margin-bottom:0}
+.fxlbl{font-family:'IBM Plex Mono',monospace;font-size:9px;text-transform:uppercase;letter-spacing:.06em;color:var(--t3);width:58px;padding-top:2px;flex-shrink:0}
+.fxchips-wrap{display:flex;gap:3px;flex-wrap:wrap}
+.fpx{height:19px;padding:0 7px;border:1px solid var(--rule);border-radius:2px;font-family:'IBM Plex Mono',monospace;font-size:9px;cursor:pointer;background:transparent;color:var(--t3);white-space:nowrap;transition:all .12s;line-height:17px}
+.fpx:hover:not(.on){background:var(--surf3);color:var(--t1)}
+.fpx.on{background:var(--t1);color:var(--surf);border-color:var(--t1)}
+.fxactive{display:none;flex-wrap:wrap;gap:3px;margin-top:7px;padding-top:7px;border-top:1px solid var(--rule2)}
+.fxactive.vis{display:flex}
+.fxachip{display:inline-flex;align-items:center;gap:3px;height:17px;padding:0 5px;background:var(--gb);border:1px solid var(--gr);border-radius:2px;font-family:'IBM Plex Mono',monospace;font-size:9px;color:var(--gd);cursor:pointer;user-select:none}
+.fxachip:hover{background:var(--gr)}
+.fxclearbtn{display:inline-flex;align-items:center;gap:3px;height:17px;padding:0 5px;background:var(--surf3);border:1px solid var(--rule);border-radius:2px;font-family:'IBM Plex Mono',monospace;font-size:9px;color:var(--t3);cursor:pointer}
+.fxclearbtn:hover{background:var(--surf4)}
+#fxToggle.on{background:var(--t1) !important;color:var(--surf) !important;border-color:var(--t1) !important}
+.fxcnt{background:var(--g);color:#fff;border-radius:2px;padding:0 3px;font-size:8px;font-weight:700;line-height:14px;display:none}
 </style>
 </head>
 <body>
@@ -319,6 +338,7 @@ a.ml:hover{text-decoration:underline}
             <input class="sinp" id="coSearch" placeholder="Search companies…" oninput="renderCompanies()"/>
           </div>
           <button class="btn sm p" onclick="doResearch()" title="Research in Claude">↗</button>
+          <button class="btn sm" id="fxToggle" onclick="toggleFxPanel()" style="display:flex;align-items:center;gap:4px">⊞ Filter <span class="fxcnt" id="fxCnt">0</span></button>
         </div>
         <div class="filters" id="coFilters">
           <button class="fp active" id="fp-all" onclick="setFilter('all',this)">All</button>
@@ -339,6 +359,15 @@ a.ml:hover{text-decoration:underline}
             <span class="sico">⌕</span>
             <input class="sinp" id="ctSearch" placeholder="Search contacts…" oninput="renderContacts()"/>
           </div>
+        <!-- Advanced filter panel -->
+        <div class="fxpanel" id="fxPanel">
+          <div class="fxrow"><span class="fxlbl">DSP</span><div class="fxchips-wrap" id="fpx-dsp"></div></div>
+          <div class="fxrow"><span class="fxlbl">Category</span><div class="fxchips-wrap" id="fpx-cat"></div></div>
+          <div class="fxrow"><span class="fxlbl">Region</span><div class="fxchips-wrap" id="fpx-region"></div></div>
+          <div class="fxrow"><span class="fxlbl">Size</span><div class="fxchips-wrap" id="fpx-size"></div></div>
+          <div class="fxrow" style="margin-bottom:0"><span class="fxlbl">ICP</span><div class="fxchips-wrap" id="fpx-icp"></div></div>
+          <div class="fxactive" id="fxActive"></div>
+        </div>
         </div>
         <div class="list-meta"><span id="ctMeta">—</span><span>click to open</span></div>
         <div class="co-list" id="ctList"></div>
@@ -714,9 +743,22 @@ function getFiltered() {
       const hay = [c.name,c.note,c.category,c.region,c.hq_city,c.description].join(' ').toLowerCase();
       if (!hay.includes(q)) return false;
     }
+    if(!fxFilter(c))return false;
     return true;
   });
 }
+
+
+/* ── Advanced filters ──────────────────────── */
+let fx = {dsp:[],cat:[],region:[],size:[],icp:[]};
+function catBucket(cat){if(!cat)return null;const c=cat.toLowerCase();if(c.includes('dsp'))return'DSP';if(c.includes('ssp'))return'SSP';if(c.includes('cdp'))return'CDP';if(c.includes('dmp'))return'DMP';if(c.includes('identity'))return'Identity';if(c.includes('agency'))return'Agency';if(c.includes('data provider')||c.includes('data'))return'Data Provider';return null;}
+function sizeBucket(c){const n=parseInt(c.size||c.employees)||0;if(!n)return null;if(n<50)return'micro';if(n<200)return'small';if(n<500)return'mid';return'large';}
+function toggleFxPanel(){const p=document.getElementById('fxPanel');const btn=document.getElementById('fxToggle');const open=p.classList.toggle('open');btn.classList.toggle('on',open);if(open)buildFxOptions();}
+function buildFxOptions(){const CHIP="height:19px;padding:0 7px;border:1px solid var(--rule);border-radius:2px;font-family:'IBM Plex Mono',monospace;font-size:9px;cursor:pointer;background:transparent;color:var(--t3);white-space:nowrap;transition:all .12s;line-height:17px";function mk(g,v,l){const el=document.createElement('button');el.style.cssText=CHIP;el.className='fpx';el.textContent=l||v;el.dataset.group=g;el.dataset.val=v;if(fx[g]?.includes(v)){el.style.background='var(--t1)';el.style.color='var(--surf)';el.style.borderColor='var(--t1)';}el.onclick=()=>toggleFxChip(g,v,el);return el;}function fill(id,items,g,lFn){const c=document.getElementById(id);if(!c)return;c.innerHTML='';items.forEach(v=>c.appendChild(mk(g,v,lFn?lFn(v):v)));}const dsps=new Set(),cats=new Set(),regions=new Set();companies.forEach(c=>{(c.dsps||[]).forEach(d=>{if(d)dsps.add(d)});const b=catBucket(c.category);if(b)cats.add(b);if(c.region)regions.add(c.region);});const rOrd=['US','UK','EU','EMEA','CEE','APAC','LatAm'].filter(r=>[...regions].some(x=>x===r||x.includes(r)));fill('fpx-dsp',[...dsps].sort(),'dsp');fill('fpx-cat',[...cats].sort(),'cat');fill('fpx-region',rOrd.length?rOrd:[...regions].sort(),'region');fill('fpx-size',['micro','small','mid','large'],'size',v=>({micro:'<50',small:'50–20',mid:'200–500',large:'500+'}[v]));fill('fpx-icp',['high','mid','low'],'icp',v=>({high:'8–10 ★★★★',mid:'5–7 ★★★',low:'<5'}[v]));}
+function toggleFxChip(g,v,el){const arr=fx[g],idx=arr.indexOf(v);if(idx>-1){arr.splice(idx,1);el.style.background='transparent';el.style.color='var(--t3)';el.style.borderColor='var(--rule)';}else{arr.push(v);el.style.background='var(--t1)';el.style.color='var(--surf)';el.style.borderColor='var(--t1)';}renderFxActive();updateFxBadge();renderCompanies();}
+function renderFxActive(){const row=document.getElementById('fxActive');if(!row)return;const lbl={dsp:v=>v,cat:v=>v,region:v=>v,size:v=>({micro:'<50',small:'50–200',mid:'200–500',large:'500+'}[v]||v),icp:v=>({high:'ICP 8–10',mid:'ICP 5–7',low:'ICP <5'}[v]||v)};row.innerHTML='';let n=0;Object.entries(fx).forEach(([g,vals])=>vals.forEach(v=>{n++;const ch=document.createElement('span');ch.className='fxachip';ch.innerHTML=(lbl[g]?.(v)||v)+' <span style="opacity:.6;font-size:8px">✕</span>';ch.onclick=()=>{fx[g]=fx[g].filter(x=>x!==v);document.querySelectorAll('[data-group="'+g+'"][data-val="'+CSS.escape(v)+'"]').forEach(b=>{b.style.background='transparent';b.style.color='var(--t3)';b.style.borderColor='var(--rule)';});renderFxActive();updateFxBadge();renderCompanies();};row.appendChild(ch);}));if(n){const cl=document.createElement('span');cl.className='fxclearbtn';cl.innerHTML='Clear all ✕';cl.onclick=()=>{Object.keys(fx).forEach(k=>fx[k]=[]);document.querySelectorAll('.fpx').forEach(b=>{b.style.background='transparent';b.style.color='var(--t3)';b.style.borderColor='var(--rule)';});renderFxActive();updateFxBadge();renderCompanies();};row.appendChild(cl);}row.classList.toggle('vis',n>0);}
+function updateFxBadge(){const n=Object.values(fx).reduce((a,v)=>a+v.length,0);const badge=document.getElementById('fxCnt');if(!badge)return;badge.textContent=n;badge.style.display=n?'inline':'none';}
+function fxFilter(c){if(fx.dsp.length&&!fx.dsp.some(d=>(c.dsps||[]).includes(d)))return false;if(fx.cat.length){const b=catBucket(c.category);if(!b||!fx.cat.includes(b))return false;}if(fx.region.length){const r=c.region||'';if(!fx.region.some(fr=>r===fr||r.includes(fr)||fr.includes(r)))return false;}if(fx.size.length&&!fx.size.includes(sizeBucket(c)))return false;if(fx.icp.length){const s=c.icp||0;const b=s>=8?'high':s>=5?'mid':'low';if(!fx.icp.includes(b))return false;}return true;}
 
 function renderCompanies() {
   const filtered = getFiltered();
