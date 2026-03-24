@@ -4,63 +4,29 @@
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
 <title>onAudience — Sales Intelligence Hub</title>
-<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@300;400;500;600&family=IBM+Plex+Sans:wght@300;400;500;600&display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@300;400;500;600&family=IBM+Plex+Sans:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400;1,500&family=IBM+Plex+Serif:ital,wght@0,300;0,400;0,500;1,300;1,400&display=swap" rel="stylesheet"/>
 <style>
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
-[data-theme="light"]{
-  --bg:#F4F2EC;--surf:#FFFFFF;--surf2:#F8F6F0;--surf3:#EFEDE6;--surf4:#E8E6DE;
-  --rule:rgba(0,0,0,0.09);--rule2:rgba(0,0,0,0.05);--rule3:rgba(0,0,0,0.03);
-  --t1:#0C0C0A;--t2:#5C5C56;--t3:#9A9990;--t4:#C8C6BC;
-  --g:#178066;--gd:#0F6E56;--gb:rgba(23,128,102,0.08);--gr:rgba(23,128,102,0.28);
-  --cc:#146B3A;--cb:#E4F5EC;--cr:rgba(20,107,58,0.28);
-  --pc:#1A4F8A;--pb:#E6EEFA;--pr:rgba(26,79,138,0.28);
-  --prc:#7A4200;--prb:#FEF2E0;--prr:rgba(122,66,0,0.28);
-  --nc:#6B6B64;--nb:#EFEDE6;--nr:rgba(107,107,100,0.28);
-  --poc:#4B2D9E;--pob:#EDE8FD;--por:rgba(75,45,158,0.28);
-  --sh:0 1px 2px rgba(0,0,0,0.06),0 4px 12px rgba(0,0,0,0.04);
-}
-[data-theme="dark"]{
-  --bg:#0C0C0A;--surf:#141412;--surf2:#1C1C1A;--surf3:#242421;--surf4:#2E2E2B;
-  --rule:rgba(255,255,255,0.08);--rule2:rgba(255,255,255,0.05);--rule3:rgba(255,255,255,0.03);
-  --t1:#F0EFE8;--t2:#8A8A82;--t3:#555550;--t4:#38382E;
-  --g:#1FA882;--gd:#178066;--gb:rgba(31,168,130,0.1);--gr:rgba(31,168,130,0.3);
-  --cc:#4ADE80;--cb:rgba(74,222,128,0.1);--cr:rgba(74,222,128,0.25);
-  --pc:#60A5FA;--pb:rgba(96,165,250,0.1);--pr:rgba(96,165,250,0.25);
-  --prc:#FBBF24;--prb:rgba(251,191,36,0.1);--prr:rgba(251,191,36,0.25);
-  --nc:#55554E;--nb:rgba(85,85,78,0.15);--nr:rgba(85,85,78,0.25);
-  --poc:#C084FC;--pob:rgba(192,132,252,0.1);--por:rgba(192,132,252,0.25);
-  --sh:0 1px 3px rgba(0,0,0,0.5),0 6px 20px rgba(0,0,0,0.35);
-}
-[data-theme="dark"] body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;
-  background-image:linear-gradient(rgba(255,255,255,.016) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.016) 1px,transparent 1px);background-size:40px 40px;}
+[data-theme="light"]{--bg:#F4F2EC;--surf:#FFFFFF;--surf2:#F8F6F0;--surf3:#EFEDE6;--surf4:#E8E6DE;--rule:rgba(0,0,0,0.09);--rule2:rgba(0,0,0,0.05);--rule3:rgba(0,0,0,0.03);--t1:#0C0C0A;--t2:#5C5C56;--t3:#9A9990;--t4:#C8C6BC;--g:#178066;--gd:#0F6E56;--gb:rgba(23,128,102,0.08);--gr:rgba(23,128,102,0.28);--cc:#146B3A;--cb:#E4F5EC;--cr:rgba(20,107,58,0.28);--pc:#1A4F8A;--pb:#E6EEFA;--pr:rgba(26,79,138,0.28);--prc:#7A4200;--prb:#FEF2E0;--prr:rgba(122,66,0,0.28);--nc:#6B6B64;--nb:#EFEDE6;--nr:rgba(107,107,100,0.28);--poc:#4B2D9E;--pob:#EDE8FD;--por:rgba(75,45,158,0.28);--sh:0 1px 2px rgba(0,0,0,0.06),0 4px 12px rgba(0,0,0,0.04);}
+[data-theme="dark"]{--bg:#0C0C0A;--surf:#141412;--surf2:#1C1C1A;--surf3:#242421;--surf4:#2E2E2B;--rule:rgba(255,255,255,0.08);--rule2:rgba(255,255,255,0.05);--rule3:rgba(255,255,255,0.03);--t1:#F0EFE8;--t2:#8A8A82;--t3:#555550;--t4:#38382E;--g:#1FA882;--gd:#178066;--gb:rgba(31,168,130,0.1);--gr:rgba(31,168,130,0.3);--cc:#4ADE80;--cb:rgba(74,222,128,0.1);--cr:rgba(74,222,128,0.25);--pc:#60A5FA;--pb:rgba(96,165,250,0.1);--pr:rgba(96,165,250,0.25);--prc:#FBBF24;--prb:rgba(251,191,36,0.1);--prr:rgba(251,191,36,0.25);--nc:#55554E;--nb:rgba(85,85,78,0.15);--nr:rgba(85,85,78,0.25);--poc:#C084FC;--pob:rgba(192,132,252,0.1);--por:rgba(192,132,252,0.25);--sh:0 1px 3px rgba(0,0,0,0.5),0 6px 20px rgba(0,0,0,0.35);}
+[data-theme="dark"] body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;background-image:linear-gradient(rgba(255,255,255,.016) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.016) 1px,transparent 1px);background-size:40px 40px;}
 html,body{height:100%;background:var(--bg);color:var(--t1);font-family:'IBM Plex Sans',sans-serif;font-size:13px;line-height:1.5;transition:background .25s,color .25s}
 ::-webkit-scrollbar{width:3px;height:3px}::-webkit-scrollbar-thumb{background:var(--surf4);border-radius:2px}
-
 .tag{font-family:'IBM Plex Mono',monospace;font-size:8px;font-weight:500;text-transform:uppercase;letter-spacing:.06em;padding:1px 5px;border-radius:2px;border:1px solid;white-space:nowrap;flex-shrink:0}
 .tc{color:var(--cc);background:var(--cb);border-color:var(--cr)}.tp{color:var(--pc);background:var(--pb);border-color:var(--pr)}.tpr{color:var(--prc);background:var(--prb);border-color:var(--prr)}.tn{color:var(--nc);background:var(--nb);border-color:var(--nr)}.tpo{color:var(--poc);background:var(--pob);border-color:var(--por)}
-
 .btn{height:26px;padding:0 10px;border:1px solid var(--rule);border-radius:2px;font-family:'IBM Plex Mono',monospace;font-size:9px;font-weight:500;text-transform:uppercase;letter-spacing:.06em;cursor:pointer;background:var(--surf2);color:var(--t2);transition:all .15s}
 .btn:hover{background:var(--surf3);color:var(--t1)}.btn.p{background:var(--g);color:#fff;border-color:var(--g)}.btn.p:hover{background:var(--gd)}.btn.sm{height:22px;padding:0 7px;font-size:8px}.btn.full{width:100%}.btn.on{background:var(--g);color:#fff;border-color:var(--g)}
-
 .app{display:flex;flex-direction:column;height:100vh;overflow:hidden;position:relative;z-index:1}
-
-/* NAV */
 .nav{height:42px;flex-shrink:0;display:flex;align-items:center;gap:10px;padding:0 14px;background:var(--surf);border-bottom:1px solid var(--rule)}
 .nav-logo{font-family:'IBM Plex Mono',monospace;font-weight:600;font-size:12px;background:var(--g);color:#fff;width:26px;height:26px;border-radius:2px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
 .nav-title{font-family:'IBM Plex Mono',monospace;font-size:11px;font-weight:500;color:var(--t1);letter-spacing:.02em}.nav-sub{color:var(--t3);font-weight:400}
-.nav-status{margin-left:4px;font-family:'IBM Plex Mono',monospace;font-size:9px;padding:2px 7px;border-radius:2px;border:1px solid var(--rule);background:var(--surf2);color:var(--t3)}
-.nav-status.live{color:var(--cc);border-color:var(--cr);background:var(--cb)}.nav-right{margin-left:auto;display:flex;align-items:center;gap:6px}
-
-/* STATS BAR */
+.nav-status{margin-left:4px;font-family:'IBM Plex Mono',monospace;font-size:9px;padding:2px 7px;border-radius:2px;border:1px solid var(--rule);background:var(--surf2);color:var(--t3)}.nav-status.live{color:var(--cc);border-color:var(--cr);background:var(--cb)}.nav-right{margin-left:auto;display:flex;align-items:center;gap:6px}
 .stats-bar{height:36px;flex-shrink:0;display:flex;align-items:stretch;border-bottom:1px solid var(--rule);background:var(--surf2);overflow:hidden}
 .sb-col{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:0 6px;border-right:1px solid var(--rule);cursor:pointer;transition:background .1s;min-width:0;gap:1px}
 .sb-col:last-child{border-right:none}.sb-col:hover{background:var(--surf3)}.sb-col.active{background:var(--gb)}
 .sb-num{font-family:'IBM Plex Mono',monospace;font-size:11px;font-weight:600;color:var(--t1)}
 .sb-lbl{font-family:'IBM Plex Mono',monospace;font-size:7px;font-weight:500;text-transform:uppercase;letter-spacing:.06em;color:var(--t3);line-height:1}
-
 .main{flex:1;display:flex;overflow:hidden}
-
-/* LEFT */
 .left{width:300px;flex-shrink:0;display:flex;flex-direction:column;border-right:1px solid var(--rule);background:var(--surf);overflow:hidden}
 .left-tabs{display:flex;border-bottom:1px solid var(--rule);height:32px;flex-shrink:0}
 .left-tab{flex:1;display:flex;align-items:center;justify-content:center;font-family:'IBM Plex Mono',monospace;font-size:9px;font-weight:500;text-transform:uppercase;letter-spacing:.06em;color:var(--t3);cursor:pointer;transition:all .15s;border-bottom:2px solid transparent}
@@ -71,204 +37,117 @@ html,body{height:100%;background:var(--bg);color:var(--t1);font-family:'IBM Plex
 .left-filters{padding:5px 8px;border-bottom:1px solid var(--rule2);display:flex;gap:4px;flex-wrap:wrap;flex-shrink:0}
 .f-chip{font-family:'IBM Plex Mono',monospace;font-size:7px;font-weight:500;text-transform:uppercase;letter-spacing:.06em;padding:2px 6px;border-radius:2px;border:1px solid var(--rule);cursor:pointer;background:var(--surf2);color:var(--t3);transition:all .15s}
 .f-chip:hover{background:var(--surf3);color:var(--t2)}.f-chip.active{background:var(--g);color:#fff;border-color:var(--g)}
-
-/* TAG PANEL */
-.tag-panel{flex-shrink:0;overflow:hidden;border-bottom:1px solid var(--rule);background:var(--surf2);max-height:0;transition:max-height .22s ease}
-.tag-panel.open{max-height:185px}
+.tag-panel{flex-shrink:0;overflow:hidden;border-bottom:1px solid var(--rule);background:var(--surf2);max-height:0;transition:max-height .22s ease}.tag-panel.open{max-height:185px}
 .tp-head{display:flex;align-items:center;gap:6px;padding:6px 8px 5px;border-bottom:1px solid var(--rule2)}
-.tp-title{font-family:'IBM Plex Mono',monospace;font-size:8px;font-weight:500;text-transform:uppercase;letter-spacing:.06em;color:var(--t3)}
-.tp-logic{display:flex;gap:2px}
+.tp-title{font-family:'IBM Plex Mono',monospace;font-size:8px;font-weight:500;text-transform:uppercase;letter-spacing:.06em;color:var(--t3)}.tp-logic{display:flex;gap:2px}
 .tp-logic-btn{font-family:'IBM Plex Mono',monospace;font-size:7px;padding:1px 5px;border-radius:2px;border:1px solid var(--rule);background:var(--surf3);color:var(--t3);cursor:pointer;transition:all .12s;text-transform:uppercase;letter-spacing:.04em}
 .tp-logic-btn.active{background:var(--g);color:#fff;border-color:var(--g)}
-.tp-clear{margin-left:auto;font-family:'IBM Plex Mono',monospace;font-size:8px;color:var(--g);cursor:pointer;padding:1px 5px;border-radius:2px;transition:background .1s;display:none}
-.tp-clear:hover{background:var(--gb)}.tp-clear.vis{display:block}
+.tp-clear{margin-left:auto;font-family:'IBM Plex Mono',monospace;font-size:8px;color:var(--g);cursor:pointer;padding:1px 5px;border-radius:2px;transition:background .1s;display:none}.tp-clear:hover{background:var(--gb)}.tp-clear.vis{display:block}
 .tp-body{padding:6px 8px 8px;display:flex;flex-wrap:wrap;gap:4px;max-height:118px;overflow-y:auto}
 .t-pill{font-family:'IBM Plex Mono',monospace;font-size:8px;font-weight:500;padding:2px 7px;border-radius:2px;border:1px solid var(--rule);cursor:pointer;background:var(--surf);color:var(--t2);transition:all .12s;display:flex;align-items:center;gap:4px;white-space:nowrap;user-select:none}
 .t-pill:hover{border-color:var(--g);color:var(--g)}.t-pill.active{background:var(--g);color:#fff;border-color:var(--g)}
-.t-cnt{font-size:7px;padding:0 3px;border-radius:2px;background:var(--surf3);color:var(--t3);min-width:14px;text-align:center}
-.t-pill.active .t-cnt{background:rgba(255,255,255,.22);color:#fff}
-
-/* LIST META */
+.t-cnt{font-size:7px;padding:0 3px;border-radius:2px;background:var(--surf3);color:var(--t3);min-width:14px;text-align:center}.t-pill.active .t-cnt{background:rgba(255,255,255,.22);color:#fff}
 .list-meta{padding:4px 10px;font-family:'IBM Plex Mono',monospace;font-size:8px;color:var(--t3);border-bottom:1px solid var(--rule3);flex-shrink:0;display:flex;align-items:center;gap:5px;flex-wrap:wrap;text-transform:uppercase;letter-spacing:.04em;min-height:24px}
-.m-pill{font-family:'IBM Plex Mono',monospace;font-size:7px;padding:1px 5px;border-radius:2px;cursor:pointer;display:flex;align-items:center;gap:3px;white-space:nowrap}
-.m-pill::after{content:'×';font-size:8px}
-.m-pill.tag{background:var(--gb);color:var(--g);border:1px solid var(--gr)}
-.m-pill.ai{background:var(--pob);color:var(--poc);border:1px solid var(--por)}
-
+.m-pill{font-family:'IBM Plex Mono',monospace;font-size:7px;padding:1px 5px;border-radius:2px;cursor:pointer;display:flex;align-items:center;gap:3px;white-space:nowrap}.m-pill::after{content:'×';font-size:8px}
+.m-pill.tag{background:var(--gb);color:var(--g);border:1px solid var(--gr)}.m-pill.ai{background:var(--pob);color:var(--poc);border:1px solid var(--por)}
 .list-scroll{flex:1;overflow-y:auto;min-height:0}
-
-/* COMPANY ROW */
 .c-row{display:flex;align-items:flex-start;gap:8px;padding:8px 10px;border-bottom:1px solid var(--rule3);cursor:pointer;transition:background .1s;user-select:none}
 .c-row:hover{background:var(--surf2)}.c-row.selected{background:var(--gb);border-right:2px solid var(--g)}
 .c-av{width:28px;height:28px;border-radius:2px;display:flex;align-items:center;justify-content:center;font-family:'IBM Plex Mono',monospace;font-size:9px;font-weight:600;flex-shrink:0;margin-top:1px}
-.c-info{flex:1;min-width:0}
-.c-name{font-size:12px;font-weight:500;color:var(--t1);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;line-height:1.3}
-.c-note{font-size:10px;color:var(--t3);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;line-height:1.3;margin-top:1px}
-.c-tags-row{display:flex;gap:3px;margin-top:4px;flex-wrap:wrap}
-.c-tag-micro{font-family:'IBM Plex Mono',monospace;font-size:6px;padding:1px 4px;border-radius:2px;background:var(--surf3);border:1px solid var(--rule);color:var(--t3);text-transform:uppercase;letter-spacing:.04em;transition:all .1s}
-.c-tag-micro.hit{background:var(--gb);border-color:var(--gr);color:var(--g)}
-
-/* CONTACT ROW */
-.ct-row{display:flex;align-items:center;gap:8px;padding:8px 10px;border-bottom:1px solid var(--rule3);cursor:pointer;transition:background .1s}
-.ct-row:hover{background:var(--surf2)}
+.c-info{flex:1;min-width:0}.c-name{font-size:12px;font-weight:500;color:var(--t1);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;line-height:1.3}.c-note{font-size:10px;color:var(--t3);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;line-height:1.3;margin-top:1px}
+.c-tags-row{display:flex;gap:3px;margin-top:4px;flex-wrap:wrap}.c-tag-micro{font-family:'IBM Plex Mono',monospace;font-size:6px;padding:1px 4px;border-radius:2px;background:var(--surf3);border:1px solid var(--rule);color:var(--t3);text-transform:uppercase;letter-spacing:.04em;transition:all .1s}.c-tag-micro.hit{background:var(--gb);border-color:var(--gr);color:var(--g)}
+.ct-row{display:flex;align-items:center;gap:8px;padding:8px 10px;border-bottom:1px solid var(--rule3);cursor:pointer;transition:background .1s}.ct-row:hover{background:var(--surf2)}
 .ct-av{width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-family:'IBM Plex Mono',monospace;font-size:9px;font-weight:600;background:var(--surf3);color:var(--t2);flex-shrink:0}
-.ct-info{flex:1;min-width:0}
-.ct-name{font-size:12px;font-weight:500;color:var(--t1);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.ct-sub{font-size:10px;color:var(--t3);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin-top:1px}
-
-/* AI BAR */
+.ct-info{flex:1;min-width:0}.ct-name{font-size:12px;font-weight:500;color:var(--t1);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.ct-sub{font-size:10px;color:var(--t3);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin-top:1px}
 .ai-bar{flex-shrink:0;border-top:1px solid var(--rule);background:var(--surf);display:flex;flex-direction:column}
 .ai-bar-row{display:flex;align-items:center;gap:5px;padding:7px 8px 5px}
 .ai-badge{font-family:'IBM Plex Mono',monospace;font-size:7px;font-weight:600;text-transform:uppercase;letter-spacing:.08em;padding:2px 5px;border-radius:2px;background:var(--poc);color:#fff;flex-shrink:0}
 [data-theme="dark"] .ai-badge{background:var(--poc);color:var(--bg)}
 .ai-inp{flex:1;height:26px;padding:0 8px;border:1px solid var(--rule);border-radius:2px;font-family:'IBM Plex Mono',monospace;font-size:10px;background:var(--surf2);color:var(--t1);outline:none;transition:border-color .15s}
 .ai-inp:focus{border-color:var(--poc)}.ai-inp::placeholder{color:var(--t4)}
-.ai-stat{padding:0 8px 6px;font-family:'IBM Plex Mono',monospace;font-size:8px;color:var(--t3);display:none;align-items:center;gap:5px}
-.ai-stat.vis{display:flex}
-.ai-dot{width:6px;height:6px;border-radius:50%;background:var(--poc);flex-shrink:0;animation:pulse 1.4s infinite}
-.ai-dot.done{background:var(--g);animation:none}.ai-dot.err{background:var(--prc);animation:none}
-.ai-clr{margin-left:auto;font-family:'IBM Plex Mono',monospace;font-size:8px;color:var(--t3);cursor:pointer;padding:1px 5px;border-radius:2px;transition:all .1s}
-.ai-clr:hover{color:var(--t1);background:var(--surf3)}
-@keyframes pulse{0%,100%{opacity:1}50%{opacity:.35}}
-
-/* CENTER */
-.center{flex:1;overflow:hidden;display:flex;flex-direction:column;background:var(--bg)}
+.ai-stat{padding:0 8px 6px;font-family:'IBM Plex Mono',monospace;font-size:8px;color:var(--t3);display:none;align-items:center;gap:5px}.ai-stat.vis{display:flex}
+.ai-dot{width:6px;height:6px;border-radius:50%;background:var(--poc);flex-shrink:0;animation:pulse 1.4s infinite}.ai-dot.done{background:var(--g);animation:none}.ai-dot.err{background:var(--prc);animation:none}
+.ai-clr{margin-left:auto;font-family:'IBM Plex Mono',monospace;font-size:8px;color:var(--t3);cursor:pointer;padding:1px 5px;border-radius:2px;transition:all .1s}.ai-clr:hover{color:var(--t1);background:var(--surf3)}
+@keyframes pulse{0%,100%{opacity:.9}50%{opacity:.35}}
+.center{flex:1;overflow:hidden;display:flex;flex-direction:column;background:var(--bg);min-width:0}
 .center-scroll{flex:1;overflow-y:auto;padding:20px}
 .empty-wrap{display:flex;flex-direction:column;align-items:center;justify-content:center;height:100%;gap:20px}
 .empty-title{font-family:'IBM Plex Mono',monospace;font-size:11px;font-weight:500;color:var(--t3);text-transform:uppercase;letter-spacing:.06em}
 .qa-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;max-width:520px;width:100%}
-.qa-card{background:var(--surf);border:1px solid var(--rule);border-radius:2px;padding:12px 14px;cursor:pointer;transition:all .15s}
-.qa-card:hover{border-color:var(--g);background:var(--gb)}
+.qa-card{background:var(--surf);border:1px solid var(--rule);border-radius:2px;padding:12px 14px;cursor:pointer;transition:all .15s}.qa-card:hover{border-color:var(--g);background:var(--gb)}
 .qa-icon{font-size:16px;margin-bottom:5px}.qa-label{font-family:'IBM Plex Mono',monospace;font-size:9px;font-weight:500;text-transform:uppercase;letter-spacing:.05em;color:var(--t1);margin-bottom:2px}.qa-desc{font-size:10px;color:var(--t3)}
-
-/* ── INTELLIGENCE BRIEF ── */
+/* INTELLIGENCE BRIEF */
 .ib{max-width:680px;display:flex;flex-direction:column;gap:0}
-
-/* header */
 .ib-head{background:var(--surf);border:1px solid var(--rule);border-radius:2px;padding:16px;display:flex;align-items:flex-start;gap:14px;margin-bottom:1px}
-.ib-av{width:52px;height:52px;border-radius:2px;display:flex;align-items:center;justify-content:center;font-family:'IBM Plex Mono',monospace;font-size:15px;font-weight:600;flex-shrink:0;background:linear-gradient(135deg,var(--g),var(--gd))}
+.ib-av{width:52px;height:52px;border-radius:2px;display:flex;align-items:center;justify-content:center;font-family:'IBM Plex Mono',monospace;font-size:15px;font-weight:600;flex-shrink:0;background:linear-gradient(135deg,var(--g),var(--gd));color:#fff}
 .ib-av.nogo{background:linear-gradient(135deg,var(--nc),#44443E)}
-.ib-meta{flex:1;min-width:0}
-.ib-name{font-size:18px;font-weight:500;color:var(--t1);line-height:1.2;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.ib-row2{display:flex;align-items:center;gap:6px;margin-top:4px;flex-wrap:wrap}
-.ib-note{font-size:11px;color:var(--t3);margin-top:3px;line-height:1.4;overflow:hidden;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical}
-.ib-icp{font-size:11px;color:var(--g);letter-spacing:.05em}
-.ib-close{flex-shrink:0;font-size:18px;color:var(--t3);cursor:pointer;padding:2px;transition:color .15s;margin-left:auto;align-self:flex-start}.ib-close:hover{color:var(--t1)}
-
-/* CTA strip */
+.ib-meta{flex:1;min-width:0}.ib-name{font-size:18px;font-weight:500;color:var(--t1);line-height:1.2;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.ib-row2{display:flex;align-items:center;gap:6px;margin-top:4px;flex-wrap:wrap}.ib-note{font-size:11px;color:var(--t3);margin-top:3px;line-height:1.4;overflow:hidden;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical}
+.ib-icp{font-size:11px;color:var(--g);letter-spacing:.05em}.ib-close{flex-shrink:0;font-size:18px;color:var(--t3);cursor:pointer;padding:2px;transition:color .15s;margin-left:auto;align-self:flex-start}.ib-close:hover{color:var(--t1)}
 .ib-cta{background:var(--surf);border:1px solid var(--rule);border-top:none;padding:8px 12px;display:flex;gap:5px;flex-wrap:wrap;margin-bottom:8px}
 .ib-cta-btn{height:26px;padding:0 11px;border:1px solid var(--rule);border-radius:2px;font-family:'IBM Plex Mono',monospace;font-size:8px;font-weight:500;text-transform:uppercase;letter-spacing:.05em;cursor:pointer;background:var(--surf2);color:var(--t2);transition:all .15s;white-space:nowrap}
-.ib-cta-btn:hover{background:var(--surf3);color:var(--t1)}
-.ib-cta-btn.primary{background:var(--g);color:#fff;border-color:var(--g)}.ib-cta-btn.primary:hover{background:var(--gd)}
-
-/* section blocks */
+.ib-cta-btn:hover{background:var(--surf3);color:var(--t1)}.ib-cta-btn.primary{background:var(--g);color:#fff;border-color:var(--g)}.ib-cta-btn.primary:hover{background:var(--gd)}
 .ib-sec{background:var(--surf);border:1px solid var(--rule);border-radius:2px;overflow:hidden;margin-bottom:5px}
 .ib-sh{display:flex;align-items:center;gap:7px;padding:7px 14px;background:var(--surf2);border-bottom:1px solid var(--rule2)}
 .ib-sh-lbl{font-family:'IBM Plex Mono',monospace;font-size:8px;font-weight:600;text-transform:uppercase;letter-spacing:.07em;color:var(--t3)}
 .ib-sh-cnt{font-family:'IBM Plex Mono',monospace;font-size:8px;padding:1px 5px;border-radius:2px;background:var(--surf3);border:1px solid var(--rule);color:var(--t3);margin-left:2px}
 .ib-sh-act{margin-left:auto;font-family:'IBM Plex Mono',monospace;font-size:8px;color:var(--g);cursor:pointer;padding:1px 6px;border-radius:2px;border:1px solid var(--gr);background:var(--gb);transition:all .1s}.ib-sh-act:hover{background:var(--gr)}
-.ib-body{padding:12px 14px}
-
-/* two-col top grid */
-.ib-top{display:grid;grid-template-columns:1fr 1fr;gap:5px;margin-bottom:5px}
-
-/* facts table */
-.ib-facts{width:100%;border-collapse:collapse;font-size:11px}
-.ib-facts td{padding:4px 0;border-bottom:1px solid var(--rule3);vertical-align:top}
+.ib-body{padding:12px 14px}.ib-top{display:grid;grid-template-columns:1fr 1fr;gap:5px;margin-bottom:5px}
+.ib-facts{width:100%;border-collapse:collapse;font-size:11px}.ib-facts td{padding:4px 0;border-bottom:1px solid var(--rule3);vertical-align:top}
 .ib-facts td:first-child{font-family:'IBM Plex Mono',monospace;font-size:9px;font-weight:500;text-transform:uppercase;letter-spacing:.04em;color:var(--t3);width:80px;padding-right:10px;white-space:nowrap}
 .ib-facts tr:last-child td{border-bottom:none}
-
-/* description */
 .ib-desc{font-size:11px;color:var(--t2);line-height:1.65;margin-top:8px;padding-top:8px;border-top:1px solid var(--rule2)}
-
-/* angle card */
 .ib-angle{background:var(--gb);border:1px solid var(--gr);border-radius:2px;height:100%;padding:12px 14px;display:flex;flex-direction:column;gap:0}
 .ib-angle.empty{background:var(--surf2);border-color:var(--rule)}
 .ib-angle-lbl{font-family:'IBM Plex Mono',monospace;font-size:7px;font-weight:600;text-transform:uppercase;letter-spacing:.07em;color:var(--g);margin-bottom:7px}
-.ib-angle.empty .ib-angle-lbl{color:var(--t3)}
-.ib-angle-text{font-size:11px;color:var(--t1);line-height:1.65;flex:1}
-
-/* signal strip */
+.ib-angle.empty .ib-angle-lbl{color:var(--t3)}.ib-angle-text{font-size:11px;color:var(--t1);line-height:1.65;flex:1}
 .ib-signals{display:flex;align-items:center;gap:5px;flex-wrap:wrap;padding:8px 14px;background:var(--surf2);border-bottom:1px solid var(--rule2)}
 .ib-sig-lbl{font-family:'IBM Plex Mono',monospace;font-size:7px;font-weight:600;text-transform:uppercase;letter-spacing:.07em;color:var(--t3);white-space:nowrap}
 .ib-sig-div{width:1px;height:12px;background:var(--rule);margin:0 2px}
 .ib-sig-tag{font-family:'IBM Plex Mono',monospace;font-size:7px;padding:2px 6px;border-radius:2px;border:1px solid var(--gr);background:var(--gb);color:var(--g);font-weight:500;white-space:nowrap}
 .ib-tech-pill{font-family:'IBM Plex Mono',monospace;font-size:7px;padding:2px 6px;border-radius:2px;border:1px solid var(--rule);background:var(--surf3);color:var(--t2);font-weight:500;white-space:nowrap}
-
-/* contact cards */
 .ib-cts-grid{display:grid;grid-template-columns:1fr 1fr;gap:6px}
-.ib-ct{background:var(--surf2);border:1px solid var(--rule);border-radius:2px;padding:10px 12px;cursor:pointer;transition:border-color .15s}
-.ib-ct:hover{border-color:var(--g)}
+.ib-ct{background:var(--surf2);border:1px solid var(--rule);border-radius:2px;padding:10px 12px;cursor:pointer;transition:border-color .15s}.ib-ct:hover{border-color:var(--g)}
 .ib-ct-top{display:flex;align-items:center;gap:8px;margin-bottom:6px}
 .ib-ct-av{width:30px;height:30px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-family:'IBM Plex Mono',monospace;font-size:9px;font-weight:600;flex-shrink:0}
-.ib-ct-name{font-size:12px;font-weight:500;color:var(--t1);line-height:1.2}
-.ib-ct-title{font-size:10px;color:var(--t3);margin-top:1px;line-height:1.3}
+.ib-ct-name{font-size:12px;font-weight:500;color:var(--t1);line-height:1.2}.ib-ct-title{font-size:10px;color:var(--t3);margin-top:1px;line-height:1.3}
 .ib-ct-email{font-family:'IBM Plex Mono',monospace;font-size:9px;color:var(--pc);margin-top:4px}
-.ib-ct-actions{display:flex;gap:4px;margin-top:7px}
-.ib-ct-btn{font-family:'IBM Plex Mono',monospace;font-size:7px;height:18px;padding:0 6px;border-radius:2px;border:1px solid var(--rule);background:var(--surf);color:var(--t3);cursor:pointer;transition:all .12s;text-transform:uppercase;letter-spacing:.04em}
-.ib-ct-btn:hover{color:var(--g);border-color:var(--gr)}
-
-/* intelligence / news items */
-.ib-news-item{display:flex;align-items:flex-start;gap:8px;padding:7px 0;border-bottom:1px solid var(--rule3)}
-.ib-news-item:last-child{border-bottom:none}
+.ib-ct-actions{display:flex;gap:4px;margin-top:7px}.ib-ct-btn{font-family:'IBM Plex Mono',monospace;font-size:7px;height:18px;padding:0 6px;border-radius:2px;border:1px solid var(--rule);background:var(--surf);color:var(--t3);cursor:pointer;transition:all .12s;text-transform:uppercase;letter-spacing:.04em}.ib-ct-btn:hover{color:var(--g);border-color:var(--gr)}
+.ib-news-item{display:flex;align-items:flex-start;gap:8px;padding:7px 0;border-bottom:1px solid var(--rule3)}.ib-news-item:last-child{border-bottom:none}
 .ib-news-dot{width:6px;height:6px;border-radius:50%;background:var(--g);flex-shrink:0;margin-top:4px}
 .ib-news-body{flex:1;min-width:0}
-.ib-news-title{font-size:11px;color:var(--t1);line-height:1.4;cursor:pointer;text-decoration:none;transition:color .12s}
-.ib-news-title:hover{color:var(--g)}
-.ib-news-meta{font-family:'IBM Plex Mono',monospace;font-size:8px;color:var(--t3);margin-top:2px;display:flex;gap:8px}
-.ib-news-src{color:var(--t3)}.ib-news-date{color:var(--t4)}
-
-/* relations compact */
-.ib-rel-item{display:flex;align-items:center;gap:6px;padding:5px 0;border-bottom:1px solid var(--rule3)}
-.ib-rel-item:last-child{border-bottom:none}
+.ib-news-title{font-size:11px;color:var(--t1);line-height:1.4;cursor:pointer;text-decoration:none;transition:color .12s}.ib-news-title:hover{color:var(--g)}
+.ib-news-meta{font-family:'IBM Plex Mono',monospace;font-size:8px;color:var(--t3);margin-top:2px;display:flex;gap:8px}.ib-news-src{color:var(--t3)}.ib-news-date{color:var(--t4)}
+.ib-rel-item{display:flex;align-items:center;gap:6px;padding:5px 0;border-bottom:1px solid var(--rule3)}.ib-rel-item:last-child{border-bottom:none}
 .ib-rel-arrow{font-family:'IBM Plex Mono',monospace;font-size:11px;color:var(--g);flex-shrink:0;width:16px;text-align:center}
-.ib-rel-name{font-size:11px;font-weight:500;color:var(--g);cursor:pointer;flex:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.ib-rel-name.no-link{color:var(--t1);cursor:default}
+.ib-rel-name{font-size:11px;font-weight:500;color:var(--g);cursor:pointer;flex:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.ib-rel-name.no-link{color:var(--t1);cursor:default}
 .ib-rel-type{font-family:'IBM Plex Mono',monospace;font-size:7px;color:var(--t3);text-transform:uppercase;letter-spacing:.04em;white-space:nowrap}
 .ib-rel-notes{font-size:10px;color:var(--t3);padding:2px 0 4px 22px;border-bottom:1px solid var(--rule3)}
-
-/* products mini */
-.ib-prod-row{display:flex;align-items:baseline;gap:8px;padding:5px 0;border-bottom:1px solid var(--rule3)}
-.ib-prod-row:last-child{border-bottom:none}
-.ib-prod-name{font-size:11px;font-weight:500;color:var(--t1);min-width:100px;flex-shrink:0}
-.ib-prod-desc{font-size:10px;color:var(--t2);flex:1;line-height:1.4}
-
-/* quick links row */
+.ib-prod-row{display:flex;align-items:baseline;gap:8px;padding:5px 0;border-bottom:1px solid var(--rule3)}.ib-prod-row:last-child{border-bottom:none}
+.ib-prod-name{font-size:11px;font-weight:500;color:var(--t1);min-width:100px;flex-shrink:0}.ib-prod-desc{font-size:10px;color:var(--t2);flex:1;line-height:1.4}
 .ib-links{display:flex;flex-wrap:wrap;gap:5px;padding:10px 14px}
-.ib-link{font-family:'IBM Plex Mono',monospace;font-size:8px;padding:4px 10px;border-radius:2px;border:1px solid var(--rule);background:var(--surf2);color:var(--t2);text-decoration:none;transition:all .12s;cursor:pointer}
-.ib-link:hover{border-color:var(--g);color:var(--g);background:var(--gb)}
-
-/* bg action status */
+.ib-link{font-family:'IBM Plex Mono',monospace;font-size:8px;padding:4px 10px;border-radius:2px;border:1px solid var(--rule);background:var(--surf2);color:var(--t2);text-decoration:none;transition:all .12s;cursor:pointer}.ib-link:hover{border-color:var(--g);color:var(--g);background:var(--gb)}
 .bg-running{font-family:'IBM Plex Mono',monospace;font-size:7px;font-weight:600;text-transform:uppercase;letter-spacing:.06em;padding:1px 6px;border-radius:2px;background:var(--pob);color:var(--poc);border:1px solid var(--por);display:inline-flex;align-items:center;gap:4px;animation:pulse 1.2s infinite}
-.bg-done   {font-family:'IBM Plex Mono',monospace;font-size:7px;padding:1px 6px;border-radius:2px;background:var(--cb);color:var(--cc);border:1px solid var(--cr)}
-.bg-err    {font-family:'IBM Plex Mono',monospace;font-size:7px;padding:1px 6px;border-radius:2px;background:var(--prb);color:var(--prc);border:1px solid var(--prr)}
-.live-dot  {width:5px;height:5px;border-radius:50%;background:#E53935;display:inline-block;animation:pulse 1.2s infinite;flex-shrink:0}
+.bg-done{font-family:'IBM Plex Mono',monospace;font-size:7px;padding:1px 6px;border-radius:2px;background:var(--cb);color:var(--cc);border:1px solid var(--cr)}
+.bg-err{font-family:'IBM Plex Mono',monospace;font-size:7px;padding:1px 6px;border-radius:2px;background:var(--prb);color:var(--prc);border:1px solid var(--prr)}
+.live-dot{width:5px;height:5px;border-radius:50%;background:#E53935;display:inline-block;animation:pulse 1.2s infinite;flex-shrink:0}
 .live-label{font-family:'IBM Plex Mono',monospace;font-size:7px;font-weight:700;text-transform:uppercase;letter-spacing:.07em;color:#E53935;display:flex;align-items:center;gap:4px}
-/* loading skeleton */
 .ib-loading{font-family:'IBM Plex Mono',monospace;font-size:9px;color:var(--t3);text-transform:uppercase;padding:12px 0;text-align:center;animation:pulse 1.4s infinite}
-@keyframes pulse{0%,100%{opacity:.9}50%{opacity:.35}}
-
-/* CONTEXT MENU */
 .ctx-menu{position:fixed;background:var(--surf);border:1px solid var(--rule);border-radius:2px;padding:5px;z-index:9998;min-width:210px;box-shadow:var(--sh);display:none}
 .ctx-label{font-family:'IBM Plex Mono',monospace;font-size:8px;font-weight:500;text-transform:uppercase;letter-spacing:.06em;padding:4px 8px 3px;color:var(--t3)}
 .ctx-sep{height:1px;background:var(--rule);margin:4px 0}
 .ctx-item{display:flex;align-items:center;gap:8px;padding:6px 8px;font-size:11px;color:var(--t2);border-radius:2px;cursor:pointer;transition:background .1s}.ctx-item:hover{background:var(--surf2);color:var(--t1)}
 .ctx-ico{font-size:12px;width:16px;text-align:center;flex-shrink:0}
-
-/* DRAWER */
 #ctDrawer{position:fixed;top:0;right:-390px;width:380px;height:100vh;background:var(--surf);border-left:1px solid var(--rule);z-index:9000;transition:right .25s;display:flex;flex-direction:column;box-shadow:var(--sh)}
 #ctDrawer.open{right:0}
 #ctDrawerOverlay{position:fixed;inset:0;background:rgba(0,0,0,.3);z-index:8999;display:none;backdrop-filter:blur(2px)}
 #ctDrawerOverlay.vis{display:block}
 .dr-head{display:flex;align-items:center;gap:10px;padding:14px;border-bottom:1px solid var(--rule);flex-shrink:0}
 .dr-av{width:40px;height:40px;border-radius:50%;background:var(--surf3);display:flex;align-items:center;justify-content:center;font-family:'IBM Plex Mono',monospace;font-size:13px;font-weight:600;color:var(--t2)}
-.dr-name{font-size:14px;font-weight:500;color:var(--t1)}.dr-sub{font-size:11px;color:var(--t3);margin-top:1px}
-.dr-close{margin-left:auto;font-size:18px;cursor:pointer;color:var(--t3);padding:4px}.dr-close:hover{color:var(--t1)}
+.dr-name{font-size:14px;font-weight:500;color:var(--t1)}.dr-sub{font-size:11px;color:var(--t3);margin-top:1px}.dr-close{margin-left:auto;font-size:18px;cursor:pointer;color:var(--t3);padding:4px}.dr-close:hover{color:var(--t1)}
 .dr-body{flex:1;overflow-y:auto;padding:14px}
 .dr-field{margin-bottom:12px}.dr-field label{font-family:'IBM Plex Mono',monospace;font-size:8px;font-weight:500;text-transform:uppercase;letter-spacing:.06em;color:var(--t3);display:block;margin-bottom:3px}.dr-field p{font-size:11px;color:var(--t1)}
 .dr-actions{display:grid;grid-template-columns:1fr 1fr;gap:6px;padding:14px;border-top:1px solid var(--rule);flex-shrink:0}
-
-/* MODALS */
 #overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:10000;align-items:center;justify-content:center;backdrop-filter:blur(4px)}
 #overlay.vis{display:flex}
 .modal-box{background:var(--surf);border:1px solid var(--rule);border-radius:4px;padding:20px;max-width:480px;width:90%;box-shadow:var(--sh)}
@@ -276,85 +155,171 @@ html,body{height:100%;background:var(--bg);color:var(--t1);font-family:'IBM Plex
 .modal-box p{font-size:11px;color:var(--t3);margin-bottom:12px;line-height:1.6}
 .modal-box input[type=text]{width:100%;padding:8px 10px;border:1px solid var(--rule);border-radius:2px;font-family:'IBM Plex Mono',monospace;font-size:10px;background:var(--surf2);color:var(--t1);outline:none;transition:border-color .15s}
 .modal-box input[type=text]:focus{border-color:var(--g)}.modal-foot{display:flex;gap:6px;justify-content:flex-end;margin-top:12px}
-#panelModal{display:none;position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:9999;align-items:center;justify-content:center}
-#panelModal.vis{display:flex}
+
+/* ══════════════════════════════════════
+   MEESEEKS COMPOSER DRAWER
+══════════════════════════════════════ */
+#mcDrawer{position:fixed;top:0;right:-860px;width:840px;height:100vh;background:var(--surf);border-left:1px solid var(--rule);z-index:9500;transition:right .3s cubic-bezier(.22,1,.36,1);display:flex;flex-direction:column;box-shadow:var(--sh)}
+#mcDrawer.open{right:0}
+#mcOverlay{position:fixed;inset:0;background:rgba(0,0,0,.4);z-index:9499;display:none;backdrop-filter:blur(3px)}
+#mcOverlay.vis{display:block}
+.mc-nav{height:42px;flex-shrink:0;display:flex;align-items:center;gap:10px;padding:0 14px;background:var(--surf);border-bottom:1px solid var(--rule)}
+.mc-logo{font-family:'IBM Plex Mono',monospace;font-weight:600;font-size:12px;background:var(--g);color:#fff;width:26px;height:26px;border-radius:2px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.mc-title{font-family:'IBM Plex Mono',monospace;font-size:11px;font-weight:500;color:var(--t1);letter-spacing:.02em}
+.mc-sub{color:var(--t3);font-weight:400}
+.mc-persona-badge{font-family:'IBM Plex Mono',monospace;font-size:8px;font-weight:600;text-transform:uppercase;letter-spacing:.08em;padding:2px 8px;border-radius:2px;color:#fff;margin-left:4px;transition:background .2s}
+.mc-close{margin-left:auto;font-size:18px;cursor:pointer;color:var(--t3);padding:4px;transition:color .15s;background:none;border:none}.mc-close:hover{color:var(--t1)}
+.mc-key-btn{height:26px;padding:0 10px;border:1px solid var(--rule);border-radius:2px;font-family:'IBM Plex Mono',monospace;font-size:9px;font-weight:500;text-transform:uppercase;letter-spacing:.06em;cursor:pointer;background:var(--surf2);color:var(--t2);transition:all .15s}.mc-key-btn:hover{background:var(--surf3);color:var(--t1)}.mc-key-btn.set{color:var(--cc);border-color:var(--cr);background:var(--cb)}
+.mc-shell{flex:1;display:flex;overflow:hidden}
+/* left form */
+.mc-left{width:290px;flex-shrink:0;display:flex;flex-direction:column;border-right:1px solid var(--rule);background:var(--surf);overflow:hidden}
+.mc-scroll{flex:1;overflow-y:auto;padding:12px 13px 4px}
+.mc-lbl{font-family:'IBM Plex Mono',monospace;font-size:7px;font-weight:600;text-transform:uppercase;letter-spacing:.1em;color:var(--t3);margin-bottom:6px;margin-top:13px}.mc-lbl:first-child{margin-top:0}
+/* persona grid */
+.mc-pgrid{display:grid;grid-template-columns:repeat(5,1fr);gap:4px;width:100%}
+.mc-ptile{display:flex;flex-direction:column;align-items:center;gap:2px;padding:7px 2px 6px;border-radius:2px;border:1px solid var(--rule);cursor:pointer;transition:all .15s;background:var(--surf2);user-select:none;min-width:0}
+.mc-ptile:hover{border-color:var(--g);background:var(--gb)}.mc-ptile.active{border-color:transparent}
+.mc-ptile.active .mc-pname,.mc-ptile.active .mc-pvibe{color:#fff}
+.mc-pemoji{font-size:16px;line-height:1}.mc-pname{font-family:'IBM Plex Mono',monospace;font-size:6.5px;font-weight:600;text-transform:uppercase;letter-spacing:.05em;color:var(--t1);line-height:1;margin-top:2px;white-space:nowrap}.mc-pvibe{font-family:'IBM Plex Mono',monospace;font-size:5.5px;color:var(--t3);line-height:1;letter-spacing:.02em;white-space:nowrap}
+/* company block */
+.mc-co{background:var(--surf2);border:1px solid var(--rule);border-radius:2px;padding:10px;width:100%}.mc-co.filled{border-color:var(--gr);background:var(--gb)}
+.mc-co-top{display:flex;align-items:center;gap:8px}
+.mc-co-av{width:30px;height:30px;border-radius:2px;display:flex;align-items:center;justify-content:center;font-family:'IBM Plex Mono',monospace;font-size:10px;font-weight:600;flex-shrink:0;background:linear-gradient(135deg,var(--g),var(--gd));color:#fff}
+.mc-co-name{font-size:12px;font-weight:500;color:var(--t1);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.mc-co-note{font-size:10px;color:var(--t3);margin-top:1px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.mc-co-empty{font-family:'IBM Plex Mono',monospace;font-size:9px;color:var(--t4);text-transform:uppercase;letter-spacing:.06em}
+.mc-co-tags{display:flex;gap:3px;flex-wrap:wrap;margin-top:7px;padding-top:7px;border-top:1px solid var(--rule2)}
+.mc-co-tag{font-family:'IBM Plex Mono',monospace;font-size:6px;padding:2px 5px;border-radius:2px;border:1px solid var(--gr);background:var(--gb);color:var(--g);font-weight:600;text-transform:uppercase;letter-spacing:.05em}
+/* contact picker */
+.mc-ctlist{display:flex;flex-direction:column;gap:4px;width:100%}
+.mc-ctcard{display:flex;align-items:center;gap:9px;padding:8px 10px;border:1px solid var(--rule);border-radius:2px;background:var(--surf2);cursor:pointer;transition:all .15s;user-select:none;width:100%}
+.mc-ctcard:hover{border-color:var(--g);background:var(--gb)}.mc-ctcard.active{border-color:var(--g);background:var(--gb)}.mc-ctcard.active .mc-ctcheck{opacity:1}
+.mc-ctav{width:30px;height:30px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-family:'IBM Plex Mono',monospace;font-size:9px;font-weight:700;flex-shrink:0}
+.mc-ctbody{flex:1;min-width:0}
+.mc-ctnm{font-size:12px;font-weight:500;color:var(--t1);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.mc-ctti{font-size:9px;color:var(--t3);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin-top:1px}
+.mc-ctemail{font-family:'IBM Plex Mono',monospace;font-size:8px;color:var(--pc);margin-top:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.mc-ctcheck{font-size:12px;color:var(--g);opacity:0;flex-shrink:0;transition:opacity .12s}
+.mc-ctempty{font-family:'IBM Plex Mono',monospace;font-size:9px;color:var(--t3);padding:8px 2px;text-transform:uppercase;letter-spacing:.06em}
+/* textareas */
+textarea.mc-tf{width:100%;padding:8px 10px;border:1px solid var(--rule);border-radius:2px;font-family:'IBM Plex Sans',sans-serif;font-size:11px;background:var(--surf2);color:var(--t1);outline:none;resize:none;transition:border-color .15s;line-height:1.55}
+textarea.mc-tf:focus{border-color:var(--g)}.mc-tf::placeholder{color:var(--t4)}
+.mc-tf-hint{font-family:'IBM Plex Mono',monospace;font-size:7px;color:var(--t4);text-align:right;margin-top:3px}
+/* generate button */
+.mc-gen{width:100%;height:40px;border:none;border-radius:2px;background:var(--g);color:#fff;font-family:'IBM Plex Mono',monospace;font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:.1em;cursor:pointer;transition:background .15s;display:flex;align-items:center;justify-content:center;gap:8px}
+.mc-gen:hover{background:var(--gd)}.mc-gen:disabled{background:var(--surf4);color:var(--t3);cursor:default}
+.mc-spin{width:14px;height:14px;border:2px solid rgba(255,255,255,.3);border-top-color:#fff;border-radius:50%;animation:spin .7s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+.mc-footer{padding:10px 13px;border-top:1px solid var(--rule);flex-shrink:0}
+/* right output */
+.mc-right{flex:1;display:flex;flex-direction:column;background:var(--surf2);overflow:hidden;min-width:0}
+.mc-rbar{height:38px;flex-shrink:0;display:flex;align-items:center;gap:8px;padding:0 18px;border-bottom:1px solid var(--rule);background:var(--surf)}
+.mc-rlbl{font-family:'IBM Plex Mono',monospace;font-size:9px;font-weight:500;text-transform:uppercase;letter-spacing:.07em;color:var(--t3);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.mc-racts{margin-left:auto;display:flex;gap:5px;flex-shrink:0}
+.mc-obtn{height:22px;padding:0 10px;border:1px solid var(--rule);border-radius:2px;font-family:'IBM Plex Mono',monospace;font-size:8px;font-weight:500;text-transform:uppercase;letter-spacing:.05em;cursor:pointer;background:var(--surf2);color:var(--t2);transition:all .15s;white-space:nowrap}
+.mc-obtn:hover{background:var(--surf3);color:var(--t1)}.mc-obtn.p{background:var(--g);color:#fff;border-color:var(--g)}.mc-obtn.p:hover{background:var(--gd)}
+.mc-rscroll{flex:1;overflow-y:auto;padding:40px 52px}
+.mc-empty{display:flex;flex-direction:column;align-items:center;justify-content:center;height:100%;gap:10px}
+.mc-earrow{font-family:'IBM Plex Mono',monospace;font-size:52px;font-weight:200;letter-spacing:-4px;color:var(--t4)}
+.mc-ehint{font-family:'IBM Plex Mono',monospace;font-size:9px;text-transform:uppercase;letter-spacing:.08em;color:var(--t3)}
+/* output typography */
+.mc-wrap{max-width:560px;margin:0 auto}
+.mc-subject{font-family:'IBM Plex Mono',monospace;font-size:8px;font-weight:600;text-transform:uppercase;letter-spacing:.08em;color:var(--t3);padding:7px 12px 6px;background:var(--surf3);border:1px solid var(--rule);border-radius:2px;margin-bottom:28px;display:flex;align-items:baseline;gap:10px;width:100%}
+.mc-subject-val{font-family:'IBM Plex Sans',sans-serif;text-transform:none;letter-spacing:0;font-weight:600;color:var(--t1);font-size:14px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.mc-badge{display:inline-flex;align-items:center;gap:6px;padding:3px 11px 3px 7px;border-radius:2px;margin-bottom:26px;font-family:'IBM Plex Mono',monospace;font-size:7px;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:#fff}
+.mc-bdot{width:5px;height:5px;border-radius:50%;background:rgba(255,255,255,.5);flex-shrink:0}.mc-bemoji{font-size:16px;line-height:1}.mc-bvibe{font-weight:400;opacity:.75;letter-spacing:.06em}
+.mc-email{color:var(--t1);white-space:pre-wrap;word-break:break-word}
+.mc-error{font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--prc);background:var(--prb);border:1px solid var(--prr);border-radius:2px;padding:12px 14px;line-height:1.6}
+.mc-out-steve  .mc-email{font-family:'IBM Plex Sans',sans-serif;font-size:26px;line-height:2.05;font-weight:300;letter-spacing:.005em}
+.mc-out-steve  .mc-badge{background:#1d1d1f}
+.mc-out-barack .mc-email{font-family:'IBM Plex Sans',sans-serif;font-size:22px;line-height:2.1;font-weight:400}
+.mc-out-barack .mc-badge{background:#1a3a5c}
+.mc-out-margaret .mc-email{font-family:'IBM Plex Sans',sans-serif;font-size:18px;line-height:1.72;font-weight:500;letter-spacing:.01em}
+.mc-out-margaret .mc-badge{background:#2c2c54}
+.mc-out-winston .mc-email{font-family:'IBM Plex Serif',serif;font-size:24px;line-height:1.95;font-weight:400;letter-spacing:.01em}
+.mc-out-winston .mc-badge{background:#7b341e}
+.mc-out-david  .mc-email{font-family:'IBM Plex Mono',monospace;font-size:13px;line-height:1.8;font-weight:400;letter-spacing:.01em;color:var(--t2)}
+.mc-out-david  .mc-badge{background:#2d6a4f}
+.mc-out-jeff   .mc-email{font-family:'IBM Plex Mono',monospace;font-size:12px;line-height:1.75;font-weight:500;letter-spacing:-.005em}
+.mc-out-jeff   .mc-badge{background:#1a4b6e}
+.mc-out-gary   .mc-email{font-family:'IBM Plex Sans',sans-serif;font-size:24px;line-height:2.1;font-weight:400;letter-spacing:.018em}
+.mc-out-gary   .mc-badge{background:#c05621}
+.mc-out-maya   .mc-email{font-family:'IBM Plex Serif',serif;font-size:22px;line-height:2.2;font-weight:300;font-style:italic;letter-spacing:.012em}
+.mc-out-maya   .mc-badge{background:#553c9a}
+.mc-out-elon   .mc-email{font-family:'IBM Plex Sans',sans-serif;font-size:28px;line-height:1.6;font-weight:700;letter-spacing:-.02em}
+.mc-out-elon   .mc-badge{background:#000}
+.mc-out-oprah  .mc-email{font-family:'IBM Plex Sans',sans-serif;font-size:22px;line-height:2.1;font-weight:400;letter-spacing:.012em}
+.mc-out-oprah  .mc-badge{background:#8b4513}
+/* key modal */
+#mcKeyOverlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:10500;align-items:center;justify-content:center;backdrop-filter:blur(4px)}
+#mcKeyOverlay.vis{display:flex}
+.mc-kbox{background:var(--surf);border:1px solid var(--rule);border-radius:4px;padding:20px;max-width:440px;width:90%;box-shadow:var(--sh)}
+.mc-kbox h2{font-family:'IBM Plex Mono',monospace;font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:.08em;margin-bottom:8px}
+.mc-kbox p{font-size:11px;color:var(--t3);margin-bottom:12px;line-height:1.6}
+.mc-kbox input{width:100%;padding:8px 10px;border:1px solid var(--rule);border-radius:2px;font-family:'IBM Plex Mono',monospace;font-size:10px;background:var(--surf2);color:var(--t1);outline:none;transition:border-color .15s}
+.mc-kbox input:focus{border-color:var(--g)}
+.mc-kfoot{display:flex;gap:6px;justify-content:flex-end;margin-top:12px}
+.mc-kb{height:26px;padding:0 12px;border:1px solid var(--rule);border-radius:2px;font-family:'IBM Plex Mono',monospace;font-size:9px;font-weight:500;text-transform:uppercase;letter-spacing:.06em;cursor:pointer;background:var(--surf2);color:var(--t2);transition:all .15s}
+.mc-kb:hover{background:var(--surf3)}.mc-kb.p{background:var(--g);color:#fff;border-color:var(--g)}.mc-kb.p:hover{background:var(--gd)}
 </style>
 </head>
 <body>
 <div class="app">
-
-<!-- NAV -->
 <nav class="nav">
   <div class="nav-logo">oA</div>
   <span class="nav-title">Sales Intelligence Hub <span class="nav-sub">/ onAudience</span></span>
   <span class="nav-status" id="dbStatus">○ Loading…</span>
   <div class="nav-right">
     <button class="btn sm" onclick="window.oaDB&&window.oaDB.reload()">↺ Sync</button>
+    <button class="btn sm" onclick="openComposer(null)">✉ Compose</button>
     <button class="btn sm p" onclick="promptResearch()">+ Research</button>
     <button class="btn sm" onclick="toggleTheme()" id="themeBtn">🌙</button>
   </div>
 </nav>
-
-<!-- STATS BAR -->
 <div class="stats-bar">
-  <div class="sb-col active" id="sbAll"      onclick="setFilter('all',this)">      <div class="sb-num" id="stAll">—</div>      <div class="sb-lbl">All</div></div>
-  <div class="sb-col"        id="sbClient"   onclick="setFilter('client',this)">   <div class="sb-num" id="stClient">—</div>   <div class="sb-lbl">Clients</div></div>
-  <div class="sb-col"        id="sbPoc"      onclick="setFilter('poc',this)">      <div class="sb-num" id="stPoc">—</div>      <div class="sb-lbl">POC</div></div>
-  <div class="sb-col"        id="sbPartner"  onclick="setFilter('partner',this)">  <div class="sb-num" id="stPartner">—</div>  <div class="sb-lbl">Partners</div></div>
-  <div class="sb-col"        id="sbProspect" onclick="setFilter('prospect',this)"> <div class="sb-num" id="stProspect">—</div> <div class="sb-lbl">Prospects</div></div>
-  <div class="sb-col"        id="sbNogo"     onclick="setFilter('nogo',this)">     <div class="sb-num" id="stNogo">—</div>     <div class="sb-lbl">No Outreach</div></div>
-  <div class="sb-col"        id="sbFresh"    onclick="setFilter('fresh',this)">    <div class="sb-num" id="stFresh">—</div>    <div class="sb-lbl">Fresh 🥩</div></div>
+  <div class="sb-col active" id="sbAll" onclick="setFilter('all',this)"><div class="sb-num" id="stAll">—</div><div class="sb-lbl">All</div></div>
+  <div class="sb-col" id="sbClient" onclick="setFilter('client',this)"><div class="sb-num" id="stClient">—</div><div class="sb-lbl">Clients</div></div>
+  <div class="sb-col" id="sbPoc" onclick="setFilter('poc',this)"><div class="sb-num" id="stPoc">—</div><div class="sb-lbl">POC</div></div>
+  <div class="sb-col" id="sbPartner" onclick="setFilter('partner',this)"><div class="sb-num" id="stPartner">—</div><div class="sb-lbl">Partners</div></div>
+  <div class="sb-col" id="sbProspect" onclick="setFilter('prospect',this)"><div class="sb-num" id="stProspect">—</div><div class="sb-lbl">Prospects</div></div>
+  <div class="sb-col" id="sbNogo" onclick="setFilter('nogo',this)"><div class="sb-num" id="stNogo">—</div><div class="sb-lbl">No Outreach</div></div>
+  <div class="sb-col" id="sbFresh" onclick="setFilter('fresh',this)"><div class="sb-num" id="stFresh">—</div><div class="sb-lbl">Fresh 🥩</div></div>
 </div>
-
 <div class="main">
-
-  <!-- LEFT PANEL -->
   <div class="left">
     <div class="left-tabs">
       <div class="left-tab active" id="tabComp" onclick="switchTab('companies')">Companies</div>
       <div class="left-tab" id="tabCont" onclick="switchTab('contacts')">Contacts</div>
     </div>
-
-    <!-- search row -->
     <div class="left-search">
       <input type="text" id="searchInput" placeholder="Search…" oninput="onSearch()"/>
       <button class="btn sm" id="tagBtn" onclick="toggleTagPanel()" title="Tag filter">🏷</button>
       <button class="btn sm" onclick="promptResearch()" title="Research">↗</button>
     </div>
-
-    <!-- type chips -->
     <div class="left-filters" id="filtersRow">
-      <span class="f-chip active" data-f="all"      onclick="setFilter('all',this)">All</span>
-      <span class="f-chip"        data-f="client"   onclick="setFilter('client',this)">Clients</span>
-      <span class="f-chip"        data-f="partner"  onclick="setFilter('partner',this)">Partners</span>
-      <span class="f-chip"        data-f="prospect" onclick="setFilter('prospect',this)">Prospects</span>
-      <span class="f-chip"        data-f="poc"      onclick="setFilter('poc',this)">POC</span>
-      <span class="f-chip"        data-f="nogo"     onclick="setFilter('nogo',this)">Nogo</span>
+      <span class="f-chip active" data-f="all" onclick="setFilter('all',this)">All</span>
+      <span class="f-chip" data-f="client" onclick="setFilter('client',this)">Clients</span>
+      <span class="f-chip" data-f="partner" onclick="setFilter('partner',this)">Partners</span>
+      <span class="f-chip" data-f="prospect" onclick="setFilter('prospect',this)">Prospects</span>
+      <span class="f-chip" data-f="poc" onclick="setFilter('poc',this)">POC</span>
+      <span class="f-chip" data-f="nogo" onclick="setFilter('nogo',this)">Nogo</span>
     </div>
-
-    <!-- TAG SELECTOR PANEL -->
     <div class="tag-panel" id="tagPanel">
       <div class="tp-head">
         <span class="tp-title">Tag filter</span>
         <div class="tp-logic">
-          <span class="tp-logic-btn active" id="tlOr"  onclick="setTagLogic('or')">OR</span>
-          <span class="tp-logic-btn"        id="tlAnd" onclick="setTagLogic('and')">AND</span>
+          <span class="tp-logic-btn active" id="tlOr" onclick="setTagLogic('or')">OR</span>
+          <span class="tp-logic-btn" id="tlAnd" onclick="setTagLogic('and')">AND</span>
         </div>
         <span class="tp-clear" id="tpClear" onclick="clearTags()">Clear all</span>
       </div>
       <div class="tp-body" id="tpBody"></div>
     </div>
-
-    <!-- list meta -->
     <div class="list-meta" id="listMeta">
       <span id="metaTxt">Loading…</span>
       <div id="metaPills" style="display:flex;gap:3px;flex-wrap:wrap;margin-left:auto"></div>
     </div>
-
-    <!-- list -->
     <div class="list-scroll" id="listScroll"></div>
-
-    <!-- AI BAR (companies only) -->
     <div class="ai-bar" id="aiBar">
       <div class="ai-bar-row">
         <span class="ai-badge">AI</span>
@@ -368,8 +333,6 @@ html,body{height:100%;background:var(--bg);color:var(--t1);font-family:'IBM Plex
       </div>
     </div>
   </div>
-
-  <!-- CENTER -->
   <div class="center">
     <div class="center-scroll" id="centerScroll">
       <div class="empty-wrap" id="emptyState">
@@ -380,15 +343,16 @@ html,body{height:100%;background:var(--bg);color:var(--t1);font-family:'IBM Plex
           <div class="qa-card" onclick="openClaude('What are the top 5 highest-priority prospects in the onAudience database we should contact this week?')"><div class="qa-icon">⭐</div><div class="qa-label">Top picks this week</div><div class="qa-desc">Priority ranking</div></div>
           <div class="qa-card" onclick="promptSimilar()"><div class="qa-icon">🔗</div><div class="qa-label">Find similar</div><div class="qa-desc">Lookalike discovery</div></div>
           <div class="qa-card" onclick="openClaude('Which companies in the onAudience database have not been contacted in 30+ days and are worth re-engaging?')"><div class="qa-icon">♻️</div><div class="qa-label">Re-engage dormant</div><div class="qa-desc">Warm up cold leads</div></div>
-          <div class="qa-card" onclick="openPanel('meeseeks',null)"><div class="qa-icon">✉</div><div class="qa-label">Draft email</div><div class="qa-desc">AI outreach composer</div></div>
+          <div class="qa-card" onclick="openComposer(null)"><div class="qa-icon">✉</div><div class="qa-label">Draft email</div><div class="qa-desc">AI outreach composer</div></div>
         </div>
       </div>
       <div id="coPanel" style="display:none"></div>
     </div>
   </div>
 </div>
-</div><!-- /app -->
+</div>
 
+<!-- CONTACT DRAWER -->
 <div id="ctxMenu" class="ctx-menu"></div>
 <div id="ctDrawerOverlay" onclick="closeDrawer()"></div>
 <div id="ctDrawer">
@@ -397,6 +361,7 @@ html,body{height:100%;background:var(--bg);color:var(--t1);font-family:'IBM Plex
   <div class="dr-actions"><button class="btn sm full" onclick="drEmail()">✉ Draft Email</button><button class="btn sm full" onclick="drLinkedIn()">LinkedIn ↗</button><button class="btn sm full" onclick="drGmail()">Gmail History</button><button class="btn sm full p" onclick="drResearch()">Full Research ↗</button></div>
 </div>
 
+<!-- RESEARCH MODAL -->
 <div id="overlay">
   <div class="modal-box">
     <h2 id="modalTitle">Research a Company</h2>
@@ -405,152 +370,166 @@ html,body{height:100%;background:var(--bg);color:var(--t1);font-family:'IBM Plex
     <div class="modal-foot"><button class="btn" onclick="closeModal()">Cancel</button><button class="btn p" onclick="submitModal()">Open in Claude ↗</button></div>
   </div>
 </div>
-<div id="panelModal" onclick="if(event.target===this)closePanel2()">
-  <div style="width:780px;height:85vh;border-radius:4px;overflow:hidden;border:1px solid var(--rule);box-shadow:var(--sh)">
-    <iframe id="panelIframe" src="" style="width:100%;height:100%;border:none"></iframe>
+
+<!-- MEESEEKS COMPOSER OVERLAY -->
+<div id="mcOverlay" onclick="closeComposer()"></div>
+<div id="mcDrawer">
+  <div class="mc-nav">
+    <div class="mc-logo">oA</div>
+    <span class="mc-title">Meeseeks <span class="mc-sub">/ Composer</span></span>
+    <span class="mc-persona-badge" id="mcNavBadge">STEVE</span>
+    <div style="margin-left:auto;display:flex;align-items:center;gap:6px">
+      <button class="mc-key-btn" id="mcKeyBtn" onclick="mcOpenKey()">🔑 Key</button>
+      <button class="mc-close" onclick="closeComposer()">✕</button>
+    </div>
+  </div>
+  <div class="mc-shell">
+    <div class="mc-left">
+      <div class="mc-scroll">
+        <div class="mc-lbl">Pick Meeseeks</div>
+        <div class="mc-pgrid" id="mcPersonaGrid"></div>
+        <div class="mc-lbl">Company</div>
+        <div class="mc-co" id="mcCoBlock">
+          <div class="mc-co-top">
+            <div class="mc-co-av" id="mcCoAv">?</div>
+            <div style="flex:1;min-width:0">
+              <div class="mc-co-empty" id="mcCoEmpty">No company selected</div>
+              <div class="mc-co-name" id="mcCoName" style="display:none"></div>
+              <div class="mc-co-note" id="mcCoNote" style="display:none"></div>
+            </div>
+          </div>
+          <div class="mc-co-tags" id="mcCoTags" style="display:none"></div>
+        </div>
+        <div class="mc-lbl">Contact</div>
+        <div class="mc-ctlist" id="mcCtList">
+          <div class="mc-ctempty">Open a company from the hub to load contacts</div>
+        </div>
+        <div class="mc-lbl" style="margin-top:12px">Context — signals, news, what they do</div>
+        <textarea class="mc-tf" id="mcCtx" rows="4" placeholder="e.g. EU DSP expanding into CTV, exploring cookieless, raised Series B…" oninput="mcHint(this,'mcCtxHint')"></textarea>
+        <div class="mc-tf-hint" id="mcCtxHint">0 chars</div>
+        <div class="mc-lbl">Outreach angle</div>
+        <textarea class="mc-tf" id="mcAngle" rows="3" placeholder="e.g. EU audience data + cookieless complement for their DSP inventory…" oninput="mcHint(this,'mcAngleHint')"></textarea>
+        <div class="mc-tf-hint" id="mcAngleHint">0 chars</div>
+      </div>
+      <div class="mc-footer">
+        <button class="mc-gen" id="mcGenBtn" onclick="mcGenerate()">
+          <span id="mcGenIcon">✉</span><span id="mcGenLabel">Generate Email</span>
+        </button>
+      </div>
+    </div>
+    <div class="mc-right">
+      <div class="mc-rbar">
+        <span class="mc-rlbl" id="mcOutLabel">Output</span>
+        <div class="mc-racts" id="mcOutActs" style="display:none">
+          <button class="mc-obtn" onclick="mcCopy()">Copy</button>
+          <button class="mc-obtn" onclick="mcGenerate()">↺ Regen</button>
+          <button class="mc-obtn p" onclick="closeComposer()">Done ✓</button>
+        </div>
+      </div>
+      <div class="mc-rscroll" id="mcRScroll">
+        <div class="mc-empty" id="mcEmpty">
+          <div class="mc-earrow">←</div>
+          <div class="mc-ehint">Pick persona · select contact · generate</div>
+        </div>
+        <div id="mcOutContent" style="display:none"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- API KEY MODAL -->
+<div id="mcKeyOverlay">
+  <div class="mc-kbox">
+    <h2>Anthropic API Key</h2>
+    <p>Stored locally in this browser. Used only for the Meeseeks composer and background actions (angle generation, AI contact finder).</p>
+    <input type="password" id="mcKeyInput" placeholder="sk-ant-…"/>
+    <div class="mc-kfoot">
+      <button class="mc-kb" onclick="mcClearKey()">Clear</button>
+      <button class="mc-kb" onclick="mcCloseKey()">Cancel</button>
+      <button class="mc-kb p" onclick="mcSaveKey()">Save</button>
+    </div>
   </div>
 </div>
 
 <script>
-/* ── CONSTANTS ── */
+/* ══════════════════════════════════════
+   CONSTANTS
+══════════════════════════════════════ */
 const SB_URL='https://nyzkkqqjnkctcmxoirdj.supabase.co';
 const SB_KEY='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im55emtrcXFqbmtjdGNteG9pcmRqIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzM4NzMxMzYsImV4cCI6MjA4OTQ0OTEzNn0.jhAq_C68klOp4iTyj9HmsyyvoxsOI6ACld7t_87TAk0';
 const HDR={apikey:SB_KEY,Authorization:`Bearer ${SB_KEY}`,'Content-Type':'application/json'};
-const PANELS={meeseeks:{src:'meeseeks-composer.html',label:'Meeseeks Composer'},composer:{src:'email-composer-panel.html',label:'Email Composer'}};
 
-/* ── TAG RULES ──
-   Each rule scans: name + note + category + region (lowercased)
-   Tags are auto-derived — no manual tagging needed.
-*/
+/* ══════════════════════════════════════
+   TAG RULES
+══════════════════════════════════════ */
 const TAG_RULES=[
-  {tag:'DSP',        kw:['dsp','demand-side','demand side','madhive','mntn','bidtheatre','splicky','xandr','thetradedesk','criteo','stackadapt','liquid advertising']},
-  {tag:'SSP',        kw:['ssp','supply-side','supply side','pubmatic','equativ','openx','sharethrough','sovrn','scoota']},
-  {tag:'Agency',     kw:['agency','havas','dentsu','omd','publicis','wpp','omg','interpublic','media buy']},
-  {tag:'Data',       kw:['data provider','data exchange','data platform','datonics','mobilewalla','globaldata','global data','true data','epsilon','experian','nielsen','claritas','precisely','ventiveiq','weborama','beklever']},
-  {tag:'Identity',   kw:['cookieless','identity','id5','liveramp','tapad','kochava','liveramp','bango']},
-  {tag:'CDP / DMP',  kw:['dmp','cdp','adobe','zeotap','permutive','lotame','semasio','audigent']},
-  {tag:'CTV',        kw:['ctv','connected tv','vistar','mntn','madhive','samba','aniview']},
-  {tag:'Mobile',     kw:['mobile','moboost','memob','anzu','kochava','bango','intuizi','opensignal']},
+  {tag:'DSP',kw:['dsp','demand-side','demand side','madhive','mntn','bidtheatre','splicky','xandr','thetradedesk','criteo','stackadapt','liquid advertising']},
+  {tag:'SSP',kw:['ssp','supply-side','supply side','pubmatic','equativ','openx','sharethrough','sovrn','scoota']},
+  {tag:'Agency',kw:['agency','havas','dentsu','omd','publicis','wpp','omg','interpublic','media buy']},
+  {tag:'Data',kw:['data provider','data exchange','data platform','datonics','mobilewalla','globaldata','global data','true data','epsilon','experian','nielsen','claritas','precisely','ventiveiq','weborama','beklever']},
+  {tag:'Identity',kw:['cookieless','identity','id5','liveramp','tapad','kochava','bango']},
+  {tag:'CDP/DMP',kw:['dmp','cdp','adobe','zeotap','permutive','lotame','semasio','audigent']},
+  {tag:'CTV',kw:['ctv','connected tv','vistar','mntn','madhive','samba','aniview']},
+  {tag:'Mobile',kw:['mobile','moboost','memob','anzu','kochava','bango','intuizi','opensignal']},
   {tag:'Marketplace',kw:['marketplace','curation','liveramp','audigent','equativ','sharethrough','pubmatic']},
-  {tag:'EU / EMEA',  kw:['europe','european','emea','scandinavia','spain','poland',' pl ','germany','france','uk','netherlands','sweden','nordic','adform','bidtheatre','eskimi','belogic','beintoo','eyeota','weborama']},
-  {tag:'US',         kw:['usa','north america','datonics','claritas','epsilon','foursquare','mastercard','oracle','samba tv','madhive','mntn','stackadapt']},
-  {tag:'APAC',       kw:['apac','asia','thailand','china','india','japan','australia','bytedance','tiktok','dentsu thailand','omd thailand']},
-  {tag:'Retail / OOH',kw:['retail','wowcher','ooh','out-of-home','foursquare','vistar']},
+  {tag:'EU/EMEA',kw:['europe','european','emea','scandinavia','spain','poland',' pl ','germany','france','uk','netherlands','sweden','nordic','adform','bidtheatre','eskimi','belogic','beintoo','eyeota','weborama']},
+  {tag:'US',kw:['usa','north america','datonics','claritas','epsilon','foursquare','mastercard','oracle','samba tv','madhive','mntn','stackadapt']},
+  {tag:'APAC',kw:['apac','asia','thailand','china','india','japan','australia','bytedance','tiktok','dentsu thailand','omd thailand']},
+  {tag:'Retail/OOH',kw:['retail','wowcher','ooh','out-of-home','foursquare','vistar']},
   {tag:'Programmatic',kw:['programmatic','rtb','bidder','exchange','trading desk','bidberry','bidscube','hybrid']},
-  {tag:'Research',   kw:['research','analytics','insights','sportradar','national research','big village','dynata','echo analytics']},
+  {tag:'Research',kw:['research','analytics','insights','sportradar','national research','big village','dynata','echo analytics']},
 ];
 
-/* ── SEED ── */
+/* ══════════════════════════════════════
+   SEED DATA
+══════════════════════════════════════ */
 const SEED_RAW=[
-  ['6sense','POC client'],['Adform','integrated partner / DSP Europe'],
-  ['Admixer','no outreach'],['Adobe','partner — DMP integration'],
-  ['Adtonos','client'],['Alikeaudience','client'],
-  ['Aniview','no outreach — failed deal'],['Anzu','POC client'],
-  ['Amazon','partner'],['Audience Network','internal — group company'],
-  ['Audigent','partner / curation'],['Bango','prospect — via LiveRamp'],
-  ['Beintoo','prospect — to continue'],['Belogic TR','partner'],
-  ['Bidberry / Carbon / Clickso','partner'],['Bidscube','no outreach — former client'],
-  ['Bidtheatre','partner / DSP Scandinavia'],['Big Village','to check'],
-  ['Bright Mountain Media','prospect — to continue'],['Bytedance (TikTok)','client — APAC only'],
-  ['Captify UK','client'],['Claritas','prospect — to continue'],
-  ['Clue','prospect — to continue'],['Criteo','partner — contact: Adrian'],
-  ['Datonics','client'],['Dynata','no outreach — former client'],
-  ['Echo Analytics','POC client'],['Entity X','client — Adrian'],
-  ['Epsilon','partner — Matt deal'],['Equativ','partner / SSP curation'],
-  ['Eskimi','no outreach — bad timing'],['Experian','prospect — Karo/Maciek'],
-  ['Eyeota','partner'],['Foursquare','partner'],['Fyllo','partner'],
-  ['Synthesi','partner — to be'],['GlobalDataResources','partner — NDR acquisition'],
-  ['Google','partner'],['Havas PL','client / agency'],['Hybrid','partner'],
-  ['ID5','partner / cookieless product'],['Intuizi','client — Adrian'],
-  ['Kochava','partner / data provider'],['Lifesight','no outreach — unwanted'],
-  ['LiveRamp','partner / marketplace'],['Lotame','no outreach — contract ended'],
-  ['Madhive','prospect / DSP — Karolina'],['Mastercard','partner'],
-  ['Medianation','no outreach'],['Mediasmart','no outreach — low revenue'],
-  ['MediaWallah','partner / data exchange'],['MeMob','client'],
-  ['Meta','no outreach — via LiveRamp only'],['Microsoft Advertising (Xandr)','partner'],
-  ['Mindvalley','POC client — no renewal'],['MNTN','partner / DSP'],
-  ['Mobilewalla','client'],['Moboost','client'],['Multilocal','client — Adrian'],
-  ['National Research Group','to check'],['Nexxen','prospect'],['Nielsen','no outreach'],
-  ['OpenSignal','client'],['OpenX','prospect'],['Oracle','no outreach — closed ad division'],
-  ['Permutive','client'],['Pubmatic','partner'],['Precisely','no outreach'],
-  ['Razorpod','no outreach'],['Roq Ad','no outreach — cross-device'],
-  ['RTB House','no business'],['Samba TV','prospect'],['Scoota','prospect'],
-  ['Semantec','client'],['Semasio','partner — acquired by Fyllo'],
-  ['Sharethrough','partner / data exchange'],['Sovrn','client — Adrian'],
-  ['Sportradar','prospect — Karolina'],['Taboola','prospect — via MSFT Curate'],
-  ['Tapad','no fit'],['TheTradeDesk','partner'],['TikTok','partner — via Bytedance'],
-  ['TL1','internal — our company'],['True Data','client'],['Twitch','no fit'],
-  ['Twitter','no fit'],['VentiveIQ','prospect — Maciek + Adrian'],
-  ['VistarMedia (T-Mobile)','prospect'],['Wowcher','client'],['Zeotap','client'],
-  ['Beklever','prospect'],['Havas Spain','prospect'],['Dentsu Thailand','prospect'],
-  ['OMD Thailand','prospect'],['Splicky DSP','prospect'],['Traveldesk Global','prospect'],
+  ['6sense','POC client'],['Adform','integrated partner / DSP Europe'],['Admixer','no outreach'],['Adobe','partner — DMP integration'],
+  ['Adtonos','client'],['Alikeaudience','client'],['Aniview','no outreach — failed deal'],['Anzu','POC client'],
+  ['Amazon','partner'],['Audience Network','internal — group company'],['Audigent','partner / curation'],['Bango','prospect — via LiveRamp'],
+  ['Beintoo','prospect — to continue'],['Belogic TR','partner'],['Bidberry / Carbon / Clickso','partner'],['Bidscube','no outreach — former client'],
+  ['Bidtheatre','partner / DSP Scandinavia'],['Big Village','to check'],['Bright Mountain Media','prospect — to continue'],['Bytedance (TikTok)','client — APAC only'],
+  ['Captify UK','client'],['Claritas','prospect — to continue'],['Clue','prospect — to continue'],['Criteo','partner — contact: Adrian'],
+  ['Datonics','client'],['Dynata','no outreach — former client'],['Echo Analytics','POC client'],['Entity X','client — Adrian'],
+  ['Epsilon','partner — Matt deal'],['Equativ','partner / SSP curation'],['Eskimi','no outreach — bad timing'],['Experian','prospect — Karo/Maciek'],
+  ['Eyeota','partner'],['Foursquare','partner'],['Fyllo','partner'],['Synthesi','partner — to be'],
+  ['GlobalDataResources','partner — NDR acquisition'],['Google','partner'],['Havas PL','client / agency'],['Hybrid','partner'],
+  ['ID5','partner / cookieless product'],['Intuizi','client — Adrian'],['Kochava','partner / data provider'],['Lifesight','no outreach — unwanted'],
+  ['LiveRamp','partner / marketplace'],['Lotame','no outreach — contract ended'],['Madhive','prospect / DSP — Karolina'],['Mastercard','partner'],
+  ['Medianation','no outreach'],['Mediasmart','no outreach — low revenue'],['MediaWallah','partner / data exchange'],['MeMob','client'],
+  ['Meta','no outreach — via LiveRamp only'],['Microsoft Advertising (Xandr)','partner'],['Mindvalley','POC client — no renewal'],['MNTN','partner / DSP'],
+  ['Mobilewalla','client'],['Moboost','client'],['Multilocal','client — Adrian'],['National Research Group','to check'],
+  ['Nexxen','prospect'],['Nielsen','no outreach'],['OpenSignal','client'],['OpenX','prospect'],
+  ['Oracle','no outreach — closed ad division'],['Permutive','client'],['Pubmatic','partner'],['Precisely','no outreach'],
+  ['Razorpod','no outreach'],['Roq Ad','no outreach — cross-device'],['RTB House','no business'],['Samba TV','prospect'],
+  ['Scoota','prospect'],['Semantec','client'],['Semasio','partner — acquired by Fyllo'],['Sharethrough','partner / data exchange'],
+  ['Sovrn','client — Adrian'],['Sportradar','prospect — Karolina'],['Taboola','prospect — via MSFT Curate'],['Tapad','no fit'],
+  ['TheTradeDesk','partner'],['TikTok','partner — via Bytedance'],['TL1','internal — our company'],['True Data','client'],
+  ['Twitch','no fit'],['Twitter','no fit'],['VentiveIQ','prospect — Maciek + Adrian'],['VistarMedia (T-Mobile)','prospect'],
+  ['Wowcher','client'],['Zeotap','client'],['Beklever','prospect'],['Havas Spain','prospect'],
+  ['Dentsu Thailand','prospect'],['OMD Thailand','prospect'],['Splicky DSP','prospect'],['Traveldesk Global','prospect'],
   ['Liquid Advertising','prospect'],['Stackadapt','prospect'],['Weborama','prospect'],['Memob','client']
 ];
 
-function classify(n){
-  const s=(n||'').toLowerCase();
-  if(s.includes('no outreach')||s.includes('no fit')||s.includes('no business')||s.includes('internal')||s.includes('closed')||s.includes('unwanted'))return'nogo';
-  if(s.includes('poc client'))return'poc';
-  if(s.includes('client'))return'client';
-  if(s.includes('partner'))return'partner';
-  if(s.includes('prospect')||s.includes('to check')||s.includes('to continue'))return'prospect';
-  return'partner';
-}
-
+function classify(n){const s=(n||'').toLowerCase();if(s.includes('no outreach')||s.includes('no fit')||s.includes('no business')||s.includes('internal')||s.includes('closed')||s.includes('unwanted'))return'nogo';if(s.includes('poc client'))return'poc';if(s.includes('client'))return'client';if(s.includes('partner'))return'partner';if(s.includes('prospect')||s.includes('to check')||s.includes('to continue'))return'prospect';return'partner';}
 const SEED=SEED_RAW.map(([name,note])=>({name,note:note||'',type:classify(note),id:_slug(name),category:null,region:null,size:null,website:null,linkedin_slug:null,icp:null,description:null,hq_city:null,founded_year:null,funding:null,tcf_vendor_id:null,tech_stack:null,products:null,dsps:null,outreach_angle:null,updated_at:null}));
 
-/* ── STATE ── */
+/* ══════════════════════════════════════
+   HUB STATE
+══════════════════════════════════════ */
 let companies=[...SEED],contacts=[],activeFilter='all',searchQ='',activeTab='companies';
-let activeTags=new Set(),tagLogic='or',tagPanelOpen=false;
-let aiSet=null; // Set of names | null
+let activeTags=new Set(),tagLogic='or',tagPanelOpen=false,aiSet=null;
 let currentCompany=null,currentContact=null,_modalMode='research';
 
 /* ── SLUG ── */
 function _slug(n){return(n||'').replace(/\s+(Ltd|Inc|LLC|S\.A\.|GmbH|Corp|B\.V\.|AG|PLC|SAS)\.?$/i,'').toLowerCase().trim().replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,'');}
 
-/* ── TAG ENGINE ── */
-function getCoTags(c){
-  const hay=((c.name||'')+' '+(c.note||'')+' '+(c.category||'')+' '+(c.region||'')).toLowerCase();
-  return TAG_RULES.filter(r=>r.kw.some(k=>hay.includes(k))).map(r=>r.tag);
-}
-
-function tagCountsFor(pool){
-  const m={};
-  TAG_RULES.forEach(r=>{m[r.tag]=0;});
-  pool.forEach(c=>getCoTags(c).forEach(t=>{m[t]=(m[t]||0)+1;}));
-  return m;
-}
-
-// Pool for tag counts = type + text filtered, before tag/AI filter
-function countPool(){
-  const t30=Date.now()-30*24*60*60*1000;
-  const cids=new Set(contacts.map(c=>_slug(c.company_name||'')));
-  return companies.filter(c=>{
-    if(activeFilter==='fresh'){if(c.type!=='prospect')return false;if(c.updated_at&&new Date(c.updated_at).getTime()>=t30)return false;if(cids.has(_slug(c.name)))return false;}
-    else if(activeFilter!=='all'&&c.type!==activeFilter)return false;
-    if(searchQ&&!(c.name||'').toLowerCase().includes(searchQ)&&!(c.note||'').toLowerCase().includes(searchQ))return false;
-    return true;
-  });
-}
-
-function renderTagPanel(){
-  const body=document.getElementById('tpBody');
-  if(!body)return;
-  const counts=tagCountsFor(countPool());
-  body.innerHTML=TAG_RULES
-    .filter(r=>counts[r.tag]>0)
-    .map(r=>`<span class="t-pill${activeTags.has(r.tag)?' active':''}" data-tag="${r.tag.replace(/"/g,'&quot;')}" onclick="toggleTagEl(this)">${r.tag}<span class="t-cnt">${counts[r.tag]}</span></span>`)
-    .join('');
-  const cl=document.getElementById('tpClear');
-  if(cl)cl.className='tp-clear'+(activeTags.size?' vis':'');
-}
-
-function toggleTagPanel(){
-  tagPanelOpen=!tagPanelOpen;
-  document.getElementById('tagPanel').className='tag-panel'+(tagPanelOpen?' open':'');
-  document.getElementById('tagBtn').className='btn sm'+(tagPanelOpen?' on':'');
-  if(tagPanelOpen)renderTagPanel();
-}
+/* ── TAGS ── */
+function getCoTags(c){const hay=((c.name||'')+' '+(c.note||'')+' '+(c.category||'')+' '+(c.region||'')+' '+(c.description||'')).toLowerCase();return TAG_RULES.filter(r=>r.kw.some(k=>hay.includes(k))).map(r=>r.tag);}
+function tagCountsFor(pool){const m={};TAG_RULES.forEach(r=>{m[r.tag]=0;});pool.forEach(c=>getCoTags(c).forEach(t=>{m[t]=(m[t]||0)+1;}));return m;}
+function countPool(){const t30=Date.now()-30*24*60*60*1000;const cids=new Set(contacts.map(c=>_slug(c.company_name||'')));return companies.filter(c=>{if(activeFilter==='fresh'){if(c.type!=='prospect')return false;if(c.updated_at&&new Date(c.updated_at).getTime()>=t30)return false;if(cids.has(_slug(c.name)))return false;}else if(activeFilter!=='all'&&c.type!==activeFilter)return false;if(searchQ&&!(c.name||'').toLowerCase().includes(searchQ)&&!(c.note||'').toLowerCase().includes(searchQ))return false;return true;});}
+function renderTagPanel(){const body=document.getElementById('tpBody');if(!body)return;const counts=tagCountsFor(countPool());body.innerHTML=TAG_RULES.filter(r=>counts[r.tag]>0).map(r=>`<span class="t-pill${activeTags.has(r.tag)?' active':''}" data-tag="${r.tag.replace(/"/g,'&quot;')}" onclick="toggleTagEl(this)">${r.tag}<span class="t-cnt">${counts[r.tag]}</span></span>`).join('');const cl=document.getElementById('tpClear');if(cl)cl.className='tp-clear'+(activeTags.size?' vis':'');}
+function toggleTagPanel(){tagPanelOpen=!tagPanelOpen;document.getElementById('tagPanel').className='tag-panel'+(tagPanelOpen?' open':'');document.getElementById('tagBtn').className='btn sm'+(tagPanelOpen?' on':'');if(tagPanelOpen)renderTagPanel();}
 function toggleTag(tag){if(activeTags.has(tag))activeTags.delete(tag);else activeTags.add(tag);renderTagPanel();renderList();}
 function toggleTagEl(el){toggleTag(el.dataset.tag);}
 function clearTags(){activeTags.clear();renderTagPanel();renderList();}
@@ -558,41 +537,11 @@ function setTagLogic(l){tagLogic=l;document.getElementById('tlOr').className='tp
 function matchTags(c){if(!activeTags.size)return true;const t=getCoTags(c);return tagLogic==='and'?[...activeTags].every(x=>t.includes(x)):[...activeTags].some(x=>t.includes(x));}
 
 /* ── AI FILTER ── */
-async function runAI(){
-  const q=document.getElementById('aiInp').value.trim();if(!q)return;
-  const btn=document.getElementById('aiBtn'),stat=document.getElementById('aiStat'),dot=document.getElementById('aiDot'),txt=document.getElementById('aiTxt');
-  btn.disabled=true;stat.className='ai-stat vis';dot.className='ai-dot';dot.style.background='';txt.textContent='Thinking…';
-  const list=companies.map(c=>`${c.name} (${c.type}${c.note?' – '+c.note.slice(0,60):''})`).join('\n');
-  try{
-    const res=await fetch('https://api.anthropic.com/v1/messages',{method:'POST',
-      headers:{'Content-Type':'application/json'},
-      body:JSON.stringify({
-        model:'claude-sonnet-4-20250514',max_tokens:800,
-        system:`You are a B2B sales filter for onAudience. Given a company list and a query, return ONLY a raw JSON array of matching company names. No markdown, no explanation, no preamble. Example: ["Adform","TheTradeDesk"]. Return [] if nothing matches.`,
-        messages:[{role:'user',content:`Query: "${q}"\n\nCompany list:\n${list}`}]
-      })
-    });
-    const data=await res.json();
-    const raw=(data.content||[]).filter(b=>b.type==='text').map(b=>b.text).join('').replace(/```json|```/g,'').trim();
-    const names=JSON.parse(raw);
-    if(!Array.isArray(names))throw new Error('not array');
-    aiSet=new Set(names);
-    dot.className='ai-dot done';
-    txt.textContent=`${names.length} match${names.length!==1?'es':''} — "${q.length>30?q.slice(0,30)+'…':q}"`;
-    renderList();
-  }catch(e){dot.className='ai-dot err';txt.textContent='Error — try again';console.error(e);}
-  btn.disabled=false;
-}
+async function runAI(){const q=document.getElementById('aiInp').value.trim();if(!q)return;const btn=document.getElementById('aiBtn'),stat=document.getElementById('aiStat'),dot=document.getElementById('aiDot'),txt=document.getElementById('aiTxt');btn.disabled=true;stat.className='ai-stat vis';dot.className='ai-dot';dot.style.background='';txt.textContent='Thinking…';const list=companies.map(c=>`${c.name} (${c.type}${c.note?' – '+c.note.slice(0,60):''})`).join('\n');try{const res=await fetch('https://api.anthropic.com/v1/messages',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({model:'claude-sonnet-4-20250514',max_tokens:800,system:`You are a B2B sales filter for onAudience. Given a company list and a query, return ONLY a raw JSON array of matching company names. No markdown, no explanation. Return [] if nothing matches.`,messages:[{role:'user',content:`Query: "${q}"\n\nCompany list:\n${list}`}]})});const data=await res.json();const raw=(data.content||[]).filter(b=>b.type==='text').map(b=>b.text).join('').replace(/\`\`\`json|\`\`\`/g,'').trim();const names=JSON.parse(raw);if(!Array.isArray(names))throw new Error('not array');aiSet=new Set(names);dot.className='ai-dot done';txt.textContent=`${names.length} matches — "${q.length>30?q.slice(0,30)+'…':q}"`;renderList();}catch(e){dot.className='ai-dot err';txt.textContent='Error — try again';console.error(e);}btn.disabled=false;}
 function clearAI(){aiSet=null;document.getElementById('aiStat').className='ai-stat';document.getElementById('aiInp').value='';renderList();}
 
 /* ── META PILLS ── */
-function renderMetaPills(){
-  const el=document.getElementById('metaPills');
-  const parts=[];
-  activeTags.forEach(t=>{parts.push(`<span class="m-pill tag" data-tag="${t.replace(/"/g,'&quot;')}" onclick="toggleTagEl(this)" title="Remove">${t}</span>`);});
-  if(aiSet){parts.push(`<span class="m-pill ai" onclick="clearAI()" title="Clear AI">AI: ${aiSet.size}</span>`);}
-  el.innerHTML=parts.join('');
-}
+function renderMetaPills(){const el=document.getElementById('metaPills');const parts=[];activeTags.forEach(t=>{parts.push(`<span class="m-pill tag" data-tag="${t.replace(/"/g,'&quot;')}" onclick="toggleTagEl(this)" title="Remove">${t}</span>`);});if(aiSet){parts.push(`<span class="m-pill ai" onclick="clearAI()" title="Clear AI">AI: ${aiSet.size}</span>`);}el.innerHTML=parts.join('');}
 
 /* ── THEME ── */
 let theme=localStorage.getItem('oaTheme')||'light';
@@ -601,35 +550,14 @@ function toggleTheme(){theme=theme==='light'?'dark':'light';document.documentEle
 document.getElementById('themeBtn').textContent=theme==='dark'?'☀️':'🌙';
 
 /* ── SUPABASE ── */
-async function loadFromSupabase(){
-  const ctrl=new AbortController(),timer=setTimeout(()=>ctrl.abort(),8000);
-  try{
-    const[cr,ct]=await Promise.all([fetch(`${SB_URL}/rest/v1/companies?select=*&order=name.asc`,{headers:HDR,signal:ctrl.signal}),fetch(`${SB_URL}/rest/v1/contacts?select=*&order=full_name.asc`,{headers:HDR,signal:ctrl.signal})]);
-    clearTimeout(timer);if(!cr.ok)throw new Error(cr.status);
-    const dbc=await cr.json(),dbt=ct.ok?await ct.json():[];
-    if(Array.isArray(dbc)&&dbc.length)companies=dbc.map(r=>({...r,type:r.type||classify(r.note||''),note:r.note||''}));
-    if(Array.isArray(dbt))contacts=dbt;
-    setStatus(true);
-  }catch(e){clearTimeout(timer);console.warn('seed',e.message);setStatus(false);}
-  renderStats();renderList();if(tagPanelOpen)renderTagPanel();
-}
+async function loadFromSupabase(){const ctrl=new AbortController(),timer=setTimeout(()=>ctrl.abort(),8000);try{const[cr,ct]=await Promise.all([fetch(`${SB_URL}/rest/v1/companies?select=*&order=name.asc`,{headers:HDR,signal:ctrl.signal}),fetch(`${SB_URL}/rest/v1/contacts?select=*&order=full_name.asc`,{headers:HDR,signal:ctrl.signal})]);clearTimeout(timer);if(!cr.ok)throw new Error(cr.status);const dbc=await cr.json(),dbt=ct.ok?await ct.json():[];if(Array.isArray(dbc)&&dbc.length)companies=dbc.map(r=>({...r,type:r.type||classify(r.note||''),note:r.note||''}));if(Array.isArray(dbt))contacts=dbt;setStatus(true);}catch(e){clearTimeout(timer);console.warn('seed',e.message);setStatus(false);}renderStats();renderList();if(tagPanelOpen)renderTagPanel();}
 function setStatus(live){const el=document.getElementById('dbStatus');if(live){el.textContent=`● Live · ${companies.length}`;el.className='nav-status live';}else{el.textContent=`○ Seed · ${companies.length}`;el.className='nav-status';}}
 async function saveCompany(r){return fetch(`${SB_URL}/rest/v1/companies`,{method:'POST',headers:{...HDR,'Prefer':'resolution=merge-duplicates,return=minimal'},body:JSON.stringify(r)});}
 async function saveContact(r){return fetch(`${SB_URL}/rest/v1/contacts`,{method:'POST',headers:{...HDR,'Prefer':'resolution=merge-duplicates,return=minimal'},body:JSON.stringify(r)});}
 window.oaDB={saveCompany,saveContact,reload:()=>{document.getElementById('dbStatus').textContent='○ Syncing…';loadFromSupabase();}};
 
 /* ── STATS ── */
-function renderStats(){
-  const t30=Date.now()-30*24*60*60*1000,cids=new Set(contacts.map(c=>_slug(c.company_name||'')));
-  const fresh=companies.filter(c=>c.type==='prospect'&&(!c.updated_at||new Date(c.updated_at).getTime()<t30)&&!cids.has(_slug(c.name))).length;
-  document.getElementById('stAll').textContent=companies.length;
-  document.getElementById('stClient').textContent=companies.filter(c=>c.type==='client').length;
-  document.getElementById('stPoc').textContent=companies.filter(c=>c.type==='poc').length;
-  document.getElementById('stPartner').textContent=companies.filter(c=>c.type==='partner').length;
-  document.getElementById('stProspect').textContent=companies.filter(c=>c.type==='prospect').length;
-  document.getElementById('stNogo').textContent=companies.filter(c=>c.type==='nogo').length;
-  document.getElementById('stFresh').textContent=fresh;
-}
+function renderStats(){const t30=Date.now()-30*24*60*60*1000,cids=new Set(contacts.map(c=>_slug(c.company_name||'')));const fresh=companies.filter(c=>c.type==='prospect'&&(!c.updated_at||new Date(c.updated_at).getTime()<t30)&&!cids.has(_slug(c.name))).length;document.getElementById('stAll').textContent=companies.length;document.getElementById('stClient').textContent=companies.filter(c=>c.type==='client').length;document.getElementById('stPoc').textContent=companies.filter(c=>c.type==='poc').length;document.getElementById('stPartner').textContent=companies.filter(c=>c.type==='partner').length;document.getElementById('stProspect').textContent=companies.filter(c=>c.type==='prospect').length;document.getElementById('stNogo').textContent=companies.filter(c=>c.type==='nogo').length;document.getElementById('stFresh').textContent=fresh;}
 
 /* ── AVATAR ── */
 const PAL=[{bg:'rgba(23,128,102,0.1)',fg:'#0F6E56'},{bg:'rgba(26,79,138,0.1)',fg:'#1A4F8A'},{bg:'rgba(122,66,0,0.1)',fg:'#7A4200'},{bg:'rgba(75,45,158,0.1)',fg:'#4B2D9E'},{bg:'rgba(107,107,100,0.1)',fg:'#6B6B64'}];
@@ -638,563 +566,139 @@ function ini(n){return(n||'').replace(/[^A-Za-z ]/g,'').split(' ').filter(Boolea
 function tClass(t){return{client:'tc',partner:'tp',prospect:'tpr',nogo:'tn',poc:'tpo'}[t]||'tn';}
 function tLabel(t){return{client:'Client',partner:'Partner',prospect:'Prospect',nogo:'No Outreach',poc:'POC'}[t]||t;}
 function stars(n){if(!n)return'';return'★'.repeat(Math.min(n,5))+'☆'.repeat(Math.max(0,5-n));}
+function esc(s){return(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
 
 /* ── TAB SWITCH ── */
-function switchTab(t){
-  activeTab=t;
-  document.getElementById('tabComp').className='left-tab'+(t==='companies'?' active':'');
-  document.getElementById('tabCont').className='left-tab'+(t==='contacts'?' active':'');
-  document.getElementById('filtersRow').style.display=t==='companies'?'flex':'none';
-  document.getElementById('tagPanel').style.display=t==='companies'?'':'none';
-  document.getElementById('tagBtn').style.display=t==='companies'?'':'none';
-  document.getElementById('aiBar').style.display=t==='companies'?'flex':'none';
-  renderList();
-}
+function switchTab(t){activeTab=t;document.getElementById('tabComp').className='left-tab'+(t==='companies'?' active':'');document.getElementById('tabCont').className='left-tab'+(t==='contacts'?' active':'');document.getElementById('filtersRow').style.display=t==='companies'?'flex':'none';document.getElementById('tagPanel').style.display=t==='companies'?'':'none';document.getElementById('tagBtn').style.display=t==='companies'?'':'none';document.getElementById('aiBar').style.display=t==='companies'?'flex':'none';renderList();}
 
-/* ── FILTER / SEARCH ── */
-function setFilter(f,el){
-  activeFilter=f;
-  document.querySelectorAll('.f-chip').forEach(c=>c.classList.remove('active'));
-  if(el&&el.classList)el.classList.add('active');
-  const sm={all:'sbAll',client:'sbClient',poc:'sbPoc',partner:'sbPartner',prospect:'sbProspect',nogo:'sbNogo',fresh:'sbFresh'};
-  document.querySelectorAll('.sb-col').forEach(c=>c.classList.remove('active'));
-  const s=document.getElementById(sm[f]);if(s)s.classList.add('active');
-  if(tagPanelOpen)renderTagPanel();
-  renderList();
-}
+/* ── FILTER/SEARCH ── */
+function setFilter(f,el){activeFilter=f;document.querySelectorAll('.f-chip').forEach(c=>c.classList.remove('active'));if(el&&el.classList)el.classList.add('active');const sm={all:'sbAll',client:'sbClient',poc:'sbPoc',partner:'sbPartner',prospect:'sbProspect',nogo:'sbNogo',fresh:'sbFresh'};document.querySelectorAll('.sb-col').forEach(c=>c.classList.remove('active'));const s=document.getElementById(sm[f]);if(s)s.classList.add('active');if(tagPanelOpen)renderTagPanel();renderList();}
 function onSearch(){searchQ=document.getElementById('searchInput').value.toLowerCase().trim();if(tagPanelOpen)renderTagPanel();renderList();}
 
-/* ── RENDER LIST — all filters AND-chained ── */
+/* ── RENDER LIST ── */
 function renderList(){
   const scroll=document.getElementById('listScroll'),meta=document.getElementById('metaTxt');
-
-  if(activeTab==='contacts'){
-    const filt=contacts.filter(c=>{
-      if(!searchQ)return true;
-      return(c.full_name||'').toLowerCase().includes(searchQ)||(c.company_name||'').toLowerCase().includes(searchQ)||(c.title||'').toLowerCase().includes(searchQ);
-    });
-    meta.textContent=`${filt.length} of ${contacts.length} contacts`;
-    if(!filt.length){scroll.innerHTML='<div style="padding:20px 10px;font-family:\'IBM Plex Mono\',monospace;font-size:9px;color:var(--t3);text-transform:uppercase">No contacts</div>';return;}
-    scroll.innerHTML=filt.map(ct=>{const av=getAv(ct.full_name||'');const n=ini(ct.full_name||'');
-      return`<div class="ct-row" onclick="openDrawer('${ct.id||_slug(ct.full_name||'')}')"><div class="ct-av" style="background:${av.bg};color:${av.fg}">${n}</div><div class="ct-info"><div class="ct-name">${ct.full_name||'—'}</div><div class="ct-sub">${ct.title||''}${ct.company_name?' · '+ct.company_name:''}</div></div></div>`;
-    }).join('');return;
-  }
-
-  // companies
+  if(activeTab==='contacts'){const filt=contacts.filter(c=>{if(!searchQ)return true;return(c.full_name||'').toLowerCase().includes(searchQ)||(c.company_name||'').toLowerCase().includes(searchQ)||(c.title||'').toLowerCase().includes(searchQ);});meta.textContent=`${filt.length} of ${contacts.length} contacts`;if(!filt.length){scroll.innerHTML='<div style="padding:20px 10px;font-family:\'IBM Plex Mono\',monospace;font-size:9px;color:var(--t3);text-transform:uppercase">No contacts</div>';return;}scroll.innerHTML=filt.map(ct=>{const av=getAv(ct.full_name||'');const n=ini(ct.full_name||'');return`<div class="ct-row" onclick="openDrawer('${ct.id||_slug(ct.full_name||'')}')"><div class="ct-av" style="background:${av.bg};color:${av.fg}">${n}</div><div class="ct-info"><div class="ct-name">${ct.full_name||'—'}</div><div class="ct-sub">${ct.title||''}${ct.company_name?' · '+ct.company_name:''}</div></div></div>`;}).join('');return;}
   const t30=Date.now()-30*24*60*60*1000,cids=new Set(contacts.map(c=>_slug(c.company_name||'')));
-  const filt=companies.filter(c=>{
-    if(activeFilter==='fresh'){if(c.type!=='prospect')return false;if(c.updated_at&&new Date(c.updated_at).getTime()>=t30)return false;if(cids.has(_slug(c.name)))return false;}
-    else if(activeFilter!=='all'&&c.type!==activeFilter)return false;
-    if(searchQ&&!(c.name||'').toLowerCase().includes(searchQ)&&!(c.note||'').toLowerCase().includes(searchQ))return false;
-    if(!matchTags(c))return false;
-    if(aiSet&&!aiSet.has(c.name))return false;
-    return true;
-  });
-
-  const parts=[`${filt.length} of ${companies.length}`];
-  if(activeTags.size)parts.push(`· ${activeTags.size} tag${activeTags.size>1?'s':''} ${tagLogic.toUpperCase()}`);
-  if(aiSet)parts.push('· AI');
-  meta.textContent=parts.join(' ');
-  renderMetaPills();
-
+  const filt=companies.filter(c=>{if(activeFilter==='fresh'){if(c.type!=='prospect')return false;if(c.updated_at&&new Date(c.updated_at).getTime()>=t30)return false;if(cids.has(_slug(c.name)))return false;}else if(activeFilter!=='all'&&c.type!==activeFilter)return false;if(searchQ&&!(c.name||'').toLowerCase().includes(searchQ)&&!(c.note||'').toLowerCase().includes(searchQ))return false;if(!matchTags(c))return false;if(aiSet&&!aiSet.has(c.name))return false;return true;});
+  const parts=[`${filt.length} of ${companies.length}`];if(activeTags.size)parts.push(`· ${activeTags.size} tag${activeTags.size>1?'s':''} ${tagLogic.toUpperCase()}`);if(aiSet)parts.push('· AI');meta.textContent=parts.join(' ');renderMetaPills();
   if(!filt.length){scroll.innerHTML='<div style="padding:20px 10px;font-family:\'IBM Plex Mono\',monospace;font-size:9px;color:var(--t3);text-transform:uppercase">No results</div>';return;}
-
   const showTagRow=tagPanelOpen||activeTags.size||aiSet;
-  scroll.innerHTML=filt.map(c=>{
-    const av=getAv(c.name);const n=ini(c.name);
-    const tc=tClass(c.type),tl=tLabel(c.type);
-    const note=(c.note||'').length>48?(c.note||'').slice(0,48)+'…':(c.note||'—');
-    const sel=currentCompany&&currentCompany.name===c.name?' selected':'';
-    const coTags=getCoTags(c);
-    const tagRow=showTagRow&&coTags.length
-      ?`<div class="c-tags-row">${coTags.slice(0,5).map(t=>`<span class="c-tag-micro${activeTags.has(t)?' hit':''}">${t}</span>`).join('')}</div>`:
-      '';
-    return`<div class="c-row${sel}" data-slug="${_slug(c.name)}" onclick="openBySlug(this.dataset.slug)" oncontextmenu="showCtxSlug(event,this);return false;">
-      <div class="c-av" style="background:${av.bg};color:${av.fg};border:1px solid ${av.fg}33">${n}</div>
-      <div class="c-info"><div class="c-name">${c.name}</div><div class="c-note">${note}</div>${tagRow}</div>
-      <span class="tag ${tc}" style="flex-shrink:0;margin-top:2px">${tl}</span>
-    </div>`;
-  }).join('');
+  scroll.innerHTML=filt.map(c=>{const av=getAv(c.name);const n=ini(c.name);const tc=tClass(c.type),tl=tLabel(c.type);const note=(c.note||'').length>48?(c.note||'').slice(0,48)+'…':(c.note||'—');const sel=currentCompany&&currentCompany.name===c.name?' selected':'';const coTags=getCoTags(c);const tagRow=showTagRow&&coTags.length?`<div class="c-tags-row">${coTags.slice(0,5).map(t=>`<span class="c-tag-micro${activeTags.has(t)?' hit':''}">${t}</span>`).join('')}</div>`:'';return`<div class="c-row${sel}" data-slug="${_slug(c.name)}" onclick="openBySlug(this.dataset.slug)" oncontextmenu="showCtxSlug(event,this);return false;"><div class="c-av" style="background:${av.bg};color:${av.fg};border:1px solid ${av.fg}33">${n}</div><div class="c-info"><div class="c-name">${c.name}</div><div class="c-note">${note}</div>${tagRow}</div><span class="tag ${tc}" style="flex-shrink:0;margin-top:2px">${tl}</span></div>`;}).join('');
 }
 
-/* ── coAction — safe dispatch using currentCompany ── */
-function coAction(a){
-  const c=currentCompany;if(!c)return;
-  const n=c.name;
-  if(a==='report')   openClaude(`Full contact report for ${n} — decision makers, outreach angle, ICP fit`);
-  if(a==='dms')      openClaude(`Find Head of Data Partnerships or Programmatic at ${n} — LinkedIn, email, background`);
-  if(a==='email')    openPanel('meeseeks',{company:n,status:c.type,icp:c.icp||null,description:c.description||'',angle:c.outreach_angle||''});
-  if(a==='linkedin') window.open('https://linkedin.com/search/results/companies/?keywords='+encodeURIComponent(n),'_blank');
-  if(a==='similar')  openClaude(`Find companies similar to ${n} for onAudience data partnerships — top 10 by ICP fit`);
-  if(a==='gmail')    openClaude(`Check Gmail for previous contact history with ${n}`);
-  if(a==='angle')    openClaude(`Generate outreach angle for ${n} — value proposition for onAudience data partnerships`);
-  if(a==='find-contacts') openClaude(`Find decision makers at ${n} — LinkedIn, email, title, background`);
-}
+/* ── coAction ── */
+function coAction(a){const c=currentCompany;if(!c)return;const n=c.name;if(a==='report')openClaude(`Full contact report for ${n} — decision makers, outreach angle, ICP fit`);if(a==='dms')openClaude(`Find Head of Data Partnerships or Programmatic at ${n} — LinkedIn, email, background`);if(a==='email')openComposer({company:n,note:c.note,status:c.type,icp:c.icp||null,description:c.description||'',angle:c.outreach_angle||'',category:c.category||'',region:c.region||''});if(a==='linkedin')window.open('https://linkedin.com/search/results/companies/?keywords='+encodeURIComponent(n),'_blank');if(a==='similar')openClaude(`Find companies similar to ${n} for onAudience data partnerships — top 10 by ICP fit`);if(a==='gmail')openClaude(`Check Gmail for previous contact history with ${n}`);if(a==='angle')bgGenerateAngle();if(a==='find-contacts')bgFindDMs();}
 
-/* ── OPEN COMPANY — Intelligence Brief ── */
+/* ── ctAction ── */
+function ctAction(action,ctSlug){const ct=contacts.find(c=>c.id===ctSlug||(c.full_name&&_slug(c.full_name)===ctSlug));if(!ct)return;if(action==='email')openComposer({company:ct.company_name,contactName:ct.full_name,contactTitle:ct.title,linkedin:ct.linkedin_url});if(action==='research')openClaude(`Full research on ${ct.full_name}, ${ct.title||''} at ${ct.company_name||''} — background, LinkedIn activity, outreach hooks`);}
+
+/* ══════════════════════════════════════
+   OPEN COMPANY — Intelligence Brief
+══════════════════════════════════════ */
 function openCompany(c){
-  if(!c)return;
-  currentCompany=c;
+  if(!c)return;currentCompany=c;
   document.getElementById('emptyState').style.display='none';
-  const panel=document.getElementById('coPanel');
-  panel.style.display='block';
-
-  const av=getAv(c.name),n=ini(c.name);
-  const tc=tClass(c.type),tl=tLabel(c.type);
-  const icpDisp=c.icp?'★'.repeat(Math.min(c.icp,10)).slice(0,5)+(c.icp>5?` ${c.icp}/10`:''):'';
-
-  // ── facts rows ──
-  const facts=[
-    c.category        && ['Category',   c.category],
-    (c.region||c.hq_city) && ['HQ',     [c.region,c.hq_city].filter(Boolean).join(', ')],
-    c.size            && ['Size',        c.size],
-    c.founded_year    && ['Founded',     c.founded_year],
-    c.funding         && ['Funding',     c.funding],
-    c.tcf_vendor_id   && ['GVL/TCF',     c.tcf_vendor_id],
-    c.website         && ['Website',     `<a href="https://${c.website}" target="_blank" style="color:var(--g);text-decoration:none">${c.website} ↗</a>`],
-    c.dsps?.length    && ['DSPs',        (Array.isArray(c.dsps)?c.dsps:c.dsps.split(',')).join(', ')],
-    c.updated_at      && ['Updated',     new Date(c.updated_at).toLocaleDateString('en-GB',{day:'numeric',month:'short',year:'2-digit'})],
-  ].filter(Boolean);
-
-  // ── signals ──
-  const semanticTags=getCoTags(c);
-  const techArr=Array.isArray(c.tech_stack)?c.tech_stack:[];
-  const signalHtml=[
-    semanticTags.length ? `<span class="ib-sig-lbl">Signals</span>${semanticTags.map(t=>`<span class="ib-sig-tag">${t}</span>`).join('')}` : '',
-    semanticTags.length && techArr.length ? '<span class="ib-sig-div"></span>' : '',
-    techArr.length ? `<span class="ib-sig-lbl">Tech</span>${techArr.slice(0,8).map(t=>`<span class="ib-tech-pill">${t.tool||t}</span>`).join('')}` : '',
-  ].filter(Boolean).join('');
-
-  // ── contacts ──
+  const panel=document.getElementById('coPanel');panel.style.display='block';
+  const av=getAv(c.name),n=ini(c.name),tc=tClass(c.type),tl=tLabel(c.type),st=stars(c.icp);
+  const facts=[c.category&&['Category',c.category],(c.region||c.hq_city)&&['HQ',[c.region,c.hq_city].filter(Boolean).join(', ')],c.size&&['Size',c.size],c.founded_year&&['Founded',c.founded_year],c.funding&&['Funding',c.funding],c.tcf_vendor_id&&['GVL/TCF',c.tcf_vendor_id],c.website&&['Website',`<a href="https://${c.website}" target="_blank" style="color:var(--g);text-decoration:none">${c.website} ↗</a>`],c.dsps&&c.dsps.length&&['DSPs',(Array.isArray(c.dsps)?c.dsps:c.dsps.split(',')).join(', ')],c.updated_at&&['Updated',new Date(c.updated_at).toLocaleDateString('en-GB',{day:'numeric',month:'short',year:'2-digit'})]].filter(Boolean);
+  const semnTags=getCoTags(c);const techArr=Array.isArray(c.tech_stack)?c.tech_stack:[];
+  const signalHtml=[semnTags.length?`<span class="ib-sig-lbl">Signals</span>${semnTags.map(t=>`<span class="ib-sig-tag">${t}</span>`).join('')}`:'',semnTags.length&&techArr.length?'<span class="ib-sig-div"></span>':'',techArr.length?`<span class="ib-sig-lbl">Tech</span>${techArr.slice(0,8).map(t=>`<span class="ib-tech-pill">${t.tool||t}</span>`).join('')}`:''].filter(Boolean).join('');
   const coCts=contacts.filter(ct=>(ct.company_name||'').toLowerCase()===c.name.toLowerCase());
-  const ctGridHtml=coCts.length
-    ? `<div class="ib-cts-grid">${coCts.map(ct=>{
-        const a2=getAv(ct.full_name||''),n2=ini(ct.full_name||'');
-        const ctSlug=ct.id||_slug(ct.full_name||'');
-        return `<div class="ib-ct" data-ctslug="${ctSlug}" onclick="openDrawer('${ctSlug}')">
-          <div class="ib-ct-top">
-            <div class="ib-ct-av" style="background:${a2.bg};color:${a2.fg}">${n2}</div>
-            <div><div class="ib-ct-name">${ct.full_name||'—'}</div><div class="ib-ct-title">${ct.title||''}</div></div>
-          </div>
-          ${ct.email?`<div class="ib-ct-email">${ct.email}</div>`:''}
-          <div class="ib-ct-actions">
-            <button class="ib-ct-btn" onclick="event.stopPropagation();ctAction('email','${ctSlug}')">✉ Email</button>
-            ${ct.linkedin_url?`<button class="ib-ct-btn" onclick="event.stopPropagation();window.open('${ct.linkedin_url}','_blank')">LI ↗</button>`:''}
-            <button class="ib-ct-btn" onclick="event.stopPropagation();ctAction('research','${ctSlug}')">Research ↗</button>
-          </div>
-        </div>`;
-      }).join('')}</div>`
-    : `<div style="display:flex;align-items:center;gap:8px">
-        <div style="font-size:11px;color:var(--t3)">No contacts stored yet</div>
-        <button class="ib-cta-btn" onclick="coAction('dms')" style="margin-left:auto">Find DMs ↗</button>
-      </div>`;
-
-  // ── products ──
+  const ctGridHtml=coCts.length?`<div class="ib-cts-grid">${coCts.map(ct=>{const a2=getAv(ct.full_name||''),n2=ini(ct.full_name||'');const ctSlug=ct.id||_slug(ct.full_name||'');return`<div class="ib-ct" data-ctslug="${ctSlug}" onclick="openDrawer('${ctSlug}')"><div class="ib-ct-top"><div class="ib-ct-av" style="background:${a2.bg};color:${a2.fg}">${n2}</div><div><div class="ib-ct-name">${ct.full_name||'—'}</div><div class="ib-ct-title">${ct.title||''}</div></div></div>${ct.email?`<div class="ib-ct-email">${ct.email}</div>`:''}<div class="ib-ct-actions"><button class="ib-ct-btn" onclick="event.stopPropagation();ctAction('email','${ctSlug}')">✉ Email</button>${ct.linkedin_url?`<button class="ib-ct-btn" onclick="event.stopPropagation();window.open('${ct.linkedin_url}','_blank')">LI ↗</button>`:''}<button class="ib-ct-btn" onclick="event.stopPropagation();ctAction('research','${ctSlug}')">Research ↗</button></div></div>`;}).join('')}</div>`:`<div style="display:flex;align-items:center;gap:8px"><div style="font-size:11px;color:var(--t3)">No contacts stored</div><button class="ib-cta-btn" onclick="bgFindDMs()" style="margin-left:auto">✨ Find DMs</button></div>`;
   const prods=c.products?.products||[];
-  const prodsHtml=prods.length
-    ? prods.map(p=>`<div class="ib-prod-row"><div class="ib-prod-name">${p.name||''}</div><div class="ib-prod-desc">${p.description||''}${p.target_user?` <span style="color:var(--t3)">· ${p.target_user}</span>`:''}</div></div>`).join('')
-    : '';
+  const prodsHtml=prods.length?prods.map(p=>`<div class="ib-prod-row"><div class="ib-prod-name">${p.name||''}</div><div class="ib-prod-desc">${p.description||''}${p.target_user?` <span style="color:var(--t3)">· ${p.target_user}</span>`:''}</div></div>`).join(''):'';
 
   panel.innerHTML=`<div class="ib">
-
-  <!-- HEADER -->
-  <div class="ib-head">
-    <div class="ib-av${c.type==='nogo'?' nogo':''}" style="${c.type!=='nogo'?'':'color:#fff'};color:#fff">${n}</div>
-    <div class="ib-meta">
-      <div class="ib-name">${c.name}</div>
-      <div class="ib-row2">
-        <span class="tag ${tc}">${tl}</span>
-        ${icpDisp?`<span class="ib-icp">${icpDisp}</span>`:''}
-        ${c.category?`<span style="font-family:'IBM Plex Mono',monospace;font-size:9px;color:var(--t3)">${c.category}</span>`:''}
-      </div>
-      ${c.note?`<div class="ib-note">${c.note}</div>`:''}
-    </div>
-    <div class="ib-close" onclick="closePanel()">✕</div>
-  </div>
-
-  <!-- CTA STRIP -->
-  <div class="ib-cta">
-    <button class="ib-cta-btn primary" onclick="coAction('email')">✉ Draft Email</button>
-    <button class="ib-cta-btn" onclick="bgFindDMs()">👤 Find DMs</button>
-    <button class="ib-cta-btn" onclick="bgGenerateAngle()">💡 Gen Angle</button>
-    <button class="ib-cta-btn" onclick="bgRefreshIntel()">📰 Refresh News</button>
-    <button class="ib-cta-btn" onclick="coAction('similar')">🔗 Find Similar</button>
-    <button class="ib-cta-btn" onclick="coAction('linkedin')" style="margin-left:auto">LinkedIn ↗</button>
-  </div>
-
-  <!-- TOP GRID: facts + angle -->
-  <div class="ib-top">
-    <div class="ib-sec" style="margin-bottom:0">
-      <div class="ib-sh"><span class="ib-sh-lbl">🏢 Company</span></div>
-      <div class="ib-body">
-        ${facts.length?`<table class="ib-facts">${facts.map(([k,v])=>`<tr><td>${k}</td><td>${v}</td></tr>`).join('')}</table>`:'<span style="font-size:11px;color:var(--t3)">No details stored</span>'}
-        ${c.description?`<div class="ib-desc">${c.description}</div>`:''}
-      </div>
-    </div>
-    <div class="ib-sec" style="margin-bottom:0">
-      <div class="ib-sh">
-        <span class="ib-sh-lbl">💡 Outreach Angle</span>
-        <span class="ib-sh-act" id="ib-angle-btn" onclick="bgGenerateAngle()">${c.outreach_angle?'↺ Regen':'✨ Generate'}</span>
-      </div>
-      <div class="ib-body" style="padding:0">
-        <div class="ib-angle${c.outreach_angle?'':' empty'}" id="ib-angle-card" style="border:none;border-radius:0;min-height:100px">
-          <div class="ib-angle-lbl">${c.outreach_angle?'Recommended positioning':'No angle stored yet'}</div>
-          ${c.outreach_angle
-            ? `<div class="ib-angle-text">${c.outreach_angle}</div>`
-            : `<div class="ib-angle-text" style="color:var(--t3);font-size:10px">Click "✨ Generate" — Claude will analyse this company's profile and write a personalised positioning for onAudience.</div>`}
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <!-- SIGNALS -->
-  ${signalHtml?`<div class="ib-sec"><div class="ib-signals">${signalHtml}</div></div>`:''}
-
-  <!-- CONTACTS -->
-  <div class="ib-sec" id="ib-contacts">
-    <div class="ib-sh">
-      <span class="ib-sh-lbl">👤 Contacts</span>
-      ${coCts.length?`<span class="ib-sh-cnt">${coCts.length}</span>`:''}
-      <span class="ib-sh-act" onclick="bgFindDMs()">✨ Find DMs</span>
-    </div>
-    <div class="ib-body" id="ib-ct-body">${ctGridHtml}</div>
-  </div>
-
-  <!-- INTELLIGENCE — Supabase stored + Google News RSS live -->
-  <div class="ib-sec" id="ib-intel">
-    <div class="ib-sh">
-      <span class="ib-sh-lbl">📰 Intelligence</span>
-      <span class="ib-sh-cnt" id="ib-intel-cnt"></span>
-      <span id="ib-intel-live" style="display:none" class="live-label"><span class="live-dot"></span>Live</span>
-      <span class="ib-sh-act" id="ib-intel-refresh" onclick="bgRefreshIntel()">↺ Refresh</span>
-    </div>
-    <div class="ib-body" id="ib-intel-body"><div class="ib-loading">Loading…</div></div>
-  </div>
-
-  <!-- PRODUCTS (if available) -->
-  ${prodsHtml?`<div class="ib-sec"><div class="ib-sh"><span class="ib-sh-lbl">📦 Products</span><span class="ib-sh-cnt">${prods.length}</span></div><div class="ib-body">${prodsHtml}</div></div>`:''}
-
-  <!-- RELATIONS — loaded async -->
-  <div class="ib-sec" id="ib-rels">
-    <div class="ib-sh"><span class="ib-sh-lbl">🔗 Relations</span><span class="ib-sh-cnt" id="ib-rels-cnt"></span></div>
-    <div class="ib-body" id="ib-rels-body"><div class="ib-loading">Loading…</div></div>
-  </div>
-
-  <!-- QUICK LINKS -->
-  <div class="ib-sec">
-    <div class="ib-sh"><span class="ib-sh-lbl">🔗 Quick Links</span></div>
-    <div class="ib-links">
-      <a class="ib-link" href="https://www.linkedin.com/search/results/people/?keywords=${encodeURIComponent(c.name+'data partnerships')}" target="_blank">LI People Search ↗</a>
-      <a class="ib-link" href="https://www.linkedin.com/search/results/companies/?keywords=${encodeURIComponent(c.name)}" target="_blank">LI Company ↗</a>
-      ${c.website?`<a class="ib-link" href="https://${c.website}" target="_blank">${c.website} ↗</a>`:''}
-      <a class="ib-link" href="https://www.crunchbase.com/search/organizations/field/organizations/facet_ids/${encodeURIComponent(c.name)}" target="_blank">Crunchbase ↗</a>
-      <a class="ib-link" href="https://news.google.com/search?q=${encodeURIComponent(c.name)}" target="_blank">Google News ↗</a>
-      <span class="ib-link" onclick="coAction('gmail')">Gmail History</span>
-    </div>
-  </div>
-
+<div class="ib-head"><div class="ib-av${c.type==='nogo'?' nogo':''}">${n}</div><div class="ib-meta"><div class="ib-name">${c.name}</div><div class="ib-row2"><span class="tag ${tc}">${tl}</span>${st?`<span class="ib-icp">${st}</span>`:''}</div>${c.note?`<div class="ib-note">${c.note}</div>`:''}</div><div class="ib-close" onclick="closePanel()">✕</div></div>
+<div class="ib-cta"><button class="ib-cta-btn primary" onclick="coAction('email')">✉ Draft Email</button><button class="ib-cta-btn" onclick="bgFindDMs()">👤 Find DMs</button><button class="ib-cta-btn" onclick="bgGenerateAngle()">💡 Gen Angle</button><button class="ib-cta-btn" onclick="bgRefreshIntel()">📰 Refresh News</button><button class="ib-cta-btn" onclick="coAction('similar')">🔗 Find Similar</button><button class="ib-cta-btn" onclick="coAction('linkedin')" style="margin-left:auto">LinkedIn ↗</button></div>
+<div class="ib-top">
+  <div class="ib-sec" style="margin-bottom:0"><div class="ib-sh"><span class="ib-sh-lbl">🏢 Company</span></div><div class="ib-body">${facts.length?`<table class="ib-facts">${facts.map(([k,v])=>`<tr><td>${k}</td><td>${v}</td></tr>`).join('')}</table>`:'<span style="font-size:11px;color:var(--t3)">No details stored</span>'}${c.description?`<div class="ib-desc">${c.description}</div>`:''}</div></div>
+  <div class="ib-sec" style="margin-bottom:0"><div class="ib-sh"><span class="ib-sh-lbl">💡 Outreach Angle</span><span class="ib-sh-act" id="ib-angle-btn" onclick="bgGenerateAngle()">${c.outreach_angle?'↺ Regen':'✨ Generate'}</span></div><div class="ib-body" style="padding:0"><div class="ib-angle${c.outreach_angle?'':' empty'}" id="ib-angle-card" style="border:none;border-radius:0;min-height:100px"><div class="ib-angle-lbl">${c.outreach_angle?'Recommended positioning':'No angle stored yet'}</div>${c.outreach_angle?`<div class="ib-angle-text">${c.outreach_angle}</div>`:`<div class="ib-angle-text" style="color:var(--t3);font-size:10px">Click "✨ Generate" to create a personalised positioning for onAudience.</div>`}</div></div></div>
+</div>
+${signalHtml?`<div class="ib-sec"><div class="ib-signals">${signalHtml}</div></div>`:''}
+<div class="ib-sec" id="ib-contacts"><div class="ib-sh"><span class="ib-sh-lbl">👤 Contacts</span>${coCts.length?`<span class="ib-sh-cnt">${coCts.length}</span>`:''}<span class="ib-sh-act" onclick="bgFindDMs()">✨ Find DMs</span></div><div class="ib-body" id="ib-ct-body">${ctGridHtml}</div></div>
+<div class="ib-sec" id="ib-intel"><div class="ib-sh"><span class="ib-sh-lbl">📰 Intelligence</span><span class="ib-sh-cnt" id="ib-intel-cnt"></span><span id="ib-intel-live" style="display:none" class="live-label"><span class="live-dot"></span>Live</span><span class="ib-sh-act" id="ib-intel-refresh" onclick="bgRefreshIntel()">↺ Refresh</span></div><div class="ib-body" id="ib-intel-body"><div class="ib-loading">Loading…</div></div></div>
+${prodsHtml?`<div class="ib-sec"><div class="ib-sh"><span class="ib-sh-lbl">📦 Products</span><span class="ib-sh-cnt">${prods.length}</span></div><div class="ib-body">${prodsHtml}</div></div>`:''}
+<div class="ib-sec" id="ib-rels"><div class="ib-sh"><span class="ib-sh-lbl">🔗 Relations</span><span class="ib-sh-cnt" id="ib-rels-cnt"></span></div><div class="ib-body" id="ib-rels-body"><div class="ib-loading">Loading…</div></div></div>
+<div class="ib-sec"><div class="ib-sh"><span class="ib-sh-lbl">🔗 Quick Links</span></div><div class="ib-links"><a class="ib-link" href="https://www.linkedin.com/search/results/people/?keywords=${encodeURIComponent(c.name+' data partnerships')}" target="_blank">LI People ↗</a><a class="ib-link" href="https://www.linkedin.com/search/results/companies/?keywords=${encodeURIComponent(c.name)}" target="_blank">LI Company ↗</a>${c.website?`<a class="ib-link" href="https://${c.website}" target="_blank">${c.website} ↗</a>`:''}<a class="ib-link" href="https://news.google.com/search?q=${encodeURIComponent(c.name)}" target="_blank">Google News ↗</a><span class="ib-link" onclick="coAction('gmail')">Gmail History</span></div></div>
 </div>`;
-
-  renderList();
-  document.getElementById('centerScroll').scrollTop=0;
-  if(c.name){
-    const slug=_slug(c.name);
-    setTimeout(()=>loadRelationsBrief(slug),60);
-    setTimeout(()=>loadIntelligence(slug,c.name),80);
-  }
+  renderList();document.getElementById('centerScroll').scrollTop=0;
+  if(c.name){const slug=_slug(c.name);setTimeout(()=>loadRelationsBrief(slug),60);setTimeout(()=>loadIntelligence(slug,c.name),80);}
 }
 
-/* ── ctAction — contact card buttons ── */
-function ctAction(action,ctSlug){
-  const ct=contacts.find(c=>c.id===ctSlug||(c.full_name&&_slug(c.full_name)===ctSlug));
-  if(!ct)return;
-  if(action==='email')openPanel('meeseeks',{company:ct.company_name,contactName:ct.full_name,contactTitle:ct.title,linkedin:ct.linkedin_url});
-  if(action==='research')openClaude(`Full research on ${ct.full_name}, ${ct.title||''} at ${ct.company_name||''} — background, LinkedIn activity, outreach hooks`);
-}
+function closePanel(){currentCompany=null;document.getElementById('coPanel').style.display='none';document.getElementById('emptyState').style.display='flex';renderList();}
 
-/* ══════════════════════════════════════════
-   BACKGROUND ACTIONS — run in browser, render inline
-══════════════════════════════════════════ */
+/* ══════════════════════════════════════
+   BACKGROUND ACTIONS
+══════════════════════════════════════ */
+function mcGetApiKey(){return localStorage.getItem('oaApiKey')||'';}
 
-/* ── bgGenerateAngle — Anthropic API → save → render ── */
 async function bgGenerateAngle(){
-  const c=currentCompany; if(!c)return;
-  const card=document.getElementById('ib-angle-card');
-  const btn=document.getElementById('ib-angle-btn');
+  const c=currentCompany;if(!c)return;
+  const key=mcGetApiKey();if(!key){mcOpenKey();return;}
+  const card=document.getElementById('ib-angle-card'),btn=document.getElementById('ib-angle-btn');
   if(card){card.className='ib-angle';card.innerHTML=`<div class="ib-angle-lbl"><span class="bg-running">✦ Generating…</span></div>`;}
   if(btn)btn.style.display='none';
   const tags=getCoTags(c).join(', ');
   const techArr=(Array.isArray(c.tech_stack)?c.tech_stack:[]).slice(0,6).map(t=>t.tool||t).join(', ');
   try{
-    const res=await fetch('https://api.anthropic.com/v1/messages',{method:'POST',
-      headers:{'Content-Type':'application/json'},
-      body:JSON.stringify({model:'claude-sonnet-4-20250514',max_tokens:350,
-        system:`You are a senior B2B data partnership sales specialist at onAudience, a European first-party audience data company that powers programmatic advertising across DSPs.
-Your task: write a concise, specific outreach angle (3–5 sentences) for approaching this company.
-Focus on: what onAudience data solves for their business model, what timing signals suggest now is right, and the clearest value hook.
-No bullet points. No generic phrases. Write as flowing prose.`,
-        messages:[{role:'user',content:`Company: ${c.name}\nType: ${c.type}\nCategory: ${c.category||'unknown'}\nNote: ${c.note||''}\nDescription: ${c.description||''}\nTech stack: ${techArr}\nDSPs: ${JSON.stringify(c.dsps||[])}\nSignal tags: ${tags}`}]
-      })
-    });
+    const res=await fetch('https://api.anthropic.com/v1/messages',{method:'POST',headers:{'Content-Type':'application/json','x-api-key':key,'anthropic-version':'2023-06-01'},body:JSON.stringify({model:'claude-sonnet-4-20250514',max_tokens:350,system:`You are a senior B2B data partnership sales specialist at onAudience, a European first-party audience data company. Write a concise, specific outreach angle (3–5 sentences) for approaching this company. Focus on what onAudience data solves for their business model, timing signals, and clearest value hook. No bullet points. Flowing prose only.`,messages:[{role:'user',content:`Company: ${c.name}\nType: ${c.type}\nCategory: ${c.category||'unknown'}\nNote: ${c.note||''}\nDescription: ${c.description||''}\nTech: ${techArr}\nDSPs: ${JSON.stringify(c.dsps||[])}\nSignals: ${tags}`}]})});
     const data=await res.json();
     const angle=(data.content||[]).filter(b=>b.type==='text').map(b=>b.text).join('').trim();
-    if(!angle) throw new Error('empty response');
-    // update state
-    currentCompany.outreach_angle=angle;
-    companies.forEach(co=>{if(co.name===c.name)co.outreach_angle=angle;});
-    // render
+    if(!angle)throw new Error('empty');
+    currentCompany.outreach_angle=angle;companies.forEach(co=>{if(co.name===c.name)co.outreach_angle=angle;});
     if(card){card.className='ib-angle';card.innerHTML=`<div class="ib-angle-lbl">Recommended positioning <span class="bg-done">✓ generated</span></div><div class="ib-angle-text">${angle}</div>`;}
     if(btn){btn.textContent='↺ Regen';btn.style.display='';}
-    // save — try by name, then by id
-    const slug=_slug(c.name);
-    const patch={outreach_angle:angle};
-    await fetch(`${SB_URL}/rest/v1/companies?name=eq.${encodeURIComponent(c.name)}`,{method:'PATCH',headers:{...HDR,'Prefer':'return=minimal'},body:JSON.stringify(patch)}).catch(()=>{});
-  }catch(e){
-    if(card)card.innerHTML=`<div class="ib-angle-lbl"><span class="bg-err">Error — ${e.message}</span></div><div class="ib-angle-text" style="font-size:10px;color:var(--t3)">Try again or check API connection.</div>`;
-    if(btn){btn.textContent='↺ Retry';btn.style.display='';}
-  }
+    await fetch(`${SB_URL}/rest/v1/companies?name=eq.${encodeURIComponent(c.name)}`,{method:'PATCH',headers:{...HDR,'Prefer':'return=minimal'},body:JSON.stringify({outreach_angle:angle})}).catch(()=>{});
+  }catch(e){if(card)card.innerHTML=`<div class="ib-angle-lbl"><span class="bg-err">Error — ${e.message}</span></div>`;if(btn){btn.textContent='↺ Retry';btn.style.display='';}}
 }
 
-/* ── bgFindDMs — Anthropic API → render in contacts section ── */
 async function bgFindDMs(){
-  const c=currentCompany; if(!c)return;
-  const body=document.getElementById('ib-ct-body');
-  if(!body)return;
+  const c=currentCompany;if(!c)return;
+  const key=mcGetApiKey();if(!key){mcOpenKey();return;}
+  const body=document.getElementById('ib-ct-body');if(!body)return;
   body.innerHTML=`<div class="ib-loading" style="text-align:left">Finding decision makers at ${c.name}…</div>`;
   const tags=getCoTags(c).join(', ');
   try{
-    const res=await fetch('https://api.anthropic.com/v1/messages',{method:'POST',
-      headers:{'Content-Type':'application/json'},
-      body:JSON.stringify({model:'claude-sonnet-4-20250514',max_tokens:700,
-        system:`You are a B2B sales researcher. Return ONLY a raw JSON array — no markdown, no explanation.
-Each element: {"full_name":"string","title":"string","linkedin_url":"string","reason":"string (1 sentence why they're the right contact for data partnerships)"}
-Construct linkedin_url as: https://www.linkedin.com/search/results/people/?keywords=FIRSTNAME+LASTNAME+COMPANY`,
-        messages:[{role:'user',content:`Find 3–5 decision makers at ${c.name} (${c.category||'ad tech'}) most relevant for a data partnership discussion with onAudience.
-Focus: Head/VP/Director of Programmatic, Data Partnerships, Product, or Platform.
-Company context: ${c.note||''} Tags: ${tags}`}]
-      })
-    });
-    const data=await res.json();
-    const raw=(data.content||[]).filter(b=>b.type==='text').map(b=>b.text).join('').replace(/```json|```/g,'').trim();
-    const dms=JSON.parse(raw);
+    const res=await fetch('https://api.anthropic.com/v1/messages',{method:'POST',headers:{'Content-Type':'application/json','x-api-key':key,'anthropic-version':'2023-06-01'},body:JSON.stringify({model:'claude-sonnet-4-20250514',max_tokens:700,system:`You are a B2B sales researcher. Return ONLY a raw JSON array — no markdown, no explanation. Each element: {"full_name":"string","title":"string","linkedin_url":"string","reason":"string (1 sentence why relevant for data partnerships)"}. Construct linkedin_url as: https://www.linkedin.com/search/results/people/?keywords=FIRSTNAME+LASTNAME+COMPANY`,messages:[{role:'user',content:`Find 3–5 decision makers at ${c.name} (${c.category||'ad tech'}) relevant for data partnership discussions with onAudience.\nFocus: Head/VP/Director of Programmatic, Data Partnerships, Product, or Platform.\nContext: ${c.note||''} Tags: ${tags}`}]})});
+    const data=await res.json();const raw=(data.content||[]).filter(b=>b.type==='text').map(b=>b.text).join('').replace(/```json|```/g,'').trim();const dms=JSON.parse(raw);
     if(!Array.isArray(dms)||!dms.length)throw new Error('none found');
-    body.innerHTML=`
-      <div style="font-family:'IBM Plex Mono',monospace;font-size:7px;font-weight:600;text-transform:uppercase;letter-spacing:.07em;color:var(--poc);margin-bottom:8px;display:flex;align-items:center;gap:5px">
-        <span>✦ AI suggested</span><span style="color:var(--t4)">·</span><span style="color:var(--t3);font-weight:400">not verified — click Research to confirm</span>
-      </div>
-      <div class="ib-cts-grid">${dms.map(dm=>{
-        const a2=getAv(dm.full_name||'');const n2=ini(dm.full_name||'');
-        return`<div class="ib-ct">
-          <div class="ib-ct-top">
-            <div class="ib-ct-av" style="background:${a2.bg};color:${a2.fg};border:1px solid ${a2.fg}33">${n2}</div>
-            <div><div class="ib-ct-name">${dm.full_name}</div><div class="ib-ct-title">${dm.title}</div></div>
-          </div>
-          <div style="font-size:10px;color:var(--t3);margin:3px 0 6px;line-height:1.4">${dm.reason||''}</div>
-          <div class="ib-ct-actions">
-            <button class="ib-ct-btn" onclick="openPanel('meeseeks',{company:'${c.name}',contactName:'${dm.full_name}',contactTitle:'${dm.title}'})">✉ Email</button>
-            <a class="ib-ct-btn" href="${dm.linkedin_url}" target="_blank">LI ↗</a>
-            <button class="ib-ct-btn" onclick="openClaude('Research ${dm.full_name} at ${c.name} — LinkedIn, background, outreach hooks')">Research ↗</button>
-          </div>
-        </div>`;
-      }).join('')}</div>`;
-  }catch(e){
-    body.innerHTML=`<div style="font-size:11px;color:var(--t3)"><span class="bg-err">Error</span> ${e.message} — <span style="cursor:pointer;color:var(--g);text-decoration:underline" onclick="bgFindDMs()">retry</span></div>`;
-  }
+    // also pre-load into composer state
+    mcAiContacts=dms;
+    body.innerHTML=`<div style="font-family:'IBM Plex Mono',monospace;font-size:7px;font-weight:600;text-transform:uppercase;letter-spacing:.07em;color:var(--poc);margin-bottom:8px;display:flex;align-items:center;gap:5px"><span>✦ AI suggested</span><span style="color:var(--t4)">·</span><span style="color:var(--t3);font-weight:400">not verified</span></div><div class="ib-cts-grid">${dms.map(dm=>{const a2=getAv(dm.full_name||''),n2=ini(dm.full_name||'');return`<div class="ib-ct"><div class="ib-ct-top"><div class="ib-ct-av" style="background:${a2.bg};color:${a2.fg};border:1px solid ${a2.fg}33">${n2}</div><div><div class="ib-ct-name">${dm.full_name}</div><div class="ib-ct-title">${dm.title}</div></div></div><div style="font-size:10px;color:var(--t3);margin:3px 0 6px;line-height:1.4">${dm.reason||''}</div><div class="ib-ct-actions"><button class="ib-ct-btn" onclick="openComposer({company:'${c.name.replace(/'/g,'&apos;')}',contactName:'${dm.full_name.replace(/'/g,'&apos;')}',contactTitle:'${dm.title.replace(/'/g,'&apos;')}',angle:'${(c.outreach_angle||'').replace(/'/g,'&apos;').slice(0,100)}',description:'${(c.description||'').replace(/'/g,'&apos;').slice(0,100)}'})">✉ Email</button><a class="ib-ct-btn" href="${dm.linkedin_url}" target="_blank">LI ↗</a><button class="ib-ct-btn" onclick="openClaude('Research ${dm.full_name} at ${c.name} — LinkedIn, background, outreach hooks')">Research ↗</button></div></div>`;}).join('')}</div>`;
+  }catch(e){body.innerHTML=`<div style="font-size:11px;color:var(--t3)"><span class="bg-err">Error</span> ${e.message} — <span style="cursor:pointer;color:var(--g);text-decoration:underline" onclick="bgFindDMs()">retry</span></div>`;}
 }
 
-/* ── GOOGLE NEWS RSS (via CORS proxy) ── */
-async function fetchGoogleNews(name){
-  const q=encodeURIComponent(`"${name}" programmatic OR "data partnership" OR adtech`);
-  const rss=`https://news.google.com/rss/search?q=${q}&hl=en-US&gl=US&ceid=US:en`;
-  const proxy=`https://corsproxy.io/?url=${encodeURIComponent(rss)}`;
-  try{
-    const res=await fetch(proxy,{signal:AbortSignal.timeout(7000)});
-    if(!res.ok)throw new Error('proxy '+res.status);
-    const xml=await res.text();
-    const doc=new DOMParser().parseFromString(xml,'application/xml');
-    if(doc.querySelector('parsererror'))throw new Error('parse error');
-    return[...doc.querySelectorAll('item')].slice(0,10).map(item=>{
-      // Google News: link text is actually in the node after <link>
-      const linkNode=item.querySelector('link');
-      const url=linkNode?.nextSibling?.nodeValue?.trim()||item.querySelector('link')?.textContent?.trim()||'';
-      const rawTitle=item.querySelector('title')?.textContent||'';
-      const title=rawTitle.replace(/ - [^-]+$/, '').trim(); // strip source suffix
-      const src=item.querySelector('source')?.textContent||'Google News';
-      const dateRaw=item.querySelector('pubDate')?.textContent;
-      const date=dateRaw?new Date(dateRaw).toLocaleDateString('en-GB',{day:'numeric',month:'short',year:'2-digit'}):'';
-      return{title,url,source:src,date,link_type:'press',summary:''};
-    }).filter(i=>i.title&&i.url);
-  }catch(e){console.warn('Google News fetch error',e.message);return[];}
-}
+async function fetchGoogleNews(name){const q=encodeURIComponent(`"${name}" programmatic OR "data partnership" OR adtech`);const proxy=`https://corsproxy.io/?url=${encodeURIComponent('https://news.google.com/rss/search?q='+q+'&hl=en-US&gl=US&ceid=US:en')}`;try{const res=await fetch(proxy,{signal:AbortSignal.timeout(7000)});if(!res.ok)throw new Error('proxy '+res.status);const xml=await res.text();const doc=new DOMParser().parseFromString(xml,'application/xml');if(doc.querySelector('parsererror'))throw new Error('parse error');return[...doc.querySelectorAll('item')].slice(0,10).map(item=>{const linkNode=item.querySelector('link');const url=linkNode?.nextSibling?.nodeValue?.trim()||item.querySelector('link')?.textContent?.trim()||'';const rawTitle=item.querySelector('title')?.textContent||'';const title=rawTitle.replace(/ - [^-]+$/,'').trim();const src=item.querySelector('source')?.textContent||'Google News';const dateRaw=item.querySelector('pubDate')?.textContent;const date=dateRaw?new Date(dateRaw).toLocaleDateString('en-GB',{day:'numeric',month:'short',year:'2-digit'}):'';return{title,url,source:src,date,link_type:'press',summary:''};}).filter(i=>i.title&&i.url);}catch(e){console.warn('Google News error',e.message);return[];}}
 
-/* ── Save intel items to Supabase ── */
-async function saveIntelligence(slug,items){
-  if(!items.length)return;
-  try{
-    const ex=await fetch(`${SB_URL}/rest/v1/intelligence?company_id=eq.${slug}&type=eq.press_links`,{headers:{apikey:SB_KEY,Authorization:`Bearer ${SB_KEY}`}}).then(r=>r.json());
-    const existing=Array.isArray(ex)&&ex[0]?.content||[];
-    const seen=new Set(existing.map(l=>l.url));
-    const merged=[...existing,...items.filter(i=>!seen.has(i.url))];
-    if(ex&&ex[0]){
-      await fetch(`${SB_URL}/rest/v1/intelligence?company_id=eq.${slug}&type=eq.press_links`,{method:'PATCH',headers:{...HDR,'Prefer':'return=minimal'},body:JSON.stringify({content:merged})});
-    }else{
-      await fetch(`${SB_URL}/rest/v1/intelligence`,{method:'POST',headers:{...HDR,'Prefer':'resolution=merge-duplicates,return=minimal'},body:JSON.stringify({company_id:slug,type:'press_links',content:merged})});
-    }
-  }catch(e){console.warn('Intel save error',e);}
-}
+async function saveIntelligence(slug,items){if(!items.length)return;try{const ex=await fetch(`${SB_URL}/rest/v1/intelligence?company_id=eq.${slug}&type=eq.press_links`,{headers:{apikey:SB_KEY,Authorization:`Bearer ${SB_KEY}`}}).then(r=>r.json());const existing=Array.isArray(ex)&&ex[0]?.content||[];const seen=new Set(existing.map(l=>l.url));const merged=[...existing,...items.filter(i=>!seen.has(i.url))];if(ex&&ex[0]){await fetch(`${SB_URL}/rest/v1/intelligence?company_id=eq.${slug}&type=eq.press_links`,{method:'PATCH',headers:{...HDR,'Prefer':'return=minimal'},body:JSON.stringify({content:merged})});}else{await fetch(`${SB_URL}/rest/v1/intelligence`,{method:'POST',headers:{...HDR,'Prefer':'resolution=merge-duplicates,return=minimal'},body:JSON.stringify({company_id:slug,type:'press_links',content:merged})});}}catch(e){console.warn('Intel save',e);}}
 
-/* ── Render intel body (stored + live merged) ── */
-function renderIntelBody(stored,live){
-  const body=document.getElementById('ib-intel-body');
-  const cnt=document.getElementById('ib-intel-cnt');
-  const liveLabel=document.getElementById('ib-intel-live');
-  if(!body)return;
-  // flatten stored rows (each row may be a press_links array or a single item)
-  const storedItems=[];
-  (Array.isArray(stored)?stored:[]).forEach(row=>{
-    if(Array.isArray(row.content))storedItems.push(...row.content);
-    else if(row.title||row.url)storedItems.push(row);
-  });
-  const total=storedItems.length+live.length;
-  if(cnt)cnt.textContent=total||'';
-  if(liveLabel)liveLabel.style.display=live.length?'flex':'none';
-  if(!total){
-    body.innerHTML=`<div style="display:flex;align-items:center;gap:8px"><span style="font-size:11px;color:var(--t3)">No intelligence yet</span><button class="ib-ct-btn" style="height:22px;padding:0 8px;font-size:7px;margin-left:auto" onclick="bgRefreshIntel()">↺ Fetch news</button></div>`;
-    return;
-  }
-  const itemHtml=(items,dotColor)=>items.map(r=>{
-    const url=r.url||r.link||'';
-    const title=r.title||r.summary||'—';
-    const src=r.source||r.type||'';
-    const date=r.date||(r.created_at?new Date(r.created_at).toLocaleDateString('en-GB',{day:'numeric',month:'short',year:'2-digit'}):'');
-    return`<div class="ib-news-item">
-      <div class="ib-news-dot" style="background:${dotColor}"></div>
-      <div class="ib-news-body">
-        ${url?`<a class="ib-news-title" href="${url}" target="_blank">${title} ↗</a>`:`<div class="ib-news-title" style="cursor:default">${title}</div>`}
-        <div class="ib-news-meta"><span class="ib-news-src">${src}</span><span class="ib-news-date">${date}</span></div>
-      </div>
-    </div>`;
-  }).join('');
+function renderIntelBody(stored,live){const body=document.getElementById('ib-intel-body'),cnt=document.getElementById('ib-intel-cnt'),liveLabel=document.getElementById('ib-intel-live');if(!body)return;const storedItems=[];(Array.isArray(stored)?stored:[]).forEach(row=>{if(Array.isArray(row.content))storedItems.push(...row.content);else if(row.title||row.url)storedItems.push(row);});const total=storedItems.length+live.length;if(cnt)cnt.textContent=total||'';if(liveLabel)liveLabel.style.display=live.length?'flex':'none';if(!total){body.innerHTML=`<div style="display:flex;align-items:center;gap:8px"><span style="font-size:11px;color:var(--t3)">No intelligence yet</span><button class="ib-ct-btn" style="height:22px;padding:0 8px;font-size:7px;margin-left:auto" onclick="bgRefreshIntel()">↺ Fetch news</button></div>`;return;}const itemHtml=(items,dotColor)=>items.map(r=>{const url=r.url||r.link||'';const title=r.title||r.summary||'—';const src=r.source||r.type||'';const date=r.date||(r.created_at?new Date(r.created_at).toLocaleDateString('en-GB',{day:'numeric',month:'short',year:'2-digit'}):'');return`<div class="ib-news-item"><div class="ib-news-dot" style="background:${dotColor}"></div><div class="ib-news-body">${url?`<a class="ib-news-title" href="${url}" target="_blank">${title} ↗</a>`:`<div class="ib-news-title" style="cursor:default">${title}</div>`}<div class="ib-news-meta"><span class="ib-news-src">${src}</span><span class="ib-news-date">${date}</span></div></div></div>`;}).join('');let html='';if(live.length){html+=`<div style="display:flex;align-items:center;gap:5px;margin-bottom:6px"><span class="live-label"><span class="live-dot"></span>Live — Google News</span><span style="font-family:'IBM Plex Mono',monospace;font-size:7px;color:var(--t4)">${live.length} results</span></div>${itemHtml(live,'#E53935')}`;}if(storedItems.length){if(live.length)html+=`<div style="height:10px;border-top:1px solid var(--rule2);margin:8px 0"></div>`;html+=`<div style="font-family:'IBM Plex Mono',monospace;font-size:7px;font-weight:600;text-transform:uppercase;letter-spacing:.07em;color:var(--t3);margin-bottom:6px">📁 Stored</div>${itemHtml(storedItems,'var(--g)')}`;}body.innerHTML=html;}
 
-  let html='';
-  if(live.length){
-    html+=`<div style="display:flex;align-items:center;gap:5px;margin-bottom:6px">
-      <span class="live-label"><span class="live-dot"></span>Live — Google News</span>
-      <span style="font-family:'IBM Plex Mono',monospace;font-size:7px;color:var(--t4)">${live.length} results</span>
-    </div>${itemHtml(live,'#E53935')}`;
-  }
-  if(storedItems.length){
-    if(live.length)html+=`<div style="height:10px;border-top:1px solid var(--rule2);margin:8px 0 8px"></div>`;
-    html+=`<div style="font-family:'IBM Plex Mono',monospace;font-size:7px;font-weight:600;text-transform:uppercase;letter-spacing:.07em;color:var(--t3);margin-bottom:6px">📁 Stored</div>${itemHtml(storedItems,'var(--g)')}`;
-  }
-  body.innerHTML=html;
-}
+async function bgRefreshIntel(){const c=currentCompany;if(!c)return;const body=document.getElementById('ib-intel-body'),btn=document.getElementById('ib-intel-refresh');if(body)body.innerHTML=`<div class="ib-loading" style="text-align:left">Fetching news…</div>`;if(btn)btn.textContent='↻ Loading…';const slug=_slug(c.name);const[storedRes,liveRes]=await Promise.allSettled([fetch(`${SB_URL}/rest/v1/intelligence?company_id=eq.${slug}&type=eq.press_links`,{headers:{apikey:SB_KEY,Authorization:`Bearer ${SB_KEY}`}}).then(r=>r.json()),fetchGoogleNews(c.name)]);const stored=storedRes.status==='fulfilled'&&Array.isArray(storedRes.value)?storedRes.value:[];const live=liveRes.status==='fulfilled'?liveRes.value:[];renderIntelBody(stored,live);if(live.length)saveIntelligence(slug,live);if(btn)btn.textContent='↺ Refresh';}
 
-/* ── bgRefreshIntel — manual refresh button ── */
-async function bgRefreshIntel(){
-  const c=currentCompany;if(!c)return;
-  const body=document.getElementById('ib-intel-body');
-  const btn=document.getElementById('ib-intel-refresh');
-  if(body)body.innerHTML=`<div class="ib-loading" style="text-align:left">Fetching news for ${c.name}…</div>`;
-  if(btn)btn.textContent='↻ Loading…';
-  const slug=_slug(c.name);
-  const [storedRes,liveRes]=await Promise.allSettled([
-    fetch(`${SB_URL}/rest/v1/intelligence?company_id=eq.${slug}&type=eq.press_links`,{headers:{apikey:SB_KEY,Authorization:`Bearer ${SB_KEY}`}}).then(r=>r.json()),
-    fetchGoogleNews(c.name)
-  ]);
-  const stored=storedRes.status==='fulfilled'&&Array.isArray(storedRes.value)?storedRes.value:[];
-  const live=liveRes.status==='fulfilled'?liveRes.value:[];
-  renderIntelBody(stored,live);
-  if(live.length)saveIntelligence(slug,live);
-  if(btn)btn.textContent='↺ Refresh';
-}
+async function loadIntelligence(slug,name){const body=document.getElementById('ib-intel-body');if(!body)return;const[storedRes,liveRes]=await Promise.allSettled([fetch(`${SB_URL}/rest/v1/intelligence?company_id=eq.${slug}&type=eq.press_links`,{headers:{apikey:SB_KEY,Authorization:`Bearer ${SB_KEY}`}}).then(r=>r.json()),fetchGoogleNews(name)]);const stored=storedRes.status==='fulfilled'&&Array.isArray(storedRes.value)?storedRes.value:[];const live=liveRes.status==='fulfilled'?liveRes.value:[];renderIntelBody(stored,live);if(live.length)saveIntelligence(slug,live);}
 
-/* ── loadIntelligence — called on openCompany (Supabase first, then live) ── */
-async function loadIntelligence(slug,name){
-  const body=document.getElementById('ib-intel-body');if(!body)return;
-  const[storedRes,liveRes]=await Promise.allSettled([
-    fetch(`${SB_URL}/rest/v1/intelligence?company_id=eq.${slug}&type=eq.press_links`,{headers:{apikey:SB_KEY,Authorization:`Bearer ${SB_KEY}`}}).then(r=>r.json()),
-    fetchGoogleNews(name)
-  ]);
-  const stored=storedRes.status==='fulfilled'&&Array.isArray(storedRes.value)?storedRes.value:[];
-  const live=liveRes.status==='fulfilled'?liveRes.value:[];
-  renderIntelBody(stored,live);
-  if(live.length)saveIntelligence(slug,live);
-}
+async function loadRelationsBrief(slug){const body=document.getElementById('ib-rels-body'),cnt=document.getElementById('ib-rels-cnt');if(!body)return;try{const res=await fetch(`${SB_URL}/rest/v1/company_relations?or=(from_company.eq.${slug},to_company.eq.${slug})&select=*`,{headers:{apikey:SB_KEY,Authorization:`Bearer ${SB_KEY}`}});const rels=await res.json();if(!Array.isArray(rels)||!rels.length){body.innerHTML=`<div style="font-size:11px;color:var(--t3)">No relations recorded</div>`;return;}if(cnt)cnt.textContent=rels.length;const coMap={};companies.forEach(x=>{if(x.name)coMap[_slug(x.name)]=x;});const TL={data_partner:'Data Partner',dsp_integration:'DSP Integration',marketplace_listed:'Marketplace',tech_integration:'Tech Integration',client_of:'Client Of',acquired_by:'Acquired By',subsidiary_of:'Subsidiary Of',competes_with:'Competes With',co_sell:'Co-Sell'};body.innerHTML=rels.map(r=>{const isSrc=r.from_company===slug;const oid=isSrc?r.to_company:r.from_company;const co=coMap[oid];const arrow=r.direction==='bidirectional'?'⇄':(isSrc?'→':'←');const nameDisp=co?.name||oid;const type=TL[r.relation_type]||r.relation_type;return`<div class="ib-rel-item"><div class="ib-rel-arrow">${arrow}</div>${co?`<div class="ib-rel-name" data-slug="${oid}" onclick="openBySlug(this.dataset.slug)">${nameDisp}</div>`:`<div class="ib-rel-name no-link">${nameDisp}</div>`}<div class="ib-rel-type">${type}</div><span class="tag ${r.strength==='confirmed'?'tc':'tpr'}" style="flex-shrink:0">${r.strength||'—'}</span></div>${r.notes?`<div class="ib-rel-notes">${r.notes}</div>`:''}`;}).join('');}catch(e){body.innerHTML=`<div style="font-size:11px;color:var(--t3)">Error loading relations</div>`;}}
 
-/* ── RELATIONS BRIEF ── */
-async function loadRelationsBrief(slug){
-  const body=document.getElementById('ib-rels-body');
-  const cnt=document.getElementById('ib-rels-cnt');
-  if(!body)return;
-  try{
-    const res=await fetch(
-      `${SB_URL}/rest/v1/company_relations?or=(from_company.eq.${slug},to_company.eq.${slug})&select=*`,
-      {headers:{apikey:SB_KEY,Authorization:`Bearer ${SB_KEY}`}}
-    );
-    const rels=await res.json();
-    if(!Array.isArray(rels)||!rels.length){
-      body.innerHTML=`<div style="font-size:11px;color:var(--t3)">No relations recorded</div>`;
-      return;
-    }
-    if(cnt)cnt.textContent=rels.length;
-    const coMap={};companies.forEach(x=>{if(x.name)coMap[_slug(x.name)]=x;});
-    const TL={data_partner:'Data Partner',dsp_integration:'DSP Integration',marketplace_listed:'Marketplace',tech_integration:'Tech Integration',client_of:'Client Of',acquired_by:'Acquired By',subsidiary_of:'Subsidiary Of',competes_with:'Competes With',co_sell:'Co-Sell'};
-    body.innerHTML=rels.map(r=>{
-      const isSrc=r.from_company===slug;
-      const oid=isSrc?r.to_company:r.from_company;
-      const co=coMap[oid];
-      const arrow=r.direction==='bidirectional'?'⇄':(isSrc?'→':'←');
-      const nameDisp=co?.name||oid;
-      const type=TL[r.relation_type]||r.relation_type;
-      return`<div class="ib-rel-item">
-        <div class="ib-rel-arrow">${arrow}</div>
-        ${co?`<div class="ib-rel-name" data-slug="${oid}" onclick="openBySlug(this.dataset.slug)">${nameDisp}</div>`:`<div class="ib-rel-name no-link">${nameDisp}</div>`}
-        <div class="ib-rel-type">${type}</div>
-        <span class="tag ${r.strength==='confirmed'?'tc':'tpr'}" style="flex-shrink:0">${r.strength||'—'}</span>
-      </div>
-      ${r.notes?`<div class="ib-rel-notes">${r.notes}</div>`:''}`;
-    }).join('');
-  }catch(e){
-    body.innerHTML=`<div style="font-size:11px;color:var(--t3)">Error loading relations</div>`;
-  }
-}
-
-function closePanel(){currentCompany=null;document.getElementById('coPanel').style.display='none';document.getElementById('emptyState').style.display='flex';renderList();}
-
-/* ── LOOKUP HELPERS ── */
+/* ══════════════════════════════════════
+   ROUTING HELPERS
+══════════════════════════════════════ */
 function openBySlug(s){const c=companies.find(x=>_slug(x.name)===s);if(c)openCompany(c);}
 function showCtxSlug(e,el){e.preventDefault();e.stopPropagation();const s=el.dataset.slug;showCtx(e,s);}
 
 /* ── CONTEXT MENU ── */
-function showCtx(e,slugOrName){
-  e.preventDefault();e.stopPropagation();
-  const co=companies.find(x=>_slug(x.name)===slugOrName)||companies.find(x=>x.name===slugOrName);
-  const name=co?.name||slugOrName;
-  const menu=document.getElementById('ctxMenu');
-  const actions=[{icon:'🔍',text:'Full contact report',fn:()=>openClaude(`Research ${name} — full contact report`)},{icon:'👤',text:'Find decision makers',fn:()=>openClaude(`Find Head of Data Partnerships at ${name}`)},{icon:'✉',text:'Draft outreach email',fn:()=>openPanel('meeseeks',{company:name,status:co?.type})},{icon:'💬',text:'LinkedIn message',fn:()=>openClaude(`Draft LinkedIn message for ${name}`)},{icon:'🔗',text:'Find similar',fn:()=>openClaude(`Find companies similar to ${name}`)},{icon:'📧',text:'Email history',fn:()=>openClaude(`Check Gmail history with ${name}`)},];
-  if(co?.type==='nogo')actions.push({icon:'⚠️',text:'Why no outreach?',fn:()=>openClaude(`Why is ${name} marked no-outreach?`)});
-  if(co?.type==='prospect')actions.push({icon:'🚀',text:'Prioritize',fn:()=>openClaude(`Priority outreach plan for ${name}`)});
-  menu.innerHTML=`<div class="ctx-label">${name}</div><div class="ctx-sep"></div>`+actions.map((a,i)=>`<div class="ctx-item" data-i="${i}"><span class="ctx-ico">${a.icon}</span>${a.text}</div>`).join('');
-  menu.querySelectorAll('.ctx-item').forEach((el,i)=>{el.addEventListener('click',()=>{menu.style.display='none';actions[i].fn();});});
-  const x=Math.min(e.clientX,window.innerWidth-230),y=Math.min(e.clientY,window.innerHeight-actions.length*34-20);
-  menu.style.left=x+'px';menu.style.top=y+'px';menu.style.display='block';
-}
+function showCtx(e,slugOrName){e.preventDefault();e.stopPropagation();const co=companies.find(x=>_slug(x.name)===slugOrName)||companies.find(x=>x.name===slugOrName);const name=co?.name||slugOrName;const menu=document.getElementById('ctxMenu');const actions=[{icon:'🔍',text:'Full contact report',fn:()=>openClaude(`Research ${name} — full contact report`)},{icon:'👤',text:'Find decision makers',fn:()=>{openCompany(co);setTimeout(bgFindDMs,200);}},{icon:'✉',text:'Draft outreach email',fn:()=>openComposer({company:name,note:co?.note,status:co?.type,description:co?.description||'',angle:co?.outreach_angle||''})},{icon:'💬',text:'LinkedIn message',fn:()=>openClaude(`Draft LinkedIn message for ${name}`)},{icon:'🔗',text:'Find similar',fn:()=>openClaude(`Find companies similar to ${name}`)},{icon:'📧',text:'Email history',fn:()=>openClaude(`Check Gmail history with ${name}`)},];if(co?.type==='nogo')actions.push({icon:'⚠️',text:'Why no outreach?',fn:()=>openClaude(`Why is ${name} marked no-outreach?`)});if(co?.type==='prospect')actions.push({icon:'🚀',text:'Prioritize',fn:()=>openClaude(`Priority outreach plan for ${name}`)});menu.innerHTML=`<div class="ctx-label">${name}</div><div class="ctx-sep"></div>`+actions.map((a,i)=>`<div class="ctx-item" data-i="${i}"><span class="ctx-ico">${a.icon}</span>${a.text}</div>`).join('');menu.querySelectorAll('.ctx-item').forEach((el,i)=>{el.addEventListener('click',()=>{menu.style.display='none';actions[i].fn();});});const x=Math.min(e.clientX,window.innerWidth-230),y=Math.min(e.clientY,window.innerHeight-actions.length*34-20);menu.style.left=x+'px';menu.style.top=y+'px';menu.style.display='block';}
 document.addEventListener('click',()=>document.getElementById('ctxMenu').style.display='none');
 
-/* ── DRAWER ── */
+/* ── CONTACT DRAWER ── */
 function openDrawer(ctId){const ct=contacts.find(c=>c.id===ctId||(c.full_name&&_slug(c.full_name)===ctId));if(!ct)return;currentContact=ct;const av=getAv(ct.full_name||''),n=ini(ct.full_name||'');const el=document.getElementById('drAv');el.textContent=n;el.style.background=av.bg;el.style.color=av.fg;document.getElementById('drName').textContent=ct.full_name||'—';document.getElementById('drSub').textContent=(ct.title||'')+(ct.company_name?' · '+ct.company_name:'');const flds=[[ct.email,'Email',`<a href="mailto:${ct.email}" style="color:var(--g);font-family:'IBM Plex Mono',monospace;font-size:9px">${ct.email}</a>`],[ct.linkedin_url,'LinkedIn',`<a href="${ct.linkedin_url}" target="_blank" style="color:var(--g);font-family:'IBM Plex Mono',monospace;font-size:9px">${ct.linkedin_url}</a>`],[ct.notes,'Notes',ct.notes]].filter(f=>f[0]);document.getElementById('drBody').innerHTML=flds.map(([,l,v])=>`<div class="dr-field"><label>${l}</label><p>${v}</p></div>`).join('');document.getElementById('ctDrawer').classList.add('open');document.getElementById('ctDrawerOverlay').classList.add('vis');}
 function closeDrawer(){document.getElementById('ctDrawer').classList.remove('open');document.getElementById('ctDrawerOverlay').classList.remove('vis');currentContact=null;}
-function drEmail(){if(currentContact)openPanel('meeseeks',{company:currentContact.company_name,contactName:currentContact.full_name,contactTitle:currentContact.title});}
+function drEmail(){if(currentContact)openComposer({company:currentContact.company_name,contactName:currentContact.full_name,contactTitle:currentContact.title,linkedin:currentContact.linkedin_url});}
 function drLinkedIn(){if(currentContact?.linkedin_url)window.open(currentContact.linkedin_url,'_blank');}
 function drGmail(){if(currentContact)openClaude(`Gmail history with ${currentContact.full_name} at ${currentContact.company_name||''}`);}
 function drResearch(){if(currentContact)openClaude(`Full research on ${currentContact.full_name} at ${currentContact.company_name||''}`);}
-
-/* ── PANELS ── */
-function openPanel(id,payload){const p=PANELS[id];if(!p){openClaude('Compose outreach email'+(payload?.company?' for '+payload.company:''));return;}const modal=document.getElementById('panelModal'),iframe=document.getElementById('panelIframe');modal.classList.add('vis');iframe.src=p.src;iframe.onload=()=>{iframe.contentWindow.postMessage({type:'COMPOSE_PREFILL',payload},'*');iframe.contentWindow.postMessage({type:'THEME_SYNC',payload:{theme}},'*');};}
-function closePanel2(){document.getElementById('panelModal').classList.remove('vis');document.getElementById('panelIframe').src='';}
-document.getElementById('panelModal').addEventListener('click',e=>{if(e.target===document.getElementById('panelModal'))closePanel2();});
-window.addEventListener('message',e=>{if(e.data?.type==='COMPOSE_READY')closePanel2();});
 
 /* ── RESEARCH MODAL ── */
 function promptResearch(){_modalMode='research';document.getElementById('modalTitle').textContent='Research a Company';document.getElementById('modalDesc').textContent='Enter company name to generate a full contact report.';document.getElementById('modalInput').value='';document.getElementById('overlay').classList.add('vis');setTimeout(()=>document.getElementById('modalInput').focus(),60);}
@@ -1204,11 +708,148 @@ function submitModal(){const v=document.getElementById('modalInput').value.trim(
 document.addEventListener('DOMContentLoaded',()=>{const mi=document.getElementById('modalInput');if(mi)mi.addEventListener('keydown',e=>{if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();submitModal();}});const ai=document.getElementById('aiInp');if(ai)ai.addEventListener('keydown',e=>{if(e.key==='Enter')runAI();});});
 document.getElementById('overlay').addEventListener('click',e=>{if(e.target===document.getElementById('overlay'))closeModal();});
 
-/* ── UTIL ── */
 function openClaude(p){window.open('https://claude.ai/new?q='+encodeURIComponent(p),'_blank');}
 
-/* ── INIT ── */
-setStatus(false);renderStats();renderList();loadFromSupabase();
+/* ══════════════════════════════════════
+   MEESEEKS COMPOSER
+══════════════════════════════════════ */
+const MC_PERSONAS=[
+  {id:'steve',   emoji:'🍎',name:'Steve',   vibe:'Visionary',  color:'#1d1d1f',system:`Write emails like Steve Jobs presenting — visionary, minimal, magnetic. One bold idea per paragraph. Short, declarative sentences. No filler. End with a quiet, confident invitation. Never say "I hope this email finds you well."`},
+  {id:'barack',  emoji:'🎤',name:'Barack',  vibe:'Inspiring',  color:'#1a3a5c',system:`Write emails like an inspiring leader — warm, purposeful, building toward a clear point. Use "we" and shared purpose. One strong image or analogy. Close with conviction.`},
+  {id:'margaret',emoji:'⚖️',name:'Margaret',vibe:'Conviction', color:'#2c2c54',system:`Write with iron conviction — direct, factual, no hedging. Lead with the strongest argument. Short assertive sentences. No pleasantries.`},
+  {id:'winston', emoji:'🏛️',name:'Winston', vibe:'Rallying',   color:'#7b341e',system:`Write with Churchillian flair — rallying, bold, dramatic rhythm. Short punchy lines alternating with a sweeping sentence. Make the close memorable.`},
+  {id:'david',   emoji:'🗂️',name:'David',   vibe:'Research',   color:'#2d6a4f',system:`Write analytical, research-driven emails. Reference specific signals. Back claims with data points. Subject line = a hypothesis.`},
+  {id:'jeff',    emoji:'⚡',name:'Jeff',    vibe:'Metrics',    color:'#1a4b6e',system:`Write crisp metrics-first emails. Open with a number or result. No story — just outcome, mechanism, ask. Three paragraphs max.`},
+  {id:'gary',    emoji:'📦',name:'Gary',    vibe:'No-BS',      color:'#c05621',system:`Write raw and direct. Use "here's the thing:" or "real talk". Short sharp paragraphs. No fluff. End with urgency.`},
+  {id:'maya',    emoji:'🌊',name:'Maya',    vibe:'Story',      color:'#553c9a',system:`Write emails that tell a micro-story. Open with a scene or image. Build tension toward the solution. Close with emotional resonance.`},
+  {id:'elon',    emoji:'🚀',name:'Elon',    vibe:'Disruptive', color:'#000000',system:`Write blunt, bold, contrarian. One punchy paragraph. Maybe two. Challenge assumptions. End with a direct binary question: "Worth a call?" Nothing more.`},
+  {id:'oprah',   emoji:'✨',name:'Oprah',   vibe:'Authentic',  color:'#8b4513',system:`Write warm, authentic, deeply human. Open with acknowledgment. Build genuine curiosity. Close with an open invitation, not a demand.`},
+];
+
+let mcActivePId='steve';
+let mcPayload={};
+let mcDbContacts=[];
+let mcAiContacts=[];
+let mcSelectedIdx=-1;
+let mcLastEmail='';
+
+function mcHint(el,id){const h=document.getElementById(id);if(h)h.textContent=`${el.value.length} chars`;}
+function mcAllContacts(){const seen=new Set(mcDbContacts.map(c=>(c.full_name||'').toLowerCase()));const extra=mcAiContacts.filter(c=>!seen.has((c.full_name||'').toLowerCase()));return[...mcDbContacts,...extra];}
+
+function mcRenderPersonas(){
+  const grid=document.getElementById('mcPersonaGrid');
+  grid.innerHTML=MC_PERSONAS.map(p=>`<div class="mc-ptile${mcActivePId===p.id?' active':''}" style="${mcActivePId===p.id?`background:${p.color};border-color:${p.color}`:''}" data-id="${p.id}" onclick="mcPickPersona('${p.id}')"><div class="mc-pemoji">${p.emoji}</div><div class="mc-pname">${p.name}</div><div class="mc-pvibe">${p.vibe}</div></div>`).join('');
+  const p=MC_PERSONAS.find(x=>x.id===mcActivePId);if(p){const nb=document.getElementById('mcNavBadge');nb.textContent=p.name.toUpperCase();nb.style.background=p.color;}
+}
+function mcPickPersona(id){mcActivePId=id;mcRenderPersonas();}
+
+function openComposer(payload){
+  mcPayload=payload||{};mcDbContacts=[];mcAiContacts=[];mcSelectedIdx=-1;mcLastEmail='';
+  // set company block
+  const p=mcPayload;
+  if(p.company){
+    document.getElementById('mcCoEmpty').style.display='none';
+    const ne=document.getElementById('mcCoName');ne.style.display='';ne.textContent=p.company;
+    const no=document.getElementById('mcCoNote');if(p.note){no.style.display='';no.textContent=p.note;}else{no.style.display='none';}
+    document.getElementById('mcCoAv').textContent=ini(p.company);
+    document.getElementById('mcCoBlock').className='mc-co filled';
+    const tags=getCoTags(p);const te=document.getElementById('mcCoTags');
+    if(tags.length){te.style.display='flex';te.innerHTML=tags.map(t=>`<span class="mc-co-tag">${t}</span>`).join('');}else{te.style.display='none';}
+    mcLoadContacts(p.company,p.contactName);
+  }else{
+    document.getElementById('mcCoEmpty').style.display='';document.getElementById('mcCoName').style.display='none';document.getElementById('mcCoNote').style.display='none';document.getElementById('mcCoBlock').className='mc-co';document.getElementById('mcCoTags').style.display='none';
+    document.getElementById('mcCtList').innerHTML='<div class="mc-ctempty">No company selected</div>';
+  }
+  // pre-fill if AI contacts already found for this company
+  if(p.company&&currentCompany?.name===p.company&&mcAiContacts.length===0){mcAiContacts=[];}
+  document.getElementById('mcCtx').value=p.description||'';
+  document.getElementById('mcAngle').value=p.angle||'';
+  mcHint(document.getElementById('mcCtx'),'mcCtxHint');
+  mcHint(document.getElementById('mcAngle'),'mcAngleHint');
+  // reset output
+  document.getElementById('mcOutContent').style.display='none';document.getElementById('mcEmpty').style.display='flex';
+  document.getElementById('mcOutActs').style.display='none';document.getElementById('mcOutLabel').textContent='Output';
+  document.getElementById('mcRScroll').style.padding='40px 52px';
+  // open drawer
+  document.getElementById('mcDrawer').classList.add('open');document.getElementById('mcOverlay').classList.add('vis');
+  mcRenderPersonas();
+}
+function closeComposer(){document.getElementById('mcDrawer').classList.remove('open');document.getElementById('mcOverlay').classList.remove('vis');}
+document.getElementById('mcOverlay').addEventListener('click',closeComposer);
+document.addEventListener('keydown',e=>{if(e.key==='Escape'){closeComposer();closeModal();}if((e.metaKey||e.ctrlKey)&&e.key==='Enter'){if(document.getElementById('mcDrawer').classList.contains('open'))mcGenerate();}});
+
+// expose for openPanel compatibility
+function openPanel(id,payload){if(id==='meeseeks'||id==='composer')openComposer(payload);else openClaude('Compose outreach email'+(payload?.company?' for '+payload.company:''));}
+
+async function mcLoadContacts(companyName,preferName){
+  mcDbContacts=[];mcSelectedIdx=-1;
+  document.getElementById('mcCtList').innerHTML='<div class="mc-ctempty">Loading contacts…</div>';
+  // pull AI contacts from current company's bgFindDMs result if same company
+  if(currentCompany?.name===companyName)mcAiContacts=mcAiContacts; // preserve
+  try{const res=await fetch(`${SB_URL}/rest/v1/contacts?company_name=eq.${encodeURIComponent(companyName)}&select=*`,{headers:{apikey:SB_KEY,Authorization:`Bearer ${SB_KEY}`}});const data=await res.json();if(Array.isArray(data))mcDbContacts=data;}catch(e){console.warn('mc contacts',e);}
+  if(preferName){const idx=mcAllContacts().findIndex(c=>(c.full_name||'').toLowerCase()===preferName.toLowerCase());if(idx>=0)mcSelectedIdx=idx;}
+  mcRenderPicker();
+}
+
+function mcRenderPicker(loadingMsg){
+  const list=document.getElementById('mcCtList');
+  if(loadingMsg){list.innerHTML=`<div class="mc-ctempty">${loadingMsg}</div>`;return;}
+  const cts=mcAllContacts();
+  if(!cts.length){list.innerHTML=`<div class="mc-ctempty">No contacts in DB — run "Find DMs" first</div>`;return;}
+  list.innerHTML=cts.map((ct,i)=>{const av=getAv(ct.full_name||'');const n=ini(ct.full_name||'?');const active=mcSelectedIdx===i?' active':'';const isAI=i>=mcDbContacts.length;return`<div class="mc-ctcard${active}" data-i="${i}" onclick="mcPickContact(${i})"><div class="mc-ctav" style="background:${av.bg};color:${av.fg};border:1px solid ${av.fg}22">${n}</div><div class="mc-ctbody"><div class="mc-ctnm">${ct.full_name||'—'}${isAI?` <span style="font-family:'IBM Plex Mono',monospace;font-size:6px;color:var(--poc);border:1px solid var(--por);border-radius:2px;padding:0 3px;margin-left:3px">AI</span>`:''}</div><div class="mc-ctti">${ct.title||''}</div>${ct.email?`<div class="mc-ctemail">${ct.email}</div>`:''}</div><span class="mc-ctcheck">✓</span></div>`;}).join('');
+}
+function mcPickContact(i){mcSelectedIdx=mcSelectedIdx===i?-1:i;mcRenderPicker();}
+
+async function mcGenerate(){
+  const key=mcGetApiKey();if(!key){mcOpenKey();return;}
+  const persona=MC_PERSONAS.find(p=>p.id===mcActivePId)||MC_PERSONAS[0];
+  const company=mcPayload.company||'the company';
+  const cts=mcAllContacts();const ct=mcSelectedIdx>=0?cts[mcSelectedIdx]:null;
+  const contactName=ct?.full_name||'there';const contactTitle=ct?.title||'';
+  const ctx=document.getElementById('mcCtx').value.trim();
+  const angle=document.getElementById('mcAngle').value.trim();
+  const tags=getCoTags(mcPayload);
+  const btn=document.getElementById('mcGenBtn');
+  btn.disabled=true;btn.innerHTML=`<span class="mc-spin"></span><span>Generating…</span>`;
+  document.getElementById('mcEmpty').style.display='none';document.getElementById('mcOutContent').style.display='none';document.getElementById('mcOutActs').style.display='none';document.getElementById('mcOutLabel').textContent='Generating…';
+  const prompt=`Write a cold outreach email FROM a sales person at onAudience TO ${contactName}${contactTitle?' ('+contactTitle+')':''} at ${company}.\n\nonAudience: European first-party audience data company. 500M+ profiles, demographic+behavioral+purchase-intent segments across 30+ EU countries, Web + Mobile + CTV coverage, GDPR-compliant, TCF v2.0 certified. Direct integrations with major DSPs.\n\nCompany signals: ${tags.length?tags.join(', '):'n/a'}\nCompany context: ${ctx||'n/a'}\nOutreach angle: ${angle||'n/a'}\n\nRespond with:\nSUBJECT: [subject line]\n---\n[email body only — no sign-off name]\n\nKeep it 3–4 short paragraphs. End with a low-friction CTA.`;
+  try{
+    const res=await fetch('https://api.anthropic.com/v1/messages',{method:'POST',headers:{'Content-Type':'application/json','x-api-key':key,'anthropic-version':'2023-06-01'},body:JSON.stringify({model:'claude-sonnet-4-20250514',max_tokens:700,system:persona.system,messages:[{role:'user',content:prompt}]})});
+    const data=await res.json();if(data.error)throw new Error(data.error.message||'API error');
+    const raw=(data.content||[]).filter(b=>b.type==='text').map(b=>b.text).join('').trim();
+    let subject='',body=raw;const sm=raw.match(/^SUBJECT:\s*(.+?)(?:\n---|\n\n)/is);if(sm){subject=sm[1].trim();body=raw.replace(/^SUBJECT:.+?\n(?:---\n)?/is,'').trim();}
+    mcLastEmail=body;mcRenderOutput(persona,subject,body,contactName,company);
+  }catch(e){document.getElementById('mcEmpty').style.display='none';const oc=document.getElementById('mcOutContent');oc.style.display='block';oc.innerHTML=`<div class="mc-wrap"><div class="mc-error">Error: ${e.message}\n\nCheck your API key (🔑 Key button above).</div></div>`;document.getElementById('mcOutLabel').textContent='Error';}
+  btn.disabled=false;btn.innerHTML=`<span>✉</span><span>Generate Email</span>`;
+}
+
+function mcRenderOutput(persona,subject,body,contact,company){
+  const oc=document.getElementById('mcOutContent');
+  const largePad=['steve','barack','winston','gary','maya','elon','oprah'];
+  document.getElementById('mcRScroll').style.padding=largePad.includes(persona.id)?'48px 60px':'40px 52px';
+  oc.style.display='block';
+  oc.innerHTML=`<div class="mc-wrap mc-out-${persona.id}"><div class="mc-badge" style="background:${persona.color}"><span class="mc-bdot"></span><span class="mc-bemoji">${persona.emoji}</span><span>${persona.name.toUpperCase()}</span><span class="mc-bvibe">/ ${persona.vibe}</span></div>${subject?`<div class="mc-subject"><span>Subject</span><span class="mc-subject-val">${esc(subject)}</span></div>`:''}<div class="mc-email">${esc(body)}</div></div>`;
+  document.getElementById('mcOutActs').style.display='flex';
+  document.getElementById('mcOutLabel').textContent=`${persona.name} · ${company}${contact&&contact!=='there'?' → '+contact:''}`;
+  document.getElementById('mcEmpty').style.display='none';
+  document.getElementById('mcRScroll').scrollTop=0;
+}
+
+function mcCopy(){const el=document.querySelector('.mc-email');if(!el)return;const txt=el.innerText||el.textContent||'';navigator.clipboard.writeText(txt).then(()=>{const btn=event.target;btn.textContent='Copied!';setTimeout(()=>btn.textContent='Copy',1600);}).catch(()=>{});}
+
+/* ── API KEY ── */
+function mcOpenKey(){document.getElementById('mcKeyInput').value=mcGetApiKey();document.getElementById('mcKeyOverlay').classList.add('vis');setTimeout(()=>document.getElementById('mcKeyInput').focus(),60);}
+function mcCloseKey(){document.getElementById('mcKeyOverlay').classList.remove('vis');}
+function mcSaveKey(){const v=document.getElementById('mcKeyInput').value.trim();if(v)localStorage.setItem('oaApiKey',v);mcCloseKey();mcUpdateKeyBtn();}
+function mcClearKey(){localStorage.removeItem('oaApiKey');mcCloseKey();mcUpdateKeyBtn();}
+function mcUpdateKeyBtn(){const b=document.getElementById('mcKeyBtn');b.className='mc-key-btn'+(mcGetApiKey()?' set':'');b.textContent=mcGetApiKey()?'🔑 Key ✓':'🔑 Key';}
+document.getElementById('mcKeyInput').addEventListener('keydown',e=>{if(e.key==='Enter')mcSaveKey();});
+document.getElementById('mcKeyOverlay').addEventListener('click',e=>{if(e.target===document.getElementById('mcKeyOverlay'))mcCloseKey();});
+
+/* ══════════════════════════════════════
+   INIT
+══════════════════════════════════════ */
+setStatus(false);renderStats();renderList();loadFromSupabase();mcRenderPersonas();mcUpdateKeyBtn();
 </script>
 </body>
 </html>
