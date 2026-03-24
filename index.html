@@ -7,184 +7,162 @@
 <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@300;400;500;600&family=IBM+Plex+Sans:wght@300;400;500;600&display=swap" rel="stylesheet"/>
 <style>
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
-[data-theme="light"]{--bg:#F4F2EC;--surf:#FFFFFF;--surf2:#F8F6F0;--surf3:#EFEDE6;--surf4:#E8E6DE;--rule:rgba(0,0,0,0.09);--rule2:rgba(0,0,0,0.05);--rule3:rgba(0,0,0,0.03);--t1:#0C0C0A;--t2:#5C5C56;--t3:#9A9990;--t4:#C8C6BC;--g:#178066;--gd:#0F6E56;--gb:rgba(23,128,102,0.08);--gr:rgba(23,128,102,0.28);--cc:#146B3A;--cb:#E4F5EC;--cr:rgba(20,107,58,0.28);--pc:#1A4F8A;--pb:#E6EEFA;--pr:rgba(26,79,138,0.28);--prc:#7A4200;--prb:#FEF2E0;--prr:rgba(122,66,0,0.28);--nc:#6B6B64;--nb:#EFEDE6;--nr:rgba(107,107,100,0.28);--poc:#4B2D9E;--pob:#EDE8FD;--por:rgba(75,45,158,0.28);--sh:0 2px 8px rgba(0,0,0,0.08),0 8px 24px rgba(0,0,0,0.06)}
-[data-theme="dark"]{--bg:#0C0C0A;--surf:#141412;--surf2:#1C1C1A;--surf3:#242421;--surf4:#2E2E2B;--rule:rgba(255,255,255,0.08);--rule2:rgba(255,255,255,0.05);--rule3:rgba(255,255,255,0.03);--t1:#F0EFE8;--t2:#8A8A82;--t3:#555550;--t4:#38382E;--g:#1FA882;--gd:#178066;--gb:rgba(31,168,130,0.1);--gr:rgba(31,168,130,0.3);--cc:#4ADE80;--cb:rgba(74,222,128,0.1);--cr:rgba(74,222,128,0.25);--pc:#60A5FA;--pb:rgba(96,165,250,0.1);--pr:rgba(96,165,250,0.25);--prc:#FBBF24;--prb:rgba(251,191,36,0.1);--prr:rgba(251,191,36,0.25);--nc:#55554E;--nb:rgba(85,85,78,0.15);--nr:rgba(85,85,78,0.25);--poc:#C084FC;--pob:rgba(192,132,252,0.1);--por:rgba(192,132,252,0.25);--sh:0 2px 8px rgba(0,0,0,0.5),0 8px 24px rgba(0,0,0,0.4)}
+[data-theme="light"]{--bg:#F4F2EC;--surf:#FFFFFF;--surf2:#F8F6F0;--surf3:#EFEDE6;--surf4:#E8E6DE;--rule:rgba(0,0,0,0.09);--rule2:rgba(0,0,0,0.05);--rule3:rgba(0,0,0,0.03);--t1:#0C0C0A;--t2:#5C5C56;--t3:#9A9990;--t4:#C8C6BC;--g:#178066;--gd:#0F6E56;--gb:rgba(23,128,102,0.08);--gr:rgba(23,128,102,0.28);--cc:#146B3A;--cb:#E4F5EC;--cr:rgba(20,107,58,0.28);--pc:#1A4F8A;--pb:#E6EEFA;--pr:rgba(26,79,138,0.28);--prc:#7A4200;--prb:#FEF2E0;--prr:rgba(122,66,0,0.28);--nc:#6B6B64;--nb:#EFEDE6;--nr:rgba(107,107,100,0.28);--poc:#4B2D9E;--pob:#EDE8FD;--por:rgba(75,45,158,0.28);--sh:0 1px 3px rgba(0,0,0,0.06),0 4px 16px rgba(0,0,0,0.06)}
+[data-theme="dark"]{--bg:#0C0C0A;--surf:#141412;--surf2:#1C1C1A;--surf3:#242421;--surf4:#2E2E2B;--rule:rgba(255,255,255,0.08);--rule2:rgba(255,255,255,0.05);--rule3:rgba(255,255,255,0.03);--t1:#F0EFE8;--t2:#8A8A82;--t3:#555550;--t4:#38382E;--g:#1FA882;--gd:#178066;--gb:rgba(31,168,130,0.1);--gr:rgba(31,168,130,0.3);--cc:#4ADE80;--cb:rgba(74,222,128,0.1);--cr:rgba(74,222,128,0.25);--pc:#60A5FA;--pb:rgba(96,165,250,0.1);--pr:rgba(96,165,250,0.25);--prc:#FBBF24;--prb:rgba(251,191,36,0.1);--prr:rgba(251,191,36,0.25);--nc:#55554E;--nb:rgba(85,85,78,0.15);--nr:rgba(85,85,78,0.25);--poc:#C084FC;--pob:rgba(192,132,252,0.1);--por:rgba(192,132,252,0.25);--sh:0 1px 4px rgba(0,0,0,0.5),0 6px 20px rgba(0,0,0,0.35)}
 [data-theme="dark"] body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;background-image:linear-gradient(rgba(255,255,255,.016) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.016) 1px,transparent 1px);background-size:40px 40px}
 html,body{height:100%;background:var(--bg);color:var(--t1);font-family:'IBM Plex Sans',sans-serif;font-size:13px;line-height:1.5;transition:background .2s,color .2s}
-::-webkit-scrollbar{width:4px;height:4px}
+::-webkit-scrollbar{width:3px;height:3px}
 ::-webkit-scrollbar-thumb{background:var(--surf4);border-radius:2px}
 
-/* SHELL */
 .shell{display:flex;flex-direction:column;height:100vh;overflow:hidden;position:relative;z-index:1}
 .view{display:none;flex-direction:column;flex:1;overflow:hidden}
 .view.active{display:flex}
 
 /* NAV */
-.nav{background:var(--surf);border-bottom:1px solid var(--rule);display:flex;align-items:center;height:44px;padding:0 16px;gap:8px;flex-shrink:0}
-.nav-logo{width:28px;height:28px;background:var(--g);border-radius:4px;display:flex;align-items:center;justify-content:center;font-family:'IBM Plex Mono',monospace;font-weight:700;font-size:9px;color:#fff;letter-spacing:-.5px;flex-shrink:0}
-.nav-brand{font-family:'IBM Plex Mono',monospace;font-size:10px;font-weight:500;letter-spacing:.06em;text-transform:uppercase;color:var(--t1);margin-left:4px;margin-right:14px;white-space:nowrap}
-.nav-sep{width:1px;height:18px;background:var(--rule);flex-shrink:0;margin-right:6px}
+.nav{background:var(--surf);border-bottom:1px solid var(--rule);display:flex;align-items:center;height:42px;padding:0 16px;gap:8px;flex-shrink:0}
+.nav-logo{width:26px;height:26px;background:var(--g);border-radius:4px;display:flex;align-items:center;justify-content:center;font-family:'IBM Plex Mono',monospace;font-weight:700;font-size:9px;color:#fff;letter-spacing:-.5px;flex-shrink:0}
+.nav-brand{font-family:'IBM Plex Mono',monospace;font-size:10px;font-weight:500;letter-spacing:.06em;text-transform:uppercase;color:var(--t1);margin-left:4px;padding-right:14px;border-right:1px solid var(--rule);white-space:nowrap}
 .nav-tabs{display:flex;gap:2px}
-.nav-tab{height:28px;padding:0 12px;border-radius:2px;font-family:'IBM Plex Mono',monospace;font-size:9px;font-weight:500;text-transform:uppercase;letter-spacing:.06em;cursor:pointer;color:var(--t3);background:transparent;border:none;transition:all .15s;display:flex;align-items:center;gap:5px}
+.nav-tab{height:26px;padding:0 11px;border-radius:2px;font-family:'IBM Plex Mono',monospace;font-size:9px;font-weight:500;text-transform:uppercase;letter-spacing:.06em;cursor:pointer;color:var(--t3);background:transparent;border:none;transition:all .15s}
 .nav-tab:hover{color:var(--t1);background:var(--surf2)}
 .nav-tab.active{color:var(--g);background:var(--gb)}
-.nav-right{margin-left:auto;display:flex;align-items:center;gap:6px}
-.sync-chip{display:flex;align-items:center;gap:5px;font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--t3);padding:2px 8px;border:1px solid var(--rule);border-radius:2px;cursor:pointer;height:26px;transition:background .12s}
+.nav-right{margin-left:auto;display:flex;align-items:center;gap:5px}
+.sync-chip{display:flex;align-items:center;gap:5px;font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--t3);padding:2px 8px;border:1px solid var(--rule);border-radius:2px;cursor:pointer;height:24px;transition:background .12s}
 .sync-chip:hover{background:var(--surf2)}
-.sync-dot{width:5px;height:5px;border-radius:50%;background:var(--t4)}
-.sync-dot.live{background:#22C55E}
-.btn{height:26px;padding:0 10px;border:1px solid var(--rule);border-radius:2px;font-family:'IBM Plex Mono',monospace;font-size:9px;font-weight:500;text-transform:uppercase;letter-spacing:.06em;cursor:pointer;background:var(--surf2);color:var(--t2);transition:all .15s;white-space:nowrap;display:inline-flex;align-items:center;gap:4px}
+.sdot{width:5px;height:5px;border-radius:50%;background:var(--t4)}
+.sdot.live{background:#22C55E}
+.btn{height:24px;padding:0 9px;border:1px solid var(--rule);border-radius:2px;font-family:'IBM Plex Mono',monospace;font-size:9px;font-weight:500;text-transform:uppercase;letter-spacing:.06em;cursor:pointer;background:var(--surf2);color:var(--t2);transition:all .15s;white-space:nowrap;display:inline-flex;align-items:center;gap:4px}
 .btn:hover{background:var(--surf3);color:var(--t1)}
 .btn.p{background:var(--g);color:#fff;border-color:var(--g)}
 .btn.p:hover{background:var(--gd)}
-.btn.sm{height:22px;padding:0 7px;font-size:8px}
+.btn.sm{height:20px;padding:0 6px;font-size:8px}
 .btn:disabled{opacity:.4;cursor:default}
 
-/* STATS */
-.stats{display:grid;grid-template-columns:repeat(7,1fr);border-bottom:1px solid var(--rule);background:var(--surf);flex-shrink:0}
-.sc{padding:6px 12px;border-right:1px solid var(--rule);cursor:pointer;transition:background .12s;user-select:none}
+/* STATS BAR */
+.sbar{display:grid;grid-template-columns:repeat(7,1fr);border-bottom:1px solid var(--rule);background:var(--surf);flex-shrink:0}
+.sc{padding:5px 10px;border-right:1px solid var(--rule);cursor:pointer;transition:background .12s;user-select:none}
 .sc:last-child{border-right:none}
 .sc:hover{background:var(--surf2)}
 .sc.active{background:var(--gb)}
-.sn{font-family:'IBM Plex Mono',monospace;font-size:18px;font-weight:300;letter-spacing:-1px;line-height:1;color:var(--t1)}
+.sn{font-family:'IBM Plex Mono',monospace;font-size:16px;font-weight:300;letter-spacing:-1px;line-height:1;color:var(--t1)}
 .sl{font-family:'IBM Plex Mono',monospace;font-size:8px;text-transform:uppercase;letter-spacing:.07em;color:var(--t3);margin-top:2px}
 
-/* TOOLBAR */
-.toolbar{display:flex;align-items:center;gap:7px;padding:7px 16px;border-bottom:1px solid var(--rule);background:var(--surf);flex-shrink:0;flex-wrap:wrap}
-.sw{position:relative;flex:1;max-width:280px;min-width:120px}
-.si{position:absolute;left:8px;top:50%;transform:translateY(-50%);color:var(--t3);font-size:11px;pointer-events:none}
-.sinp{width:100%;height:28px;padding:0 8px 0 26px;border:1px solid var(--rule);border-radius:2px;background:var(--surf2);color:var(--t1);font-family:'IBM Plex Mono',monospace;font-size:11px;outline:none;transition:border-color .15s}
+/* TWO-PANEL MAIN */
+.main{display:flex;flex:1;overflow:hidden}
+
+/* LEFT PANEL */
+.left{width:310px;flex-shrink:0;border-right:1px solid var(--rule);background:var(--surf);display:flex;flex-direction:column;overflow:hidden}
+.left-toolbar{padding:7px 8px;border-bottom:1px solid var(--rule);display:flex;gap:5px;flex-shrink:0}
+.sw{position:relative;flex:1}
+.si{position:absolute;left:7px;top:50%;transform:translateY(-50%);color:var(--t3);font-size:10px;pointer-events:none;font-family:'IBM Plex Mono',monospace}
+.sinp{width:100%;height:26px;padding:0 7px 0 23px;border:1px solid var(--rule);border-radius:2px;background:var(--surf2);color:var(--t1);font-family:'IBM Plex Mono',monospace;font-size:11px;outline:none;transition:border-color .15s}
 .sinp:focus{border-color:var(--gr)}
 .sinp::placeholder{color:var(--t3)}
-.fps{display:flex;gap:4px}
-.fp{height:22px;padding:0 8px;border:1px solid var(--rule);border-radius:2px;font-family:'IBM Plex Mono',monospace;font-size:8px;text-transform:uppercase;letter-spacing:.05em;cursor:pointer;background:transparent;color:var(--t3);transition:all .12s}
+.sort-sel{height:26px;padding:0 6px;border:1px solid var(--rule);border-radius:2px;background:var(--surf2);color:var(--t2);font-family:'IBM Plex Mono',monospace;font-size:9px;outline:none;cursor:pointer;flex-shrink:0}
+.fps{display:flex;gap:3px;padding:5px 8px;border-bottom:1px solid var(--rule2);flex-shrink:0;flex-wrap:wrap}
+.fp{height:20px;padding:0 7px;border:1px solid var(--rule);border-radius:2px;font-family:'IBM Plex Mono',monospace;font-size:8px;text-transform:uppercase;letter-spacing:.05em;cursor:pointer;background:transparent;color:var(--t3);transition:all .1s}
 .fp:hover:not(.active){background:var(--surf2);color:var(--t1)}
 .fp.active{background:var(--t1);color:var(--surf);border-color:var(--t1)}
-.tr{margin-left:auto;display:flex;align-items:center;gap:6px}
-.tmeta{font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--t3)}
-.ssel{height:26px;padding:0 7px;border:1px solid var(--rule);border-radius:2px;background:var(--surf2);color:var(--t2);font-family:'IBM Plex Mono',monospace;font-size:10px;outline:none;cursor:pointer}
-.kbd{font-family:'IBM Plex Mono',monospace;font-size:8px;color:var(--t4);padding:1px 4px;border:1px solid var(--rule);border-radius:2px}
+.list-meta{padding:3px 8px;border-bottom:1px solid var(--rule2);display:flex;justify-content:space-between;flex-shrink:0}
+.list-meta span{font-family:'IBM Plex Mono',monospace;font-size:9px;color:var(--t3)}
+.co-list{flex:1;overflow-y:auto}
 
-/* TABLE */
-.tw{flex:1;overflow-y:auto;overflow-x:auto}
-.cot{width:100%;border-collapse:collapse;min-width:700px}
-.cot th{position:sticky;top:0;background:var(--surf);border-bottom:1px solid var(--rule);padding:0 12px;height:30px;font-family:'IBM Plex Mono',monospace;font-size:8px;text-transform:uppercase;letter-spacing:.08em;color:var(--t3);font-weight:500;text-align:left;cursor:pointer;user-select:none;white-space:nowrap;z-index:10}
-.cot th:hover{color:var(--t1)}
-.cot th.asc::after{content:' ↑';color:var(--g)}
-.cot th.desc::after{content:' ↓';color:var(--g)}
-.cot td{padding:0 12px;height:40px;border-bottom:1px solid var(--rule3);vertical-align:middle;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:0}
-.cot tr:hover td{background:var(--surf2);cursor:pointer}
-.cot tr.foc td{background:var(--gb)}
-.cot tr.foc:hover td{background:var(--gb)}
-.cot tr.dead td{opacity:.42}
-.col-cb{width:34px}
-.col-av{width:40px}
-.col-nm{width:22%}
-.col-ct{width:16%}
-.col-rg{width:10%}
-.col-tp{width:9%}
-.col-ic{width:6%}
-.col-gp{width:9%}
-.col-up{width:7%}
-.col-ac{width:68px}
-.rav{width:26px;height:26px;border-radius:2px;display:inline-flex;align-items:center;justify-content:center;font-family:'IBM Plex Mono',monospace;font-size:8px;font-weight:700;border:1px solid transparent}
-.rname{font-size:13px;font-weight:500}
-.rdom{font-family:'IBM Plex Mono',monospace;font-size:9px;color:var(--t3)}
+/* COMPANY ROW */
+.co-row{display:flex;align-items:center;gap:7px;padding:6px 8px;border-bottom:1px solid var(--rule3);cursor:pointer;transition:background .1s;user-select:none}
+.co-row:hover{background:var(--surf2)}
+.co-row.sel{background:var(--gb);border-left:2px solid var(--g);padding-left:6px}
+.co-row.dead{opacity:.42}
+.co-av{width:26px;height:26px;border-radius:2px;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-family:'IBM Plex Mono',monospace;font-size:8px;font-weight:700;border:1px solid transparent}
+.co-info{flex:1;min-width:0}
+.co-name{font-size:12px;font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.co-sub{font-family:'IBM Plex Mono',monospace;font-size:9px;color:var(--t3);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin-top:1px}
+.co-right{display:flex;align-items:center;gap:4px;flex-shrink:0}
+.icpn{font-family:'IBM Plex Mono',monospace;font-size:9px;color:var(--t4);min-width:12px;text-align:right}
+.gbar-sm{display:flex;gap:1px}
+.gsq-sm{width:5px;height:5px;border-radius:1px}
+.gfil{background:var(--cc)}
+.gmis{background:var(--surf4)}
 .tag{font-family:'IBM Plex Mono',monospace;font-size:8px;font-weight:500;text-transform:uppercase;letter-spacing:.06em;padding:1px 5px;border-radius:2px;border:1px solid;white-space:nowrap;display:inline-block}
 .tc{color:var(--cc);background:var(--cb);border-color:var(--cr)}
 .tp{color:var(--pc);background:var(--pb);border-color:var(--pr)}
 .tpr{color:var(--prc);background:var(--prb);border-color:var(--prr)}
 .tn{color:var(--nc);background:var(--nb);border-color:var(--nr)}
 .tpo{color:var(--poc);background:var(--pob);border-color:var(--por)}
-.icpv{font-family:'IBM Plex Mono',monospace;font-size:11px;font-weight:500}
-.gbar{display:inline-flex;gap:2px;align-items:center}
-.gsq{width:7px;height:7px;border-radius:1px}
-.gfil{background:var(--cc)}
-.gmis{background:var(--surf4)}
-.gcnt{font-family:'IBM Plex Mono',monospace;font-size:8px;color:var(--prc);margin-left:3px}
-.updv{font-family:'IBM Plex Mono',monospace;font-size:9px;color:var(--t3)}
-.ract{display:flex;gap:3px;opacity:0;transition:opacity .1s}
-tr:hover .ract{opacity:1}
-.rbtn{width:22px;height:22px;border:1px solid var(--rule);border-radius:2px;background:var(--surf2);cursor:pointer;font-size:11px;display:flex;align-items:center;justify-content:center;transition:all .1s;padding:0}
-.rbtn:hover{background:var(--surf3)}
-.rcb{width:14px;height:14px;accent-color:var(--g);cursor:pointer}
 
-/* DRAWER */
-.dov{position:fixed;inset:0;background:rgba(0,0,0,.22);z-index:200;display:none;backdrop-filter:blur(2px)}
-.dov.open{display:block}
-.drw{position:fixed;top:0;right:-520px;width:520px;height:100vh;background:var(--surf);border-left:1px solid var(--rule);z-index:201;transition:right .22s cubic-bezier(.4,0,.2,1);display:flex;flex-direction:column;overflow:hidden;box-shadow:var(--sh)}
-.drw.open{right:0}
-.dnav{display:flex;align-items:center;padding:0 14px;height:44px;border-bottom:1px solid var(--rule);flex-shrink:0;gap:7px}
-.dtitle{font-size:14px;font-weight:500;flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-.dclose{width:26px;height:26px;border-radius:2px;border:1px solid var(--rule);background:var(--surf2);cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:13px;color:var(--t3);transition:all .12s;flex-shrink:0}
-.dclose:hover{background:var(--surf3);color:var(--t1)}
-.dtabs{display:flex;border-bottom:1px solid var(--rule);flex-shrink:0}
-.dtab{flex:1;height:31px;display:flex;align-items:center;justify-content:center;font-family:'IBM Plex Mono',monospace;font-size:8px;text-transform:uppercase;letter-spacing:.06em;cursor:pointer;color:var(--t3);border-bottom:2px solid transparent;transition:all .12s}
-.dtab:hover{color:var(--t1);background:var(--surf2)}
-.dtab.active{color:var(--g);border-bottom-color:var(--g)}
-.dbody{flex:1;overflow-y:auto;padding:14px 16px}
-.dbody::-webkit-scrollbar{width:3px}
+/* RIGHT / CENTER PANEL */
+.center{flex:1;overflow-y:auto;background:var(--surf2)}
+.center::-webkit-scrollbar{width:3px}
+.empty-state{display:flex;flex-direction:column;align-items:center;justify-content:center;height:100%;color:var(--t3);gap:8px}
+.empty-big{font-family:'IBM Plex Mono',monospace;font-size:36px;font-weight:200;color:var(--t4);letter-spacing:-2px}
+.empty-sub{font-family:'IBM Plex Mono',monospace;font-size:9px;text-transform:uppercase;letter-spacing:.07em}
+
+/* DETAIL PANEL */
+.detail{max-width:680px;padding:14px 16px}
 .dbanner{display:flex;align-items:flex-start;gap:12px;padding-bottom:12px;border-bottom:1px solid var(--rule2);margin-bottom:10px}
 .dlogo{width:40px;height:40px;border-radius:2px;display:flex;align-items:center;justify-content:center;font-family:'IBM Plex Mono',monospace;font-size:12px;font-weight:700;color:#fff;flex-shrink:0}
 .dname{font-size:15px;font-weight:500;display:flex;align-items:center;gap:7px;flex-wrap:wrap}
 .dsub{font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--t3);margin-top:3px}
 .dstars{color:var(--g);font-size:12px;letter-spacing:1px;margin-top:4px}
-.sec{background:var(--surf2);border:1px solid var(--rule);border-radius:2px;overflow:hidden;margin-bottom:8px}
-.sh2{padding:6px 10px;border-bottom:1px solid var(--rule);display:flex;align-items:center;gap:5px;background:var(--surf)}
+.dact{display:flex;gap:5px;flex-wrap:wrap;flex-shrink:0}
+.sec{background:var(--surf);border:1px solid var(--rule);border-radius:2px;overflow:hidden;margin-bottom:8px;box-shadow:var(--sh)}
+.sh2{padding:6px 10px;border-bottom:1px solid var(--rule);display:flex;align-items:center;gap:5px;background:var(--surf2)}
 .slbl{font-family:'IBM Plex Mono',monospace;font-size:8px;font-weight:500;text-transform:uppercase;letter-spacing:.08em;color:var(--t3)}
 .sbody{padding:10px}
 table.inf{width:100%;border-collapse:collapse;font-size:12px}
 table.inf tr td{padding:4px 0;border-bottom:1px solid var(--rule3);vertical-align:top}
 table.inf tr:last-child td{border-bottom:none}
 table.inf tr td:first-child{font-family:'IBM Plex Mono',monospace;font-size:9px;color:var(--t3);width:110px;padding-right:8px;text-transform:uppercase;letter-spacing:.04em}
-.ctcard{background:var(--surf);border:1px solid var(--rule);border-radius:2px;padding:10px;margin-bottom:6px}
+.ctcard{background:var(--surf2);border:1px solid var(--rule);border-radius:2px;padding:10px;margin-bottom:6px}
 .ctcard:last-child{margin-bottom:0}
 .ctav{width:26px;height:26px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-family:'IBM Plex Mono',monospace;font-size:8px;font-weight:700;background:var(--pb);color:var(--pc);border:1px solid var(--pr);flex-shrink:0}
 .cpill{font-family:'IBM Plex Mono',monospace;font-size:9px;background:var(--surf3);border:1px solid var(--rule);border-radius:2px;padding:1px 5px}
-.nblock{background:var(--surf);border-left:2px solid var(--g);padding:8px 10px;font-size:11px;color:var(--t2);margin-top:8px;line-height:1.6}
-.spill{font-family:'IBM Plex Mono',monospace;font-size:9px;display:inline-block;padding:1px 6px;border:1px solid var(--rule);border-radius:2px;color:var(--t3);margin:2px}
+.nblock{background:var(--surf2);border-left:2px solid var(--g);padding:8px 10px;font-size:11px;color:var(--t2);margin-top:8px;line-height:1.6}
+.spill{font-family:'IBM Plex Mono',monospace;font-size:9px;display:inline-block;padding:1px 5px;border:1px solid var(--rule);border-radius:2px;color:var(--t3);margin:2px}
 a.ml{font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--g);text-decoration:none}
 a.ml:hover{text-decoration:underline}
-.nodata{font-family:'IBM Plex Mono',monospace;font-size:9px;color:var(--t3);text-transform:uppercase;letter-spacing:.05em;padding:8px 0}
+.nodata{font-family:'IBM Plex Mono',monospace;font-size:9px;color:var(--t3);text-transform:uppercase;letter-spacing:.05em;padding:6px 0}
+.dtabs{display:flex;border-bottom:1px solid var(--rule);flex-shrink:0;margin-bottom:10px}
+.dtab{flex:1;height:30px;display:flex;align-items:center;justify-content:center;font-family:'IBM Plex Mono',monospace;font-size:8px;text-transform:uppercase;letter-spacing:.06em;cursor:pointer;color:var(--t3);border-bottom:2px solid transparent;transition:all .12s}
+.dtab:hover{color:var(--t1);background:var(--surf2)}
+.dtab.active{color:var(--g);border-bottom-color:var(--g)}
 
 /* CONTACTS VIEW */
 .ctbl{width:100%;border-collapse:collapse}
-.ctbl th{position:sticky;top:0;background:var(--surf);border-bottom:1px solid var(--rule);padding:0 12px;height:30px;font-family:'IBM Plex Mono',monospace;font-size:8px;text-transform:uppercase;letter-spacing:.08em;color:var(--t3);font-weight:500;text-align:left;z-index:10}
-.ctbl td{padding:0 12px;height:38px;border-bottom:1px solid var(--rule3);vertical-align:middle;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.ctbl th{position:sticky;top:0;background:var(--surf);border-bottom:1px solid var(--rule);padding:0 12px;height:28px;font-family:'IBM Plex Mono',monospace;font-size:8px;text-transform:uppercase;letter-spacing:.08em;color:var(--t3);font-weight:500;text-align:left;z-index:10}
+.ctbl td{padding:0 12px;height:36px;border-bottom:1px solid var(--rule3);vertical-align:middle;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .ctbl tr:hover td{background:var(--surf2);cursor:pointer}
 
-/* ENRICHER VIEW */
+/* ENRICHER */
 .evw{display:flex;flex:1;overflow:hidden}
-.eleft{width:310px;flex-shrink:0;border-right:1px solid var(--rule);background:var(--surf);display:flex;flex-direction:column;overflow:hidden}
+.eleft{width:300px;flex-shrink:0;border-right:1px solid var(--rule);background:var(--surf);display:flex;flex-direction:column;overflow:hidden}
 .eright{flex:1;display:flex;flex-direction:column;overflow:hidden;background:var(--surf2)}
-.edesc-wrap{padding:10px;border-bottom:1px solid var(--rule);flex-shrink:0}
+.edwrap{padding:9px;border-bottom:1px solid var(--rule);flex-shrink:0}
 .elbl{font-family:'IBM Plex Mono',monospace;font-size:8px;text-transform:uppercase;letter-spacing:.07em;color:var(--t3);margin-bottom:4px}
-.edesc{width:100%;padding:7px 8px;border:1px solid var(--rule);border-radius:2px;background:var(--surf2);color:var(--t1);font-family:'IBM Plex Sans',sans-serif;font-size:12px;outline:none;resize:none;line-height:1.5;transition:border-color .15s}
+.edesc{width:100%;padding:6px 8px;border:1px solid var(--rule);border-radius:2px;background:var(--surf2);color:var(--t1);font-family:'IBM Plex Sans',sans-serif;font-size:11px;outline:none;resize:none;line-height:1.5;transition:border-color .15s}
 .edesc:focus{border-color:var(--gr)}
-.edesc::placeholder{color:var(--t3)}
-.ebtns{display:flex;gap:5px;margin-top:6px;align-items:center}
+.edesc::placeholder{color:var(--t3);font-size:10px}
+.ebtns{display:flex;gap:4px;margin-top:5px;align-items:center}
 .estat{font-family:'IBM Plex Mono',monospace;font-size:9px;color:var(--t3);flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-.eselbar{display:flex;align-items:center;gap:5px;padding:5px 8px;border-bottom:1px solid var(--rule2);flex-shrink:0}
-.emeta{padding:4px 8px;border-bottom:1px solid var(--rule2);display:flex;justify-content:space-between;flex-shrink:0}
+.eselbar{display:flex;align-items:center;gap:4px;padding:4px 8px;border-bottom:1px solid var(--rule2);flex-shrink:0}
+.emeta{padding:3px 8px;border-bottom:1px solid var(--rule2);display:flex;justify-content:space-between;flex-shrink:0}
 .emeta span{font-family:'IBM Plex Mono',monospace;font-size:9px;color:var(--t3)}
 .elist{overflow-y:auto;flex:1}
-.erow{display:flex;align-items:center;gap:6px;padding:5px 8px;border-bottom:1px solid var(--rule3);cursor:pointer;transition:background .1s;user-select:none}
+.erow{display:flex;align-items:center;gap:5px;padding:5px 8px;border-bottom:1px solid var(--rule3);cursor:pointer;transition:background .1s;user-select:none}
 .erow:hover{background:var(--surf2)}
 .erow.chk{background:var(--gb)}
-.ecb{width:14px;height:14px;border:1px solid var(--rule);border-radius:2px;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:9px;color:var(--g);background:var(--surf);transition:all .1s}
+.ecb{width:12px;height:12px;border:1px solid var(--rule);border-radius:2px;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:8px;color:var(--g);background:var(--surf);transition:all .1s}
 .erow.chk .ecb{background:var(--g);border-color:var(--g);color:#fff}
-.eav{width:20px;height:20px;border-radius:2px;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-family:'IBM Plex Mono',monospace;font-size:7px;font-weight:700;border:1px solid transparent}
+.eav{width:18px;height:18px;border-radius:2px;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-family:'IBM Plex Mono',monospace;font-size:7px;font-weight:700;border:1px solid transparent}
 .enm{font-size:11px;font-weight:500;flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .edom{font-family:'IBM Plex Mono',monospace;font-size:8px;color:var(--t3)}
 .egaps{display:flex;gap:2px;flex-shrink:0}
-.egsq{width:6px;height:6px;border-radius:1px}
-.egf{background:var(--cc)}
-.egm{background:var(--surf4)}
-.egn{font-family:'IBM Plex Mono',monospace;font-size:8px;color:var(--prc);min-width:14px;text-align:right}
-.tagcloud{border-top:1px solid var(--rule);padding:7px 8px;flex-shrink:0;max-height:130px;overflow-y:auto}
-.tclbl{font-family:'IBM Plex Mono',monospace;font-size:8px;text-transform:uppercase;letter-spacing:.07em;color:var(--t3);margin-bottom:5px}
+.egsq{width:5px;height:5px;border-radius:1px}
+.egf{background:var(--cc)}.egm{background:var(--surf4)}
+.egn{font-family:'IBM Plex Mono',monospace;font-size:8px;color:var(--prc);min-width:12px;text-align:right}
+.tagcloud{border-top:1px solid var(--rule);padding:6px 8px;flex-shrink:0;max-height:120px;overflow-y:auto}
+.tclbl{font-family:'IBM Plex Mono',monospace;font-size:8px;text-transform:uppercase;letter-spacing:.07em;color:var(--t3);margin-bottom:4px}
 .tctags{display:flex;flex-wrap:wrap;gap:3px}
-.tctag{font-family:'IBM Plex Mono',monospace;font-size:8px;padding:2px 6px;border:1px solid var(--rule);border-radius:2px;cursor:pointer;color:var(--t3);background:var(--surf2);transition:all .1s;white-space:nowrap;display:inline-flex;align-items:center;gap:3px}
+.tctag{font-family:'IBM Plex Mono',monospace;font-size:8px;padding:2px 5px;border:1px solid var(--rule);border-radius:2px;cursor:pointer;color:var(--t3);background:var(--surf2);transition:all .1s;white-space:nowrap;display:inline-flex;align-items:center;gap:3px}
 .tctag:hover{border-color:var(--gr);color:var(--g);background:var(--gb)}
 .tctag.active{background:var(--g);color:#fff;border-color:var(--g)}
 .tctag.gap{color:var(--prc);background:var(--prb);border-color:var(--prr)}
@@ -194,58 +172,50 @@ a.ml:hover{text-decoration:underline}
 .tctag.tca{color:var(--pc);background:var(--pb);border-color:var(--pr)}
 .tctag.tcc.active,.tctag.tcp.active,.tctag.tca.active{background:var(--g);color:#fff;border-color:var(--g)}
 .tcn{opacity:.6;font-size:7px}
-.tcsep{font-family:'IBM Plex Mono',monospace;font-size:8px;color:var(--t4);align-self:center;padding:0 2px}
-
-/* Enricher right */
+.tcsep{font-family:'IBM Plex Mono',monospace;font-size:8px;color:var(--t4);align-self:center}
 .eph{display:grid;grid-template-columns:1fr 1fr;border-bottom:1px solid var(--rule);flex-shrink:0;background:var(--surf)}
-.ephc{padding:10px 12px;border-right:1px solid var(--rule)}
+.ephc{padding:9px 12px;border-right:1px solid var(--rule)}
 .ephc:last-child{border-right:none}
-.ephhdr{display:flex;align-items:center;gap:8px;margin-bottom:7px}
-.ephtag{font-family:'IBM Plex Mono',monospace;font-size:8px;font-weight:600;text-transform:uppercase;letter-spacing:.06em;padding:2px 6px;border-radius:2px;border:1px solid}
+.ephhdr{display:flex;align-items:center;gap:7px;margin-bottom:6px}
+.ephtag{font-family:'IBM Plex Mono',monospace;font-size:8px;font-weight:600;text-transform:uppercase;letter-spacing:.06em;padding:2px 5px;border-radius:2px;border:1px solid}
 .ep1t{color:var(--pc);background:var(--pb);border-color:var(--pr)}
 .ep2t{color:var(--prc);background:var(--prb);border-color:var(--prr)}
 .ephmeta{font-family:'IBM Plex Mono',monospace;font-size:9px;color:var(--t3)}
-.ecks{display:flex;flex-wrap:wrap;gap:3px;margin-bottom:6px}
+.ecks{display:flex;flex-wrap:wrap;gap:3px;margin-bottom:5px}
 .eck{display:inline-flex;align-items:center;gap:3px;cursor:pointer;padding:2px 5px;border:1px solid var(--rule);border-radius:2px;background:var(--surf2);transition:all .1s}
 .eck:hover{border-color:var(--gr);background:var(--gb)}
 .eck.on{border-color:var(--gr);background:var(--gb)}
 .eck input{width:10px;height:10px;accent-color:var(--g);cursor:pointer}
 .ecklbl{font-family:'IBM Plex Mono',monospace;font-size:8px;color:var(--t2)}
-.eskip{display:flex;align-items:center;gap:5px;margin-bottom:4px}
+.eskip{display:flex;align-items:center;gap:4px;margin-bottom:3px}
 .eskiplbl{font-family:'IBM Plex Mono',monospace;font-size:8px;color:var(--t3);cursor:pointer}
-.ectrls{display:flex;gap:7px;flex-wrap:wrap;margin-top:4px}
-.ectl{display:flex;align-items:center;gap:4px}
+.ectrls{display:flex;gap:6px;flex-wrap:wrap;margin-top:4px}
+.ectl{display:flex;align-items:center;gap:3px}
 .ectllbl{font-family:'IBM Plex Mono',monospace;font-size:8px;color:var(--t3);text-transform:uppercase}
-.ectlnum{width:40px;height:22px;padding:0 4px;border:1px solid var(--rule);border-radius:2px;background:var(--surf2);color:var(--t1);font-family:'IBM Plex Mono',monospace;font-size:10px;text-align:center;outline:none}
+.ectlnum{width:38px;height:20px;padding:0 4px;border:1px solid var(--rule);border-radius:2px;background:var(--surf2);color:var(--t1);font-family:'IBM Plex Mono',monospace;font-size:10px;text-align:center;outline:none}
 .ectlnum:focus{border-color:var(--gr)}
-.esbrow{display:flex;align-items:center;gap:5px;margin-top:5px}
+.esbrow{display:flex;align-items:center;gap:4px;margin-top:4px}
 .esblbl{font-family:'IBM Plex Mono',monospace;font-size:8px;color:var(--t3);text-transform:uppercase;white-space:nowrap}
-.esburl{flex:1;height:20px;padding:0 5px;border:1px solid var(--rule);border-radius:2px;background:var(--surf2);color:var(--t1);font-family:'IBM Plex Mono',monospace;font-size:8px;outline:none}
-.escriptarea{flex:1;display:flex;flex-direction:column;overflow:hidden}
-.escriptbar{display:flex;align-items:center;gap:6px;padding:6px 12px;border-bottom:1px solid var(--rule);background:var(--surf);flex-shrink:0}
-.escriptlbl{font-family:'IBM Plex Mono',monospace;font-size:9px;text-transform:uppercase;letter-spacing:.07em;color:var(--t3)}
-.escriptinfo{font-family:'IBM Plex Mono',monospace;font-size:9px;color:var(--t3);flex:1}
-.escriptout{flex:1;overflow-y:auto;padding:10px 12px}
-.eidle{display:flex;flex-direction:column;align-items:center;justify-content:center;height:100%;gap:8px;color:var(--t3)}
-.eidleico{font-family:'IBM Plex Mono',monospace;font-size:30px;font-weight:200;color:var(--t4)}
+.esburl{flex:1;height:18px;padding:0 4px;border:1px solid var(--rule);border-radius:2px;background:var(--surf2);color:var(--t1);font-family:'IBM Plex Mono',monospace;font-size:8px;outline:none}
+.esa{flex:1;display:flex;flex-direction:column;overflow:hidden}
+.esbar{display:flex;align-items:center;gap:6px;padding:6px 12px;border-bottom:1px solid var(--rule);background:var(--surf);flex-shrink:0}
+.eslbl{font-family:'IBM Plex Mono',monospace;font-size:9px;text-transform:uppercase;letter-spacing:.07em;color:var(--t3)}
+.esinfo{font-family:'IBM Plex Mono',monospace;font-size:9px;color:var(--t3);flex:1}
+.esout{flex:1;overflow-y:auto;padding:10px 12px}
+.eidle{display:flex;flex-direction:column;align-items:center;justify-content:center;height:100%;gap:7px;color:var(--t3)}
+.eidleico{font-family:'IBM Plex Mono',monospace;font-size:28px;font-weight:200;color:var(--t4)}
 .eidlesub{font-family:'IBM Plex Mono',monospace;font-size:9px;text-transform:uppercase;letter-spacing:.07em}
-.eidlehint{font-size:11px;text-align:center;max-width:280px;line-height:1.6;color:var(--t3)}
+.eidlehint{font-size:11px;text-align:center;max-width:260px;line-height:1.6;color:var(--t3)}
 pre.ecode{font-family:'IBM Plex Mono',monospace;font-size:10px;line-height:1.7;color:var(--t2);white-space:pre-wrap;word-break:break-all}
 pre.ecode .c{color:var(--t4)}pre.ecode .k{color:var(--g)}pre.ecode .s{color:var(--prc)}pre.ecode .v{color:var(--pc)}
-
-/* KBD HINT */
-.kbdhint{position:fixed;bottom:12px;left:50%;transform:translateX(-50%);background:var(--surf);border:1px solid var(--rule);border-radius:2px;padding:5px 12px;font-family:'IBM Plex Mono',monospace;font-size:9px;color:var(--t3);display:flex;gap:10px;box-shadow:var(--sh);z-index:300;opacity:0;transition:opacity .3s;pointer-events:none}
-.kbdhint.vis{opacity:1}
-.kbdhint b{color:var(--t1)}
-.kbdkey{padding:1px 4px;border:1px solid var(--rule);border-radius:2px;font-size:8px}
 
 /* MODAL */
 #ov{display:none;position:fixed;inset:0;background:rgba(0,0,0,.4);z-index:500;align-items:center;justify-content:center;backdrop-filter:blur(3px)}
 #ov.vis{display:flex}
-.mbox{background:var(--surf);border:1px solid var(--rule);border-radius:4px;padding:20px;max-width:460px;width:90%;box-shadow:var(--sh)}
+.mbox{background:var(--surf);border:1px solid var(--rule);border-radius:4px;padding:20px;max-width:440px;width:90%;box-shadow:var(--sh)}
 .mbox h2{font-size:14px;font-weight:500;margin-bottom:6px}
 .mbox p{font-size:12px;color:var(--t2);margin-bottom:10px;line-height:1.6}
-.mta{width:100%;height:80px;padding:8px;border:1px solid var(--rule);border-radius:2px;background:var(--surf2);color:var(--t1);font-family:'IBM Plex Mono',monospace;font-size:11px;resize:vertical;outline:none;line-height:1.5}
+.mta{width:100%;height:76px;padding:8px;border:1px solid var(--rule);border-radius:2px;background:var(--surf2);color:var(--t1);font-family:'IBM Plex Mono',monospace;font-size:11px;resize:vertical;outline:none;line-height:1.5}
 .mta:focus{border-color:var(--gr)}
 .macts{display:flex;gap:6px;justify-content:flex-end;margin-top:10px}
 </style>
@@ -253,25 +223,25 @@ pre.ecode .c{color:var(--t4)}pre.ecode .k{color:var(--g)}pre.ecode .s{color:var(
 <body>
 <div class="shell">
 
+<!-- NAV -->
 <nav class="nav">
   <div class="nav-logo">oA</div>
   <span class="nav-brand">Sales Hub</span>
-  <div class="nav-sep"></div>
   <div class="nav-tabs">
     <button class="nav-tab active" id="nav-co" onclick="sv('co')">🏢 Companies</button>
     <button class="nav-tab" id="nav-ct" onclick="sv('ct')">👤 Contacts</button>
     <button class="nav-tab" id="nav-en" onclick="sv('en')">⚡ Enricher</button>
   </div>
   <div class="nav-right">
-    <div class="sync-chip" onclick="reload()"><div class="sync-dot" id="sdot"></div><span id="slbl">Loading…</span></div>
-    <button class="btn" onclick="openR()">+ Research <span class="kbd">N</span></button>
-    <button class="btn sm" id="tbtn" onclick="toggleTheme()">🌙</button>
+    <div class="sync-chip" onclick="reload()"><div class="sdot" id="sdot"></div><span id="slbl">Loading…</span></div>
+    <button class="btn" onclick="openR()">+ Research</button>
+    <button class="btn sm" id="tbtn" onclick="tth()">🌙</button>
   </div>
 </nav>
 
-<!-- COMPANIES -->
+<!-- ═══ COMPANIES VIEW ═══ -->
 <div class="view active" id="view-co">
-  <div class="stats">
+  <div class="sbar">
     <div class="sc active" onclick="sf('all',this)"><div class="sn" id="st-all">—</div><div class="sl">All</div></div>
     <div class="sc" onclick="sf('client',this)"><div class="sn" id="st-cl">—</div><div class="sl">Clients</div></div>
     <div class="sc" onclick="sf('poc',this)"><div class="sn" id="st-pc">—</div><div class="sl">Active Deal</div></div>
@@ -280,71 +250,71 @@ pre.ecode .c{color:var(--t4)}pre.ecode .k{color:var(--g)}pre.ecode .s{color:var(
     <div class="sc" onclick="sf('nogo',this)"><div class="sn" id="st-ng">—</div><div class="sl">No Outreach</div></div>
     <div class="sc" onclick="sf('fresh',this)"><div class="sn" id="st-fr">—</div><div class="sl">Fresh Meat 🥩</div></div>
   </div>
-  <div class="toolbar">
-    <div class="sw"><span class="si">⌕</span><input class="sinp" id="cosrch" placeholder="Search…" oninput="rt()" autocomplete="off"/></div>
-    <div class="fps">
-      <button class="fp active" onclick="sf('all',this)">All</button>
-      <button class="fp" onclick="sf('client',this)">Client</button>
-      <button class="fp" onclick="sf('partner',this)">Partner</button>
-      <button class="fp" onclick="sf('prospect',this)">Prospect</button>
-      <button class="fp" onclick="sf('poc',this)">POC</button>
-      <button class="fp" onclick="sf('nogo',this)">No outreach</button>
+  <div class="main">
+    <!-- LEFT: list -->
+    <div class="left">
+      <div class="left-toolbar">
+        <div class="sw"><span class="si">⌕</span><input class="sinp" id="cosrch" placeholder="Search…" oninput="rl()" autocomplete="off"/></div>
+        <select class="sort-sel" id="cosort" onchange="rl()">
+          <option value="icp">ICP ↓</option>
+          <option value="name">A–Z</option>
+          <option value="type">Type</option>
+          <option value="recent">Recent</option>
+        </select>
+      </div>
+      <div class="fps">
+        <button class="fp active" onclick="sf('all',this)">All</button>
+        <button class="fp" onclick="sf('client',this)">Client</button>
+        <button class="fp" onclick="sf('partner',this)">Partner</button>
+        <button class="fp" onclick="sf('prospect',this)">Prospect</button>
+        <button class="fp" onclick="sf('poc',this)">POC</button>
+        <button class="fp" onclick="sf('nogo',this)">No outreach</button>
+      </div>
+      <div class="list-meta"><span id="lmeta">—</span><span>↑↓ J/K · Enter</span></div>
+      <div class="co-list" id="colist"></div>
     </div>
-    <div class="tr">
-      <span class="tmeta" id="tmeta">—</span>
-      <select class="ssel" id="cosort" onchange="rt()"><option value="icp">ICP ↓</option><option value="name">Name A–Z</option><option value="type">Type</option><option value="recent">Recent</option></select>
+    <!-- RIGHT: detail -->
+    <div class="center" id="center">
+      <div class="empty-state"><div class="empty-big">←</div><div class="empty-sub">Select a company</div></div>
     </div>
   </div>
-  <div class="tw"><table class="cot" id="cot">
-    <thead><tr>
-      <th class="col-cb"><input type="checkbox" id="sala" onchange="tsa(this)"></th>
-      <th class="col-av"></th>
-      <th class="col-nm" onclick="sb('nm')">Name</th>
-      <th class="col-ct" onclick="sb('ct')">Category</th>
-      <th class="col-rg" onclick="sb('rg')">Region</th>
-      <th class="col-tp" onclick="sb('tp')">Status</th>
-      <th class="col-ic" onclick="sb('ic')">ICP</th>
-      <th class="col-gp">Gaps</th>
-      <th class="col-up" onclick="sb('up')">Updated</th>
-      <th class="col-ac"></th>
-    </tr></thead>
-    <tbody id="cotb"></tbody>
-  </table></div>
 </div>
 
-<!-- CONTACTS -->
+<!-- ═══ CONTACTS VIEW ═══ -->
 <div class="view" id="view-ct">
-  <div class="toolbar">
-    <div class="sw"><span class="si">⌕</span><input class="sinp" id="ctsrch" placeholder="Search contacts…" oninput="rct()" autocomplete="off"/></div>
-    <div class="tr"><span class="tmeta" id="ctmeta">—</span></div>
+  <div class="main" style="flex-direction:column">
+    <div style="padding:7px 12px;border-bottom:1px solid var(--rule);background:var(--surf);display:flex;align-items:center;gap:8px;flex-shrink:0">
+      <div class="sw" style="max-width:260px"><span class="si">⌕</span><input class="sinp" id="ctsrch" placeholder="Search contacts…" oninput="rct()" autocomplete="off"/></div>
+      <span style="font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--t3)" id="ctmeta">—</span>
+    </div>
+    <div style="flex:1;overflow-y:auto"><table class="ctbl">
+      <thead><tr>
+        <th style="width:36px"></th><th style="width:18%">Name</th><th style="width:20%">Title</th>
+        <th style="width:18%">Company</th><th style="width:22%">Email</th><th>Notes</th>
+      </tr></thead>
+      <tbody id="cttb"></tbody>
+    </table></div>
   </div>
-  <div class="tw"><table class="ctbl">
-    <thead><tr>
-      <th style="width:40px"></th><th style="width:18%">Name</th><th style="width:20%">Title</th>
-      <th style="width:18%">Company</th><th style="width:22%">Email</th><th>Notes</th>
-    </tr></thead>
-    <tbody id="cttb"></tbody>
-  </table></div>
 </div>
 
-<!-- ENRICHER -->
+<!-- ═══ ENRICHER VIEW ═══ -->
 <div class="view" id="view-en">
   <div class="evw">
     <div class="eleft">
-      <div class="edesc-wrap">
+      <div class="edwrap">
         <div class="elbl">Describe companies to enrich</div>
-        <textarea class="edesc" id="edesc" rows="3" placeholder="e.g. all prospects missing funding&#10;DSPs with 3+ data gaps&#10;UK agencies without description"></textarea>
+        <textarea class="edesc" id="edesc" rows="3" placeholder="e.g. prospects missing funding info&#10;DSPs with 3+ data gaps&#10;UK agencies without description"></textarea>
         <div class="ebtns">
           <button class="btn p sm" onclick="efind()" id="efbtn">🔍 Find</button>
-          <button class="btn sm" onclick="eclr()">✕ Clear</button>
+          <button class="btn sm" onclick="eclr()">✕</button>
           <span class="estat" id="estat"></span>
         </div>
       </div>
       <div class="eselbar">
         <button class="btn sm" onclick="eall()">All</button>
         <button class="btn sm" onclick="enone()">None</button>
-        <span class="emeta" id="eselcnt" style="border:none;padding:0;font-family:'IBM Plex Mono',monospace;font-size:9px;color:var(--t3);margin-left:auto">0 selected</span>
-        <button class="btn p sm" onclick="genScript()" style="margin-left:6px">⚡ Generate</button>
+        <span style="font-family:'IBM Plex Mono',monospace;font-size:9px;color:var(--t3);margin-left:auto" id="eselcnt">0 selected</span>
+        <button class="btn p sm" onclick="genScript()" style="margin-left:5px">⚡ Gen</button>
       </div>
       <div class="emeta"><span id="emeta">Use tags or describe above</span><span>click to select</span></div>
       <div class="elist" id="elist"></div>
@@ -384,19 +354,19 @@ pre.ecode .c{color:var(--t4)}pre.ecode .k{color:var(--g)}pre.ecode .s{color:var(
             <div class="ectl"><span class="ectllbl">Delay</span><input class="ectlnum" id="p2dl" type="number" value="12" min="5" max="60"></div>
             <div class="ectl"><span class="ectllbl">Conc</span><input class="ectlnum" id="p2cn" type="number" value="1" min="1" max="5"></div>
           </div>
-          <div class="esbrow"><span class="esblbl">Supabase</span><input class="esburl" id="p2sb" value="https://nyzkkqqjnkctcmxoirdj.supabase.co" readonly/></div>
+          <div class="esbrow"><span class="esblbl">SB URL</span><input class="esburl" id="p2sb" value="https://nyzkkqqjnkctcmxoirdj.supabase.co" readonly/></div>
         </div>
       </div>
-      <div class="escriptarea">
-        <div class="escriptbar">
-          <span class="escriptlbl">Script Output</span>
-          <span class="escriptinfo" id="esinfo">Select companies → Generate Script</span>
+      <div class="esa">
+        <div class="esbar">
+          <span class="eslbl">Script Output</span>
+          <span class="esinfo" id="esinfo">Select companies → Generate</span>
           <button class="btn sm" onclick="cpScript()" id="ecpbtn" style="display:none">Copy</button>
           <button class="btn sm" onclick="dlScript()" id="edlbtn" style="display:none">↓ .py</button>
         </div>
-        <div class="escriptout" id="esout">
+        <div class="esout" id="esout">
           <div class="eidle"><div class="eidleico">⚡</div><div class="eidlesub">Batch Enricher</div>
-          <div class="eidlehint">Select companies using tags or describe them in natural language, then click ⚡ Generate for a ready-to-run Python script.</div></div>
+          <div class="eidlehint">Select companies using tags or natural language, then ⚡ Generate for a ready-to-run Python script.</div></div>
         </div>
       </div>
     </div>
@@ -404,24 +374,6 @@ pre.ecode .c{color:var(--t4)}pre.ecode .k{color:var(--g)}pre.ecode .s{color:var(
 </div>
 
 </div><!-- /shell -->
-
-<!-- DRAWER -->
-<div class="dov" id="dov" onclick="cdraw()"></div>
-<div class="drw" id="drw">
-  <div class="dnav">
-    <div class="dtitle" id="dtitle">—</div>
-    <button class="btn sm" onclick="if(CC)oc('Research '+CC.name+' — full contact report for onAudience')">↗ Research</button>
-    <button class="btn sm" onclick="if(CC)oc('Draft personalized outreach email to '+CC.name+' for onAudience')">✉ Draft</button>
-    <button class="dclose" onclick="cdraw()" title="Close [Esc]">✕</button>
-  </div>
-  <div class="dtabs">
-    <div class="dtab active" onclick="sdt('ov',this)">Overview</div>
-    <div class="dtab" onclick="sdt('ct',this)">Contacts</div>
-    <div class="dtab" onclick="sdt('out',this)">Outreach</div>
-    <div class="dtab" onclick="sdt('rel',this)">Relations</div>
-  </div>
-  <div class="dbody" id="dbody"></div>
-</div>
 
 <!-- MODAL -->
 <div id="ov"><div class="mbox">
@@ -431,17 +383,6 @@ pre.ecode .c{color:var(--t4)}pre.ecode .k{color:var(--g)}pre.ecode .s{color:var(
   <div class="macts"><button class="btn" onclick="cm()">Cancel</button><button class="btn p" onclick="sm()">Open in Claude ↗</button></div>
 </div></div>
 
-<!-- KBD HINT -->
-<div class="kbdhint" id="kbdh">
-  <span><span class="kbdkey">J/K</span> navigate</span>
-  <span><span class="kbdkey">Enter</span> open</span>
-  <span><span class="kbdkey">← →</span> tabs</span>
-  <span><span class="kbdkey">E</span> research</span>
-  <span><span class="kbdkey">N</span> new</span>
-  <span><span class="kbdkey">/</span> search</span>
-  <span><span class="kbdkey">Esc</span> close</span>
-</div>
-
 <script>
 const SB_URL='https://nyzkkqqjnkctcmxoirdj.supabase.co';
 const SB_KEY='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im55emtrcXFqbmtjdGNteG9pcmRqIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzM4NzMxMzYsImV4cCI6MjA4OTQ0OTEzNn0.jhAq_C68klOp4iTyj9HmsyyvoxsOI6ACld7t_87TAk0';
@@ -449,7 +390,7 @@ const SBH={apikey:SB_KEY,Authorization:`Bearer ${SB_KEY}`,'Content-Type':'applic
 
 let theme=localStorage.getItem('oaTheme')||'light';
 document.documentElement.setAttribute('data-theme',theme);
-function toggleTheme(){theme=theme==='light'?'dark':'light';document.documentElement.setAttribute('data-theme',theme);localStorage.setItem('oaTheme',theme);document.getElementById('tbtn').textContent=theme==='dark'?'☀️':'🌙';}
+function tth(){theme=theme==='light'?'dark':'light';document.documentElement.setAttribute('data-theme',theme);localStorage.setItem('oaTheme',theme);document.getElementById('tbtn').textContent=theme==='dark'?'☀️':'🌙';}
 document.getElementById('tbtn').textContent=theme==='dark'?'☀️':'🌙';
 
 const SEED=[
@@ -514,13 +455,13 @@ const SEED=[
   ['Dynata','no outreach — former client','nogo','Research / Data','USA',null,5,'dynata.com','dynata'],
 ];
 
-let COS=[],CTS=[],AF='all',SF='icp',SD=-1,FI=-1,FR=[],CC=null,CDT='ov';
+let COS=[],CTS=[],AF='all',FI=-1,FR=[],CC=null,CDT='ov';
 let ES=new Set(),EF=[],EAT=null;
 
 const GF=[{id:'desc',f:'description'},{id:'size',f:'size'},{id:'fund',f:'funding'},{id:'hq',f:'hq_city'},{id:'prod',f:'products'},{id:'dsps',f:'dsps'},{id:'li',f:'linkedin_slug'}];
 
 function sl(n){return(n||'').replace(/\s+(Ltd|Inc|LLC|S\.A\.|GmbH|Corp|B\.V\.|AG|PLC|SAS|Oy)\.?$/i,'').toLowerCase().trim().replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,'');}
-function cls(note){const s=(note||'').toLowerCase();if(s.includes('no outreach')||s.includes('no fit')||s.includes('no business')||s.includes('internal')||s.includes('unwanted'))return'nogo';if(s.includes('poc client'))return'poc';if(s.includes('client'))return'client';if(s.includes('partner'))return'partner';if(s.includes('prospect')||s.includes('to check')||s.includes('to continue'))return'prospect';return'prospect';}
+function cls2(note){const s=(note||'').toLowerCase();if(s.includes('no outreach')||s.includes('no fit')||s.includes('no business')||s.includes('internal')||s.includes('unwanted'))return'nogo';if(s.includes('poc client'))return'poc';if(s.includes('client'))return'client';if(s.includes('partner'))return'partner';if(s.includes('prospect')||s.includes('to check')||s.includes('to continue'))return'prospect';return'prospect';}
 function av(n){const p=[['#9FE1CB30','#0F6E56'],['#B5D4F430','#1A4F8A'],['#FAC77530','#7A4200'],['#C0DD9730','#3B6D11'],['#F4C0D130','#993556']];let h=0;for(let c of(n||''))h=(h*31+c.charCodeAt(0))&0xffff;return p[h%p.length];}
 function ini(n){return(n||'').replace(/[^A-Za-z ]/g,'').split(' ').filter(Boolean).map(w=>w[0]).slice(0,2).join('').toUpperCase()||'?';}
 function tcls(s){return{client:'tc',partner:'tp',prospect:'tpr',nogo:'tn',poc:'tpo'}[s]||'tpr';}
@@ -533,19 +474,19 @@ function oc(p){window.open('https://claude.ai/new?q='+encodeURIComponent(p),'_bl
 function gaps(c){return GF.filter(gf=>{const v=c[gf.f];if(!v)return true;if(Array.isArray(v))return!v.length;if(typeof v==='string')return!v.trim();if(typeof v==='object'){const pp=v.products;return!pp||(Array.isArray(pp)&&!pp.length);}return false;});}
 
 function lseed(){
-  COS=SEED.map(([n,note,t,cat,reg,sz,icp,web,li])=>({id:sl(n),name:n,note:note||'',type:t||cls(note),category:cat||null,region:reg||null,hq_city:reg||null,size:sz||null,icp:icp||null,website:web||null,linkedin_slug:li||null,updated_at:null,description:null,founded_year:null,funding:null,dsps:null,tech_stack:null,products:null,outreach_angle:null,tcf_vendor_id:null}));
+  COS=SEED.map(([n,note,t,cat,reg,sz,icp,web,li])=>({id:sl(n),name:n,note:note||'',type:t||cls2(note),category:cat||null,region:reg||null,hq_city:reg||null,size:sz||null,icp:icp||null,website:web||null,linkedin_slug:li||null,updated_at:null,description:null,founded_year:null,funding:null,dsps:null,tech_stack:null,products:null,outreach_angle:null,tcf_vendor_id:null}));
   CTS=[];
 }
 async function reload(){
-  document.getElementById('sdot').className='sync-dot';document.getElementById('slbl').textContent='Loading…';
+  document.getElementById('sdot').className='sdot';document.getElementById('slbl').textContent='Loading…';
   try{
     const[cr,ctr]=await Promise.all([fetch(`${SB_URL}/rest/v1/companies?select=*&order=name.asc`,{headers:SBH}),fetch(`${SB_URL}/rest/v1/contacts?select=*&order=full_name.asc`,{headers:SBH})]);
     if(!cr.ok)throw new Error(cr.status);
     const cd=await cr.json();const ctd=ctr.ok?await ctr.json():[];
-    COS=cd.map(c=>({...c,type:c.type||cls(c.note||''),note:c.note||'',id:c.id||sl(c.name)}));CTS=Array.isArray(ctd)?ctd:[];
-    document.getElementById('sdot').className='sync-dot live';document.getElementById('slbl').textContent=`● Live · ${COS.length}`;
+    COS=cd.map(c=>({...c,type:c.type||cls2(c.note||''),note:c.note||'',id:c.id||sl(c.name)}));CTS=Array.isArray(ctd)?ctd:[];
+    document.getElementById('sdot').className='sdot live';document.getElementById('slbl').textContent=`● Live · ${COS.length}`;
   }catch(e){lseed();document.getElementById('slbl').textContent=`○ Seed · ${COS.length}`;}
-  ust();rt();rct();btc();
+  ust();rl();rct();btc();
 }
 
 function ust(){
@@ -559,110 +500,123 @@ function ust(){
 }
 
 function sf(f,el){
-  AF=f;
+  AF=f;FI=-1;
   document.querySelectorAll('.sc,.fp').forEach(b=>b.classList.remove('active'));
   const idx=['all','client','poc','partner','prospect','nogo','fresh'].indexOf(f);
   document.querySelectorAll('.sc')[idx]?.classList.add('active');
   document.querySelectorAll('.fp').forEach(fp=>{const t=fp.textContent.trim().toLowerCase().replace(' ','');if((f==='all'&&t==='all')||(f==='client'&&t==='client')||(f==='partner'&&t==='partner')||(f==='prospect'&&t==='prospect')||(f==='poc'&&t==='poc')||(f==='nogo'&&t==='nooutreach'))fp.classList.add('active');});
-  FI=-1;rt();
+  rl();
 }
-function sb(f){if(SF===f)SD*=-1;else{SF=f;SD=-1;}rt();}
-function gf(){
+
+function getFiltered(){
   const q=(document.getElementById('cosrch').value||'').toLowerCase();
   const sel=document.getElementById('cosort').value;
   let out=COS.filter(c=>{
     if(AF==='fresh'&&!fresh(c))return false;
     if(AF!=='all'&&AF!=='fresh'&&c.type!==AF)return false;
-    if(q){const h=(c.name+' '+(c.note||'')+' '+(c.category||'')+' '+(c.region||'')).toLowerCase();if(!h.includes(q))return false;}
+    if(q){const h=(c.name+' '+(c.note||'')+' '+(c.category||'')+' '+(c.region||c.hq_city||'')).toLowerCase();if(!h.includes(q))return false;}
     return true;
   });
-  const sf2=SF||sel;
   out.sort((a,b)=>{
-    if(sf2==='nm'||sel==='name')return a.name.localeCompare(b.name)*SD;
-    if(sf2==='ct')return(a.category||'').localeCompare(b.category||'')*SD;
-    if(sf2==='rg')return(a.region||'').localeCompare(b.region||'')*SD;
-    if(sf2==='tp')return(a.type||'').localeCompare(b.type||'')*SD;
-    if(sf2==='up')return(new Date(a.updated_at||0)-new Date(b.updated_at||0))*SD;
+    if(sel==='name')return a.name.localeCompare(b.name);
+    if(sel==='type')return(a.type||'').localeCompare(b.type||'');
     if(sel==='recent')return new Date(b.updated_at||0)-new Date(a.updated_at||0);
-    return((b.icp||0)-(a.icp||0))*SD;
+    return(b.icp||0)-(a.icp||0);
   });
   return out;
 }
 
-function rt(){
-  FR=gf();
-  document.getElementById('tmeta').textContent=`${FR.length} of ${COS.length}`;
-  const tb=document.getElementById('cotb');
-  if(!FR.length){tb.innerHTML=`<tr><td colspan="10" style="text-align:center;padding:28px;font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--t3);text-transform:uppercase">No results</td></tr>`;return;}
-  tb.innerHTML=FR.map((c,i)=>{
-    const[bg,fg]=av(c.name);const gps=gaps(c);
-    const gb=GF.map(gf=>`<div class="gsq ${gps.some(g=>g.id===gf.id)?'gmis':'gfil'}"></div>`).join('');
-    const d=c.website?dom(c.website):'';const foc=i===FI;
-    const esc=c.name.replace(/'/g,"\\'");
-    return`<tr class="${c.type==='nogo'?'dead':''}${foc?' foc':''}" onclick="od('${encodeURIComponent(c.id||sl(c.name))}')" data-i="${i}">
-      <td class="col-cb" onclick="event.stopPropagation()"><input type="checkbox" class="rcb" data-id="${c.id||sl(c.name)}"></td>
-      <td class="col-av"><div class="rav" style="background:${bg};border-color:${fg}40;color:${fg}">${ini(c.name)}</div></td>
-      <td class="col-nm"><div class="rname">${c.name}</div>${d?`<div class="rdom">${d}</div>`:''}</td>
-      <td class="col-ct" style="font-size:12px;color:var(--t2);max-width:0;overflow:hidden;text-overflow:ellipsis">${(c.category||'—').split('/')[0].trim()}</td>
-      <td class="col-rg" style="font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--t3)">${c.hq_city||c.region||'—'}</td>
-      <td class="col-tp"><span class="tag ${tcls(c.type)}">${tlbl(c.type)}</span></td>
-      <td class="col-ic"><span class="icpv">${c.icp||'—'}</span></td>
-      <td class="col-gp"><div class="gbar">${gb}${gps.length?`<span class="gcnt">${gps.length}</span>`:''}</div></td>
-      <td class="col-up"><span class="updv">${ta(c.updated_at)}</span></td>
-      <td class="col-ac"><div class="ract">
-        <button class="rbtn" onclick="event.stopPropagation();oc('Research ${esc} — full contact report for onAudience')" title="Research">↗</button>
-        <button class="rbtn" onclick="event.stopPropagation();oc('Draft outreach email to ${esc} for onAudience data partnership')" title="Draft">✉</button>
-      </div></td>
-    </tr>`;
+function rl(){
+  FR=getFiltered();
+  document.getElementById('lmeta').textContent=`${FR.length} of ${COS.length}`;
+  const list=document.getElementById('colist');
+  if(!FR.length){list.innerHTML=`<div style="padding:20px;text-align:center;font-family:'IBM Plex Mono',monospace;font-size:9px;color:var(--t3);text-transform:uppercase">No results</div>`;return;}
+  list.innerHTML=FR.map((c,i)=>{
+    const[bg,fg]=av(c.name);const gps=gaps(c);const sel=c===CC;
+    const d=c.website?dom(c.website):'';
+    const gb=GF.map(gf=>`<div class="gsq-sm ${gps.some(g=>g.id===gf.id)?'gmis':'gfil'}"></div>`).join('');
+    const sub=d||c.category||c.note||'';
+    return`<div class="co-row${sel?' sel':''}${c.type==='nogo'?' dead':''}" onclick="oc2('${encodeURIComponent(c.id||sl(c.name))}')" data-i="${i}">
+      <div class="co-av" style="background:${bg};border-color:${fg}40;color:${fg}">${ini(c.name)}</div>
+      <div class="co-info">
+        <div class="co-name">${c.name}</div>
+        <div class="co-sub">${sub.length>38?sub.slice(0,38)+'…':sub}</div>
+      </div>
+      <div class="co-right">
+        <div class="gbar-sm">${gb}</div>
+        <span class="icpn">${c.icp||'—'}</span>
+        <span class="tag ${tcls(c.type)}">${tlbl(c.type)}</span>
+      </div>
+    </div>`;
   }).join('');
 }
-function tsa(cb){document.querySelectorAll('.rcb').forEach(r=>r.checked=cb.checked);}
 
-function od(encId){
+function oc2(encId){
   const id=decodeURIComponent(encId);const c=COS.find(x=>(x.id||sl(x.name))===id);if(!c)return;
-  CC=c;FI=FR.indexOf(c);rt();
-  document.getElementById('dtitle').textContent=c.name;
-  document.getElementById('dov').classList.add('open');document.getElementById('drw').classList.add('open');
-  sdt(CDT,null,true);showKH();
+  CC=c;FI=FR.indexOf(c);rl();renderDetail(c);
+  const row=document.querySelector(`#colist .co-row[data-i="${FI}"]`);if(row)row.scrollIntoView({block:'nearest'});
 }
-function cdraw(){
-  document.getElementById('dov').classList.remove('open');document.getElementById('drw').classList.remove('open');
-  CC=null;FI=-1;rt();
-}
-function sdt(tab,el,force){
-  if(tab===CDT&&!force)return;CDT=tab;
-  document.querySelectorAll('.dtab').forEach(t=>t.classList.remove('active'));
-  if(el)el.classList.add('active');
-  else{const map={ov:'Overview',ct:'Contacts',out:'Outreach',rel:'Relations'};document.querySelectorAll('.dtab').forEach(t=>{if(t.textContent===map[tab])t.classList.add('active');});}
-  if(!CC)return;
-  const c=CC;const[bg,fg]=av(c.name);
+
+function renderDetail(c){
+  const[bg,fg]=av(c.name);
   const ccts=CTS.filter(ct=>(ct.company_name||'').toLowerCase()===c.name.toLowerCase()||(ct.company_id&&ct.company_id===(c.id||sl(c.name))));
   const d=c.website?dom(c.website):'';
-  const dsps=c.dsps?(Array.isArray(c.dsps)?c.dsps:JSON.parse(c.dsps)):[];
-  const ts=c.tech_stack?(Array.isArray(c.tech_stack)?c.tech_stack:JSON.parse(c.tech_stack)):[];
-  let h='';
   const esc=c.name.replace(/'/g,"\\'");
-  if(tab==='ov'){
-    h=`<div class="dbanner">
+  const center=document.getElementById('center');
+  center.innerHTML=`<div class="detail">
+    <div class="dbanner">
       <div class="dlogo" style="background:${fg}">${ini(c.name)}</div>
       <div style="flex:1;min-width:0">
         <div class="dname">${c.name}<span class="tag ${tcls(c.type)}">${tlbl(c.type)}</span>${d?`<a class="ml" href="https://${d}" target="_blank">${d} ↗</a>`:''}</div>
         <div class="dsub">${c.category||'AdTech'}${c.hq_city||c.region?' · '+(c.hq_city||c.region):''}</div>
-        <div class="dstars">${stars(c.icp||0)} <span style="font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--t3);font-weight:400">${c.icp||'—'}/10 ICP</span></div>
+        <div class="dstars">${stars(c.icp||0)} <span style="font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--t3);font-weight:400">${c.icp||'—'}/10</span></div>
+      </div>
+      <div class="dact">
+        <button class="btn p sm" onclick="oc('Research ${esc} — full contact report for onAudience')">↗ Research</button>
+        <button class="btn sm" onclick="oc('Draft personalized outreach email to ${esc} for onAudience data partnership')">✉ Draft</button>
       </div>
     </div>
-    <div class="sec"><div class="sh2"><span class="slbl">Overview</span></div><div class="sbody">
+    <div class="dtabs" id="dtabs">
+      <div class="dtab active" onclick="sdt('ov',this)">Overview</div>
+      <div class="dtab" onclick="sdt('ct',this)">Contacts${ccts.length?` (${ccts.length})`:''}</div>
+      <div class="dtab" onclick="sdt('out',this)">Outreach</div>
+      <div class="dtab" onclick="sdt('rel',this)">Relations</div>
+    </div>
+    <div id="dtbody"></div>
+  </div>`;
+  rdt('ov');
+}
+
+function sdt(tab,el){
+  CDT=tab;
+  document.querySelectorAll('#dtabs .dtab').forEach(t=>t.classList.remove('active'));
+  if(el)el.classList.add('active');
+  rdt(tab);
+}
+
+function rdt(tab){
+  const c=CC;if(!c)return;
+  const b=document.getElementById('dtbody');if(!b)return;
+  const[bg,fg]=av(c.name);
+  const ccts=CTS.filter(ct=>(ct.company_name||'').toLowerCase()===c.name.toLowerCase()||(ct.company_id&&ct.company_id===(c.id||sl(c.name))));
+  const d=c.website?dom(c.website):'';
+  const esc=c.name.replace(/'/g,"\\'");
+  const dsps=c.dsps?(Array.isArray(c.dsps)?c.dsps:JSON.parse(c.dsps)):[];
+  const ts=c.tech_stack?(Array.isArray(c.tech_stack)?c.tech_stack:JSON.parse(c.tech_stack)):[];
+
+  if(tab==='ov'){
+    b.innerHTML=`<div class="sec"><div class="sh2"><span class="slbl">Company Overview</span></div><div class="sbody">
       <table class="inf">
         ${c.description?`<tr><td>About</td><td>${c.description}</td></tr>`:''}
         <tr><td>Category</td><td>${c.category||'—'}</td></tr>
-        <tr><td>Region</td><td>${c.hq_city||c.region||'—'}</td></tr>
+        <tr><td>Region / HQ</td><td>${c.hq_city||c.region||'—'}</td></tr>
         <tr><td>Employees</td><td>${c.size||'—'}</td></tr>
         ${c.founded_year?`<tr><td>Founded</td><td>${c.founded_year}</td></tr>`:''}
         ${c.funding?`<tr><td>Funding</td><td style="font-size:11px">${c.funding}</td></tr>`:''}
-        ${c.tcf_vendor_id?`<tr><td>GVL ID</td><td><span class="cpill">${c.tcf_vendor_id}</span></td></tr>`:''}
+        ${c.tcf_vendor_id?`<tr><td>GVL / TCF ID</td><td><span class="cpill">${c.tcf_vendor_id}</span></td></tr>`:''}
         <tr><td>DSPs</td><td>${dsps.length?dsps.map(dp=>`<span class="spill">${dp}</span>`).join(''):'—'}</td></tr>
         ${ts.length?`<tr><td>Tech Stack</td><td>${ts.slice(0,6).map(t=>`<span class="spill">${t.tool||t}</span>`).join('')}</td></tr>`:''}
-        <tr><td>Updated</td><td>${ta(c.updated_at)}</td></tr>
+        <tr><td>Updated</td><td style="font-family:'IBM Plex Mono',monospace;font-size:10px">${ta(c.updated_at)}</td></tr>
         ${c.linkedin_slug?`<tr><td>LinkedIn</td><td><a class="ml" href="https://www.linkedin.com/company/${c.linkedin_slug}" target="_blank">Company page ↗</a></td></tr>`:''}
         ${d?`<tr><td>Website</td><td><a class="ml" href="https://${d}" target="_blank">${d} ↗</a></td></tr>`:''}
       </table>${c.note?`<div class="nblock">📋 ${c.note}</div>`:''}
@@ -677,10 +631,10 @@ function sdt(tab,el,force){
         <tr><td>Email</td><td>${ct.email?`<span class="cpill">${ct.email}</span>`:'—'}</td></tr>
         ${ct.linkedin_url?`<tr><td>LinkedIn</td><td><a class="ml" href="${ct.linkedin_url}" target="_blank">Profile ↗</a></td></tr>`:''}
         ${ct.notes?`<tr><td>Notes</td><td style="color:var(--t2)">${ct.notes}</td></tr>`:''}
-      </table></div>`).join(''):`<div class="nodata">No contacts in DB</div>`;
-    h=`<div style="text-align:right;margin-bottom:8px"><button class="btn sm" onclick="oc('Find Head of Programmatic or Data Partnerships at ${esc} — LinkedIn, email, background')">Find contacts ↗</button></div>${ch}`;
+      </table></div>`).join(''):`<div class="nodata">No contacts in DB yet</div>`;
+    b.innerHTML=`<div style="text-align:right;margin-bottom:8px"><button class="btn sm" onclick="oc('Find Head of Programmatic or Data Partnerships at ${esc} — LinkedIn, email, background')">Find contacts ↗</button></div>${ch}`;
   } else if(tab==='out'){
-    h=`<div class="sec"><div class="sh2"><span class="slbl">Outreach Angle</span></div><div class="sbody">
+    b.innerHTML=`<div class="sec"><div class="sh2"><span class="slbl">Outreach Angle</span></div><div class="sbody">
       <div style="font-size:12px;color:var(--t2);line-height:1.7">${c.outreach_angle||`<span style="color:var(--t3);font-style:italic">Run full report to generate outreach angle</span>`}</div>
       <div style="display:flex;gap:5px;flex-wrap:wrap;margin-top:10px">
         <button class="btn p sm" onclick="oc('Draft personalized outreach email to ${esc} — value-led and curiosity variants for onAudience data partnership')">Draft email ↗</button>
@@ -691,14 +645,13 @@ function sdt(tab,el,force){
     </div></div>
     <div class="sec"><div class="sh2"><span class="slbl">Quick Links</span></div><div class="sbody"><table class="inf">
       <tr><td>People</td><td><a class="ml" href="https://www.linkedin.com/search/results/people/?keywords=${encodeURIComponent(c.name+' Head Programmatic Data Partnerships')}" target="_blank">LinkedIn search ↗</a></td></tr>
-      ${c.linkedin_slug?`<tr><td>Company</td><td><a class="ml" href="https://www.linkedin.com/company/${c.linkedin_slug}" target="_blank">linkedin.com/company/${c.linkedin_slug} ↗</a></td></tr>`:''}
+      ${c.linkedin_slug?`<tr><td>Company LI</td><td><a class="ml" href="https://www.linkedin.com/company/${c.linkedin_slug}" target="_blank">linkedin.com/company/${c.linkedin_slug} ↗</a></td></tr>`:''}
       ${d?`<tr><td>Website</td><td><a class="ml" href="https://${d}" target="_blank">${d} ↗</a></td></tr>`:''}
     </table></div></div>`;
   } else if(tab==='rel'){
-    h=`<div id="relb"><div class="nodata">Loading…</div></div>`;
+    b.innerHTML=`<div id="relb"><div class="nodata">Loading…</div></div>`;
     setTimeout(()=>lrel(sl(c.name)),60);
   }
-  document.getElementById('dbody').innerHTML=h;
 }
 
 async function lrel(slug){
@@ -718,7 +671,7 @@ async function lrel(slug){
         <span style="color:var(--g);font-size:13px;flex-shrink:0">${it.arrow}</span>
         <div style="flex:1;min-width:0">
           <div style="display:flex;align-items:center;gap:5px">
-            ${it.has?`<span style="font-size:12px;font-weight:500;color:var(--g);cursor:pointer" onclick="od('${encodeURIComponent(it.oid)}')">${it.name}</span>`:`<span style="font-size:12px;font-weight:500">${it.name}</span>`}
+            ${it.has?`<span style="font-size:12px;font-weight:500;color:var(--g);cursor:pointer" onclick="oc2('${encodeURIComponent(it.oid)}')">${it.name}</span>`:`<span style="font-size:12px;font-weight:500">${it.name}</span>`}
             <span class="tag ${it.scls}" style="margin-left:auto">${it.strength}</span>
           </div>
           ${it.notes?`<div style="font-size:11px;color:var(--t3);margin-top:2px">${it.notes}</div>`:''}
@@ -732,13 +685,13 @@ function rct(){
   const f=CTS.filter(ct=>!q||(ct.full_name+' '+(ct.company_name||'')+' '+(ct.title||'')).toLowerCase().includes(q));
   document.getElementById('ctmeta').textContent=`${f.length} of ${CTS.length}`;
   document.getElementById('cttb').innerHTML=f.map(ct=>{const[bg,fg]=av(ct.full_name||'');
-    return`<tr onclick="oc('Research ${(ct.full_name||'').replace(/'/g,"\\'")} at ${(ct.company_name||'').replace(/'/g,"\\'")} — background and outreach hooks')">
-      <td><div class="ctav" style="width:26px;height:26px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-family:'IBM Plex Mono',monospace;font-size:8px;font-weight:700;background:${bg};border:1px solid ${fg}40;color:${fg}">${ini(ct.full_name||'')}</div></td>
+    return`<tr onclick="oc('Research ${(ct.full_name||'').replace(/'/g,"\\'")} at ${(ct.company_name||'').replace(/'/g,"\\'")} for onAudience outreach')">
+      <td><div style="width:26px;height:26px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-family:'IBM Plex Mono',monospace;font-size:8px;font-weight:700;background:${bg};border:1px solid ${fg}40;color:${fg}">${ini(ct.full_name||'')}</div></td>
       <td style="font-weight:500">${ct.full_name||'—'}</td>
       <td style="font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--t3)">${ct.title||'—'}</td>
       <td>${ct.company_name||'—'}</td>
       <td>${ct.email?`<span class="cpill">${ct.email}</span>`:'—'}</td>
-      <td style="font-size:11px;color:var(--t2);overflow:hidden;text-overflow:ellipsis;max-width:200px">${ct.notes||''}</td>
+      <td style="font-size:11px;color:var(--t2)">${ct.notes||''}</td>
     </tr>`;}).join('');
 }
 
@@ -748,23 +701,18 @@ function sv(v){
   if(v==='en')btc();
 }
 
-/* KBD */
-let kht;
-function showKH(){const h=document.getElementById('kbdh');h.classList.add('vis');clearTimeout(kht);kht=setTimeout(()=>h.classList.remove('vis'),5000);}
+/* KEYBOARD */
 document.addEventListener('keydown',e=>{
   if(e.target.tagName==='INPUT'||e.target.tagName==='TEXTAREA')return;
-  const do2=document.getElementById('drw').classList.contains('open');
-  if(e.key==='Escape'){if(do2)cdraw();else cm();return;}
+  if(e.key==='Escape'){cm();return;}
   if(e.key==='/'){ e.preventDefault();document.getElementById('cosrch').focus();return;}
   if(e.key==='n'||e.key==='N'){e.preventDefault();openR();return;}
-  if((e.key==='j'||e.key==='ArrowDown')&&!do2){e.preventDefault();FI=Math.min(FI+1,FR.length-1);rt();stf();return;}
-  if((e.key==='k'||e.key==='ArrowUp')&&!do2){e.preventDefault();FI=Math.max(FI-1,0);rt();stf();return;}
-  if(e.key==='Enter'&&FI>=0&&!do2){const c=FR[FI];if(c)od(encodeURIComponent(c.id||sl(c.name)));return;}
-  if((e.key==='e'||e.key==='E')&&CC){e.preventDefault();oc('Research '+CC.name+' — full contact report for onAudience');return;}
-  if(e.key==='ArrowLeft'&&do2){const t=['ov','ct','out','rel'];const i=t.indexOf(CDT);if(i>0)sdt(t[i-1],null,true);return;}
-  if(e.key==='ArrowRight'&&do2){const t=['ov','ct','out','rel'];const i=t.indexOf(CDT);if(i<t.length-1)sdt(t[i+1],null,true);return;}
+  if(e.key==='j'||e.key==='ArrowDown'){e.preventDefault();FI=Math.min(FI+1,FR.length-1);if(FR[FI])oc2(encodeURIComponent(FR[FI].id||sl(FR[FI].name)));return;}
+  if(e.key==='k'||e.key==='ArrowUp'){e.preventDefault();FI=Math.max(FI-1,0);if(FR[FI])oc2(encodeURIComponent(FR[FI].id||sl(FR[FI].name)));return;}
+  if(e.key==='e'||e.key==='E'){if(CC){e.preventDefault();oc('Research '+CC.name+' — full contact report for onAudience');}return;}
+  if(e.key==='ArrowLeft'&&CC){const t=['ov','ct','out','rel'];const i=t.indexOf(CDT);if(i>0){CDT=t[i-1];document.querySelectorAll('#dtabs .dtab')[i-1]?.click();}return;}
+  if(e.key==='ArrowRight'&&CC){const t=['ov','ct','out','rel'];const i=t.indexOf(CDT);if(i<t.length-1){CDT=t[i+1];document.querySelectorAll('#dtabs .dtab')[i+1]?.click();}return;}
 });
-function stf(){const r=document.querySelector(`#cotb tr[data-i="${FI}"]`);if(r)r.scrollIntoView({block:'nearest'});}
 
 /* MODAL */
 let _mt='';
@@ -803,15 +751,15 @@ function etag(tag,el){
 function ess(t){const el=document.getElementById('estat');if(el)el.textContent=t;}
 async function efind(){
   const d=document.getElementById('edesc').value.trim();if(!d){document.getElementById('edesc').focus();return;}
-  const btn=document.getElementById('efbtn');btn.disabled=true;btn.textContent='⏳ Finding…';ess('Asking AI…');
+  const btn=document.getElementById('efbtn');btn.disabled=true;btn.textContent='⏳…';ess('Asking AI…');
   EAT=null;document.querySelectorAll('.tctag').forEach(t=>t.classList.remove('active'));
   try{
     const coList=COS.map(c=>{const gps=gaps(c).map(g=>g.id);return`${c.id||sl(c.name)}|${c.name}|${c.type}|${c.category||''}|${c.region||c.hq_city||''}|gaps:${gps.join(',')||'none'}|desc:${c.description?'y':'n'}|size:${c.size?'y':'n'}|fund:${c.funding?'y':'n'}`;}).join('\n');
-    const pr=`You are a database filter for the onAudience sales CRM.\nUser wants: "${d}"\nCompany database (id|name|type|category|region|gaps|desc|size|fund):\n${coList}\nReturn ONLY a JSON array of company IDs that best match. Be liberal.\nNo markdown, no explanation. Example: ["adform","zeotap"]`;
+    const pr=`You are a database filter for the onAudience sales CRM.\nUser wants: "${d}"\nDatabase (id|name|type|category|region|gaps|desc|size|fund):\n${coList}\nReturn ONLY a JSON array of matching company IDs. No markdown. Example: ["adform","zeotap"]`;
     const res=await fetch('https://api.anthropic.com/v1/messages',{method:'POST',headers:{'Content-Type':'application/json','x-api-key':gak(),'anthropic-version':'2023-06-01','anthropic-dangerous-direct-browser-access':'true'},body:JSON.stringify({model:'claude-haiku-4-5-20251001',max_tokens:800,messages:[{role:'user',content:pr}]})});
     const data=await res.json();if(data.error)throw new Error(data.error.message);
     const ids=JSON.parse((data.content?.[0]?.text||'[]').replace(/```[a-z]*/g,'').replace(/```/g,'').trim().match(/\[[\s\S]*\]/)?.[0]||'[]');
-    EF=ids;ES=new Set(ids);ess(`Found ${ids.length} companies`);erl();eusc();
+    EF=ids;ES=new Set(ids);ess(`Found ${ids.length}`);erl();eusc();
   }catch(e){ess(`⚠ ${e.message}`);}
   btn.disabled=false;btn.textContent='🔍 Find';
 }
@@ -835,18 +783,15 @@ function erl(){
 function etr(enc){const id=decodeURIComponent(enc);if(ES.has(id))ES.delete(id);else ES.add(id);eusc();erl();}
 function eall(){(EF.length?EF:COS.map(c=>c.id||sl(c.name))).forEach(id=>ES.add(id));eusc();erl();}
 function enone(){ES.clear();eusc();erl();}
-function gak(){let k=localStorage.getItem('oaAntKey');if(!k){k=prompt('Anthropic API key (stored in browser localStorage):');if(k)localStorage.setItem('oaAntKey',k.trim());}return k||'';}
+function gak(){let k=localStorage.getItem('oaAntKey');if(!k){k=prompt('Anthropic API key (stored in localStorage):');if(k)localStorage.setItem('oaAntKey',k.trim());}return k||'';}
 
 function genScript(){
-  if(!ES.size){document.getElementById('esout').innerHTML='<div style="padding:20px;font-family:\'IBM Plex Mono\',monospace;font-size:10px;color:var(--prc)">⚠ Select companies first.</div>';return;}
+  if(!ES.size){document.getElementById('esout').innerHTML='<div style="padding:16px;font-family:\'IBM Plex Mono\',monospace;font-size:10px;color:var(--prc)">⚠ Select companies first.</div>';return;}
   const sel=COS.filter(c=>ES.has(c.id||sl(c.name)));
   const p1f=[...document.querySelectorAll('#p1cks input:checked')].map(i=>i.dataset.f);
   const p2f=[...document.querySelectorAll('#p2cks input:checked')].map(i=>i.dataset.f);
-  const p1sk=document.getElementById('p1sk').checked;
-  const p2sk=document.getElementById('p2sk').checked;
-  const sts=document.getElementById('p2st').value;
-  const dly=document.getElementById('p2dl').value;
-  const cnc=document.getElementById('p2cn').value;
+  const p1sk=document.getElementById('p1sk').checked;const p2sk=document.getElementById('p2sk').checked;
+  const sts=document.getElementById('p2st').value;const dly=document.getElementById('p2dl').value;const cnc=document.getElementById('p2cn').value;
   const sbUrl=document.getElementById('p2sb').value;
   const cj=JSON.stringify(sel.map(c=>({id:c.id||sl(c.name),name:c.name,website:c.website||'',gaps:gaps(c).map(g=>g.id)})),null,2);
   const sc=`#!/usr/bin/env python3
@@ -863,7 +808,6 @@ SUPABASE_URL  = "${sbUrl}"
 SUPABASE_KEY  = os.environ.get("SUPABASE_KEY", "${SB_KEY}")
 B2B_MCP_URL   = "https://b2b.ctpl.dev/sse"
 SBH = {"apikey": SUPABASE_KEY, "Authorization": f"Bearer {SUPABASE_KEY}", "Content-Type": "application/json", "Prefer": "resolution=merge-duplicates,return=minimal"}
-
 COMPANIES = ${cj}
 
 async def sbget(cid):
@@ -896,7 +840,7 @@ ${p1sk?'    if not needs: print(f"  [P1] {co[\'name\']}: skip"); return {}':''}
 ${p2sk?'    if not needs: print(f"  [P2] {co[\'name\']}: skip"); return {}':''}
     if not needs: return {}
     llm = ChatAnthropic(model="claude-sonnet-4-6", api_key=ANTHROPIC_KEY, temperature=0, max_tokens=1000)
-    task = f"Navigate to {co['website']} + /about + /products. Fill fields: {needs}. Return JSON only."
+    task = f"Navigate to {co['website']} + /about + /products. Fill: {needs}. Return JSON only."
     agent = Agent(task=task, llm=llm, max_steps=${sts})
     result = await agent.run(); await asyncio.sleep(${dly})
     try: return json.loads(re.search(r'\\{[\\s\\S]+\\}', str(result.final_result() or "")).group(0))
@@ -911,7 +855,6 @@ ${p2f.length?`    p2 = await phase2(co)
     print(f"  {'✅ '+str(len(updates))+' fields' if updates else '— no updates'}")
 
 async def main():
-    print(f"onAudience Enricher | {len(COMPANIES)} co | P1:{${JSON.stringify(p1f)}} P2:{${JSON.stringify(p2f)}}")
     sem = asyncio.Semaphore(${cnc})
     async def run(co):
         async with sem: await enrich(co)
@@ -937,7 +880,7 @@ document.addEventListener('DOMContentLoaded',()=>{
   document.querySelectorAll('.eck input').forEach(cb=>cb.addEventListener('change',function(){this.closest('.eck').classList.toggle('on',this.checked);}));
 });
 
-lseed();ust();rt();rct();reload();
+lseed();ust();rl();rct();reload();
 </script>
 </body>
 </html>
