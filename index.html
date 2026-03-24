@@ -3,1570 +3,1143 @@
 <head>
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
-<title>onAudience — Data Providers Directory</title>
+<title>onAudience — Sales Intelligence Hub</title>
 <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@300;400;500;600&family=IBM+Plex+Sans:wght@300;400;500;600&display=swap" rel="stylesheet"/>
 <style>
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
-[data-theme="light"]{--bg:#F4F2EC;--surf:#FFFFFF;--surf2:#F8F6F0;--surf3:#EFEDE6;--surf4:#E8E6DE;--rule:rgba(0,0,0,0.09);--rule2:rgba(0,0,0,0.05);--rule3:rgba(0,0,0,0.03);--t1:#0C0C0A;--t2:#5C5C56;--t3:#9A9990;--t4:#C8C6BC;--g:#178066;--gd:#0F6E56;--gb:rgba(23,128,102,0.08);--gr:rgba(23,128,102,0.28);--cc:#146B3A;--cb:#E4F5EC;--cr:rgba(20,107,58,0.28);--pc:#1A4F8A;--pb:#E6EEFA;--pr:rgba(26,79,138,0.28);--prc:#7A4200;--prb:#FEF2E0;--prr:rgba(122,66,0,0.28);--nc:#6B6B64;--nb:#EFEDE6;--nr:rgba(107,107,100,0.28);--poc:#4B2D9E;--pob:#EDE8FD;--por:rgba(75,45,158,0.28);--sh:0 1px 2px rgba(0,0,0,0.06),0 4px 12px rgba(0,0,0,0.04)}
-[data-theme="dark"]{--bg:#0C0C0A;--surf:#141412;--surf2:#1C1C1A;--surf3:#242421;--surf4:#2E2E2B;--rule:rgba(255,255,255,0.08);--rule2:rgba(255,255,255,0.05);--rule3:rgba(255,255,255,0.03);--t1:#F0EFE8;--t2:#8A8A82;--t3:#555550;--t4:#38382E;--g:#1FA882;--gd:#178066;--gb:rgba(31,168,130,0.1);--gr:rgba(31,168,130,0.3);--cc:#4ADE80;--cb:rgba(74,222,128,0.1);--cr:rgba(74,222,128,0.25);--pc:#60A5FA;--pb:rgba(96,165,250,0.1);--pr:rgba(96,165,250,0.25);--prc:#FBBF24;--prb:rgba(251,191,36,0.1);--prr:rgba(251,191,36,0.25);--nc:#55554E;--nb:rgba(85,85,78,0.15);--nr:rgba(85,85,78,0.25);--poc:#C084FC;--pob:rgba(192,132,252,0.1);--por:rgba(192,132,252,0.25);--sh:0 1px 3px rgba(0,0,0,0.5),0 6px 20px rgba(0,0,0,0.35)}
-html,body{min-height:100%;background:var(--bg);color:var(--t1);transition:background .25s,color .25s}
-body{font-family:'IBM Plex Sans',system-ui,sans-serif;font-size:13px;line-height:1.5}
+[data-theme="light"]{
+  --bg:#F4F2EC;--surf:#FFFFFF;--surf2:#F8F6F0;--surf3:#EFEDE6;--surf4:#E8E6DE;
+  --rule:rgba(0,0,0,0.09);--rule2:rgba(0,0,0,0.05);--rule3:rgba(0,0,0,0.03);
+  --t1:#0C0C0A;--t2:#5C5C56;--t3:#9A9990;--t4:#C8C6BC;
+  --g:#178066;--gd:#0F6E56;--gb:rgba(23,128,102,0.08);--gr:rgba(23,128,102,0.28);
+  --cc:#146B3A;--cb:#E4F5EC;--cr:rgba(20,107,58,0.28);
+  --pc:#1A4F8A;--pb:#E6EEFA;--pr:rgba(26,79,138,0.28);
+  --prc:#7A4200;--prb:#FEF2E0;--prr:rgba(122,66,0,0.28);
+  --nc:#6B6B64;--nb:#EFEDE6;--nr:rgba(107,107,100,0.28);
+  --poc:#4B2D9E;--pob:#EDE8FD;--por:rgba(75,45,158,0.28);
+  --sh:0 1px 2px rgba(0,0,0,0.06),0 4px 12px rgba(0,0,0,0.04);
+}
+[data-theme="dark"]{
+  --bg:#0C0C0A;--surf:#141412;--surf2:#1C1C1A;--surf3:#242421;--surf4:#2E2E2B;
+  --rule:rgba(255,255,255,0.08);--rule2:rgba(255,255,255,0.05);--rule3:rgba(255,255,255,0.03);
+  --t1:#F0EFE8;--t2:#8A8A82;--t3:#555550;--t4:#38382E;
+  --g:#1FA882;--gd:#178066;--gb:rgba(31,168,130,0.1);--gr:rgba(31,168,130,0.3);
+  --cc:#4ADE80;--cb:rgba(74,222,128,0.1);--cr:rgba(74,222,128,0.25);
+  --pc:#60A5FA;--pb:rgba(96,165,250,0.1);--pr:rgba(96,165,250,0.25);
+  --prc:#FBBF24;--prb:rgba(251,191,36,0.1);--prr:rgba(251,191,36,0.25);
+  --nc:#55554E;--nb:rgba(85,85,78,0.15);--nr:rgba(85,85,78,0.25);
+  --poc:#C084FC;--pob:rgba(192,132,252,0.1);--por:rgba(192,132,252,0.25);
+  --sh:0 1px 3px rgba(0,0,0,0.5),0 6px 20px rgba(0,0,0,0.35);
+}
+[data-theme="dark"] body::before{
+  content:'';position:fixed;inset:0;pointer-events:none;z-index:0;
+  background-image:linear-gradient(rgba(255,255,255,.016) 1px,transparent 1px),
+    linear-gradient(90deg,rgba(255,255,255,.016) 1px,transparent 1px);
+  background-size:40px 40px;
+}
+html,body{height:100%;background:var(--bg);color:var(--t1);
+  font-family:'IBM Plex Sans',sans-serif;font-size:13px;line-height:1.5;
+  transition:background .25s,color .25s}
+::-webkit-scrollbar{width:3px;height:3px}
+::-webkit-scrollbar-thumb{background:var(--surf4);border-radius:2px}
 
-/* NAV */
-.topnav{background:var(--surf);border-bottom:1px solid var(--rule);display:flex;align-items:center;height:42px;padding:0 18px;gap:0;position:sticky;top:0;z-index:100}
-.nav-logo{width:26px;height:26px;background:var(--g);border-radius:4px;display:flex;align-items:center;justify-content:center;font-family:'IBM Plex Mono',monospace;font-weight:600;font-size:9px;color:#fff;letter-spacing:-0.5px;flex-shrink:0}
-.nav-brand{font-family:'IBM Plex Mono',monospace;font-size:10px;font-weight:500;letter-spacing:.06em;text-transform:uppercase;margin-left:10px;padding-right:14px;border-right:1px solid var(--rule);color:var(--t1);white-space:nowrap}
+/* ── App shell ── */
+.app{display:flex;flex-direction:column;height:100vh;overflow:hidden;position:relative;z-index:1}
+
+/* ── Nav ── */
+.nav{background:var(--surf);border-bottom:1px solid var(--rule);
+     display:flex;align-items:center;height:42px;padding:0 14px;gap:0;flex-shrink:0}
+.nav-logo{width:26px;height:26px;background:var(--g);border-radius:4px;
+          display:flex;align-items:center;justify-content:center;
+          font-family:'IBM Plex Mono',monospace;font-weight:600;font-size:9px;
+          color:#fff;letter-spacing:-.5px;flex-shrink:0}
+.nav-brand{font-family:'IBM Plex Mono',monospace;font-size:10px;font-weight:500;
+           letter-spacing:.06em;text-transform:uppercase;margin-left:10px;
+           padding-right:14px;border-right:1px solid var(--rule);color:var(--t1)}
 .nav-sub{color:var(--t3);font-weight:400}
-.nav-right{margin-left:auto;display:flex;align-items:center;gap:7px}
-.synced{display:flex;align-items:center;gap:5px;font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--t3);padding:2px 8px;border:1px solid var(--rule);border-radius:2px}
-.dot{width:5px;height:5px;border-radius:50%;background:#22C55E;animation:blink 3s infinite}
+.nav-right{margin-left:auto;display:flex;align-items:center;gap:6px}
+.nav-status{display:flex;align-items:center;gap:5px;font-family:'IBM Plex Mono',monospace;
+            font-size:9px;color:var(--t3);padding:2px 8px;border:1px solid var(--rule);border-radius:2px}
+.nav-dot{width:5px;height:5px;border-radius:50%;background:#22C55E}
+.nav-dot.seed{background:var(--t4)}
 @keyframes blink{0%,90%,100%{opacity:1}95%{opacity:.3}}
-.theme-btn{width:26px;height:26px;border:1px solid var(--rule);border-radius:2px;background:var(--surf2);cursor:pointer;font-size:12px;display:flex;align-items:center;justify-content:center;transition:background .15s;color:var(--t2)}
-.theme-btn:hover{background:var(--surf3)}
+.nav-dot.live{animation:blink 3s infinite}
 
-/* STATS BAR */
-.stats-bar{background:var(--surf);border-bottom:1px solid var(--rule);display:grid;grid-template-columns:repeat(6,1fr)}
-.sc{padding:9px 14px 8px;border-right:1px solid var(--rule);cursor:pointer;transition:background .15s}
+/* ── Stats bar ── */
+.stats-bar{background:var(--surf);border-bottom:1px solid var(--rule);
+           display:grid;grid-template-columns:repeat(7,1fr);flex-shrink:0}
+.sc{padding:7px 10px 6px;border-right:1px solid var(--rule);cursor:pointer;transition:background .15s}
 .sc:last-child{border-right:none}
 .sc:hover{background:var(--surf2)}
 .sc.active{background:var(--gb)}
-.sn{font-family:'IBM Plex Mono',monospace;font-size:22px;font-weight:300;letter-spacing:-1px;line-height:1;color:var(--t1)}
-.sl{font-family:'IBM Plex Mono',monospace;font-size:9px;text-transform:uppercase;letter-spacing:.08em;color:var(--t3);margin-top:3px}
+.sn{font-family:'IBM Plex Mono',monospace;font-size:20px;font-weight:300;
+    letter-spacing:-1px;line-height:1;color:var(--t1)}
+.sl{font-family:'IBM Plex Mono',monospace;font-size:8px;text-transform:uppercase;
+    letter-spacing:.08em;color:var(--t3);margin-top:2px;white-space:nowrap}
 
-/* ALERT */
-.alert{background:var(--pob);border-bottom:1px solid var(--por);border-left:3px solid var(--poc);padding:7px 16px;display:flex;align-items:center;gap:10px}
-.alert-text{font-size:12px;color:var(--poc);flex:1}.alert-text strong{font-weight:500}
-.alert-btn{height:22px;padding:0 10px;border:1px solid var(--por);border-radius:2px;font-family:'IBM Plex Mono',monospace;font-size:9px;text-transform:uppercase;letter-spacing:.05em;cursor:pointer;background:var(--poc);color:#fff}
+/* ── Main layout ── */
+.main{display:flex;flex:1;overflow:hidden}
 
-/* SEARCH BAR */
-.search-bar{background:var(--surf);border-bottom:1px solid var(--rule);padding:7px 14px;display:flex;align-items:center;gap:8px;flex-wrap:wrap}
-.sbox{position:relative;flex:1;min-width:180px}
-.sico{position:absolute;left:8px;top:50%;transform:translateY(-50%);color:var(--t3);font-family:'IBM Plex Mono',monospace;font-size:10px;pointer-events:none}
-.sinp{width:100%;height:28px;padding:0 8px 0 24px;border:1px solid var(--rule);border-radius:2px;background:var(--surf2);color:var(--t1);font-family:'IBM Plex Mono',monospace;font-size:11px;outline:none;transition:border-color .15s}
+/* ── Left panel ── */
+.left{width:320px;flex-shrink:0;border-right:1px solid var(--rule);
+      background:var(--surf);display:flex;flex-direction:column;overflow:hidden}
+.tab-bar{display:flex;border-bottom:1px solid var(--rule);flex-shrink:0}
+.tab{flex:1;height:32px;border:none;background:none;font-family:'IBM Plex Mono',monospace;
+     font-size:9px;text-transform:uppercase;letter-spacing:.06em;color:var(--t3);
+     cursor:pointer;transition:all .15s;border-bottom:2px solid transparent}
+.tab.active{color:var(--g);border-bottom-color:var(--g);background:var(--surf2)}
+.left-search{padding:7px 8px;border-bottom:1px solid var(--rule2);display:flex;gap:5px;flex-shrink:0}
+.sinp{flex:1;height:26px;padding:0 8px 0 22px;border:1px solid var(--rule);border-radius:2px;
+      background:var(--surf2);color:var(--t1);font-family:'IBM Plex Mono',monospace;
+      font-size:10px;outline:none;transition:border-color .15s}
 .sinp::placeholder{color:var(--t3)}
 .sinp:focus{border-color:var(--gr)}
-.fpills{display:flex;gap:4px;flex-wrap:wrap}
-.fp{height:22px;padding:0 9px;border:1px solid var(--rule);border-radius:2px;font-family:'IBM Plex Mono',monospace;font-size:9px;text-transform:uppercase;letter-spacing:.05em;cursor:pointer;background:transparent;color:var(--t3);transition:all .12s;white-space:nowrap}
+.sbox{position:relative;flex:1}
+.sico{position:absolute;left:7px;top:50%;transform:translateY(-50%);
+      color:var(--t3);font-size:10px;pointer-events:none;font-family:'IBM Plex Mono',monospace}
+.filters{display:flex;gap:4px;padding:5px 8px;border-bottom:1px solid var(--rule2);
+         flex-wrap:wrap;flex-shrink:0}
+.fp{height:20px;padding:0 7px;border:1px solid var(--rule);border-radius:2px;
+    font-family:'IBM Plex Mono',monospace;font-size:8px;text-transform:uppercase;
+    letter-spacing:.05em;cursor:pointer;background:transparent;color:var(--t3);transition:all .12s}
 .fp:hover:not(.active){background:var(--surf3);color:var(--t1)}
 .fp.active{background:var(--t1);color:var(--surf);border-color:var(--t1)}
-.sort-sel{height:28px;padding:0 8px;border:1px solid var(--rule);border-radius:2px;background:var(--surf2);color:var(--t2);font-family:'IBM Plex Mono',monospace;font-size:10px;outline:none;cursor:pointer}
-
-/* LAYOUT */
-.main{display:flex;height:calc(100vh - 42px - 38px - 33px - 43px - var(--fx-offset,0px))}
-.panel-left{width:310px;flex-shrink:0;border-right:1px solid var(--rule);background:var(--surf);display:flex;flex-direction:column;overflow:hidden}
-.list-meta{padding:4px 10px;border-bottom:1px solid var(--rule2);display:flex;justify-content:space-between;flex-shrink:0}
-.list-meta span{font-family:'IBM Plex Mono',monospace;font-size:9px;color:var(--t3)}
+.list-meta{padding:3px 9px;border-bottom:1px solid var(--rule3);display:flex;justify-content:space-between;flex-shrink:0}
+.list-meta span{font-family:'IBM Plex Mono',monospace;font-size:8px;color:var(--t3)}
 .co-list{overflow-y:auto;flex:1}
-.co-list::-webkit-scrollbar{width:3px}
-.co-list::-webkit-scrollbar-thumb{background:var(--surf4);border-radius:2px}
 
-/* COMPANY ROW */
-.co-row{display:flex;align-items:center;gap:8px;padding:6px 10px;border-bottom:1px solid var(--rule3);cursor:pointer;transition:background .1s;user-select:none}
+/* ── Company row ── */
+.co-row{display:flex;align-items:center;gap:8px;padding:6px 9px;
+        border-bottom:1px solid var(--rule3);cursor:pointer;transition:background .1s;user-select:none}
 .co-row:hover{background:var(--surf2)}
-.co-row.selected{background:var(--gb);border-left:2px solid var(--g);padding-left:8px}
-.co-row.dead-row{opacity:.45}
-.co-av{width:26px;height:26px;border-radius:3px;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-family:'IBM Plex Mono',monospace;font-size:8px;font-weight:600;border:1px solid transparent}
-.co-info-sm{flex:1;min-width:0}
-.co-name-sm{font-size:12px;font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.co-meta-sm{font-family:'IBM Plex Mono',monospace;font-size:9px;color:var(--t3);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin-top:1px}
-.co-right-sm{display:flex;align-items:center;gap:4px;flex-shrink:0}
-.icp-num{font-family:'IBM Plex Mono',monospace;font-size:9px;color:var(--t4);min-width:14px;text-align:right}
+.co-row.sel{background:var(--gb);border-left:2px solid var(--g);padding-left:7px}
+.co-av{width:26px;height:26px;border-radius:3px;flex-shrink:0;display:flex;
+       align-items:center;justify-content:center;font-family:'IBM Plex Mono',monospace;
+       font-size:8px;font-weight:600;border:1px solid transparent}
+.co-info{flex:1;min-width:0}
+.co-name{font-size:12px;font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.co-note{font-family:'IBM Plex Mono',monospace;font-size:9px;color:var(--t3);
+         white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin-top:1px}
+.co-right{display:flex;align-items:center;gap:4px;flex-shrink:0}
+.icp-n{font-family:'IBM Plex Mono',monospace;font-size:9px;color:var(--t4);min-width:14px;text-align:right}
 
-/* DETAIL PANEL */
-.panel-right{flex:1;overflow-y:auto;background:var(--surf2);padding:12px}
-.panel-right::-webkit-scrollbar{width:3px}
-.panel-right::-webkit-scrollbar-thumb{background:var(--surf4);border-radius:2px}
-
-/* === REPORT COMPONENTS (contact-report-style skill v3) === */
-.tag{font-family:'IBM Plex Mono',monospace;font-size:8px;font-weight:500;text-transform:uppercase;letter-spacing:.06em;padding:1px 5px;border-radius:2px;border:1px solid;white-space:nowrap}
+/* ── Tags ── */
+.tag{font-family:'IBM Plex Mono',monospace;font-size:8px;font-weight:500;
+     text-transform:uppercase;letter-spacing:.06em;padding:1px 5px;
+     border-radius:2px;border:1px solid;white-space:nowrap;flex-shrink:0}
 .tc{color:var(--cc);background:var(--cb);border-color:var(--cr)}
 .tp{color:var(--pc);background:var(--pb);border-color:var(--pr)}
 .tpr{color:var(--prc);background:var(--prb);border-color:var(--prr)}
 .tn{color:var(--nc);background:var(--nb);border-color:var(--nr)}
 .tpo{color:var(--poc);background:var(--pob);border-color:var(--por)}
-.banner{background:var(--surf);border:1px solid var(--rule);border-radius:3px;padding:14px 16px;display:flex;align-items:flex-start;gap:12px;margin-bottom:6px;box-shadow:var(--sh)}
-.co-logo{width:40px;height:40px;border-radius:3px;background:var(--g);display:flex;align-items:center;justify-content:center;font-family:'IBM Plex Mono',monospace;font-size:11px;font-weight:600;color:#fff;flex-shrink:0;letter-spacing:-0.5px}
+
+/* ── Buttons ── */
+.btn{height:26px;padding:0 10px;border:1px solid var(--rule);border-radius:2px;
+     font-family:'IBM Plex Mono',monospace;font-size:9px;font-weight:500;
+     text-transform:uppercase;letter-spacing:.06em;cursor:pointer;
+     background:var(--surf2);color:var(--t2);transition:all .15s}
+.btn:hover{background:var(--surf3);color:var(--t1)}
+.btn.p{background:var(--g);color:#fff;border-color:var(--g)}
+.btn.p:hover{background:var(--gd)}
+.btn.sm{height:22px;padding:0 7px;font-size:8px}
+
+/* ── Center panel ── */
+.center{flex:1;overflow-y:auto;background:var(--surf2);padding:12px}
+
+/* ── Empty state QA cards ── */
+.qa-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;max-width:600px;margin:60px auto 0}
+.qa-card{background:var(--surf);border:1px solid var(--rule);border-radius:4px;
+         padding:14px;cursor:pointer;transition:all .15s}
+.qa-card:hover{border-color:var(--g);background:var(--gb)}
+.qa-icon{font-size:18px;margin-bottom:6px}
+.qa-title{font-size:13px;font-weight:500;color:var(--t1);margin-bottom:2px}
+.qa-desc{font-size:11px;color:var(--t3)}
+.empty-hdr{text-align:center;margin-top:48px;margin-bottom:24px}
+.empty-hdr .big{font-family:'IBM Plex Mono',monospace;font-size:13px;font-weight:500;
+                text-transform:uppercase;letter-spacing:.08em;color:var(--t3)}
+.empty-hdr .sub{font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--t4);margin-top:4px}
+
+/* ── Company detail ── */
+.co-panel{max-width:760px}
+.banner{background:var(--surf);border:1px solid var(--rule);border-radius:4px;
+        padding:14px 16px;display:flex;align-items:flex-start;gap:12px;
+        margin-bottom:6px;box-shadow:var(--sh)}
+.co-logo{width:40px;height:40px;border-radius:4px;display:flex;align-items:center;
+         justify-content:center;font-family:'IBM Plex Mono',monospace;font-size:11px;
+         font-weight:600;color:#fff;flex-shrink:0;letter-spacing:-.5px}
 .co-hdr-info{flex:1;min-width:0}
 .co-hdr-name{font-size:16px;font-weight:500;color:var(--t1);display:flex;align-items:center;gap:7px;flex-wrap:wrap}
 .co-domain{font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--t3)}
-.co-sub{font-size:11px;color:var(--t2);margin-top:3px}
-.icp-row{display:flex;align-items:center;gap:10px;margin-top:6px}
-.stars{color:var(--g);font-size:13px;letter-spacing:1px;font-family:'IBM Plex Mono',monospace}
+.co-hdr-sub{font-size:11px;color:var(--t2);margin-top:3px}
+.icp-row{display:flex;align-items:center;gap:8px;margin-top:5px}
+.stars{color:var(--g);font-size:12px;letter-spacing:1px}
 .icp-reason{font-family:'IBM Plex Mono',monospace;font-size:9px;color:var(--t3)}
-.section{background:var(--surf);border:1px solid var(--rule);border-radius:3px;overflow:hidden;margin-bottom:6px;box-shadow:var(--sh)}
-.sec-hdr{background:var(--surf2);padding:6px 12px;border-bottom:1px solid var(--rule);display:flex;align-items:center;gap:6px}
-.sec-label{font-family:'IBM Plex Mono',monospace;font-size:9px;font-weight:500;text-transform:uppercase;letter-spacing:.08em;color:var(--t3)}
+.hdr-actions{display:flex;flex-direction:column;gap:4px;flex-shrink:0}
+
+/* Sections */
+.section{background:var(--surf);border:1px solid var(--rule);border-radius:4px;
+         overflow:hidden;margin-bottom:6px;box-shadow:var(--sh)}
+.sec-hdr{background:var(--surf2);padding:6px 12px;border-bottom:1px solid var(--rule);
+         display:flex;align-items:center;gap:6px;cursor:pointer}
+.sec-hdr:hover{background:var(--surf3)}
+.sec-icon{font-size:11px}
+.sec-label{font-family:'IBM Plex Mono',monospace;font-size:9px;font-weight:500;
+           text-transform:uppercase;letter-spacing:.08em;color:var(--t3)}
 .sec-body{padding:10px 12px}
+.sec-body.hidden{display:none}
+.sec-badge{font-family:'IBM Plex Mono',monospace;font-size:9px;background:var(--surf3);
+           border:1px solid var(--rule);border-radius:2px;padding:0 5px;color:var(--t3);margin-left:auto}
+.sec-ml{margin-left:auto}
+
+/* Info tables */
 table.info{width:100%;border-collapse:collapse;font-size:12px}
 table.info tr td{padding:4px 0;vertical-align:top;border-bottom:1px solid var(--rule3)}
 table.info tr:last-child td{border-bottom:none}
-table.info tr td:first-child{font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--t3);width:130px;padding-right:12px;text-transform:uppercase;letter-spacing:.04em}
+table.info tr td:first-child{font-family:'IBM Plex Mono',monospace;font-size:9px;color:var(--t3);
+                              width:120px;padding-right:12px;text-transform:uppercase;letter-spacing:.04em}
 table.grid{width:100%;border-collapse:collapse;font-size:11px}
-table.grid th{font-family:'IBM Plex Mono',monospace;font-size:8px;text-transform:uppercase;letter-spacing:.08em;color:var(--t3);padding:5px 8px;border-bottom:1px solid var(--rule);background:var(--surf2);text-align:left;font-weight:500}
+table.grid th{font-family:'IBM Plex Mono',monospace;font-size:8px;text-transform:uppercase;
+              letter-spacing:.08em;color:var(--t3);padding:5px 8px;border-bottom:1px solid var(--rule);
+              background:var(--surf2);text-align:left;font-weight:500}
 table.grid td{padding:5px 8px;border-bottom:1px solid var(--rule3);color:var(--t1);vertical-align:top}
 table.grid tr:last-child td{border-bottom:none}
 table.grid tr:hover td{background:var(--surf2)}
-.contact-card{background:var(--surf2);border:1px solid var(--rule);border-radius:3px;padding:10px 12px;margin-bottom:5px}
+
+/* Contact cards */
+.contact-card{background:var(--surf2);border:1px solid var(--rule);border-radius:3px;
+              padding:9px 11px;margin-bottom:5px}
 .contact-card:last-child{margin-bottom:0}
-.ct-av{width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-family:'IBM Plex Mono',monospace;font-size:8px;font-weight:700;background:var(--pb);color:var(--pc);border:1px solid var(--pr);flex-shrink:0}
+.ct-row{display:flex;align-items:flex-start;gap:8px;margin-bottom:4px}
+.ct-av{width:28px;height:28px;border-radius:50%;display:flex;align-items:center;
+       justify-content:center;font-family:'IBM Plex Mono',monospace;font-size:8px;
+       font-weight:700;background:var(--pb);color:var(--pc);border:1px solid var(--pr);flex-shrink:0}
+.ct-meta{flex:1}
 .ct-name{font-size:12px;font-weight:500;color:var(--t1)}
 .ct-role{font-family:'IBM Plex Mono',monospace;font-size:9px;color:var(--t3)}
-.ct-row{display:flex;align-items:flex-start;gap:8px;margin-bottom:6px}
-.ct-meta{flex:1}
-table.info2{width:100%;border-collapse:collapse;font-size:11px}
-table.info2 tr td{padding:3px 0;vertical-align:top;border-bottom:1px solid var(--rule3)}
-table.info2 tr:last-child td{border-bottom:none}
-table.info2 tr td:first-child{font-family:'IBM Plex Mono',monospace;font-size:9px;color:var(--t3);width:80px;text-transform:uppercase;letter-spacing:.04em}
-.code-pill{font-family:'IBM Plex Mono',monospace;font-size:10px;background:var(--surf3);border:1px solid var(--rule);border-radius:2px;padding:1px 5px;color:var(--t1)}
-.conf{font-family:'IBM Plex Mono',monospace;font-size:8px;padding:1px 5px;border-radius:2px;border:1px solid;margin-left:4px}
+.code-pill{font-family:'IBM Plex Mono',monospace;font-size:10px;background:var(--surf3);
+           border:1px solid var(--rule);border-radius:2px;padding:1px 5px;color:var(--t1)}
+.conf{font-family:'IBM Plex Mono',monospace;font-size:8px;padding:1px 5px;
+      border-radius:2px;border:1px solid;margin-left:4px}
 .conf-hi{color:var(--cc);background:var(--cb);border-color:var(--cr)}
 .conf-med{color:var(--prc);background:var(--prb);border-color:var(--prr)}
-.rel-alert{background:var(--cb);border:1px solid var(--cr);border-left:3px solid var(--cc);border-radius:3px;padding:8px 12px;font-size:11px;color:var(--cc);margin-bottom:6px}
-.rel-alert strong{font-weight:500}
-.urg-alert{background:var(--pob);border:1px solid var(--por);border-left:3px solid var(--poc);border-radius:3px;padding:8px 12px;font-size:11px;color:var(--poc);margin-bottom:6px}
-.urg-alert strong{font-weight:500}
-.no-rel{background:var(--surf2);border:1px solid var(--rule);border-radius:3px;padding:8px 12px;font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--t3);text-transform:uppercase;letter-spacing:.05em;margin-bottom:6px}
-.note{background:var(--surf2);border-left:2px solid var(--g);padding:8px 12px;font-size:11px;color:var(--t2);margin-top:6px;line-height:1.6}
-.seg-pill{font-family:'IBM Plex Mono',monospace;font-size:9px;display:inline-block;padding:1px 6px;border:1px solid var(--rule);border-radius:2px;color:var(--t3);margin:2px}
-.btn{height:24px;padding:0 10px;border:1px solid var(--rule);border-radius:2px;font-family:'IBM Plex Mono',monospace;font-size:9px;font-weight:500;text-transform:uppercase;letter-spacing:.06em;cursor:pointer;background:var(--surf2);color:var(--t2);transition:all .15s}
-.btn:hover{background:var(--surf3);color:var(--t1)}
-.btn.primary{background:var(--g);color:#fff;border-color:var(--g)}
-.btn.primary:hover{background:var(--gd)}
+
+/* Note / angle */
+.note{background:var(--surf2);border-left:2px solid var(--g);padding:8px 12px;
+      font-size:11px;color:var(--t2);line-height:1.7}
 .btn-row{display:flex;gap:5px;flex-wrap:wrap;margin-top:8px}
+
+/* Alerts */
+.rel-alert{background:var(--cb);border:1px solid var(--cr);border-left:3px solid var(--cc);
+           border-radius:3px;padding:8px 12px;font-size:11px;color:var(--cc);margin-bottom:6px}
+.no-rel{background:var(--surf2);border:1px solid var(--rule);border-radius:3px;
+        padding:7px 11px;font-family:'IBM Plex Mono',monospace;font-size:9px;
+        color:var(--t3);text-transform:uppercase;letter-spacing:.05em}
+
+/* Links */
 a.ml{font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--g);text-decoration:none}
 a.ml:hover{text-decoration:underline}
-.sec-icon{font-size:12px}
-.empty-panel{display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:300px;color:var(--t3)}
-.empty-panel .big{font-family:'IBM Plex Mono',monospace;font-size:40px;font-weight:200;letter-spacing:-2px;margin-bottom:8px;color:var(--t4)}
-.empty-panel .sub{font-family:'IBM Plex Mono',monospace;font-size:10px;text-transform:uppercase;letter-spacing:.08em}
 
-/* FILTER PANEL */
-.fbar{background:var(--surf);border-bottom:1px solid var(--rule);padding:0 14px;overflow:hidden}
-.fbar-inner{overflow:hidden;max-height:0;transition:max-height .22s ease}
-.fbar-inner.open{max-height:240px}
-.fgroup{display:flex;align-items:flex-start;gap:8px;padding:7px 0;border-bottom:1px solid var(--rule2)}
-.fgroup:last-child{border-bottom:none;padding-bottom:8px}
-.fg-lbl{font-family:'IBM Plex Mono',monospace;font-size:9px;text-transform:uppercase;letter-spacing:.06em;color:var(--t3);width:72px;flex-shrink:0;padding-top:3px}
-.fg-pills{display:flex;gap:3px;flex-wrap:wrap}
-.fpx{height:20px;padding:0 8px;border:1px solid var(--rule);border-radius:2px;font-family:'IBM Plex Mono',monospace;font-size:9px;cursor:pointer;background:transparent;color:var(--t3);transition:all .12s;white-space:nowrap;line-height:18px}
-.fpx:hover:not(.on){background:var(--surf3);color:var(--t1)}
-.fpx.on{background:var(--t1);color:var(--surf);border-color:var(--t1)}
-/* active chips strip inside search bar */
-.chips-row{display:flex;gap:4px;flex-wrap:wrap;padding:4px 0 0}
-.chips-row:empty{display:none}
-.achip{display:inline-flex;align-items:center;gap:4px;height:18px;padding:0 6px;background:var(--gb);border:1px solid var(--gr);border-radius:2px;font-family:'IBM Plex Mono',monospace;font-size:9px;color:var(--gd);cursor:pointer;user-select:none}
-.achip:hover{background:var(--gr)}
-.achip-x{opacity:.6;font-size:8px}
-/* filter toggle btn */
-.filt-btn{height:28px;padding:0 10px;border:1px solid var(--rule);border-radius:2px;font-family:'IBM Plex Mono',monospace;font-size:9px;text-transform:uppercase;letter-spacing:.05em;cursor:pointer;background:var(--surf2);color:var(--t2);display:flex;align-items:center;gap:5px;transition:all .12s;white-space:nowrap}
-.filt-btn:hover{background:var(--surf3);color:var(--t1)}
-.filt-btn.active{background:var(--t1);color:var(--surf);border-color:var(--t1)}
-.fcnt{display:inline-flex;align-items:center;justify-content:center;min-width:14px;height:14px;padding:0 3px;border-radius:2px;background:var(--g);color:#fff;font-size:8px;font-weight:700}
-/* row tags for size/region */
-.row-tag{font-family:'IBM Plex Mono',monospace;font-size:8px;padding:1px 4px;border-radius:2px;border:1px solid var(--rule);color:var(--t3);background:var(--surf2);white-space:nowrap}
+/* Tech stack pills */
+.seg-pill{font-family:'IBM Plex Mono',monospace;font-size:9px;display:inline-block;
+          padding:1px 6px;border:1px solid var(--rule);border-radius:2px;
+          color:var(--t3);margin:2px}
+
+/* ── Context menu ── */
+.ctx-menu{position:fixed;background:var(--surf);border:1px solid var(--rule);
+          border-radius:4px;padding:5px;z-index:9998;min-width:220px;box-shadow:var(--sh)}
+.ctx-label{font-family:'IBM Plex Mono',monospace;font-size:9px;color:var(--t3);
+           padding:4px 10px 3px;text-transform:uppercase;letter-spacing:.05em}
+.ctx-sep{height:1px;background:var(--rule);margin:4px 0}
+.ctx-item{display:flex;align-items:center;gap:9px;padding:7px 10px;font-size:12px;
+          color:var(--t1);border-radius:2px;cursor:pointer;transition:background .1s}
+.ctx-item:hover{background:var(--surf2)}
+.ctx-ico{font-size:13px;width:16px;text-align:center}
+
+/* ── Contact drawer ── */
+.drawer-overlay{position:fixed;inset:0;background:rgba(0,0,0,.3);z-index:8000;display:none}
+.drawer-overlay.vis{display:block}
+.drawer{position:fixed;top:0;right:-380px;width:380px;height:100vh;
+        background:var(--surf);border-left:1px solid var(--rule);
+        z-index:8001;transition:right .25s ease;display:flex;flex-direction:column;overflow:hidden}
+.drawer.open{right:0}
+.drawer-hdr{padding:12px 14px;border-bottom:1px solid var(--rule);display:flex;align-items:center;gap:10px;flex-shrink:0}
+.drawer-body{overflow-y:auto;flex:1;padding:12px 14px}
+.drawer-close{margin-left:auto;background:none;border:none;font-size:16px;cursor:pointer;color:var(--t3)}
+.drawer-close:hover{color:var(--t1)}
 </style>
 </head>
 <body>
+<div class="app">
 
-<nav class="topnav">
-  <div class="nav-logo">oA</div>
-  <span class="nav-brand">Sales Intelligence Hub <span class="nav-sub">/ Data Providers</span></span>
-  <div class="nav-right">
-    <div class="synced"><div class="dot"></div><span style="font-family:'IBM Plex Mono',monospace;font-size:10px" id="syncLabel">105 companies · Mar 2026</span></div>
-    <button class="theme-btn" onclick="toggleTheme()" title="Toggle theme">◐</button>
+  <!-- ── Nav ── -->
+  <nav class="nav">
+    <div class="nav-logo">oA</div>
+    <span class="nav-brand">Sales Intelligence Hub <span class="nav-sub">/ onAudience</span></span>
+    <div class="nav-right">
+      <div class="nav-status"><div class="nav-dot seed" id="navDot"></div><span id="navLabel">Loading…</span></div>
+      <button class="btn sm" onclick="reloadDB()" title="Reload from Supabase">↺</button>
+      <button class="btn sm p" onclick="openResearch()">+ Research</button>
+      <button class="btn sm" onclick="toggleTheme()" id="themeBtn">🌙</button>
+    </div>
+  </nav>
+
+  <!-- ── Stats bar ── -->
+  <div class="stats-bar">
+    <div class="sc active" id="sc-all" onclick="setFilter('all',this)">
+      <div class="sn" id="st-all">—</div><div class="sl">Total</div></div>
+    <div class="sc" id="sc-client" onclick="setFilter('client',this)">
+      <div class="sn" id="st-client">—</div><div class="sl">Clients</div></div>
+    <div class="sc" id="sc-poc" onclick="setFilter('poc',this)">
+      <div class="sn" id="st-poc">—</div><div class="sl">Active Deal</div></div>
+    <div class="sc" id="sc-partner" onclick="setFilter('partner',this)">
+      <div class="sn" id="st-partner">—</div><div class="sl">Partners</div></div>
+    <div class="sc" id="sc-prospect" onclick="setFilter('prospect',this)">
+      <div class="sn" id="st-prospect">—</div><div class="sl">Prospects</div></div>
+    <div class="sc" id="sc-nogo" onclick="setFilter('nogo',this)">
+      <div class="sn" id="st-nogo">—</div><div class="sl">No outreach</div></div>
+    <div class="sc" id="sc-fresh" onclick="setFilter('fresh',this)">
+      <div class="sn" id="st-fresh">—</div><div class="sl">Fresh Meat 🥩</div></div>
   </div>
-</nav>
 
-<div class="stats-bar">
-  <div class="sc active" onclick="setFilter('all',this)"><div class="sn" id="st-all">—</div><div class="sl">Total</div></div>
-  <div class="sc" onclick="setFilter('poc',this)"><div class="sn" id="st-poc">—</div><div class="sl">Active Deal</div></div>
-  <div class="sc" onclick="setFilter('client',this)"><div class="sn" id="st-client">—</div><div class="sl">Clients</div></div>
-  <div class="sc" onclick="setFilter('prospect',this)"><div class="sn" id="st-prospect">—</div><div class="sl">Prospects</div></div>
-  <div class="sc" onclick="setFilter('dsp',this)"><div class="sn" id="st-dsp">—</div><div class="sl">DSP Integrated</div></div>
-  <div class="sc" onclick="setFilter('nogo',this)"><div class="sn" id="st-nogo">—</div><div class="sl">No outreach</div></div>
+  <!-- ── Main ── -->
+  <div class="main">
+
+    <!-- Left panel -->
+    <div class="left">
+      <div class="tab-bar">
+        <button class="tab active" id="tab-co" onclick="switchTab('companies')">Companies</button>
+        <button class="tab" id="tab-ct" onclick="switchTab('contacts')">Contacts</button>
+      </div>
+
+      <!-- Companies tab -->
+      <div id="pane-companies">
+        <div class="left-search">
+          <div class="sbox">
+            <span class="sico">⌕</span>
+            <input class="sinp" id="coSearch" placeholder="Search companies…" oninput="renderCompanies()"/>
+          </div>
+          <button class="btn sm p" onclick="doResearch()" title="Research in Claude">↗</button>
+        </div>
+        <div class="filters" id="coFilters">
+          <button class="fp active" id="fp-all" onclick="setFilter('all',this)">All</button>
+          <button class="fp" id="fp-client" onclick="setFilter('client',this)">Client</button>
+          <button class="fp" id="fp-poc" onclick="setFilter('poc',this)">POC</button>
+          <button class="fp" id="fp-partner" onclick="setFilter('partner',this)">Partner</button>
+          <button class="fp" id="fp-prospect" onclick="setFilter('prospect',this)">Prospect</button>
+          <button class="fp" id="fp-nogo" onclick="setFilter('nogo',this)">No out.</button>
+        </div>
+        <div class="list-meta"><span id="listMeta">—</span><span>click to open</span></div>
+        <div class="co-list" id="coList"></div>
+      </div>
+
+      <!-- Contacts tab -->
+      <div id="pane-contacts" style="display:none;flex-direction:column;flex:1;overflow:hidden">
+        <div class="left-search">
+          <div class="sbox">
+            <span class="sico">⌕</span>
+            <input class="sinp" id="ctSearch" placeholder="Search contacts…" oninput="renderContacts()"/>
+          </div>
+        </div>
+        <div class="list-meta"><span id="ctMeta">—</span><span>click to open</span></div>
+        <div class="co-list" id="ctList"></div>
+      </div>
+    </div>
+
+    <!-- Center -->
+    <div class="center" id="center">
+      <div class="empty-hdr">
+        <div class="big">Sales Intelligence Hub</div>
+        <div class="sub">onAudience · Data Partnerships &amp; Programmatic Outreach</div>
+      </div>
+      <div class="qa-grid">
+        <div class="qa-card" onclick="openResearch()">
+          <div class="qa-icon">🔍</div>
+          <div class="qa-title">Company research</div>
+          <div class="qa-desc">Full contact report with decision makers &amp; ICP score</div>
+        </div>
+        <div class="qa-card" onclick="openClaude('Find new DSP, SSP, and media agency prospects for onAudience in EMEA — companies not in our database, strong programmatic data buying signals, ranked by ICP fit')">
+          <div class="qa-icon">🎯</div>
+          <div class="qa-title">Find prospects</div>
+          <div class="qa-desc">Discover new EMEA / APAC targets by ICP criteria</div>
+        </div>
+        <div class="qa-card" onclick="openClaude('Show me the top 5 highest-priority prospects in the onAudience database that we should contact this week — include rationale and suggested outreach')">
+          <div class="qa-icon">⭐</div>
+          <div class="qa-title">Top picks this week</div>
+          <div class="qa-desc">Prioritized outreach recommendations</div>
+        </div>
+        <div class="qa-card" onclick="promptModal('Find similar companies','Enter a reference company:','Find companies similar to [COMPANY] for onAudience programmatic data outreach — ranked by ICP fit')">
+          <div class="qa-icon">🔗</div>
+          <div class="qa-title">Find similar</div>
+          <div class="qa-desc">Lookalike discovery from reference account</div>
+        </div>
+        <div class="qa-card" onclick="openClaude('Find onAudience accounts that went cold — no activity in 90+ days, previously engaged. Suggest re-engagement angles for top 5.')">
+          <div class="qa-icon">♻️</div>
+          <div class="qa-title">Re-engage dormant</div>
+          <div class="qa-desc">Revive cold accounts with fresh angles</div>
+        </div>
+        <div class="qa-card" onclick="openPanel('meeseeks')">
+          <div class="qa-icon">✉</div>
+          <div class="qa-title">Draft email</div>
+          <div class="qa-desc">AI-powered outreach composer</div>
+        </div>
+      </div>
+    </div>
+
+  </div>
 </div>
 
-<div class="alert">
-  <div class="alert-text"><strong>🔥 AudienceRate — active DV360 deal.</strong> Gianluca Leotta last followed up Apr 29. Tests still running. Reply overdue.</div>
-  <button class="alert-btn" onclick="openReport('AudienceRate')">Open ↗</button>
-</div>
-
-<div class="search-bar">
-  <div class="sbox">
-    <span class="sico">⌕</span>
-    <input class="sinp" id="searchQ" placeholder="Search name, DSP, description, HQ…" oninput="renderList()"/>
-  </div>
-  <div class="fpills" id="fpills">
-    <button class="fp active" id="fp-all" onclick="setFilter('all',this)">All</button>
-    <button class="fp" id="fp-poc" onclick="setFilter('poc',this)">Active deal</button>
-    <button class="fp" id="fp-client" onclick="setFilter('client',this)">Client</button>
-    <button class="fp" id="fp-prospect" onclick="setFilter('prospect',this)">Prospect</button>
-    <button class="fp" id="fp-dsp" onclick="setFilter('dsp',this)">DSP integrated</button>
-    <button class="fp" id="fp-nogo" onclick="setFilter('nogo',this)">No outreach</button>
-  </div>
-  <button class="filt-btn" id="filtToggle" onclick="toggleFilterPanel()">⊞ Filter <span class="fcnt" id="fxCount" style="display:none">0</span></button>
-  <select class="sort-sel" id="sortBy" onchange="renderList()">
-    <option value="icp">ICP score</option>
-    <option value="emp">Company size</option>
-    <option value="rev">Revenue</option>
-    <option value="az">Name A–Z</option>
-  </select>
-</div>
-<div id="chipsRow" class="chips-row" style="padding:4px 14px;background:var(--surf);border-bottom:1px solid var(--rule2);display:none;flex-wrap:wrap;gap:4px"></div>
-
-<div class="fbar">
-  <div class="fbar-inner" id="filterInner">
-    <div class="fgroup">
-      <span class="fg-lbl">Size</span>
-      <div class="fg-pills">
-        <button class="fpx" data-dim="size" data-val="micro" onclick="toggleFx(this)">Micro &lt;20</button>
-        <button class="fpx" data-dim="size" data-val="small" onclick="toggleFx(this)">Small 20–100</button>
-        <button class="fpx" data-dim="size" data-val="mid" onclick="toggleFx(this)">Mid 100–500</button>
-        <button class="fpx" data-dim="size" data-val="large" onclick="toggleFx(this)">Enterprise 500+</button>
-      </div>
-    </div>
-    <div class="fgroup">
-      <span class="fg-lbl">Region</span>
-      <div class="fg-pills">
-        <button class="fpx" data-dim="region" data-val="US" onclick="toggleFx(this)">🇺🇸 US</button>
-        <button class="fpx" data-dim="region" data-val="UK" onclick="toggleFx(this)">🇬🇧 UK</button>
-        <button class="fpx" data-dim="region" data-val="EMEA" onclick="toggleFx(this)">🌍 EMEA</button>
-        <button class="fpx" data-dim="region" data-val="APAC" onclick="toggleFx(this)">🌏 APAC</button>
-        <button class="fpx" data-dim="region" data-val="LatAm" onclick="toggleFx(this)">🌎 LatAm</button>
-      </div>
-    </div>
-    <div class="fgroup">
-      <span class="fg-lbl">Tech / DSP</span>
-      <div class="fg-pills">
-        <button class="fpx" data-dim="dsp" data-val="TTD" onclick="toggleFx(this)">TTD</button>
-        <button class="fpx" data-dim="dsp" data-val="DV360" onclick="toggleFx(this)">DV360</button>
-        <button class="fpx" data-dim="dsp" data-val="Xandr" onclick="toggleFx(this)">Xandr</button>
-        <button class="fpx" data-dim="dsp" data-val="Amazon DSP" onclick="toggleFx(this)">Amazon DSP</button>
-        <button class="fpx" data-dim="dsp" data-val="StackAdapt" onclick="toggleFx(this)">StackAdapt</button>
-        <button class="fpx" data-dim="dsp" data-val="Yahoo" onclick="toggleFx(this)">Yahoo</button>
-        <button class="fpx" data-dim="dsp" data-val="Basis" onclick="toggleFx(this)">Basis</button>
-        <button class="fpx" data-dim="dsp" data-val="MediaMath" onclick="toggleFx(this)">MediaMath</button>
-      </div>
-    </div>
-    <div class="fgroup">
-      <span class="fg-lbl">Category</span>
-      <div class="fg-pills">
-        <button class="fpx" data-dim="cat" data-val="Data Provider" onclick="toggleFx(this)">Data Provider</button>
-        <button class="fpx" data-dim="cat" data-val="DMP" onclick="toggleFx(this)">DMP</button>
-        <button class="fpx" data-dim="cat" data-val="DSP" onclick="toggleFx(this)">DSP</button>
-        <button class="fpx" data-dim="cat" data-val="SSP" onclick="toggleFx(this)">SSP</button>
-        <button class="fpx" data-dim="cat" data-val="CDP" onclick="toggleFx(this)">CDP</button>
-        <button class="fpx" data-dim="cat" data-val="Identity" onclick="toggleFx(this)">Identity</button>
-        <button class="fpx" data-dim="cat" data-val="Agency" onclick="toggleFx(this)">Agency</button>
-      </div>
-    </div>
-    <div class="fgroup">
-      <span class="fg-lbl">Gmail</span>
-      <div class="fg-pills">
-        <button class="fpx" data-dim="gmail" data-val="active" onclick="toggleFx(this)">🔥 Active deal</button>
-        <button class="fpx" data-dim="gmail" data-val="prior" onclick="toggleFx(this)">♻ Prior contact</button>
-        <button class="fpx" data-dim="gmail" data-val="client" onclick="toggleFx(this)">✅ Existing client</button>
-        <button class="fpx" data-dim="gmail" data-val="none" onclick="toggleFx(this)">○ No history</button>
-      </div>
-    </div>
+<!-- ── Panel modal (iframe host) ── -->
+<div id="panelModal" onclick="if(event.target===this){this.style.display='none';document.getElementById('panelIframe').src=''}"
+  style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:9999;align-items:center;justify-content:center">
+  <div style="width:780px;height:85vh;border-radius:4px;overflow:hidden;border:1px solid var(--rule);box-shadow:var(--sh)">
+    <iframe id="panelIframe" src="" style="width:100%;height:100%;border:none"></iframe>
   </div>
 </div>
 
-<div class="main">
-  <div class="panel-left">
-    <div class="list-meta"><span id="listMeta">—</span><span id="listMeta2">click to open report</span></div>
-    <div class="co-list" id="coList"></div>
+<!-- ── Contact drawer ── -->
+<div class="drawer-overlay" id="drawerOverlay" onclick="closeDrawer()"></div>
+<div class="drawer" id="contactDrawer">
+  <div class="drawer-hdr">
+    <div class="ct-av" id="drAv" style="width:32px;height:32px;font-size:9px">?</div>
+    <div>
+      <div id="drName" style="font-size:13px;font-weight:500"></div>
+      <div id="drRole" style="font-family:'IBM Plex Mono',monospace;font-size:9px;color:var(--t3)"></div>
+    </div>
+    <button class="drawer-close" onclick="closeDrawer()">✕</button>
   </div>
-  <div class="panel-right" id="detail">
-    <div class="empty-panel"><div class="big">←</div><div class="sub">Select a company</div></div>
+  <div class="drawer-body" id="drawerBody"></div>
+</div>
+
+<!-- ── Context menu ── -->
+<div class="ctx-menu" id="ctxMenu" style="display:none"></div>
+
+<!-- ── Research modal ── -->
+<div id="researchOverlay" onclick="if(event.target===this)closeResearch()"
+  style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:10000;
+         align-items:center;justify-content:center;backdrop-filter:blur(4px)">
+  <div style="background:var(--surf);border:1px solid var(--rule);border-radius:4px;
+              padding:20px;max-width:480px;width:90%;box-shadow:var(--sh)">
+    <div style="font-family:'IBM Plex Mono',monospace;font-size:10px;text-transform:uppercase;
+                letter-spacing:.08em;color:var(--t3);margin-bottom:12px" id="resTitle">Research a company</div>
+    <div style="font-size:12px;color:var(--t2);margin-bottom:10px" id="resDesc">Enter the company name to generate a full contact report.</div>
+    <input type="text" id="resInput" placeholder="Company name…"
+      style="width:100%;height:32px;padding:0 10px;border:1px solid var(--rule);border-radius:2px;
+             background:var(--surf2);color:var(--t1);font-family:'IBM Plex Mono',monospace;
+             font-size:11px;outline:none;margin-bottom:10px"/>
+    <div style="display:flex;gap:6px;justify-content:flex-end">
+      <button class="btn" onclick="closeResearch()">Cancel</button>
+      <button class="btn p" onclick="submitResearch()">Open in Claude ↗</button>
+    </div>
   </div>
 </div>
 
 <script>
-const COMPANIES = [
-  {name:'Czech Publisher Exchange (CPEx)',website:'https://www.cpex.cz/',linkedin:'https://www.linkedin.com/company/czech-publisher-exchange',
-   description:'Czech Publisher Exchange (CPEx) facilitates digital content distribution and monetization for publishers using advanced technologies.',
-   hq:'Prague, Czech Republic',category:'SSP / Publisher Alliance / Data Provider',
-   employees:'10',revenue:'10.6',funding:'',
-   comments:'DV360 or The Trade Desk by targeting specific Czech publishers',dsps:["TTD", "DV360"],icp:10,
-   status:'prospect',dead:false,
-   status_note:'New director Filip Hromek since Jan 2025. Main priority: expanding Czech Ad ID cookieless standard. TTD & DV360 integrated via Magnite.',gmail:'none',
-   angle:'Czech Ad ID expansion — onAudience EU segments on TTD/DV360 complement their cookieless standard for cross-EU advertisers.',
-   contacts:[{"name": "Filip Hromek", "role": "Executive Director (since Jan 2025)", "email": "filip.hromek@cpex.cz", "conf": "estimated"}]},
-  {name:'CrossPixel',website:'https://crosspixel.net/',linkedin:'https://www.linkedin.com/company/cross-pixel-media',
-   description:'CrossPixel delivers advanced audience and contextual targeting solutions for programmatic advertising.',
-   hq:'Miami Beach, FL / New York, NY — US',category:'Data Provider / Contextual',
-   employees:'13',revenue:'5.3',funding:'Seed Round - $0.3M - Unknown, Series A - $1.5M - Unknown, Debt - General - Unknown, Debt - PPP - Unknown (+1 more)',
-   comments:'DV360 & TTD integrated',dsps:["TTD", "DV360"],icp:10,
-   status:'prospect',dead:false,
-   status_note:'Acquired by Knower Tech (Know Company Inc.) Sep 2025 all-cash. Founder Alan Pearlstein moved to Dstillery. EU gap-fill angle — no EU data collection.',gmail:'none',
-   angle:'Post-acquisition expansion: CrossPixel has zero EU data — onAudience fills the gap on TTD/DV360 with no overlap.',
-   contacts:[{"name": "Stephanie McCabe", "role": "President, Knower Tech / EVP Know Company", "email": "stephanie.mccabe@knowcompany.com", "conf": "estimated"}]},
-  {name:'Retargetly',website:'https://retargetly.com',linkedin:'https://www.linkedin.com/company/retargetly',
-   description:'Retargetly provides advertising technology solutions for first-party data management and audience targeting.',
-   hq:'Buenos Aires, Argentina',category:'DMP / Data Provider / Identity',
-   employees:'23',revenue:'7.3',funding:'',
-   comments:'Dv360,TTD,Xandr,Mediamath integrated',dsps:["TTD", "DV360", "Xandr", "MediaMath"],icp:10,
-   status:'prospect',dead:false,
-   status_note:'Acquired by Epsilon (Publicis Groupe) Nov 2022. Retained name and CEO. Prior onAudience TTD/BlueKai partnership in 2019 via Santi Darmandrail.',gmail:'prior',
-   angle:'Warm re-engagement after 6-year gap: prior partnership, now Epsilon LatAm — propose EU/APAC complement to their LatAm-only coverage.',
-   contacts:[{"name": "Daniel Czaplinski", "role": "Co-Founder & CEO", "email": "daniel.czaplinski@retargetly.com", "conf": "estimated"}, {"name": "Santi Darmandrail", "role": "MD, Retargetly Data", "email": "santi@retargetly.com", "conf": "confirmed"}]},
-  {name:'Datonics',website:'https://www.datonics.com/',linkedin:'https://www.linkedin.com/company/datonics',
-   description:'Datonics specializes in programmatic data, audience targeting, insights, and enrichment solutions.',
-   hq:'New York, NY — US',category:'Data Provider / Programmatic Data',
-   employees:'24',revenue:'5.3',funding:'',
-   comments:'DV360, The Trade Desk, Amazon DSP, Yahoo, Xandr, Basis',dsps:["TTD", "DV360", "Amazon DSP", "Xandr", "Yahoo", "Basis"],icp:10,
-   status:'client',dead:false,
-   status_note:'Existing client — active on DV360, TTD, Amazon DSP, Yahoo, Xandr, Basis. Check CRM for account manager and contract details.',gmail:'client',
-   angle:'Upsell: review current segment usage, propose adjacent categories or new geo coverage.',
-   contacts:[{"name": "(Existing client)", "role": "Check CRM for account manager", "email": "\u2014", "conf": "existing"}]},
-  {name:'TruSignal 2',website:'https://www.trusignal.io/',linkedin:'https://www.linkedin.com/company/trusignal/',
-   description:'TruSignal specializes in AI-driven predictive marketing and data optimization solutions.',
-   hq:'',category:'Data Provider / AdTech',
-   employees:'30',revenue:'5',funding:'Series A - $5M - Redpoint Ventures, Series A - $5M - Split Rock Partners, Series A - $5M - Tenaya Capital, Series A - $5M - eBureau (+1 more)',
-   comments:'DV360 & TTD integrated',dsps:["TTD", "DV360"],icp:10,
-   status:'prospect',dead:false,
-   status_note:'',gmail:'none',
-   angle:'',
-   contacts:[]},
-  {name:'AlikeAudience',website:'https://www.alikeaudience.com/',linkedin:'https://www.linkedin.com/company/alikeaudience',
-   description:'AlikeAudience leverages AI for omnichannel audience intelligence and data-driven advertising solutions.',
-   hq:'Sunnyvale, CA — APAC ops: Hong Kong, Singapore, Australia',category:'Audience Data Provider / DMP / Mobile',
-   employees:'36',revenue:'4',funding:'Seed Round - Amount Unknown - Plug and Play, Seed Round - Amount Unknown - SkyDeck Berkeley',
-   comments:'available in The Trade Desk, DV360, or StackAdapt',dsps:["TTD", "DV360", "StackAdapt"],icp:10,
-   status:'client',dead:false,
-   status_note:'Existing client — active on TTD, DV360, StackAdapt. Award-winning AI-first audience platform. ICP 10/10.',gmail:'client',
-   angle:'Upsell: APAC and EU segment expansion, new verticals, or co-activation on StackAdapt.',
-   contacts:[{"name": "Jeremy Ryvicker", "role": "VP Data Partnerships", "email": "jeremy.ryvicker@alikeaudience.com", "conf": "estimated"}]},
-  {name:'VerticalMass',website:'',linkedin:'https://www.linkedin.com/company/vertical-mass',
-   description:'Vertical Mass provides a data management platform for audience analytics in entertainment sectors.',
-   hq:'',category:'Data Provider / AdTech',
-   employees:'3',revenue:'',funding:'Total Amount Raised - $12.3M',
-   comments:'DV360.TTD Integration',dsps:["TTD", "DV360"],icp:9,
-   status:'prospect',dead:false,
-   status_note:'',gmail:'none',
-   angle:'',
-   contacts:[]},
-  {name:'Leiki Oy Finland',website:'https://www.doubleverify.com',linkedin:'https://www.linkedin.com/company/leiki',
-   description:'Leiki Oy specializes in SaaS for user profiling and contextual content discovery solutions.',
-   hq:'',category:'Data Provider / AdTech',
-   employees:'26',revenue:'',funding:'',
-   comments:'DSP Targeting (DV360, TTD, etc.) available',dsps:["TTD", "DV360"],icp:9,
-   status:'prospect',dead:false,
-   status_note:'',gmail:'none',
-   angle:'',
-   contacts:[]},
-  {name:'Audience360',website:'https://www.audience360.com.au/',linkedin:'https://au.linkedin.com/company/audience360',
-   description:'Audience360 delivers programmatic marketing solutions leveraging first-party audience data for advertisers.',
-   hq:'',category:'Data Provider / AdTech',
-   employees:'30',revenue:'2.5',funding:'',
-   comments:'DV360 & TTD integrated',dsps:["TTD", "DV360"],icp:9,
-   status:'prospect',dead:false,
-   status_note:'',gmail:'none',
-   angle:'',
-   contacts:[]},
-  {name:'AudienceRate',website:'https://audiencerate.com/',linkedin:'https://uk.linkedin.com/company/audiencerate',
-   description:'AudienceRate specializes in data management solutions using AI in digital marketing.',
-   hq:'London, UK',category:'Data Monetization Platform',
-   employees:'50',revenue:'10.6',funding:'$8.55M - Milano Ventures (Majority), Angel (individual) - Minority',
-   comments:'DV360 Available',dsps:["DV360"],icp:9,
-   status:'poc',dead:false,
-   status_note:'ACTIVE DEAL — DV360 collaboration thread since Feb 26 2025. Last email Apr 29 (Piotr: "unfortunately not yet" on tests). Awaiting reply.',gmail:'active',
-   angle:'Active deal — update on DV360 tests, propose 90-day non-exclusive revenue-share trial with top 20 segments.',
-   contacts:[{"name": "Gianluca Leotta", "role": "Commercial / Partnerships", "email": "gl@audiencerate.com", "conf": "confirmed"}, {"name": "Aaron Cesaro", "role": "Business Development", "email": "aaron.cesaro@audiencerate.com", "conf": "confirmed"}, {"name": "Filippo Gramigna", "role": "CEO", "email": "filippo.gramigna@audiencerate.com", "conf": "estimated"}]},
-  {name:'TruSignal',website:'https://www.trusignal.com',linkedin:'https://www.linkedin.com/company/trusignal',
-   description:'TruSignal utilizes AI-driven predictive scoring for actionable people-based marketing solutions.',
-   hq:'',category:'Data Provider / AdTech',
-   employees:'21',revenue:'5',funding:'Series A - $5M - Redpoint Ventures, Series A - $5M - Split Rock Partners, Series A - $5M - Tenaya Capital',
-   comments:'',dsps:[],icp:8,
-   status:'prospect',dead:false,
-   status_note:'',gmail:'none',
-   angle:'',
-   contacts:[]},
-  {name:'Bizo',website:'https://bizo.com',linkedin:'https://www.linkedin.com/company/bizo',
-   description:'Bizo offers B2B marketing services through advanced audience targeting and data management technology.',
-   hq:'',category:'Data Provider / AdTech',
-   employees:'23',revenue:'9',funding:'Total Funding - $16M - Bessemer Ventures, Total Funding - $16M - Crosslink Capital, Total Funding - $16M - Venrock',
-   comments:'website unavailable',dsps:[],icp:8,
-   status:'nogo',dead:true,
-   status_note:'',gmail:'none',
-   angle:'',
-   contacts:[]},
-  {name:'MediaQuark',website:'http://www.mediaquark.com',linkedin:'https://sg.linkedin.com/company/mediaquark',
-   description:'MediaQuark delivers data-driven solutions for digital marketing and programmatic advertising technologies.',
-   hq:'',category:'Data Provider / AdTech',
-   employees:'2',revenue:'3.6',funding:'',
-   comments:'website link unavailable',dsps:[],icp:7,
-   status:'nogo',dead:true,
-   status_note:'',gmail:'none',
-   angle:'',
-   contacts:[]},
-  {name:'ADNOLOGIES',website:'http://adnologies.com',linkedin:'https://www.linkedin.com/company/adnologies-gmbh',
-   description:'ADNOLOGIES provides data-driven advertising solutions connecting publishers, agencies, and advertisers.',
-   hq:'',category:'Data Provider / AdTech',
-   employees:'2',revenue:'',funding:'',
-   comments:'website link unavailable',dsps:[],icp:7,
-   status:'nogo',dead:true,
-   status_note:'',gmail:'none',
-   angle:'',
-   contacts:[]},
-  {name:'PushSpring',website:'',linkedin:'https://www.linkedin.com/company/pushspring-inc-',
-   description:'PushSpring provides device-level targeting data for mobile app audience insights.',
-   hq:'',category:'Data Provider / AdTech',
-   employees:'3',revenue:'0.056',funding:'',
-   comments:'http://www.pushspring.com unvailable site',dsps:[],icp:7,
-   status:'nogo',dead:true,
-   status_note:'',gmail:'none',
-   angle:'',
-   contacts:[]},
-  {name:'e-Viral',website:'',linkedin:'https://www.linkedin.com/company/e-viral',
-   description:'e-Viral optimizes digital marketing strategies utilizing data analytics, performance tracking, and technology integration.',
-   hq:'',category:'Data Provider / AdTech',
-   employees:'4',revenue:'0.44',funding:'Seed round - CorLyst, LLC',
-   comments:'website link unavailable',dsps:[],icp:7,
-   status:'nogo',dead:true,
-   status_note:'',gmail:'none',
-   angle:'',
-   contacts:[]},
-  {name:'Datalogix',website:'https://www.datalogix.io/',linkedin:'https://www.linkedin.com/company/datalogix-io',
-   description:'Datalogix develops data-driven software for marketers, enhancing targeting through consumer behavior analytics.',
-   hq:'',category:'Data Provider / AdTech',
-   employees:'4',revenue:'0.86',funding:'Series A - $5M - Accel Partners, Series B - $20M - Sequoia, Series C - $86.8M - IVP, Secondary Market - Amount Obfuscated - SharesPost Investment Management (+1 more)',
-   comments:'',dsps:[],icp:7,
-   status:'prospect',dead:false,
-   status_note:'',gmail:'none',
-   angle:'',
-   contacts:[]},
-  {name:'ComRatings',website:'http://comratings.aivexus.com',linkedin:'https://sg.linkedin.com/company/comratings',
-   description:'ComRatings specializes in advertising measurement and AI-driven insights for brand growth.',
-   hq:'',category:'Data Provider / AdTech',
-   employees:'4',revenue:'',funding:'',
-   comments:'',dsps:[],icp:7,
-   status:'prospect',dead:false,
-   status_note:'',gmail:'none',
-   angle:'',
-   contacts:[]},
-  {name:'Datomik',website:'https://www.datomik.com',linkedin:'https://www.linkedin.com/company/datanomik',
-   description:'Innovative online platform for consumer behavior data analytics and insights.',
-   hq:'',category:'Data Provider / AdTech',
-   employees:'5',revenue:'',funding:'',
-   comments:'website link unavailable',dsps:[],icp:7,
-   status:'nogo',dead:true,
-   status_note:'',gmail:'none',
-   angle:'',
-   contacts:[]},
-  {name:'CleverOnDemand',website:'http://www.cleverondemand.com',linkedin:'https://www.linkedin.com/company/cleverman-inc',
-   description:'CleverOnDemand optimizes digital advertising via advanced ad network management solutions.',
-   hq:'',category:'Data Provider / AdTech',
-   employees:'10',revenue:'',funding:'',
-   comments:'website link unavailable',dsps:[],icp:7,
-   status:'nogo',dead:true,
-   status_note:'',gmail:'none',
-   angle:'',
-   contacts:[]},
-  {name:'DataXpand',website:'https://www.dataxpander.com/',linkedin:'https://www.linkedin.com/company/dataxpander',
-   description:'DataXpand specializes in data management and analytics for audience targeting in advertising.',
-   hq:'',category:'Data Provider / AdTech',
-   employees:'12',revenue:'',funding:'',
-   comments:'',dsps:[],icp:7,
-   status:'prospect',dead:false,
-   status_note:'',gmail:'none',
-   angle:'',
-   contacts:[]},
-  {name:'Datalogix 2',website:'https://www.datalogix.io/',linkedin:'https://www.linkedin.com/company/datalogix',
-   description:'Datalogix develops technology-driven advertising solutions using consumer transaction data analytics.',
-   hq:'',category:'Data Provider / AdTech',
-   employees:'13',revenue:'0.978',funding:'Oracle Corp.',
-   comments:'',dsps:[],icp:7,
-   status:'prospect',dead:false,
-   status_note:'',gmail:'none',
-   angle:'',
-   contacts:[]},
-  {name:'socialAudience',website:'https://thesocialaudience.com/',linkedin:'https://www.linkedin.com/company/thesocialaudience/',
-   description:'Connects online ad campaigns to CRM databases for creating custom audiences.',
-   hq:'',category:'Data Provider / AdTech',
-   employees:'15',revenue:'1.8',funding:'LLYC Venturing, Axivate Capital',
-   comments:'',dsps:[],icp:7,
-   status:'prospect',dead:false,
-   status_note:'',gmail:'none',
-   angle:'',
-   contacts:[]},
-  {name:'eXelate',website:'https://exalate.com/',linkedin:'https://www.linkedin.com/company/exelate',
-   description:'eXelate provides a data management platform for optimizing digital marketing strategies.',
-   hq:'',category:'Data Provider / AdTech',
-   employees:'15',revenue:'3.1',funding:'Trident Capital, NewSpring, Menlo Ventures, Viola Ventures',
-   comments:'',dsps:[],icp:7,
-   status:'prospect',dead:false,
-   status_note:'',gmail:'none',
-   angle:'',
-   contacts:[]},
-  {name:'Navegg',website:'http://www.navegg.com/en',linkedin:'https://br.linkedin.com/company/navegg',
-   description:'Navegg specializes in audience intelligence, big data analytics, and digital marketing solutions.',
-   hq:'São Paulo, Brazil',category:'DMP / Data Provider / LatAm',
-   employees:'16',revenue:'1.7',funding:'Astella Investimentos, BuscaPe Company Informacao e Tecnologia',
-   comments:'',dsps:[],icp:7,
-   status:'prospect',dead:false,
-   status_note:'Part of dentsu group. 180M+ unique users/month across LatAm. DV360 integrated. EU/APAC complement — no overlap.',gmail:'none',
-   angle:'EU/APAC data complement: dentsu-backed LatAm DMP + onAudience EU segments = global coverage for dentsu campaigns.',
-   contacts:[{"name": "Pedro Cruz", "role": "Co-Founder", "email": "pedro.cruz@navegg.com", "conf": "estimated"}]},
-  {name:'TruOptik',website:'https://www.truoptik.com',linkedin:'https://www.linkedin.com/company/truoptik',
-   description:'TruOptik specializes in data marketplace technology for audience targeting in connected TV advertising.',
-   hq:'',category:'Data Provider / AdTech',
-   employees:'18',revenue:'0.5796',funding:'Mithera Capital, TransUnion, Connecticut Innovations, Arab Angel Fund (+1 more)',
-   comments:'',dsps:[],icp:7,
-   status:'prospect',dead:false,
-   status_note:'',gmail:'none',
-   angle:'',
-   contacts:[]},
-  {name:'Audience Center',website:'https://audiencecenter.google.com/',linkedin:'https://www.linkedin.com/company/audienceio',
-   description:'Audience Center enables marketers to optimize digital campaigns using customer data management and analytics.',
-   hq:'',category:'Data Provider / AdTech',
-   employees:'22',revenue:'0.441',funding:'Series A - $12.8M - Next Coast Ventures',
-   comments:'website unavailable',dsps:[],icp:7,
-   status:'nogo',dead:true,
-   status_note:'',gmail:'none',
-   angle:'',
-   contacts:[]},
-  {name:'Effective Measure',website:'https://www.effectivemeasure.com/',linkedin:'https://www.linkedin.com/company/effective-measure',
-   description:'Narratiive offers audience measurement using analytics for digital advertising effectiveness.',
-   hq:'',category:'Data Provider / AdTech',
-   employees:'26',revenue:'2.6',funding:'',
-   comments:'website unavailable',dsps:[],icp:7,
-   status:'nogo',dead:true,
-   status_note:'',gmail:'none',
-   angle:'',
-   contacts:[]},
-  {name:'Mindset',website:'https://www.themindsetcompany.com/',linkedin:'https://www.linkedin.com/company/mindsetcare',
-   description:'Mindset leverages AI for customized solutions in decision-making and operational efficiency.',
-   hq:'',category:'Data Provider / AdTech',
-   employees:'27',revenue:'2.15',funding:'£4.3M - Edge VC, £4.3M - Pembroke VCT',
-   comments:'',dsps:[],icp:7,
-   status:'prospect',dead:false,
-   status_note:'',gmail:'none',
-   angle:'',
-   contacts:[]},
-  {name:'Brilig',website:'https://brilligsys.com/',linkedin:'https://www.linkedin.com/company/brilig-systems',
-   description:'Brilig facilitates data exchange in advertising using audience insights for targeted marketing.',
-   hq:'',category:'Data Provider / AdTech',
-   employees:'30',revenue:'2.5',funding:'',
-   comments:'',dsps:[],icp:7,
-   status:'prospect',dead:false,
-   status_note:'',gmail:'none',
-   angle:'',
-   contacts:[]},
-  {name:'Netsprint',website:'http://en.netsprint.eu/',linkedin:'https://www.linkedin.com/company/netsprint',
-   description:'Netsprint specializes in programmatic advertising, offering contextual, display, and native ad solutions.',
-   hq:'',category:'Data Provider / AdTech',
-   employees:'30',revenue:'3.5',funding:'Khosla Ventures, Dell Technologies Capital',
-   comments:'',dsps:[],icp:7,
-   status:'prospect',dead:false,
-   status_note:'',gmail:'none',
-   angle:'',
-   contacts:[]},
-  {name:'Banzai',website:'https://www.banzai.io/',linkedin:'https://www.linkedin.com/company/banzai-inc.',
-   description:'Banzai offers AI-driven marketing solutions enhancing event engagement and audience analytics.',
-   hq:'',category:'Data Provider / AdTech',
-   employees:'30',revenue:'4.5',funding:'Series A - $5.2M - DNX Ventures, Series B - $5.0M, Series C - $11.0M, Post-IPO funding - $21.2M total raised',
-   comments:'',dsps:[],icp:7,
-   status:'prospect',dead:false,
-   status_note:'',gmail:'none',
-   angle:'',
-   contacts:[]},
-  {name:'Facetz',website:'https://facetz.app/',linkedin:'',
-   description:'Facetz specializes in real estate investment, management, and leasing solutions.',
-   hq:'',category:'Data Provider / AdTech',
-   employees:'30',revenue:'',funding:'',
-   comments:'',dsps:[],icp:7,
-   status:'prospect',dead:false,
-   status_note:'',gmail:'none',
-   angle:'',
-   contacts:[]},
-  {name:'Adnologies',website:'http://adnologies.com',linkedin:'https://www.linkedin.com/company/adnologies-gmbh',
-   description:'Adnologies provides a data-driven advertising platform connecting publishers, agencies, and advertisers.',
-   hq:'',category:'Data Provider / AdTech',
-   employees:'30',revenue:'',funding:'Seed - ViewPoint Capital Partners',
-   comments:'website unavailable',dsps:[],icp:7,
-   status:'nogo',dead:true,
-   status_note:'',gmail:'none',
-   angle:'',
-   contacts:[]},
-  {name:'CleverDATA',website:'https://cleverdata-web.azurewebsites.net/',linkedin:'https://www.linkedin.com/company/clever-data/',
-   description:'CleverDATA delivers AI-driven data management solutions for business intelligence and analytics.',
-   hq:'',category:'Data Provider / AdTech',
-   employees:'32',revenue:'',funding:'',
-   comments:'',dsps:[],icp:7,
-   status:'prospect',dead:false,
-   status_note:'',gmail:'none',
-   angle:'',
-   contacts:[]},
-  {name:'Neodata',website:'https://neodatagroup.ai/',linkedin:'https://www.linkedin.com/company/neodatagroup/',
-   description:'Neodata specializes in digital media solutions, offering real-time content delivery platforms and analytics.',
-   hq:'',category:'Data Provider / AdTech',
-   employees:'32',revenue:'',funding:'Funding round - $3.48M - Principia',
-   comments:'',dsps:[],icp:7,
-   status:'prospect',dead:false,
-   status_note:'',gmail:'none',
-   angle:'',
-   contacts:[]},
-  {name:'UserReport',website:'https://userreport.com/',linkedin:'https://www.linkedin.com/company/userreport/',
-   description:'UserReport offers survey tools for capturing user feedback and enhancing engagement analytics.',
-   hq:'',category:'Data Provider / AdTech',
-   employees:'33',revenue:'',funding:'',
-   comments:'',dsps:[],icp:7,
-   status:'prospect',dead:false,
-   status_note:'',gmail:'none',
-   angle:'',
-   contacts:[]},
-  {name:'advanced AUDIENCE',website:'http://www.advanced-audience.com',linkedin:'https://www.linkedin.com/company/advanced-audience',
-   description:'Innovating solutions through cutting-edge AI, IoT, and blockchain technologies for optimized data intelligence.',
-   hq:'',category:'Data Provider / AdTech',
-   employees:'33',revenue:'',funding:'Series A - Amount Obfuscated - Next Coast Ventures, Amount Raised - $150K',
-   comments:'website unavailable',dsps:[],icp:7,
-   status:'nogo',dead:true,
-   status_note:'',gmail:'none',
-   angle:'',
-   contacts:[]},
-  {name:'Krux',website:'https://krux.digital/',linkedin:'https://www.linkedin.com/company/krux-digital',
-   description:'Krux provides a data platform for real-time drilling data collection and analysis.',
-   hq:'',category:'Data Provider / AdTech',
-   employees:'39',revenue:'3',funding:'Total funding - $46M - Sapphire Ventures, Total funding - $46M - 15 other investors, Acquisition by Salesforce - up to $750M',
-   comments:'',dsps:[],icp:7,
-   status:'prospect',dead:false,
-   status_note:'',gmail:'none',
-   angle:'',
-   contacts:[]},
-  {name:'SIRdata',website:'http://www.sirdata.com/',linkedin:'https://www.linkedin.com/company/sirdata/',
-   description:'SIRdata provides data technology services for audience targeting and consent management solutions.',
-   hq:'Paris, France',category:'Data Provider / CMP / Contextual',
-   employees:'42',revenue:'4.4',funding:'Seed - $700K - ISource Gestion, Seed - $700K - Val\'Angels',
-   comments:'',dsps:[],icp:7,
-   status:'prospect',dead:false,
-   status_note:'Acquired by Proxistore Mar 2023. French contextual & semantic data, GDPR-first. Adform + DV360 integrated. AudienceRate partnership confirmed.',gmail:'none',
-   angle:'Data supply partnership: SIRdata contextual + onAudience behavioral/B2B = full-stack EU targeting. Both on Adform & DV360.',
-   contacts:[{"name": "Thibault Montanier", "role": "Head of Data & Addressability", "email": "thibault.montanier@sirdata.com", "conf": "estimated"}, {"name": "Benoit Oberle", "role": "Co-Founder & CEO", "email": "benoit.oberle@sirdata.com", "conf": "estimated"}]},
-  {name:'TailTarget',website:'www.tailtarget.com',linkedin:'https://www.zoominfo.com/c/tailtarget/366294839',
-   description:'TailTarget: Data management platform analyzing consumer behavior for targeted marketing solutions.',
-   hq:'',category:'Data Provider / AdTech',
-   employees:'50',revenue:'2.9',funding:'Angel Round - $500K - Unknown, Venture - Series Unknown - BoostLAB',
-   comments:'website unavailable',dsps:[],icp:7,
-   status:'nogo',dead:true,
-   status_note:'',gmail:'none',
-   angle:'',
-   contacts:[]},
-  {name:'Auditorius',website:'https://www.auditoria.ai',linkedin:'https://www.linkedin.com/company/auditoriaai',
-   description:'Auditorius enhances finance efficiency with AI, automating processes and ensuring compliance.',
-   hq:'',category:'Data Provider / AdTech',
-   employees:'53',revenue:'5.8',funding:'Series B - $38M - Innovius Capital, Series B - $38M - Dell Technologies Capital, Series B - $38M - Sentinel Global, Series B - $38M - Venrock (+3 more)',
-   comments:'',dsps:[],icp:7,
-   status:'prospect',dead:false,
-   status_note:'',gmail:'none',
-   angle:'',
-   contacts:[]},
-  {name:'nugg.ad',website:'https://nugg.ad/en/',linkedin:'https://www.linkedin.com/company/nugg-s',
-   description:'Nugg.ad offers programmatic advertising solutions for optimized targeting and engagement.',
-   hq:'',category:'Data Provider / AdTech',
-   employees:'75',revenue:'15',funding:'Attia Ventures, Deutsche Post, European Founders Fund, IBB Ventures (+1 more)',
-   comments:'',dsps:[],icp:7,
-   status:'prospect',dead:false,
-   status_note:'',gmail:'none',
-   angle:'',
-   contacts:[]},
-  {name:'adsquare',website:'https://adsquare.com/',linkedin:'https://www.linkedin.com/company/adsquare-gmbh',
-   description:'Adsquare provides location intelligence and audience targeting for programmatic advertising.',
-   hq:'',category:'Data Provider / AdTech',
-   employees:'75',revenue:'12.5',funding:'Series B - $4.3M',
-   comments:'',dsps:[],icp:7,
-   status:'prospect',dead:false,
-   status_note:'',gmail:'none',
-   angle:'',
-   contacts:[]},
-  {name:'Eyeota',website:'https://www.eyeota.com/',linkedin:'https://www.linkedin.com/company/eyeota',
-   description:'Eyeota provides audience data solutions for targeted marketing and analytics optimization.',
-   hq:'',category:'Data Provider / AdTech',
-   employees:'79',revenue:'44.3',funding:'5 Funding Rounds, Blackbook Ventures, Jolt Capital, Project A Ventures',
-   comments:'',dsps:[],icp:7,
-   status:'prospect',dead:false,
-   status_note:'',gmail:'none',
-   angle:'',
-   contacts:[]},
-  {name:'Emetriq',website:'https://www.emetriq.com/',linkedin:'https://www.linkedin.com/company/emetriq-gmbh/',
-   description:'Emetriq specializes in data-driven advertising and dynamic retargeting solutions using advanced analytics.',
-   hq:'',category:'Data Provider / AdTech',
-   employees:'90',revenue:'17.5',funding:'EOS Group - Former Investor',
-   comments:'',dsps:[],icp:7,
-   status:'prospect',dead:false,
-   status_note:'',gmail:'none',
-   angle:'',
-   contacts:[]},
-  {name:'Twine',website:'https://www.twine.net/',linkedin:'https://www.linkedin.com/company/wearetwine',
-   description:'Twine is a digital marketplace connecting freelancers with businesses for creative projects.',
-   hq:'',category:'Data Provider / AdTech',
-   employees:'98',revenue:'10.8',funding:'Seed round - $1.5M - Airtree Ventures, Gill Findlay, Sam Nickless, Hemal Shah',
-   comments:'',dsps:[],icp:7,
-   status:'prospect',dead:false,
-   status_note:'',gmail:'none',
-   angle:'',
-   contacts:[]},
-  {name:'Nano Interactive',website:'https://www.nanointeractive.com/',linkedin:'https://uk.linkedin.com/company/nanointeractive',
-   description:'Nano Interactive offers AI-powered, privacy-first targeting solutions for digital advertising campaigns.',
-   hq:'',category:'Data Provider / AdTech',
-   employees:'100',revenue:'26.65',funding:'Foresight Group - $4.74M - Series Unknown, Maven Capital Partners',
-   comments:'',dsps:[],icp:7,
-   status:'prospect',dead:false,
-   status_note:'',gmail:'none',
-   angle:'',
-   contacts:[]},
-  {name:'SkimLinks',website:'https://www.skimlinks.com/',linkedin:'https://www.linkedin.com/company/skimlinks',
-   description:'Skimlinks automates affiliate link monetization for publishers through sophisticated technology platforms.',
-   hq:'',category:'Data Provider / AdTech',
-   employees:'112',revenue:'15.7',funding:'Total funding - $21M, Series C - Mystery amount - Frog Capital, Series C - Mystery amount - Greycroft, Series A - Unknown Amount - Other Investors',
-   comments:'',dsps:[],icp:7,
-   status:'prospect',dead:false,
-   status_note:'',gmail:'none',
-   angle:'',
-   contacts:[]},
-  {name:'V12',website:'https://v12marketing.com/',linkedin:'https://www.linkedin.com/company/v12marketing',
-   description:'V12 Technologies provides tailored cloud consulting and customized solutions for business challenges.',
-   hq:'',category:'Data Provider / AdTech',
-   employees:'133',revenue:'65',funding:'',
-   comments:'',dsps:[],icp:7,
-   status:'prospect',dead:false,
-   status_note:'',gmail:'none',
-   angle:'',
-   contacts:[]},
-  {name:'Lotame',website:'https://www.lotame.com/',linkedin:'https://www.linkedin.com/company/lotame',
-   description:'Lotame provides a data management platform for audience insights and digital marketing.',
-   hq:'',category:'Data Provider / AdTech',
-   employees:'137',revenue:'125.2',funding:'Series D - $X - Publicis Groupe, Series B - $Y - Battery Ventures, Series A - $Z - Emergence Capital',
-   comments:'',dsps:[],icp:7,
-   status:'prospect',dead:false,
-   status_note:'',gmail:'none',
-   angle:'',
-   contacts:[]},
-  {name:'AppJolt',website:'',linkedin:'',
-   description:'AppJolt empowers app developers with tools to recapture, monetize, and analyze uninstalls.',
-   hq:'',category:'Data Provider / AdTech',
-   employees:'150',revenue:'16.5',funding:'',
-   comments:'',dsps:[],icp:7,
-   status:'prospect',dead:false,
-   status_note:'',gmail:'none',
-   angle:'',
-   contacts:[]},
-  {name:'The Adex',website:'https://adexusa.com/',linkedin:'https://www.linkedin.com/company/adexusa',
-   description:'The Adex provides integrated staffing solutions for telecommunications, focusing on digital transformation.',
-   hq:'',category:'Data Provider / AdTech',
-   employees:'51',revenue:'',funding:'Series A - $3.04M - Capnamic Ventures, Series A - $3.04M - IRIS',
-   comments:'',dsps:[],icp:6,
-   status:'prospect',dead:false,
-   status_note:'',gmail:'none',
-   angle:'',
-   contacts:[]},
-  {name:'Placed.com',website:'https://www.placed.com/ui/login',linkedin:'https://www.linkedin.com/company/placed',
-   description:'Placed.com is a location analytics platform providing mobile ad intelligence and consumer insights.',
-   hq:'',category:'Data Provider / AdTech',
-   employees:'75',revenue:'1.9',funding:'$8.31M - 2 rounds, Series A - Nov 23, 2022 - Praetura Ventures, Early Stage Investors - 55 others',
-   comments:'',dsps:[],icp:6,
-   status:'prospect',dead:false,
-   status_note:'',gmail:'none',
-   angle:'',
-   contacts:[]},
-  {name:'Audience Partners',website:'https://www.audiencepartners.com/',linkedin:'https://www.linkedin.com/company/audience-partners',
-   description:'Audience Partners offers data-driven advertising solutions utilizing data science and programmatic technology.',
-   hq:'',category:'Data Provider / AdTech',
-   employees:'75',revenue:'',funding:'Series A - $750K - QED Investors',
-   comments:'website unavailable',dsps:[],icp:6,
-   status:'nogo',dead:true,
-   status_note:'',gmail:'none',
-   angle:'',
-   contacts:[]},
-  {name:'Intimate Merger',website:'www.intimatemerger.com',linkedin:'',
-   description:'Intimate Merger develops advanced data management platforms to optimize marketing strategies.',
-   hq:'',category:'Data Provider / AdTech',
-   employees:'75',revenue:'',funding:'3 funding rounds, SBI shinsei bank, Dentsu',
-   comments:'',dsps:[],icp:6,
-   status:'prospect',dead:false,
-   status_note:'',gmail:'none',
-   angle:'',
-   contacts:[]},
-  {name:'Semasio',website:'https://www.semasio.com/',linkedin:'https://www.linkedin.com/company/semasio-global',
-   description:'Cloud-based platform optimizing programmatic advertising through semantic targeting and audience segmentation.',
-   hq:'',category:'Data Provider / AdTech',
-   employees:'106',revenue:'3.6',funding:'Series A - Undisclosed - BDMI, Series A - Undisclosed - HV Capital, Seed - $714K - HTGF, Angel - Martin Rusch (+1 more)',
-   comments:'',dsps:[],icp:6,
-   status:'prospect',dead:false,
-   status_note:'',gmail:'none',
-   angle:'',
-   contacts:[]},
-  {name:'Cxense (ASA)',website:'http://www.cxense.com',linkedin:'https://www.linkedin.com/company/cxense',
-   description:'Cxense ASA utilizes AI technologies to manage data, content personalization, and advertising strategies.',
-   hq:'',category:'Data Provider / AdTech',
-   employees:'107',revenue:'',funding:'Early Stage VC - Completed, IPO on 01-Jul-2014 - Amount: 31.2M, PIPE - Several rounds completed between 2014 to 2017, Merger/Acquisition on 02-Oct-2019 - Amount: 39M (+5 more)',
-   comments:'',dsps:[],icp:6,
-   status:'prospect',dead:false,
-   status_note:'',gmail:'none',
-   angle:'',
-   contacts:[]},
-  {name:'SalesSpider',website:'https://salespidermedia.com/',linkedin:'https://ca.linkedin.com/company/sales-spider',
-   description:'SalesSpider leverages big data to generate targeted, opt-in leads for businesses.',
-   hq:'',category:'Data Provider / AdTech',
-   employees:'175',revenue:'15',funding:'',
-   comments:'',dsps:[],icp:6,
-   status:'prospect',dead:false,
-   status_note:'',gmail:'none',
-   angle:'',
-   contacts:[]},
-  {name:'VisualDNA',website:'https://www.visual-dna.net/',linkedin:'https://uk.linkedin.com/company/visualdna',
-   description:'VisualDNA leverages psychometrics and big data for audience targeting and insights.',
-   hq:'',category:'Data Provider / AdTech',
-   employees:'175',revenue:'27.1',funding:'Series A - $5M - Northzone, Series B - $18.5M - Horizons Ventures',
-   comments:'',dsps:[],icp:6,
-   status:'prospect',dead:false,
-   status_note:'',gmail:'none',
-   angle:'',
-   contacts:[]},
-  {name:'BlueKai',website:'http://www.bluekai.com/',linkedin:'https://www.linkedin.com/company/bluekai',
-   description:'BlueKai is a cloud-based data management platform for marketing data activation and unification.',
-   hq:'',category:'Data Provider / AdTech',
-   employees:'200',revenue:'300',funding:'',
-   comments:'',dsps:[],icp:6,
-   status:'prospect',dead:false,
-   status_note:'',gmail:'none',
-   angle:'',
-   contacts:[]},
-  {name:'ZeoTap',website:'https://zeotap.com/',linkedin:'https://www.linkedin.com/company/zeotap',
-   description:'ZeoTap is an AI-driven Customer Data Platform optimizing customer insights for measured marketing.',
-   hq:'',category:'Data Provider / AdTech',
-   employees:'227',revenue:'34.2',funding:'',
-   comments:'',dsps:[],icp:6,
-   status:'prospect',dead:false,
-   status_note:'',gmail:'none',
-   angle:'',
-   contacts:[]},
-  {name:'TalkingData',website:'https://www.talkingdata.com/dmp.jsp?languagetype=en_us',linkedin:'https://www.linkedin.com/company/talkingdata',
-   description:'TalkingData provides data analytics, processing, and digital marketing solutions for mobile applications.',
-   hq:'',category:'Data Provider / AdTech',
-   employees:'234',revenue:'57.8',funding:'10 rounds - VCI Global, 10 rounds - R.C.W. Capital Limited',
-   comments:'',dsps:[],icp:6,
-   status:'prospect',dead:false,
-   status_note:'',gmail:'none',
-   angle:'',
-   contacts:[]},
-  {name:'AddThis',website:'https://www.addthis.com',linkedin:'https://www.linkedin.com/company/addthis',
-   description:'AddThis provides behavioral audience data and website marketing tools for personalized engagement.',
-   hq:'',category:'Data Provider / AdTech',
-   employees:'250',revenue:'200',funding:'$74.9M - Various investors',
-   comments:'',dsps:[],icp:6,
-   status:'prospect',dead:false,
-   status_note:'',gmail:'none',
-   angle:'',
-   contacts:[]},
-  {name:'Crossmedia',website:'https://www.xmedia.com/',linkedin:'https://www.linkedin.com/company/crossmediaus',
-   description:'Crossmedia delivers data-driven media planning and buying solutions with integrated marketing strategies.',
-   hq:'',category:'Data Provider / AdTech',
-   employees:'300',revenue:'170',funding:'',
-   comments:'',dsps:[],icp:6,
-   status:'prospect',dead:false,
-   status_note:'',gmail:'none',
-   angle:'',
-   contacts:[]},
-  {name:'TicketekAU',website:'https://premier.ticketek.com.au/',linkedin:'https://au.linkedin.com/company/ticketek',
-   description:'TicketekAU offers advanced ticketing solutions for diverse entertainment events and sports.',
-   hq:'',category:'Data Provider / AdTech',
-   employees:'335',revenue:'100.4',funding:'',
-   comments:'',dsps:[],icp:6,
-   status:'prospect',dead:false,
-   status_note:'',gmail:'none',
-   angle:'',
-   contacts:[]},
-  {name:'Domain',website:'',linkedin:'',
-   description:'Innovative software solutions architecting scalable applications and leveraging AI-driven analytics.',
-   hq:'',category:'Data Provider / AdTech',
-   employees:'350',revenue:'26.9',funding:'',
-   comments:'',dsps:[],icp:6,
-   status:'prospect',dead:false,
-   status_note:'',gmail:'none',
-   angle:'',
-   contacts:[]},
-  {name:'I Cumulus',website:'https://www.cumulusmedia.com/',linkedin:'https://my.linkedin.com/company/icumulus',
-   description:'Cumulus offers ERP solutions, digital transformation, and technology consulting for manufacturers.',
-   hq:'',category:'Data Provider / AdTech',
-   employees:'403',revenue:'844.5',funding:'',
-   comments:'',dsps:[],icp:6,
-   status:'prospect',dead:false,
-   status_note:'',gmail:'none',
-   angle:'',
-   contacts:[]},
-  {name:'BeyondD',website:'https://www.bynd.com/',linkedin:'https://www.linkedin.com/company/beyond-technology-consultancy',
-   description:'BeyondD delivers advanced AI and cloud-based solutions for innovative technology transformation.',
-   hq:'',category:'Data Provider / AdTech',
-   employees:'450',revenue:'1400',funding:'',
-   comments:'',dsps:[],icp:6,
-   status:'prospect',dead:false,
-   status_note:'',gmail:'none',
-   angle:'',
-   contacts:[]},
-  {name:'AdNear',website:'www.near.co',linkedin:'https://www.linkedin.com/company/near/',
-   description:'AdNear utilizes geo-location data for intelligent, targeted advertising solutions.',
-   hq:'',category:'Data Provider / AdTech',
-   employees:'457',revenue:'87.8',funding:'Sequoia Capital, JP Morgan Private Equity Group, Cisco Investments, Telstra Ventures',
-   comments:'',dsps:[],icp:6,
-   status:'prospect',dead:false,
-   status_note:'',gmail:'none',
-   angle:'',
-   contacts:[]},
-  {name:'Pelmorex',website:'https://www.pelmorex.com/en/',linkedin:'https://www.linkedin.com/company/pelmorexcorp',
-   description:'Pelmorex delivers advanced weather information services through data analytics and multimedia platforms.',
-   hq:'',category:'Data Provider / AdTech',
-   employees:'500',revenue:'206.2',funding:'',
-   comments:'',dsps:[],icp:6,
-   status:'prospect',dead:false,
-   status_note:'',gmail:'none',
-   angle:'',
-   contacts:[]},
-  {name:'Weborama',website:'https://www.weborama.com/',linkedin:'https://www.linkedin.com/company/weborama',
-   description:'Weborama specializes in data-driven marketing solutions with semantic AI for targeted advertising.',
-   hq:'',category:'Data Provider / AdTech',
-   employees:'500',revenue:'32.2',funding:'Private Equity - Undisclosed - Ardian',
-   comments:'',dsps:[],icp:6,
-   status:'prospect',dead:false,
-   status_note:'',gmail:'none',
-   angle:'',
-   contacts:[]},
-  {name:'Foursquare',website:'https://foursquare.com/',linkedin:'https://www.linkedin.com/company/location-foursquare',
-   description:'Foursquare delivers geolocation technology and location intelligence solutions for businesses.',
-   hq:'',category:'Data Provider / AdTech',
-   employees:'526',revenue:'57.9',funding:'Series G - The Raine Group, Series G - Union Square Ventures',
-   comments:'',dsps:[],icp:6,
-   status:'prospect',dead:false,
-   status_note:'',gmail:'none',
-   angle:'',
-   contacts:[]},
-  {name:'Zoopla',website:'https://www.zoopla.co.uk/',linkedin:'https://uk.linkedin.com/company/zoopla',
-   description:'Zoopla offers property listings, market analysis, and digital tools for home buyers.',
-   hq:'',category:'Data Provider / AdTech',
-   employees:'700',revenue:'120',funding:'Silver Lake, Digital Property Group, Octopus Ventures, Accomplice (+1 more)',
-   comments:'',dsps:[],icp:6,
-   status:'prospect',dead:false,
-   status_note:'',gmail:'none',
-   angle:'',
-   contacts:[]},
-  {name:'Audiens',website:'https://www.audiense.com/',linkedin:'https://fr.linkedin.com/company/audiens',
-   description:'Audiens develops customer data platforms optimizing digital marketing through advanced analytics and insights.',
-   hq:'',category:'Data Provider / AdTech',
-   employees:'750',revenue:'295.2',funding:'Corporate Round - NHN Entertainment Corp, Seed Round - NHN Entertainment Corp',
-   comments:'',dsps:[],icp:6,
-   status:'prospect',dead:false,
-   status_note:'',gmail:'none',
-   angle:'',
-   contacts:[]},
-  {name:'Mobile.de',website:'https://www.mobile.de/?lang=en&srsltid=AfmBOoq7bs4TsG8fEFxyfP2ubVbiWPzZ-40FJFslNJRGaGt7Jlfd4amB',linkedin:'https://www.linkedin.com/company/mobile-de-gmbh',
-   description:'Mobile.de is Germany\'s leading online marketplace for vehicles, facilitating purchases and listings.',
-   hq:'',category:'Data Provider / AdTech',
-   employees:'750',revenue:'59.4',funding:'eBay Classifieds Group - $6.46M, Baird Capital',
-   comments:'',dsps:[],icp:6,
-   status:'prospect',dead:false,
-   status_note:'',gmail:'none',
-   angle:'',
-   contacts:[]},
-  {name:'iBotta',website:'https://home.ibotta.com/',linkedin:'https://www.linkedin.com/company/ibotta-inc-',
-   description:'Ibotta is a mobile platform delivering digital cash back offers through performance marketing.',
-   hq:'',category:'Data Provider / AdTech',
-   employees:'800',revenue:'367.3',funding:'',
-   comments:'',dsps:[],icp:6,
-   status:'prospect',dead:false,
-   status_note:'',gmail:'none',
-   angle:'',
-   contacts:[]},
-  {name:'Adform',website:'https://site.adform.com/',linkedin:'https://www.linkedin.com/company/adform',
-   description:'Adform is an integrated adtech platform enabling digital advertising across connected devices.',
-   hq:'',category:'Data Provider / AdTech',
-   employees:'838',revenue:'49.2',funding:'$27M over 4 rounds',
-   comments:'',dsps:[],icp:6,
-   status:'prospect',dead:false,
-   status_note:'',gmail:'none',
-   angle:'',
-   contacts:[]},
-  {name:'Scout24',website:'https://www.scout24.com/en/',linkedin:'https://www.linkedin.com/company/scout24-se',
-   description:'Scout24 operates a leading digital marketplace for real estate using advanced technology.',
-   hq:'',category:'Data Provider / AdTech',
-   employees:'877',revenue:'509.1',funding:'',
-   comments:'',dsps:[],icp:6,
-   status:'prospect',dead:false,
-   status_note:'',gmail:'none',
-   angle:'',
-   contacts:[]},
-  {name:'Scout24 AG',website:'https://www.scout24.com/en/',linkedin:'https://www.linkedin.com/company/scout24-se',
-   description:'Scout24 AG operates ImmoScout24, a leading digital real estate marketplace leveraging AI and data analytics.',
-   hq:'',category:'Data Provider / AdTech',
-   employees:'877',revenue:'509.1',funding:'',
-   comments:'',dsps:[],icp:6,
-   status:'prospect',dead:false,
-   status_note:'',gmail:'none',
-   angle:'',
-   contacts:[]},
-  {name:'AdAdvisor by Neustar',website:'https://home.neustar/',linkedin:'https://www.linkedin.com/company/neustar-inc',
-   description:'AdAdvisor by Neustar delivers data-driven audience targeting via verified offline data analytics.',
-   hq:'',category:'Data Provider / AdTech',
-   employees:'1159',revenue:'240.3',funding:'Take Private - $2, 900M - Warburg Pincus, Take Private - declined to disclose - TransUnion, IPO - June 10 (+2 more)',
-   comments:'',dsps:[],icp:6,
-   status:'prospect',dead:false,
-   status_note:'',gmail:'none',
-   angle:'',
-   contacts:[]},
-  {name:'Double Verify',website:'https://doubleverify.com/',linkedin:'https://www.linkedin.com/company/doubleverify-inc',
-   description:'DoubleVerify provides digital media verification and analytics using AI-driven measurement technologies.',
-   hq:'',category:'Data Provider / AdTech',
-   employees:'1197',revenue:'748',funding:'$396M - 6 Rounds - IVP, $396M - 6 Rounds - Tiger Global Management, $396M - 6 Rounds - JMI Management',
-   comments:'',dsps:[],icp:6,
-   status:'prospect',dead:false,
-   status_note:'',gmail:'none',
-   angle:'',
-   contacts:[]},
-  {name:'LiveRamp',website:'https://liveramp.com/',linkedin:'https://www.linkedin.com/company/liveramp',
-   description:'LiveRamp is a data connectivity platform for secure data activation and identity resolution.',
-   hq:'',category:'Data Provider / AdTech',
-   employees:'1300',revenue:'746',funding:'Series C - Notable lead investor: Rembrandt Venture Partners, BlackRock, FMR LLC, Vanguard Group',
-   comments:'',dsps:[],icp:6,
-   status:'prospect',dead:false,
-   status_note:'',gmail:'none',
-   angle:'',
-   contacts:[]},
-  {name:'Prisma Media',website:'https://www.prismamedia.com/',linkedin:'https://www.linkedin.com/company/prisma-media',
-   description:'Prisma Media specializes in digital publishing, multimedia advertising, and content creation solutions.',
-   hq:'',category:'Data Provider / AdTech',
-   employees:'1477',revenue:'44.7',funding:'Gruner + Jahr',
-   comments:'',dsps:[],icp:6,
-   status:'prospect',dead:false,
-   status_note:'',gmail:'none',
-   angle:'',
-   contacts:[]},
-  {name:'Hurriyet',website:'https://www.hurriyet.com.tr/',linkedin:'https://www.linkedin.com/company/hurriyet/',
-   description:'Hurriyet is a media company specializing in journalism, digital platforms, and advertising solutions.',
-   hq:'',category:'Data Provider / AdTech',
-   employees:'3000',revenue:'69.4',funding:'',
-   comments:'',dsps:[],icp:6,
-   status:'prospect',dead:false,
-   status_note:'',gmail:'none',
-   angle:'',
-   contacts:[]},
-  {name:'xAd',website:'https://www.groundtruth.com/',linkedin:'https://www.linkedin.com/company/xad-inc',
-   description:'xAd develops location-based technologies for targeted advertising and consumer engagement analytics.',
-   hq:'',category:'Data Provider / AdTech',
-   employees:'3500',revenue:'26.5',funding:'$50M - Institutional Venture Partners, $50M - Emergence Capital, $50M - Softbank Capital, $50M - Silicon Valley Bank',
-   comments:'',dsps:[],icp:6,
-   status:'prospect',dead:false,
-   status_note:'',gmail:'none',
-   angle:'',
-   contacts:[]},
-  {name:'Liveramp APAC',website:'https://liveramp.com/',linkedin:'https://www.linkedin.com/company/liveramp',
-   description:'LiveRamp APAC offers data onboarding and connectivity solutions for enhanced marketing analytics.',
-   hq:'',category:'Data Provider / AdTech',
-   employees:'4000',revenue:'811',funding:'',
-   comments:'',dsps:[],icp:6,
-   status:'prospect',dead:false,
-   status_note:'',gmail:'none',
-   angle:'',
-   contacts:[]},
-  {name:'Acxiom',website:'https://www.acxiom.com/',linkedin:'https://www.linkedin.com/company/acxiom',
-   description:'Acxiom leverages data integration and analytics for AI-driven marketing solutions.',
-   hq:'',category:'Data Provider / AdTech',
-   employees:'4247',revenue:'850',funding:'',
-   comments:'',dsps:[],icp:6,
-   status:'prospect',dead:false,
-   status_note:'',gmail:'none',
-   angle:'',
-   contacts:[]},
-  {name:'Despegar',website:'https://www.us.despegar.com/',linkedin:'https://vg.linkedin.com/company/despegar',
-   description:'Despegar is a digital travel agency facilitating online bookings of flights, hotels, and packages.',
-   hq:'',category:'Data Provider / AdTech',
-   employees:'4908',revenue:'774.1',funding:'Post IPO - $200M',
-   comments:'',dsps:[],icp:6,
-   status:'prospect',dead:false,
-   status_note:'',gmail:'none',
-   angle:'',
-   contacts:[]},
-  {name:'Dun & Bradstreet',website:'https://www.dnb.com/en-us/',linkedin:'https://www.linkedin.com/company/dun-&-bradstreet',
-   description:'Dun & Bradstreet leverages business intelligence and analytics for data-driven decision making.',
-   hq:'',category:'Data Provider / AdTech',
-   employees:'7500',revenue:'2380',funding:'$100M - 9 rounds - Kepha Partners, $100M - 9 rounds - institutional investors',
-   comments:'',dsps:[],icp:6,
-   status:'prospect',dead:false,
-   status_note:'',gmail:'none',
-   angle:'',
-   contacts:[]},
-  {name:'Epsilon',website:'https://www.epsilon.com/us',linkedin:'https://www.linkedin.com/company/epsilon',
-   description:'Epsilon provides integrated technology solutions for data management and analytics in marketing.',
-   hq:'',category:'Data Provider / AdTech',
-   employees:'9565',revenue:'2900',funding:'Acquired by Publicis Groupe',
-   comments:'',dsps:[],icp:6,
-   status:'prospect',dead:false,
-   status_note:'',gmail:'none',
-   angle:'',
-   contacts:[]},
-  {name:'Ncs',website:'http://www.ncscompanies.com',linkedin:'https://www.linkedin.com/company/ncs-companies-llc',
-   description:'NCS designs integrated IT solutions, specializing in systems integration and consulting services.',
-   hq:'',category:'Data Provider / AdTech',
-   employees:'13000',revenue:'2109.7',funding:'Singtel Group',
-   comments:'',dsps:[],icp:6,
-   status:'prospect',dead:false,
-   status_note:'',gmail:'none',
-   angle:'',
-   contacts:[]},
-  {name:'Transunion',website:'https://www.transunion.com/',linkedin:'https://www.linkedin.com/company/transunion',
-   description:'TransUnion leverages data analytics for risk assessment and consumer credit reporting.',
-   hq:'',category:'Data Provider / AdTech',
-   employees:'13200',revenue:'3831',funding:'',
-   comments:'',dsps:[],icp:6,
-   status:'prospect',dead:false,
-   status_note:'',gmail:'none',
-   angle:'',
-   contacts:[]},
-  {name:'Experian',website:'https://www.experian.com/',linkedin:'https://www.linkedin.com/company/experian',
-   description:'Experian leverages data analytics and technology to empower credit risk management and consumer insights.',
-   hq:'',category:'Data Provider / AdTech',
-   employees:'23300',revenue:'7523',funding:'',
-   comments:'',dsps:[],icp:6,
-   status:'prospect',dead:false,
-   status_note:'',gmail:'none',
-   angle:'',
-   contacts:[]},
-  {name:'Baifendian',website:'http://www.baifendian.com',linkedin:'https://www.linkedin.com/company/baifendian',
-   description:'Baifendian specializes in big data and AI-driven personalized recommendation systems.',
-   hq:'',category:'Data Provider / AdTech',
-   employees:'255',revenue:'',funding:'Series E - $71.88M - China National New Central Enterprise Operation Investment Fund, Series E - $71.88M - GF Qianhe, Series E - $71.88M - Haitong Leading Capital Management, Series A - $40M - China Guoxin Holding (+1 more)',
-   comments:'',dsps:[],icp:5,
-   status:'prospect',dead:false,
-   status_note:'',gmail:'none',
-   angle:'',
-   contacts:[]},
-  {name:'Ticketek',website:'https://www.ticketek.com/',linkedin:'https://au.linkedin.com/company/ticketek',
-   description:'Ticketek provides advanced ticketing solutions for entertainment and sports events across Australia.',
-   hq:'',category:'Data Provider / AdTech',
-   employees:'260',revenue:'',funding:'Qantas Airways - acquisition',
-   comments:'',dsps:[],icp:5,
-   status:'prospect',dead:false,
-   status_note:'',gmail:'none',
-   angle:'',
-   contacts:[]},
-  {name:'dataXtrade',website:'https://www.dataxtrade.com/',linkedin:'https://www.linkedin.com/company/datax-ltd/',
-   description:'dataXtrade develops AI-driven audience targeting software for optimized marketing and advertising solutions.',
-   hq:'',category:'Data Provider / AdTech',
-   employees:'270',revenue:'',funding:'',
-   comments:'',dsps:[],icp:5,
-   status:'prospect',dead:false,
-   status_note:'',gmail:'none',
-   angle:'',
-   contacts:[]},
-  {name:'Factual',website:'https://www.factual.work/',linkedin:'https://www.linkedin.com/company/factual-inc',
-   description:'3C Brand Hub offers branding, web design, digital marketing, and content solutions.',
-   hq:'',category:'Data Provider / AdTech',
-   employees:'509',revenue:'',funding:'Foursquare, Felicis, Upfront Ventures, Andreessen Horowitz (+3 more)',
-   comments:'',dsps:[],icp:5,
-   status:'prospect',dead:false,
-   status_note:'',gmail:'none',
-   angle:'',
-   contacts:[]},
-  {name:'Aidata',website:'https://www.aidata.com/',linkedin:'https://www.linkedin.com/company/aidata',
-   description:'Leading manufacturer of computer accessories, enhancing user experience and ergonomic efficiency.',
-   hq:'',category:'Data Provider / AdTech',
-   employees:'10',revenue:'5',funding:'',
-   comments:'',dsps:[],icp:1,
-   status:'prospect',dead:false,
-   status_note:'',gmail:'none',
-   angle:'',
-   contacts:[]},
-  {name:'AmeriLINK',website:'http://www.aichotels.com',linkedin:'https://www.linkedin.com/company/amerilink-international-corp',
-   description:'AmeriLINK installs and maintains fiber optic and coaxial cabling for telecommunications services.',
-   hq:'',category:'Data Provider / AdTech',
-   employees:'250',revenue:'7.3',funding:'PPP, RadioShack',
-   comments:'',dsps:[],icp:1,
-   status:'prospect',dead:false,
-   status_note:'',gmail:'none',
-   angle:'',
-   contacts:[]},
-  {name:'TradeMeNZ',website:'https://www.trademe.co.nz/',linkedin:'https://nz.linkedin.com/company/trade-me',
-   description:'TradeMeNZ operates a leading online auction and classifieds platform connecting buyers and sellers.',
-   hq:'',category:'Data Provider / AdTech',
-   employees:'717',revenue:'285',funding:'Total Funding Raised - $615M - Altamir, Total Funding Raised - $615M - Apax Partners, Total Funding Raised - $615M - Ardian, Total Funding Raised - $615M - CFT Capital Partners (+1 more)',
-   comments:'',dsps:[],icp:1,
-   status:'prospect',dead:false,
-   status_note:'',gmail:'none',
-   angle:'',
-   contacts:[]},
-  {name:'TradeMe',website:'https://www.trademe.co.nz/',linkedin:'https://nz.linkedin.com/company/trade-me',
-   description:'Trade Me is New Zealand\'s largest online auction and classifieds platform connecting buyers and sellers.',
-   hq:'',category:'Data Provider / AdTech',
-   employees:'750',revenue:'285',funding:'$615M - Altamir, $615M - Apax Partners, $615M - Ardian, $615M - CFT Capital Partners (+1 more)',
-   comments:'',dsps:[],icp:1,
-   status:'prospect',dead:false,
-   status_note:'',gmail:'none',
-   angle:'',
-   contacts:[]},
-  {name:'CCI',website:'http://www.ccisystems.com',linkedin:'https://www.linkedin.com/company/ccisystems',
-   description:'CCI specializes in energy trading, infrastructure investment, and logistics solutions for commodities.',
-   hq:'',category:'Data Provider / AdTech',
-   employees:'3858',revenue:'1800',funding:'Acquired by Galco Industrial Electronics',
-   comments:'',dsps:[],icp:1,
-   status:'prospect',dead:false,
-   status_note:'',gmail:'none',
-   angle:'',
-   contacts:[]},
-  {name:'CCI JP',website:'https://cci-corporation.com/en/',linkedin:'https://jp.linkedin.com/company/french-chamber-of-commerce-and-industry-in-japan',
-   description:'Develops and manufactures advanced automotive chemicals, car care products, and soundproofing materials.',
-   hq:'',category:'Data Provider / AdTech',
-   employees:'3858',revenue:'1800',funding:'',
-   comments:'',dsps:[],icp:1,
-   status:'prospect',dead:false,
-   status_note:'',gmail:'none',
-   angle:'',
-   contacts:[]},
-  {name:'Qihoo',website:'http://www.360.cn/about/englishversion.html',linkedin:'https://www.linkedin.com/company/qihoo-360',
-   description:'Qihoo 360 is a cybersecurity firm specializing in antivirus and mobile security solutions.',
-   hq:'',category:'Data Provider / AdTech',
-   employees:'5975',revenue:'1170',funding:'$600M - Acquired Opera Software, $9.3B - Acquired by investors in 2015',
-   comments:'',dsps:[],icp:1,
-   status:'prospect',dead:false,
-   status_note:'',gmail:'none',
-   angle:'',
-   contacts:[]},
+/* ═══════════════════════════════
+   CONFIG
+═══════════════════════════════ */
+const SB_URL = 'https://nyzkkqqjnkctcmxoirdj.supabase.co';
+const SB_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im55emtrcXFqbmtjdGNteG9pcmRqIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzM4NzMxMzYsImV4cCI6MjA4OTQ0OTEzNn0.jhAq_C68klOp4iTyj9HmsyyvoxsOI6ACld7t_87TAk0';
+const SB_HEADERS = { apikey: SB_KEY, Authorization: `Bearer ${SB_KEY}` };
+
+const PANELS = {
+  meeseeks: { src: 'meeseeks-composer.html', label: 'Meeseeks Composer' },
+  composer:  { src: 'email-composer-panel.html', label: 'Email Composer' },
+};
+
+/* ═══════════════════════════════
+   SEED DATA
+═══════════════════════════════ */
+const SEED = [
+  ['6sense','POC client'],['Adform','integrated partner / DSP Europe'],['Admixer','no outreach'],
+  ['Adobe','partner — DMP integration'],['Adtonos','client'],['Alikeaudience','client'],
+  ['Aniview','no outreach — failed deal'],['Anzu','POC client'],['Amazon','partner'],
+  ['Audience Network','internal — group company'],['Audigent','partner / curation'],
+  ['Bango','prospect — via LiveRamp'],['Beintoo','prospect — to continue'],
+  ['Belogic TR','partner'],['Bidberry / Carbon / Clickso','partner'],
+  ['Bidscube','no outreach — former client'],['Bidtheatre','partner / DSP Scandinavia'],
+  ['Big Village','prospect — to check'],['Bright Mountain Media','prospect — to continue'],
+  ['Bytedance (TikTok)','client — APAC only'],['Captify UK','client'],
+  ['Claritas','prospect — to continue'],['Clue','prospect — to continue'],
+  ['Criteo','partner — contact: Adrian'],['Datonics','client'],
+  ['Dynata','no outreach — former client'],['Echo Analytics','POC client'],
+  ['Entity X','client — Adrian'],['Epsilon','partner — Matt deal'],
+  ['Equativ','partner / SSP curation'],['Eskimi','no outreach — bad timing'],
+  ['Experian','prospect — Karo/Maciek'],['Eyeota','partner'],['Foursquare','partner'],
+  ['Fyllo','partner'],['Synthesi','partner — to be'],
+  ['GlobalDataResources','partner — NDR acquisition'],['Google','partner'],
+  ['Havas PL','client / agency'],['Hybrid','partner'],
+  ['ID5','partner / cookieless product'],['Intuizi','client — Adrian'],
+  ['Kochava','partner / data provider'],['Lifesight','no outreach — unwanted'],
+  ['LiveRamp','partner / marketplace'],['Lotame','no outreach — contract ended'],
+  ['Madhive','prospect / DSP — Karolina'],['Mastercard','partner'],
+  ['Medianation','no outreach'],['Mediasmart','no outreach — low revenue'],
+  ['MediaWallah','partner / data exchange'],['MeMob','client'],
+  ['Meta','no outreach — via LiveRamp only'],['Microsoft Advertising (Xandr)','partner'],
+  ['Mindvalley','POC client — no renewal'],['MNTN','partner / DSP'],
+  ['Mobilewalla','client'],['Moboost','client'],['Multilocal','client — Adrian'],
+  ['National Research Group','prospect — to check'],['Nexxen','prospect'],
+  ['Nielsen','no outreach'],['OpenSignal','client'],['OpenX','prospect'],
+  ['Oracle','no outreach — closed ad division'],['Permutive','client'],
+  ['Pubmatic','partner'],['Precisely','no outreach'],['Razorpod','no outreach'],
+  ['Roq Ad','no outreach — cross-device'],['RTB House','no business'],
+  ['Samba TV','prospect'],['Scoota','prospect'],['Semantec','client'],
+  ['Semasio','partner — acquired by Fyllo'],['Sharethrough','partner / data exchange'],
+  ['Sovrn','client — Adrian'],['Sportradar','prospect — Karolina'],
+  ['Taboola','prospect — via MSFT Curate'],['Tapad','no fit'],
+  ['TheTradeDesk','partner'],['TikTok','partner — via Bytedance'],
+  ['TL1','internal — our company'],['True Data','client'],['Twitch','no fit'],
+  ['Twitter','no fit'],['VentiveIQ','prospect — Maciek + Adrian'],
+  ['VistarMedia (T-Mobile)','prospect'],['Wowcher','client'],['Zeotap','client'],
+  ['Beklever','prospect'],['Havas Spain','prospect'],['Dentsu Thailand','prospect'],
+  ['OMD Thailand','prospect'],['Splicky DSP','prospect'],['Traveldesk Global','prospect'],
+  ['Liquid Advertising','prospect'],['Stackadapt','prospect'],['Weborama','prospect'],
+  ['Memob','client']
 ];
-</script>
-<script>
-let activeFilter='all', selectedName=null;
-let fx={size:[],region:[],dsp:[],cat:[],gmail:[]};
-let filterPanelOpen=false;
 
-/* ── helpers ── */
-function av(n){const p=[['#9FE1CB30','#0F6E56'],['#B5D4F430','#1A4F8A'],['#FAC77530','#7A4200'],['#C0DD9730','#3B6D11'],['#F4C0D130','#993556']];let h=0;for(let c of n)h=(h*31+c.charCodeAt(0))&0xffff;return p[h%p.length]}
-function ini(n){return n.replace(/[^A-Za-z ]/g,'').split(' ').filter(Boolean).map(w=>w[0]).slice(0,2).join('').toUpperCase()||'?'}
-function tagCls(s){return{client:'tc',partner:'tp',prospect:'tpr',nogo:'tn',poc:'tpo'}[s]||'tpr'}
-function tagLbl(s){return{client:'Client',partner:'Partner',prospect:'Prospect',nogo:'No outreach',poc:'Active Deal'}[s]||'Prospect'}
-function stars(n){return'★'.repeat(Math.min(5,Math.round(n/2)))+'☆'.repeat(Math.max(0,5-Math.min(5,Math.round(n/2))))}
-function domainOf(url){try{return new URL(url).hostname.replace('www.','')}catch{return url.replace(/^https?:\/\/(www\.)?/,'').split('/')[0]}}
+/* ═══════════════════════════════
+   STATE
+═══════════════════════════════ */
+let companies = [];
+let contacts  = [];
+let activeFilter = 'all';
+let selectedName = null;
+let currentTab = 'companies';
+let _resModalTemplate = '';
+let _modalAction = null;
 
-function regionOf(hq){
-  if(!hq)return null;
-  const h=hq.toLowerCase();
-  if(/\b(us|usa|united states|new york|\bny\b|california|\bca\b|florida|\bfl\b|chicago|boston|denver|seattle|miami|dallas|atlanta|san francisco|los angeles|washington)\b/.test(h))return'US';
-  if(/\b(uk|united kingdom|london|manchester|bristol|edinburgh|birmingham)\b/.test(h))return'UK';
-  if(/\b(france|germany|netherlands|spain|italy|poland|czech|sweden|denmark|finland|norway|belgium|austria|switzerland|\beu\b|europe|paris|berlin|amsterdam|madrid|stockholm|prague|warsaw|turkey|israel|dubai|south africa)\b/.test(h))return'EMEA';
-  if(/\b(australia|singapore|japan|china|india|hong kong|korea|thailand|malaysia|indonesia|taiwan|new zealand)\b/.test(h))return'APAC';
-  if(/\b(brazil|argentina|mexico|colombia|chile|latam|latin|buenos aires|s.o paulo)\b/.test(h))return'LatAm';
-  return null;
+/* ═══════════════════════════════
+   HELPERS
+═══════════════════════════════ */
+function classify(n) {
+  const s = (n||'').toLowerCase();
+  if (s.includes('no outreach')||s.includes('no fit')||s.includes('no business')||
+      s.includes('internal')||s.includes('closed')||s.includes('unwanted')) return 'nogo';
+  if (s.includes('poc client')||s.includes('active deal')) return 'poc';
+  if (s.includes('client')) return 'client';
+  if (s.includes('partner')) return 'partner';
+  if (s.includes('prospect')||s.includes('potential')||s.includes('to check')||
+      s.includes('to continue')) return 'prospect';
+  return 'prospect';
 }
 
-function sizeOf(emp){
-  const n=parseInt(emp)||0;
-  if(!n)return null;
-  if(n<20)return'micro';
-  if(n<100)return'small';
-  if(n<500)return'mid';
-  return'large';
+function _slug(n) {
+  return (n||'')
+    .replace(/\s+(Ltd|Inc|LLC|S\.A\.|GmbH|Corp|B\.V\.|AG|PLC|SAS)\.?$/i,'')
+    .toLowerCase().trim()
+    .replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,'');
 }
 
-const SIZE_LABELS={micro:'<20',small:'20–100',mid:'100–500',large:'500+'};
-
-function catOf(cat){
-  if(!cat)return null;
-  const c=cat.toLowerCase();
-  if(c.includes('dsp'))return'DSP';
-  if(c.includes('ssp'))return'SSP';
-  if(c.includes('cdp'))return'CDP';
-  if(c.includes('dmp'))return'DMP';
-  if(c.includes('identity'))return'Identity';
-  if(c.includes('agency'))return'Agency';
-  if(c.includes('data provider')||c.includes('data'))return'Data Provider';
-  return null;
+function av(n) {
+  const p=[['#9FE1CB30','#0F6E56'],['#B5D4F430','#1A4F8A'],['#FAC77530','#7A4200'],
+           ['#C0DD9730','#3B6D11'],['#F4C0D130','#993556']];
+  let h=0; for(let c of (n||''))h=(h*31+c.charCodeAt(0))&0xffff;
+  return p[h%p.length];
 }
 
-/* ── filter state ── */
-function fxCount(){return Object.values(fx).reduce((a,v)=>a+v.length,0)}
-
-function toggleFx(el){
-  const dim=el.dataset.dim, val=el.dataset.val;
-  const arr=fx[dim];
-  const idx=arr.indexOf(val);
-  if(idx===-1){arr.push(val);el.classList.add('on')}
-  else{arr.splice(idx,1);el.classList.remove('on')}
-  renderActiveChips();
-  updateFxBadge();
-  renderList();
+function ini(n) {
+  return (n||'').replace(/[^A-Za-z ]/g,'').split(' ')
+    .filter(Boolean).map(w=>w[0]).slice(0,2).join('').toUpperCase()||'?';
 }
 
-function removeFx(dim,val){
-  const arr=fx[dim];
-  const idx=arr.indexOf(val);
-  if(idx!==-1)arr.splice(idx,1);
-  // sync button state
-  document.querySelectorAll(`.fpx[data-dim="${dim}"][data-val="${CSS.escape(val)}"]`).forEach(b=>b.classList.remove('on'));
-  renderActiveChips();
-  updateFxBadge();
-  renderList();
+function tagCls(s){ return{client:'tc',partner:'tp',prospect:'tpr',nogo:'tn',poc:'tpo',fresh:'tpr'}[s]||'tpr'; }
+function tagLbl(s){ return{client:'Client',partner:'Partner',prospect:'Prospect',nogo:'No out.',poc:'Active',fresh:'Fresh'}[s]||'Prospect'; }
+
+function stars(n) {
+  if(!n) return '';
+  const f = Math.min(5,Math.round((n||0)/2));
+  return '★'.repeat(f)+'☆'.repeat(5-f);
 }
 
-function clearAllFilters(){
-  Object.keys(fx).forEach(k=>fx[k]=[]);
-  document.querySelectorAll('.fpx.on').forEach(b=>b.classList.remove('on'));
-  renderActiveChips();
-  updateFxBadge();
-  renderList();
+function domainOf(url) {
+  try{ return new URL(url.startsWith('http')?url:'https://'+url).hostname.replace('www.',''); }
+  catch{ return (url||'').replace(/^https?:\/\/(www\.)?/,'').split('/')[0]; }
 }
 
-function updateFxBadge(){
-  const cnt=fxCount();
-  const badge=document.getElementById('fxCount');
-  const btn=document.getElementById('filtToggle');
-  badge.textContent=cnt;
-  badge.style.display=cnt?'inline-flex':'none';
-  btn.classList.toggle('active',cnt>0||filterPanelOpen);
+function daysAgo(ts) {
+  if(!ts) return null;
+  return Math.floor((Date.now()-new Date(ts).getTime())/86400000);
 }
 
-function renderActiveChips(){
-  const row=document.getElementById('chipsRow');
-  const DIM_LABELS={size:'Size',region:'Region',dsp:'DSP',cat:'Category',gmail:'Gmail'};
-  const chips=[];
-  Object.entries(fx).forEach(([dim,vals])=>{
-    vals.forEach(val=>{
-      const label=dim==='size'?SIZE_LABELS[val]:val;
-      chips.push(`<span class="achip" onclick="removeFx('${dim}','${CSS.escape(val).replace(/\\/g,'\\\\')}')"><span>${label}</span><span class="achip-x">✕</span></span>`);
+function freshMeat(c) {
+  const noContact = !contacts.some(x=>(x.company_name||'').toLowerCase()===(c.name||'').toLowerCase());
+  const stale = !c.updated_at || daysAgo(c.updated_at) > 30;
+  return c.type === 'prospect' && noContact && stale;
+}
+
+/* ═══════════════════════════════
+   THEME
+═══════════════════════════════ */
+let theme = localStorage.getItem('oaTheme')||'light';
+document.documentElement.setAttribute('data-theme',theme);
+function toggleTheme(){
+  theme = theme==='light'?'dark':'light';
+  document.documentElement.setAttribute('data-theme',theme);
+  localStorage.setItem('oaTheme',theme);
+  document.getElementById('themeBtn').textContent = theme==='dark'?'☀️':'🌙';
+}
+document.getElementById('themeBtn').textContent = theme==='dark'?'☀️':'🌙';
+
+/* ═══════════════════════════════
+   SUPABASE LOAD
+═══════════════════════════════ */
+function initFromSeed() {
+  companies = SEED.map(([name,note]) => ({
+    name, note:note||'', type:classify(note),
+    id:_slug(name), icp:null, category:null, region:null, hq_city:null,
+    size:null, website:null, linkedin_slug:null, description:null,
+    founded_year:null, funding:null, tech_stack:null, products:null,
+    dsps:null, outreach_angle:null, updated_at:null,
+    tcf_vendor_id:null
+  }));
+  document.getElementById('navDot').className = 'nav-dot seed';
+  document.getElementById('navLabel').textContent = `Seed · ${companies.length}`;
+  updateStats(); renderCompanies();
+}
+
+async function loadDB() {
+  document.getElementById('navLabel').textContent = 'Loading…';
+  try {
+    const controller = new AbortController();
+    const tid = setTimeout(()=>controller.abort(), 8000);
+    const [coRes, ctRes] = await Promise.all([
+      fetch(`${SB_URL}/rest/v1/companies?select=*&order=name.asc`, {headers:SB_HEADERS, signal:controller.signal}),
+      fetch(`${SB_URL}/rest/v1/contacts?select=*`, {headers:SB_HEADERS, signal:controller.signal})
+    ]);
+    clearTimeout(tid);
+    if (!coRes.ok) throw new Error(`${coRes.status}`);
+    const coData = await coRes.json();
+    const ctData = await ctRes.json();
+    if (!Array.isArray(coData) || !coData.length) throw new Error('empty');
+
+    // Merge Supabase data over SEED
+    const seedMap = {};
+    SEED.forEach(([name,note])=>{
+      const slug = _slug(name);
+      seedMap[slug] = {name,note:note||'',type:classify(note)};
     });
-  });
-  if(chips.length){
-    chips.push(`<span class="achip" style="background:var(--nb);border-color:var(--nr);color:var(--nc)" onclick="clearAllFilters()">Clear all ✕</span>`);
-    row.innerHTML=chips.join('');
-    row.style.display='flex';
-  } else {
-    row.innerHTML='';
-    row.style.display='none';
+    companies = coData.map(r => {
+      const slug = r.id || _slug(r.name);
+      const seed = seedMap[slug] || {};
+      return {
+        id: slug,
+        name: r.name || seed.name || slug,
+        note: r.note || seed.note || '',
+        type: r.type || seed.type || classify(r.note||''),
+        icp: r.icp,
+        category: r.category,
+        region: r.region,
+        hq_city: r.hq_city,
+        size: r.size,
+        website: r.website,
+        linkedin_slug: r.linkedin_slug,
+        description: r.description,
+        founded_year: r.founded_year,
+        funding: r.funding,
+        tech_stack: r.tech_stack,
+        products: r.products,
+        dsps: r.dsps,
+        outreach_angle: r.outreach_angle,
+        updated_at: r.updated_at,
+        tcf_vendor_id: r.tcf_vendor_id,
+      };
+    });
+    // Add SEED-only entries missing from SB
+    SEED.forEach(([name,note])=>{
+      const slug = _slug(name);
+      if (!companies.find(x=>x.id===slug||_slug(x.name)===slug)) {
+        companies.push({
+          id:slug, name, note:note||'', type:classify(note),
+          icp:null,category:null,region:null,hq_city:null,size:null,website:null,
+          linkedin_slug:null,description:null,founded_year:null,funding:null,
+          tech_stack:null,products:null,dsps:null,outreach_angle:null,
+          updated_at:null,tcf_vendor_id:null
+        });
+      }
+    });
+    companies.sort((a,b)=>(a.name||'').localeCompare(b.name||''));
+
+    contacts = Array.isArray(ctData) ? ctData : [];
+    document.getElementById('navDot').className = 'nav-dot live';
+    document.getElementById('navLabel').textContent = `Live · ${companies.length}`;
+  } catch(e) {
+    console.warn('SB load failed, using seed:', e.message);
+    initFromSeed();
+    return;
   }
+  updateStats(); renderCompanies(); renderContacts();
 }
 
-function toggleFilterPanel(){
-  filterPanelOpen=!filterPanelOpen;
-  const inner=document.getElementById('filterInner');
-  inner.classList.toggle('open',filterPanelOpen);
-  updateFxBadge();
-  // adjust main panel height
-  document.documentElement.style.setProperty('--fx-offset',filterPanelOpen?'185px':'0px');
+async function reloadDB() {
+  document.getElementById('navLabel').textContent = 'Reloading…';
+  await loadDB();
 }
 
-/* ── filtering ── */
-function getFiltered(){
-  const q=(document.getElementById('searchQ').value||'').toLowerCase();
-  const sort=document.getElementById('sortBy').value;
-  let out=COMPANIES.filter(c=>{
-    // status filter (top pills)
-    if(activeFilter==='poc'&&c.status!=='poc')return false;
-    if(activeFilter==='client'&&c.status!=='client')return false;
-    if(activeFilter==='prospect'&&c.status!=='prospect')return false;
-    if(activeFilter==='nogo'&&c.status!=='nogo')return false;
-    if(activeFilter==='dsp'&&!c.dsps.length)return false;
-    // text search
-    if(q){const hay=(c.name+c.description+c.comments+c.dsps.join(' ')+c.hq+c.category).toLowerCase();if(!hay.includes(q))return false}
-    // multi-dim filters (AND across dims, OR within dim)
-    if(fx.size.length){const s=sizeOf(c.employees);if(!s||!fx.size.includes(s))return false}
-    if(fx.region.length){const r=regionOf(c.hq);if(!r||!fx.region.includes(r))return false}
-    if(fx.dsp.length){if(!fx.dsp.some(d=>c.dsps.map(x=>x.toLowerCase()).includes(d.toLowerCase())))return false}
-    if(fx.cat.length){const ct=catOf(c.category);if(!ct||!fx.cat.includes(ct))return false}
-    if(fx.gmail.length){if(!fx.gmail.includes(c.gmail))return false}
+/* ═══════════════════════════════
+   STATS
+═══════════════════════════════ */
+function updateStats() {
+  const all = companies;
+  document.getElementById('st-all').textContent      = all.length;
+  document.getElementById('st-client').textContent   = all.filter(c=>c.type==='client').length;
+  document.getElementById('st-poc').textContent      = all.filter(c=>c.type==='poc').length;
+  document.getElementById('st-partner').textContent  = all.filter(c=>c.type==='partner').length;
+  document.getElementById('st-prospect').textContent = all.filter(c=>c.type==='prospect').length;
+  document.getElementById('st-nogo').textContent     = all.filter(c=>c.type==='nogo').length;
+  document.getElementById('st-fresh').textContent    = all.filter(freshMeat).length;
+}
+
+/* ═══════════════════════════════
+   FILTER / RENDER
+═══════════════════════════════ */
+function setFilter(f, el) {
+  activeFilter = f;
+  // Stats bar
+  document.querySelectorAll('.sc').forEach(b=>b.classList.remove('active'));
+  const scEl = document.getElementById('sc-'+f) || document.getElementById('sc-all');
+  if(scEl) scEl.classList.add('active');
+  // Filter pills
+  document.querySelectorAll('.fp').forEach(b=>b.classList.remove('active'));
+  const fpEl = document.getElementById('fp-'+f);
+  if(fpEl) fpEl.classList.add('active');
+  else { const fallback=document.getElementById('fp-all'); if(fallback)fallback.classList.add('active'); }
+  renderCompanies();
+}
+
+function getFiltered() {
+  const q = (document.getElementById('coSearch')?.value||'').toLowerCase();
+  return companies.filter(c=>{
+    if (activeFilter==='fresh' && !freshMeat(c)) return false;
+    if (activeFilter!=='all' && activeFilter!=='fresh' && c.type!==activeFilter) return false;
+    if (q) {
+      const hay = [c.name,c.note,c.category,c.region,c.hq_city,c.description].join(' ').toLowerCase();
+      if (!hay.includes(q)) return false;
+    }
     return true;
   });
-  out.sort((a,b)=>{
-    if(sort==='emp')return(parseInt(a.employees)||9999)-(parseInt(b.employees)||9999);
-    if(sort==='rev')return(parseFloat(b.revenue)||0)-(parseFloat(a.revenue)||0);
-    if(sort==='az')return a.name.localeCompare(b.name);
-    return b.icp-a.icp;
-  });
-  return out;
 }
 
-function setFilter(f,el){
-  activeFilter=f;
-  document.querySelectorAll('.sc,.fp').forEach(b=>b.classList.remove('active'));
-  if(el)el.classList.add('active');
-  const fp=document.getElementById('fp-'+f);
-  const sc=document.querySelectorAll('.sc')[['all','poc','client','prospect','dsp','nogo'].indexOf(f)];
-  if(fp)fp.classList.add('active');
-  if(sc)sc.classList.add('active');
-  renderList();
-}
-
-function renderList(){
-  const filtered=getFiltered();
-  document.getElementById('listMeta').textContent=`${filtered.length} of ${COMPANIES.length}`;
-  document.getElementById('coList').innerHTML=filtered.map(c=>{
-    const[bg,fg]=av(c.name);
-    const sel=c.name===selectedName;
-    const region=regionOf(c.hq);
-    const size=sizeOf(c.employees);
-    const rowTags=[
-      region?`<span class="row-tag">${region}</span>`:'',
-      size?`<span class="row-tag">${SIZE_LABELS[size]}</span>`:'',
-    ].filter(Boolean).join('');
-    const meta=c.dsps.length
-      ?c.dsps.slice(0,3).join(' · ')+(c.dsps.length>3?` +${c.dsps.length-3}`:'')
-      :(c.hq||c.description.slice(0,36)+'…');
-    return`<div class="co-row${sel?' selected':''}${c.dead?' dead-row':''}" onclick="openReport('${encodeURIComponent(c.name)}')">
-      <div class="co-av" style="background:${bg};border-color:${fg}30;color:${fg}">${ini(c.name)}</div>
-      <div class="co-info-sm">
-        <div class="co-name-sm">${c.name}</div>
-        <div class="co-meta-sm">${meta}</div>
+function renderCompanies() {
+  const filtered = getFiltered();
+  document.getElementById('listMeta').textContent = `${filtered.length} of ${companies.length}`;
+  const list = document.getElementById('coList');
+  if (!filtered.length) {
+    list.innerHTML = '<div style="padding:24px;text-align:center;font-family:\'IBM Plex Mono\',monospace;font-size:10px;color:var(--t3);text-transform:uppercase;letter-spacing:.06em">No results</div>';
+    return;
+  }
+  list.innerHTML = filtered.map(c=>{
+    const [bg,fg] = av(c.name);
+    const sel = c.name===selectedName;
+    const icp = c.icp != null ? c.icp : '';
+    return `<div class="co-row${sel?' sel':''}" onclick="openCompany(companies.find(x=>x.name===decodeURIComponent('${encodeURIComponent(c.name)}')))" oncontextmenu="showCtx(event,'${encodeURIComponent(c.name)}','${c.type}');return false;">
+      <div class="co-av" style="background:${bg};border-color:${fg}40;color:${fg}">${ini(c.name)}</div>
+      <div class="co-info">
+        <div class="co-name">${c.name}</div>
+        <div class="co-note">${(c.note||c.category||'—').slice(0,46)}</div>
       </div>
-      <div class="co-right-sm" style="flex-direction:column;align-items:flex-end;gap:3px">
-        <div style="display:flex;align-items:center;gap:4px">
-          <span class="icp-num">${c.icp}</span>
-          <span class="tag ${tagCls(c.status)}">${tagLbl(c.status)}</span>
-        </div>
-        ${rowTags?`<div style="display:flex;gap:2px">${rowTags}</div>`:''}
+      <div class="co-right">
+        ${icp?`<span class="icp-n">${icp}</span>`:''}
+        <span class="tag ${tagCls(c.type)}">${tagLbl(c.type)}</span>
       </div>
     </div>`;
   }).join('');
 }
 
-function updateStats(){
-  document.getElementById('st-all').textContent=COMPANIES.length;
-  document.getElementById('st-poc').textContent=COMPANIES.filter(c=>c.status==='poc').length;
-  document.getElementById('st-client').textContent=COMPANIES.filter(c=>c.status==='client').length;
-  document.getElementById('st-prospect').textContent=COMPANIES.filter(c=>c.status==='prospect').length;
-  document.getElementById('st-dsp').textContent=COMPANIES.filter(c=>c.dsps.length).length;
-  document.getElementById('st-nogo').textContent=COMPANIES.filter(c=>c.status==='nogo').length;
-  document.getElementById('syncLabel').textContent=`${COMPANIES.length} companies · Mar 2026`;
+function renderContacts() {
+  const q = (document.getElementById('ctSearch')?.value||'').toLowerCase();
+  const filtered = contacts.filter(c=>{
+    if (!q) return true;
+    return [c.full_name,c.title,c.company_name,c.email].join(' ').toLowerCase().includes(q);
+  });
+  document.getElementById('ctMeta').textContent = `${filtered.length} of ${contacts.length}`;
+  const list = document.getElementById('ctList');
+  if (!filtered.length) {
+    list.innerHTML = '<div style="padding:24px;text-align:center;font-family:\'IBM Plex Mono\',monospace;font-size:10px;color:var(--t3);text-transform:uppercase;letter-spacing:.06em">No contacts</div>';
+    return;
+  }
+  list.innerHTML = filtered.map(ct=>{
+    const [bg,fg] = av(ct.company_name||ct.full_name||'');
+    return `<div class="co-row" onclick="openContact(${JSON.stringify(ct).replace(/"/g,'&quot;')})">
+      <div class="co-av" style="background:${bg};border-color:${fg}40;color:${fg};border-radius:50%">${ini(ct.full_name||'?')}</div>
+      <div class="co-info">
+        <div class="co-name">${ct.full_name||'—'}</div>
+        <div class="co-note">${ct.title||''} ${ct.company_name?'· '+ct.company_name:''}</div>
+      </div>
+    </div>`;
+  }).join('');
 }
 
-function confCls(c){return c==='confirmed'?'conf conf-hi':c==='existing'?'conf conf-hi':'conf conf-med'}
-function confLbl(c){return c==='confirmed'?'✓ Confirmed':c==='existing'?'CRM':'Estimated'}
+function switchTab(tab) {
+  currentTab = tab;
+  document.getElementById('pane-companies').style.display = tab==='companies'?'':'none';
+  document.getElementById('pane-contacts').style.display  = tab==='contacts'?'flex':'none';
+  document.getElementById('tab-co').classList.toggle('active', tab==='companies');
+  document.getElementById('tab-ct').classList.toggle('active', tab==='contacts');
+}
 
-function openReport(enc){
-  const name=decodeURIComponent(enc);
-  selectedName=name;
-  const c=COMPANIES.find(x=>x.name===name);
-  if(!c){return}
-  renderList();
-  const[bg,fg]=av(name);
+/* ═══════════════════════════════
+   COMPANY DETAIL
+═══════════════════════════════ */
+function openCompany(c) {
+  if (!c) return;
+  selectedName = c.name;
+  renderCompanies();
 
-  // contacts html
-  let ctHtml='';
-  if(c.contacts&&c.contacts.length){
-    ctHtml=c.contacts.map(ct=>`<div class="contact-card">
-      <div class="ct-row"><div class="ct-av">${ini(ct.name)}</div>
-      <div class="ct-meta"><div class="ct-name">${ct.name}</div><div class="ct-role">${ct.role}</div></div>
+  const [bg,fg] = av(c.name);
+  const domain = c.website ? domainOf(c.website) : '';
+  const dspBadges = (() => {
+    const d = c.dsps;
+    if (!d || (Array.isArray(d)&&!d.length)) return '<span style="font-family:\'IBM Plex Mono\',monospace;font-size:9px;color:var(--t3)">Not confirmed</span>';
+    const arr = Array.isArray(d) ? d : (typeof d==='string' ? d.split(',').map(x=>x.trim()) : []);
+    return arr.map(x=>`<span class="seg-pill">${x}</span>`).join('');
+  })();
+
+  const techStack = (() => {
+    const ts = c.tech_stack;
+    if (!ts || !ts.length) return '';
+    const arr = Array.isArray(ts) ? ts : [];
+    return arr.slice(0,8).map(t=>`<span class="seg-pill">${t.tool||t}</span>`).join('');
+  })();
+
+  const productsHTML = (() => {
+    const p = c.products;
+    if (!p || !p.products || !p.products.length) return '';
+    return `<div class="section">
+      <div class="sec-hdr" onclick="toggleSec(this)">
+        <span class="sec-icon">📦</span><span class="sec-label">Products</span>
+        <span class="sec-badge">${p.products.length}</span>
       </div>
-      <table class="info2">
-        <tr><td>Email</td><td>${ct.email&&ct.email!=='—'?`<span class="code-pill">${ct.email}</span><span class="${confCls(ct.conf)}">${confLbl(ct.conf)}</span>`:'<span style="font-family:IBM Plex Mono,monospace;font-size:10px;color:var(--t3)">Check CRM</span>'}</td></tr>
-      </table></div>`).join('');
-  }else{
-    ctHtml=`<div class="no-rel">No contacts researched yet</div>`;
-  }
+      <div class="sec-body">
+        <table class="grid">
+          <tr><th>Product</th><th>Description</th></tr>
+          ${p.products.map(pr=>`<tr><td style="font-weight:500">${pr.name||pr}</td><td style="color:var(--t2)">${pr.description||''}</td></tr>`).join('')}
+        </table>
+        ${p.integrations_advertised?.length ? `<div style="margin-top:8px;font-size:11px;color:var(--t2)"><strong>Integrations:</strong> ${p.integrations_advertised.join(', ')}</div>` : ''}
+        ${p.positioning?.length ? `<div style="margin-top:4px;font-size:11px;color:var(--t2)">${p.positioning.join(' · ')}</div>` : ''}
+      </div>
+    </div>`;
+  })();
 
-  // gmail html
-  let gmHtml='';
-  if(c.gmail==='active'){gmHtml=`<div class="urg-alert"><strong>Active negotiation</strong> — DV360 collaboration since Feb 26 2025. Last reply Apr 29 (Piotr: "unfortunately not yet"). Awaiting response.</div>`}
-  else if(c.gmail==='prior'){gmHtml=`<div class="rel-alert"><strong>Prior relationship found</strong> — 2019 TTD/BlueKai data partnership. Contact: santi@retargetly.com. Warm re-engagement opportunity.</div>`}
-  else if(c.gmail==='client'){gmHtml=`<div class="rel-alert"><strong>Existing client</strong> — check CRM for full account history and active contracts.</div>`}
-  else{gmHtml=`<div class="no-rel">No prior contact found in Gmail</div>`}
+  // Contacts for this company
+  const coContacts = contacts.filter(ct =>
+    (ct.company_name||'').toLowerCase() === (c.name||'').toLowerCase() ||
+    (ct.company_id) === (c.id||_slug(c.name))
+  );
+  const contactsHTML = coContacts.length
+    ? coContacts.map(ct=>`<div class="contact-card">
+        <div class="ct-row">
+          <div class="ct-av">${ini(ct.full_name||'?')}</div>
+          <div class="ct-meta">
+            <div class="ct-name">${ct.full_name||'—'}</div>
+            <div class="ct-role">${ct.title||'—'}</div>
+          </div>
+          <button class="btn sm" onclick="openContact(${JSON.stringify(ct).replace(/"/g,'&quot;')})">Open →</button>
+        </div>
+        ${ct.email ? `<div style="font-size:11px;margin-top:2px"><span class="code-pill">${ct.email}</span></div>` : ''}
+      </div>`).join('')
+    : `<div class="no-rel">No contacts in database yet</div>`;
 
-  // outreach
-  const angle=c.angle||`Research ${name} further to identify specific hook and pain point for onAudience outreach.`;
+  const angle = c.outreach_angle || `Research ${c.name} further to identify the specific hook and pain point for onAudience outreach.`;
+  const updatedAgo = c.updated_at ? `${daysAgo(c.updated_at)}d ago` : '—';
 
-  // DSP badges
-  const dspBadges=c.dsps.length?c.dsps.map(d=>`<span class="seg-pill">${d}</span>`).join(''):'<span style="color:var(--t3);font-size:11px">Not confirmed — research needed</span>';
-
-  // funding clean display
-  const fundingDisplay=c.funding||'Not disclosed';
-
-  // website domain
-  const domain=c.website?domainOf(c.website):'';
-
-  document.getElementById('detail').innerHTML=`<div style="max-width:720px">
+  document.getElementById('center').innerHTML = `<div class="co-panel">
 
     <div class="banner">
-      <div class="co-logo">${ini(name)}</div>
+      <div class="co-logo" style="background:${fg}">${ini(c.name)}</div>
       <div class="co-hdr-info">
         <div class="co-hdr-name">
-          ${c.status==='client'?'✅ ':''}${name}
-          <span class="tag ${tagCls(c.status)}">${tagLbl(c.status)}</span>
-          ${domain?`<a class="co-domain ml" href="${c.website}" target="_blank">${domain}</a>`:''}
+          ${c.name}
+          <span class="tag ${tagCls(c.type)}">${tagLbl(c.type)}</span>
+          ${domain ? `<a class="co-domain ml" href="${c.website}" target="_blank">${domain} ↗</a>` : ''}
         </div>
-        <div class="co-sub">${c.category||'Data Provider'}${c.hq?' · '+c.hq:''}</div>
-        <div class="icp-row">
-          <span class="stars">${stars(c.icp)}</span>
-          <span class="icp-reason">${c.icp}/10 ICP${c.dsps.length?' · '+c.dsps.join(' + ')+' integrated':''}</span>
+        <div class="co-hdr-sub">${c.category||'Data / AdTech'}${(c.hq_city||c.region)?(' · '+(c.hq_city||c.region)):''}
         </div>
+        ${c.icp != null ? `<div class="icp-row"><span class="stars">${stars(c.icp)}</span><span class="icp-reason">${c.icp}/10 ICP fit</span></div>` : ''}
       </div>
-      <div style="display:flex;flex-direction:column;gap:4px;flex-shrink:0">
-        <button class="btn primary" onclick="sendPrompt('Research ${name.replace(/'/g,"\\'")} — full contact report: decision makers, tech stack, outreach angle and ICP fit for onAudience data partnership')">Full report ↗</button>
-        <button class="btn" onclick="sendPrompt('Draft personalized outreach email to ${name.replace(/'/g,"\\'")} for onAudience data partnership')">Draft email ↗</button>
+      <div class="hdr-actions">
+        <button class="btn p" onclick="openClaude('Research ${c.name.replace(/'/g,"\\'")} — full contact report: decision makers, tech stack, outreach angle and ICP fit for onAudience data partnership')">Full report ↗</button>
+        <button class="btn" onclick="openPanel('meeseeks',{company:'${c.name.replace(/'/g,"\\'")}',dsps:${JSON.stringify(c.dsps||[])},description:'${(c.description||'').replace(/'/g,"\\'").slice(0,80)}',angle:'${(c.outreach_angle||'').replace(/'/g,"\\'").slice(0,80)}',status:'${c.type}',icp:${c.icp||0}})">Draft email ↗</button>
       </div>
     </div>
 
     <div class="section">
-      <div class="sec-hdr"><span class="sec-icon">🏢</span><span class="sec-label">Company Overview</span></div>
+      <div class="sec-hdr" onclick="toggleSec(this)">
+        <span class="sec-icon">🏢</span><span class="sec-label">Company Overview</span>
+      </div>
       <div class="sec-body">
         <table class="info">
-          <tr><td>Description</td><td>${c.description||'—'}</td></tr>
           <tr><td>Category</td><td>${c.category||'—'}</td></tr>
-          <tr><td>HQ / Region</td><td>${c.hq||'—'}</td></tr>
-          <tr><td>Employees</td><td>${c.employees||'—'}</td></tr>
-          <tr><td>Revenue</td><td>${c.revenue?'$'+c.revenue+'M':'—'}</td></tr>
-          <tr><td>Funding</td><td>${fundingDisplay}</td></tr>
-          <tr><td>DSP Integrations</td><td>${dspBadges}</td></tr>
-          <tr><td>Comments</td><td>${c.comments||'—'}</td></tr>
-          <tr><td>ICP Score</td><td><span class="stars">${stars(c.icp)}</span> ${c.icp}/10</td></tr>
-          ${c.linkedin?`<tr><td>LinkedIn</td><td><a class="ml" href="${c.linkedin}" target="_blank">Company profile ↗</a></td></tr>`:''}
-          ${c.website?`<tr><td>Website</td><td><a class="ml" href="${c.website}" target="_blank">${domain} ↗</a></td></tr>`:''}
+          <tr><td>Region / HQ</td><td>${[c.hq_city,c.region].filter(Boolean).join(', ')||'—'}</td></tr>
+          <tr><td>Employees</td><td>${c.size||'—'}</td></tr>
+          <tr><td>DB Updated</td><td>${updatedAgo}</td></tr>
+          ${c.description ? `<tr><td>Description</td><td style="color:var(--t2)">${c.description}</td></tr>` : ''}
+          ${c.founded_year ? `<tr><td>Founded</td><td>${c.founded_year}</td></tr>` : ''}
+          ${c.website ? `<tr><td>Website</td><td><a class="ml" href="${c.website}" target="_blank">${domain} ↗</a></td></tr>` : ''}
+          ${c.tcf_vendor_id ? `<tr><td>GVL / TCF ID</td><td><span class="code-pill">${c.tcf_vendor_id}</span></td></tr>` : ''}
+          ${c.funding ? `<tr><td>Funding</td><td style="font-size:11px;color:var(--t2)">${c.funding}</td></tr>` : ''}
+          <tr><td>DSPs</td><td>${dspBadges}</td></tr>
+          ${techStack ? `<tr><td>Tech Stack</td><td>${techStack}</td></tr>` : ''}
         </table>
-        ${c.status_note?`<div class="note">📋 ${c.status_note}</div>`:''}
+        ${c.note ? `<div class="note" style="margin-top:8px">📋 ${c.note}</div>` : ''}
       </div>
     </div>
 
+    ${productsHTML}
+
     <div class="section">
-      <div class="sec-hdr"><span class="sec-icon">👤</span><span class="sec-label">Contacts</span>
-        <button class="btn" style="margin-left:auto" onclick="sendPrompt('Find Head of Programmatic or Data Partnerships at ${name.replace(/'/g,"\\'")} — LinkedIn profile, email, background')">Find contacts ↗</button>
+      <div class="sec-hdr" onclick="toggleSec(this)">
+        <span class="sec-icon">👤</span><span class="sec-label">Contacts</span>
+        <span class="sec-badge">${coContacts.length}</span>
+        <button class="btn sm sec-ml" onclick="event.stopPropagation();openClaude('Find Head of Programmatic or Data Partnerships at ${c.name.replace(/'/g,"\\'")} — LinkedIn profile, email, background')">Find contacts ↗</button>
       </div>
-      <div class="sec-body">${ctHtml}</div>
+      <div class="sec-body">${contactsHTML}</div>
     </div>
 
     <div class="section">
-      <div class="sec-hdr"><span class="sec-icon">📬</span><span class="sec-label">Gmail History</span>
-        <button class="btn" style="margin-left:auto" onclick="sendPrompt('Check Gmail for any prior contact with ${name.replace(/'/g,"\\'")} — summarize relationship history')">Check Gmail ↗</button>
+      <div class="sec-hdr" onclick="toggleSec(this)">
+        <span class="sec-icon">💡</span><span class="sec-label">Outreach Angle</span>
       </div>
-      <div class="sec-body">${gmHtml}</div>
-    </div>
-
-    <div class="section">
-      <div class="sec-hdr"><span class="sec-icon">💡</span><span class="sec-label">Outreach Angle</span></div>
       <div class="sec-body">
-        <div style="font-size:12px;color:var(--t2);line-height:1.7">${angle}</div>
+        <div class="note">${angle}</div>
         <div class="btn-row">
-          <button class="btn primary" onclick="sendPrompt('Draft personalized outreach email to ${name.replace(/'/g,"\\'")} — value-led and curiosity variants for onAudience data partnership')">Draft email ↗</button>
-          <button class="btn" onclick="sendPrompt('Draft LinkedIn connection note and InMail for ${name.replace(/'/g,"\\'")} — short, personalized for data partnership')">LinkedIn ↗</button>
-          <button class="btn" onclick="sendPrompt('Find companies similar to ${name.replace(/'/g,"\\'")} for onAudience programmatic data outreach — ranked by ICP fit')">Find similar ↗</button>
+          <button class="btn p" onclick="openClaude('Draft personalized outreach email to ${c.name.replace(/'/g,"\\'")} — value-led and curiosity variants for onAudience data partnership')">Draft email ↗</button>
+          <button class="btn" onclick="openClaude('Draft a LinkedIn connection note and InMail for ${c.name.replace(/'/g,"\\'")} — short, personalized for data partnership')">LinkedIn ↗</button>
+          <button class="btn" onclick="openClaude('Find companies similar to ${c.name.replace(/'/g,"\\'")} for onAudience programmatic data outreach — ranked by ICP fit')">Find similar ↗</button>
+          <button class="btn" onclick="openClaude('Check Gmail for any prior contact with ${c.name.replace(/'/g,"\\'")} — summarize relationship history')">Gmail ↗</button>
         </div>
       </div>
     </div>
 
     <div class="section">
-      <div class="sec-hdr"><span class="sec-icon">🔗</span><span class="sec-label">Quick Links</span></div>
+      <div class="sec-hdr" onclick="toggleSec(this)">
+        <span class="sec-icon">🔗</span><span class="sec-label">Relations</span>
+        <span class="sec-badge" id="rel-count-badge"></span>
+      </div>
+      <div class="sec-body" id="rel-body">
+        <div style="font-family:'IBM Plex Mono',monospace;font-size:9px;color:var(--t3)">Loading…</div>
+      </div>
+    </div>
+
+    <div class="section">
+      <div class="sec-hdr" onclick="toggleSec(this)">
+        <span class="sec-icon">🔗</span><span class="sec-label">Quick Links</span>
+      </div>
       <div class="sec-body">
         <table class="info">
-          <tr><td>People Search</td><td><a class="ml" href="https://www.linkedin.com/search/results/people/?keywords=${encodeURIComponent(name+' Head Programmatic Data Partnerships')}" target="_blank">Search LinkedIn ↗</a></td></tr>
-          ${c.linkedin?`<tr><td>Company LI</td><td><a class="ml" href="${c.linkedin}" target="_blank">${c.linkedin} ↗</a></td></tr>`:''}
-          ${c.website?`<tr><td>Website</td><td><a class="ml" href="${c.website}" target="_blank">${c.website} ↗</a></td></tr>`:''}
+          <tr><td>People Search</td><td><a class="ml" href="https://www.linkedin.com/search/results/people/?keywords=${encodeURIComponent((c.name||'')+' Head Programmatic Data Partnerships')}" target="_blank">Search LinkedIn ↗</a></td></tr>
+          ${c.linkedin_slug ? `<tr><td>Company LI</td><td><a class="ml" href="https://www.linkedin.com/company/${c.linkedin_slug}" target="_blank">linkedin.com/company/${c.linkedin_slug} ↗</a></td></tr>` : ''}
+          ${c.website ? `<tr><td>Website</td><td><a class="ml" href="${c.website}" target="_blank">${c.website} ↗</a></td></tr>` : ''}
+          ${c.tcf_vendor_id ? `<tr><td>TCF Registry</td><td><a class="ml" href="https://iabeurope.eu/tcf-for-vendors/" target="_blank">Vendor ID ${c.tcf_vendor_id} ↗</a></td></tr>` : ''}
         </table>
       </div>
     </div>
 
   </div>`;
+
+  // Load relations async
+  if (c.name) setTimeout(()=>loadRelations(_slug(c.name)), 80);
 }
 
-function toggleTheme(){
-  const h=document.documentElement;
-  h.setAttribute('data-theme',h.getAttribute('data-theme')==='dark'?'light':'dark');
+function toggleSec(hdr) {
+  const body = hdr.nextElementSibling;
+  if (body) body.classList.toggle('hidden');
 }
 
-updateStats();
-renderList();
-setTimeout(()=>openReport('AudienceRate'),120);
+/* ═══════════════════════════════
+   LOAD RELATIONS
+═══════════════════════════════ */
+async function loadRelations(slug) {
+  const body  = document.getElementById('rel-body');
+  const badge = document.getElementById('rel-count-badge');
+  if (!body) return;
+  try {
+    const res = await fetch(
+      `${SB_URL}/rest/v1/company_relations?or=(from_company.eq.${slug},to_company.eq.${slug})&select=*`,
+      { headers: SB_HEADERS }
+    );
+    const rels = await res.json();
+    if (!Array.isArray(rels) || !rels.length) {
+      body.innerHTML = '<div class="no-rel">No relations recorded</div>';
+      if (badge) badge.textContent = '';
+      return;
+    }
+    const coMap = {};
+    companies.forEach(x=>{ if(x.name) coMap[_slug(x.name)] = x; });
+    const ti = { data_partner:'🤝',dsp_integration:'📡',marketplace_listed:'🛒',
+                 tech_integration:'⚙️',client_of:'💰',acquired_by:'🏢',
+                 subsidiary_of:'🏢',competes_with:'⚔️',co_sell:'🤲' };
+    const tl = { data_partner:'Data Partner',dsp_integration:'DSP Integration',
+                 marketplace_listed:'Marketplace Listed',tech_integration:'Tech Integration',
+                 client_of:'Client Of',acquired_by:'Acquired By',subsidiary_of:'Subsidiary Of',
+                 competes_with:'Competes With',co_sell:'Co-Sell' };
+    const groups = {};
+    rels.forEach(r => {
+      groups[r.relation_type] = groups[r.relation_type]||[];
+      const isSrc = r.from_company===slug;
+      const oid = isSrc ? r.to_company : r.from_company;
+      const co = coMap[oid];
+      groups[r.relation_type].push({
+        oid, name:co?.name||oid,
+        arrow: r.direction==='bidirectional'?'⇄':(isSrc?'→':'←'),
+        scls: r.strength==='confirmed'?'tc':'tpr',
+        strength:r.strength, notes:r.notes, has:!!co
+      });
+    });
+    body.innerHTML = Object.entries(groups).map(([tp,items])=>
+      `<div style="margin-bottom:10px">
+        <div style="font-family:'IBM Plex Mono',monospace;font-size:9px;text-transform:uppercase;letter-spacing:.06em;color:var(--t3);margin-bottom:4px;display:flex;align-items:center;gap:5px">
+          <span>${ti[tp]||'•'}</span><span>${tl[tp]||tp}</span>
+          <span style="margin-left:auto;background:var(--surf3);border-radius:2px;padding:0 4px">${items.length}</span>
+        </div>
+        ${items.map(it=>`<div style="display:flex;align-items:flex-start;gap:8px;padding:5px 0;border-bottom:1px solid var(--rule3)">
+          <span style="font-family:'IBM Plex Mono',monospace;font-size:13px;color:var(--g);flex-shrink:0;margin-top:1px">${it.arrow}</span>
+          <div style="flex:1;min-width:0">
+            <div style="display:flex;align-items:center;gap:6px">
+              ${it.has
+                ? `<span style="font-size:12px;font-weight:500;color:var(--g);cursor:pointer"
+                    onclick="openCompany(companies.find(x=>_slug(x.name)==='${it.oid}'))">${it.name}</span>`
+                : `<span style="font-size:12px;font-weight:500;color:var(--t1)">${it.name}</span>`}
+              <span class="tag ${it.scls}" style="margin-left:auto">${it.strength||'?'}</span>
+            </div>
+            ${it.notes?`<div style="font-size:11px;color:var(--t3);margin-top:2px;line-height:1.4">${it.notes}</div>`:''}
+          </div></div>`).join('')}
+      </div>`
+    ).join('');
+    if (badge) badge.textContent = `(${rels.length})`;
+  } catch(e) {
+    body.innerHTML = `<div class="no-rel">Relations unavailable — ${e.message}</div>`;
+  }
+}
+
+/* ═══════════════════════════════
+   CONTACT DRAWER
+═══════════════════════════════ */
+function openContact(ct) {
+  const [bg,fg] = av(ct.company_name||ct.full_name||'');
+  document.getElementById('drAv').style.cssText += `;background:${bg};border:1px solid ${fg}40;color:${fg}`;
+  document.getElementById('drAv').textContent = ini(ct.full_name||'?');
+  document.getElementById('drName').textContent = ct.full_name||'—';
+  document.getElementById('drRole').textContent = [ct.title,ct.company_name].filter(Boolean).join(' · ');
+  document.getElementById('drawerBody').innerHTML = `
+    <table class="info" style="margin-bottom:12px">
+      ${ct.email ? `<tr><td>Email</td><td><span class="code-pill">${ct.email}</span></td></tr>` : ''}
+      ${ct.phone ? `<tr><td>Phone</td><td>${ct.phone}</td></tr>` : ''}
+      ${ct.linkedin_url ? `<tr><td>LinkedIn</td><td><a class="ml" href="${ct.linkedin_url}" target="_blank">Profile ↗</a></td></tr>` : ''}
+      ${ct.notes ? `<tr><td>Notes</td><td style="font-size:11px;color:var(--t2)">${ct.notes}</td></tr>` : ''}
+    </table>
+    <div class="btn-row">
+      <button class="btn p" onclick="openClaude('Draft personalized outreach email to ${(ct.full_name||'').replace(/'/g,"\\'")} at ${(ct.company_name||'').replace(/'/g,"\\'")} — role: ${(ct.title||'').replace(/'/g,"\\'")} — value-led for onAudience data partnership')">Draft email ↗</button>
+      ${ct.linkedin_url ? `<button class="btn" onclick="window.open('${ct.linkedin_url}','_blank')">LinkedIn ↗</button>` : ''}
+      ${ct.email ? `<button class="btn" onclick="openClaude('Check Gmail for any prior contact with ${(ct.full_name||'').replace(/'/g,"\\'")} at ${(ct.company_name||'').replace(/'/g,"\\'")} — summarize relationship history')">Gmail ↗</button>` : ''}
+      <button class="btn" onclick="openClaude('Full research on ${(ct.full_name||'').replace(/'/g,"\\'")} at ${(ct.company_name||'').replace(/'/g,"\\'")} — background, seniority, interests, talking points for onAudience outreach')">Full research ↗</button>
+    </div>`;
+  document.getElementById('drawerOverlay').classList.add('vis');
+  document.getElementById('contactDrawer').classList.add('open');
+}
+
+function closeDrawer() {
+  document.getElementById('drawerOverlay').classList.remove('vis');
+  document.getElementById('contactDrawer').classList.remove('open');
+}
+
+/* ═══════════════════════════════
+   CONTEXT MENU
+═══════════════════════════════ */
+function showCtx(e, enc, type) {
+  e.preventDefault(); e.stopPropagation();
+  const name = decodeURIComponent(enc);
+  const menu = document.getElementById('ctxMenu');
+  const actions = [
+    { icon:'🔍', text:'Full contact report',  prompt:`Research ${name} — full contact report with decision makers, outreach angle, and ICP fit score` },
+    { icon:'👤', text:'Find decision makers', prompt:`Find Head of Programmatic or Data Partnerships at ${name} — LinkedIn, email, background` },
+    { icon:'✉',  text:'Draft outreach',       prompt:`Draft a personalized outreach email to ${name} — value-led and curiosity variants` },
+    { icon:'💬', text:'LinkedIn message',      prompt:`Draft a LinkedIn connection note and InMail for ${name} — short, personalized` },
+    { icon:'🔗', text:'Find similar',          prompt:`Find companies similar to ${name} for onAudience outreach — top 10 ranked by ICP fit` },
+    { icon:'📧', text:'Check email history',   prompt:`Check Gmail for any previous contact with ${name} — summarize relationship history` },
+  ];
+  if (type==='nogo')     actions.push({ icon:'⚠️', text:'Why no outreach?',  prompt:`Explain why ${name} is marked no-outreach in onAudience and what happened` });
+  if (type==='prospect') actions.push({ icon:'🚀', text:'Prioritize account', prompt:`Why should onAudience prioritize ${name} — ICP fit, timing, buying signals` });
+  menu.innerHTML = `<div class="ctx-label">${name}</div><div class="ctx-sep"></div>`
+    + actions.map((a,i)=>`<div class="ctx-item" data-i="${i}"><span class="ctx-ico">${a.icon}</span>${a.text}</div>`).join('');
+  menu.querySelectorAll('.ctx-item').forEach((el,i)=>{
+    el.addEventListener('click',()=>{ menu.style.display='none'; openClaude(actions[i].prompt); });
+  });
+  const x = Math.min(e.clientX, window.innerWidth-240);
+  const y = Math.min(e.clientY, window.innerHeight-320);
+  menu.style.left=x+'px'; menu.style.top=y+'px'; menu.style.display='block';
+}
+document.addEventListener('click',()=>document.getElementById('ctxMenu').style.display='none');
+
+/* ═══════════════════════════════
+   PANELS
+═══════════════════════════════ */
+function openPanel(id, payload) {
+  const p = PANELS[id];
+  if (!p) { openClaude('Draft personalized outreach email for onAudience data partnership — value-led and curiosity variants'); return; }
+  const modal  = document.getElementById('panelModal');
+  const iframe = document.getElementById('panelIframe');
+  modal.style.display = 'flex';
+  iframe.src = p.src;
+  iframe.onload = () => {
+    iframe.contentWindow.postMessage({ type:'COMPOSE_PREFILL', payload: payload||{} }, '*');
+    iframe.contentWindow.postMessage({ type:'THEME_SYNC', payload:{ theme } }, '*');
+  };
+}
+window.addEventListener('message', e => {
+  if (e.data?.type==='COMPOSE_READY') { /* handle result */ }
+});
+
+/* ═══════════════════════════════
+   CLAUDE / RESEARCH
+═══════════════════════════════ */
+function openClaude(prompt) {
+  window.open('https://claude.ai/new?q='+encodeURIComponent(prompt),'_blank');
+}
+
+function openResearch() {
+  _resModalTemplate = 'Research [COMPANY] — full contact report with decision makers, outreach angle, and ICP fit score';
+  document.getElementById('resTitle').textContent = 'Research a company';
+  document.getElementById('resDesc').textContent = 'Enter the company name to generate a full contact report.';
+  document.getElementById('resInput').value = '';
+  document.getElementById('researchOverlay').style.display = 'flex';
+  setTimeout(()=>document.getElementById('resInput').focus(), 60);
+}
+
+function closeResearch() { document.getElementById('researchOverlay').style.display = 'none'; }
+
+function submitResearch() {
+  const val = document.getElementById('resInput').value.trim();
+  if (!val) return;
+  closeResearch();
+  openClaude(_resModalTemplate.replace('[COMPANY]',val));
+}
+
+function promptModal(title, desc, template) {
+  _resModalTemplate = template;
+  document.getElementById('resTitle').textContent = title;
+  document.getElementById('resDesc').textContent = desc;
+  document.getElementById('resInput').value = '';
+  document.getElementById('researchOverlay').style.display = 'flex';
+  setTimeout(()=>document.getElementById('resInput').focus(), 60);
+}
+
+function doResearch() {
+  const q = document.getElementById('coSearch').value.trim();
+  if (q) openClaude(`Research ${q} — full contact report with decision makers, outreach angle, and ICP fit score`);
+  else openResearch();
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+  const ri = document.getElementById('resInput');
+  if (ri) ri.addEventListener('keydown', e => {
+    if (e.key==='Enter'&&!e.shiftKey) { e.preventDefault(); submitResearch(); }
+  });
+});
+
+/* ═══════════════════════════════
+   INIT
+═══════════════════════════════ */
+initFromSeed(); // show immediately
+loadDB();       // enrich async
 </script>
 </body>
 </html>
