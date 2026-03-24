@@ -744,15 +744,19 @@ async function renderTCFCenter(){
     center.innerHTML=`<div class="empty-wrap"><div style="font-size:32px">&#128737;&#65039;</div><div class="empty-title">TCF Privacy Analyser</div><div style="font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--t3);text-align:center;max-width:280px;line-height:1.7;margin-top:4px">Select companies from the left to analyse TCF declarations and compare legal bases across up to 4 vendors.</div></div>`;
     return;
   }
-  center.innerHTML='<div style="padding:20px;font-family:\'IBM Plex Mono\',monospace;font-size:10px;color:var(--t3)">Loading GVL v3\u2026</div>';
+  center.innerHTML='<div style="padding:20px;font-family:\'IBM Plex Mono\',monospace;font-size:10px;color:var(--t3)">Loading GVL v3… <span style="opacity:.5">(first load may take a moment)</span></div>';
   const gvl=await loadGVL();
+  if(!gvl||!gvl.vendors||!Object.keys(gvl.vendors).length){
+    center.innerHTML='<div style="padding:20px"><div style="font-family:\'IBM Plex Mono\',monospace;font-size:10px;color:#F87171;margin-bottom:10px">&#9888; GVL fetch failed — check network / CORS.</div><button class=\"btn sm p\" onclick=\"window.gvlData=null;window._gvlPromise=null;renderTCFCenter()\">&#8635; Retry</button></div>';
+    return;
+  }
   if(selected.length===1){renderTCFSingleCenter(center,selected[0],gvl);}
   else{renderTCFMultiCenter(center,selected,gvl);}
 }
 
 function renderTCFSingleCenter(container,c,gvl){
   const slug=c.id||_slug(c.name||'');
-  const vendor=c.tcf_vendor_id?getVendor(c.tcf_vendor_id):null;
+  const vendor=c.tcf_vendor_id?(gvl.vendors&&gvl.vendors[String(c.tcf_vendor_id)]||null):null;
   const score=vendor?calcPrivacyRisk(vendor):null;
   if(score)saveRiskScore(slug,score);
   const av=getAv(c.name),n=ini(c.name),tc=tClass(c.type),tl=tLabel(c.type);
@@ -841,7 +845,7 @@ function renderTCFSingleCenter(container,c,gvl){
 }
 
 function renderTCFMultiCenter(container,selected,gvl){
-  const vendors=selected.map(c=>c.tcf_vendor_id?getVendor(c.tcf_vendor_id):null);
+  const vendors=selected.map(c=>c.tcf_vendor_id?(gvl.vendors&&gvl.vendors[String(c.tcf_vendor_id)]||null):null);
   selected.forEach((c,i)=>{if(vendors[i]){const sc=calcPrivacyRisk(vendors[i]);if(sc)saveRiskScore(c.id||_slug(c.name||''),sc);}});
 
   // Always include onAudience as the reference column (first)
@@ -1061,7 +1065,7 @@ async function executeGVLConfirm(){
 
 /* ── Init ───────────────────────────────────────────────────── */
 document.addEventListener('DOMContentLoaded',function(){
-  setTimeout(function(){loadGVL();},4000);
+  setTimeout(function(){loadGVL();},800);
   const ov2=document.getElementById('gvl-confirm-overlay');
   if(ov2)ov2.addEventListener('click',e=>{if(e.target===ov2)closeGVLConfirm();});
 });
