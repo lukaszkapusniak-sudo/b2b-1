@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
-<title>onAudience — Batch Enricher</title>
+<title>onAudience — Sales Intelligence Hub</title>
 <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@300;400;500;600&family=IBM+Plex+Sans:wght@300;400;500;600&display=swap" rel="stylesheet"/>
 <style>
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
@@ -31,112 +31,284 @@
   --poc:#C084FC;--pob:rgba(192,132,252,0.1);--por:rgba(192,132,252,0.25);
   --sh:0 1px 3px rgba(0,0,0,0.5),0 6px 20px rgba(0,0,0,0.35);
 }
-html,body{height:100%;background:var(--bg);color:var(--t1);font-family:'IBM Plex Sans',sans-serif;font-size:13px;line-height:1.5;overflow:hidden}
-::-webkit-scrollbar{width:3px}::-webkit-scrollbar-thumb{background:var(--surf4);border-radius:2px}
-.app{display:flex;flex-direction:column;height:100vh}
+[data-theme="dark"] body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;
+  background-image:linear-gradient(rgba(255,255,255,.016) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.016) 1px,transparent 1px);
+  background-size:40px 40px}
+html,body{height:100%;background:var(--bg);color:var(--t1);font-family:'IBM Plex Sans',sans-serif;font-size:13px;line-height:1.5;transition:background .25s,color .25s}
+::-webkit-scrollbar{width:3px;height:3px}
+::-webkit-scrollbar-thumb{background:var(--surf4);border-radius:2px}
 
 /* NAV */
-.nav{height:42px;background:var(--surf);border-bottom:1px solid var(--rule);display:flex;align-items:center;padding:0 14px;gap:10px;flex-shrink:0}
-.nav-logo{width:26px;height:26px;background:var(--g);border-radius:4px;display:flex;align-items:center;justify-content:center;font-family:'IBM Plex Mono',monospace;font-weight:600;font-size:9px;color:#fff;letter-spacing:-.5px;flex-shrink:0}
-.nav-brand{font-family:'IBM Plex Mono',monospace;font-size:10px;font-weight:500;letter-spacing:.06em;text-transform:uppercase;color:var(--t1)}
+.nav{background:var(--surf);border-bottom:1px solid var(--rule);display:flex;align-items:center;height:42px;padding:0 14px;gap:0;position:sticky;top:0;z-index:100;flex-shrink:0}
+.nav-logo{width:26px;height:26px;background:var(--g);border-radius:4px;display:flex;align-items:center;justify-content:center;font-family:'IBM Plex Mono',monospace;font-weight:600;font-size:9px;color:#fff;letter-spacing:-0.5px;flex-shrink:0}
+.nav-brand{font-family:'IBM Plex Mono',monospace;font-size:10px;font-weight:500;letter-spacing:.06em;text-transform:uppercase;margin-left:10px;padding-right:14px;border-right:1px solid var(--rule);color:var(--t1);white-space:nowrap}
 .nav-sub{color:var(--t3);font-weight:400}
-.nav-right{margin-left:auto;display:flex;align-items:center;gap:8px}
-.sdot{width:6px;height:6px;border-radius:50%;background:var(--t4);transition:background .3s;flex-shrink:0}
-.sdot.live{background:#22C55E}
-.sdot.loading{background:#F59E0B;animation:pulse 1s infinite}
-@keyframes pulse{0%,100%{opacity:1}50%{opacity:.3}}
-.chip{font-family:'IBM Plex Mono',monospace;font-size:9px;padding:2px 8px;border:1px solid var(--rule);border-radius:2px;color:var(--t3);white-space:nowrap}
-.theme-btn{width:26px;height:26px;border:1px solid var(--rule);border-radius:2px;background:var(--surf2);cursor:pointer;font-size:12px;display:flex;align-items:center;justify-content:center;color:var(--t2)}
-
-/* STATS */
-.stats-bar{background:var(--surf);border-bottom:1px solid var(--rule);display:flex;flex-shrink:0;overflow-x:auto}
-.sc{padding:7px 14px;border-right:1px solid var(--rule);cursor:pointer;min-width:90px;transition:background .15s;flex-shrink:0}
-.sc:hover{background:var(--surf2)}
-.sc.active{background:var(--gb)}
-.sn{font-family:'IBM Plex Mono',monospace;font-size:20px;font-weight:300;letter-spacing:-1px;line-height:1}
-.sl{font-family:'IBM Plex Mono',monospace;font-size:9px;text-transform:uppercase;letter-spacing:.07em;color:var(--t3);margin-top:2px}
-.sl.w{color:var(--prc)}.sl.r{color:#A32D2D}
-
-/* TOOLBAR */
-.toolbar{background:var(--surf2);border-bottom:1px solid var(--rule);padding:6px 14px;display:flex;align-items:center;gap:8px;flex-shrink:0;flex-wrap:wrap}
-.sbox{position:relative}
-.sinp{height:26px;padding:0 8px 0 22px;border:1px solid var(--rule);border-radius:2px;background:var(--surf);color:var(--t1);font-family:'IBM Plex Mono',monospace;font-size:10px;outline:none;width:200px}
-.sinp:focus{border-color:var(--gr)}
-.sico{position:absolute;left:7px;top:50%;transform:translateY(-50%);font-size:11px;color:var(--t3);pointer-events:none}
+.nav-right{margin-left:auto;display:flex;align-items:center;gap:6px}
+.sync-chip{display:flex;align-items:center;gap:5px;font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--t3);padding:2px 8px;border:1px solid var(--rule);border-radius:2px;cursor:pointer}
+.sync-chip:hover{background:var(--surf2)}
+.sync-dot{width:5px;height:5px;border-radius:50%;background:#22C55E;transition:background .3s}
+.sync-dot.dead{background:var(--t4)}
 .btn{height:26px;padding:0 10px;border:1px solid var(--rule);border-radius:2px;font-family:'IBM Plex Mono',monospace;font-size:9px;font-weight:500;text-transform:uppercase;letter-spacing:.06em;cursor:pointer;background:var(--surf2);color:var(--t2);transition:all .15s;white-space:nowrap}
 .btn:hover{background:var(--surf3);color:var(--t1)}
 .btn.p{background:var(--g);color:#fff;border-color:var(--g)}
 .btn.p:hover{background:var(--gd)}
-.fp{height:22px;padding:0 8px;border:1px solid var(--rule);border-radius:2px;font-family:'IBM Plex Mono',monospace;font-size:9px;text-transform:uppercase;letter-spacing:.05em;cursor:pointer;background:transparent;color:var(--t3);transition:all .12s}
-.fp:hover:not(.active){background:var(--surf3);color:var(--t1)}
-.fp.active{background:var(--t1);color:var(--surf);border-color:var(--t1)}
-.t-sep{width:1px;height:18px;background:var(--rule);flex-shrink:0}
+.btn.sm{height:22px;padding:0 7px;font-size:8px}
+
+/* STATS BAR */
+.stats-bar{background:var(--surf);border-bottom:1px solid var(--rule);display:grid;grid-template-columns:repeat(7,1fr);flex-shrink:0}
+.sc{padding:7px 10px 6px;border-right:1px solid var(--rule);cursor:pointer;transition:background .15s;text-align:left}
+.sc:last-child{border-right:none}
+.sc:hover{background:var(--surf2)}
+.sc.active{background:var(--gb)}
+.sn{font-family:'IBM Plex Mono',monospace;font-size:20px;font-weight:300;letter-spacing:-1px;line-height:1;color:var(--t1)}
+.sl{font-family:'IBM Plex Mono',monospace;font-size:8px;text-transform:uppercase;letter-spacing:.07em;color:var(--t3);margin-top:2px}
 
 /* LAYOUT */
+.app{display:flex;flex-direction:column;height:100vh;overflow:hidden;position:relative;z-index:1}
 .main{display:flex;flex:1;overflow:hidden}
 
-/* LEFT LIST */
-.panel-left{width:330px;flex-shrink:0;border-right:1px solid var(--rule);display:flex;flex-direction:column;background:var(--surf)}
-.list-meta{padding:4px 10px;border-bottom:1px solid var(--rule2);display:flex;justify-content:space-between;align-items:center;flex-shrink:0}
+/* LEFT PANEL */
+.panel-left{width:300px;flex-shrink:0;border-right:1px solid var(--rule);background:var(--surf);display:flex;flex-direction:column;overflow:hidden}
+.tab-bar{display:flex;border-bottom:1px solid var(--rule);flex-shrink:0}
+.tab{flex:1;height:32px;display:flex;align-items:center;justify-content:center;font-family:'IBM Plex Mono',monospace;font-size:9px;text-transform:uppercase;letter-spacing:.06em;cursor:pointer;color:var(--t3);border-bottom:2px solid transparent;transition:all .15s;gap:5px}
+.tab:hover{color:var(--t1);background:var(--surf2)}
+.tab.active{color:var(--g);border-bottom-color:var(--g);background:var(--gb)}
+.tab-content{display:none;flex-direction:column;flex:1;overflow:hidden}
+.tab-content.active{display:flex}
+
+/* SEARCH ROW */
+.search-row{display:flex;gap:6px;padding:8px;border-bottom:1px solid var(--rule2);flex-shrink:0}
+.sinp{flex:1;height:26px;padding:0 8px;border:1px solid var(--rule);border-radius:2px;background:var(--surf2);color:var(--t1);font-family:'IBM Plex Mono',monospace;font-size:11px;outline:none;transition:border-color .15s}
+.sinp::placeholder{color:var(--t3)}
+.sinp:focus{border-color:var(--gr)}
+
+/* FILTER PILLS */
+.filters{display:flex;gap:4px;flex-wrap:wrap;padding:6px 8px;border-bottom:1px solid var(--rule2);flex-shrink:0}
+.fp{height:20px;padding:0 8px;border:1px solid var(--rule);border-radius:2px;font-family:'IBM Plex Mono',monospace;font-size:8px;text-transform:uppercase;letter-spacing:.05em;cursor:pointer;background:transparent;color:var(--t3);transition:all .12s;white-space:nowrap}
+.fp:hover:not(.active){background:var(--surf3);color:var(--t1)}
+.fp.active{background:var(--t1);color:var(--surf);border-color:var(--t1)}
+
+/* LIST */
+.list-meta{padding:4px 8px;border-bottom:1px solid var(--rule2);display:flex;justify-content:space-between;flex-shrink:0}
 .list-meta span{font-family:'IBM Plex Mono',monospace;font-size:9px;color:var(--t3)}
 .co-list{overflow-y:auto;flex:1}
-.co-row{display:flex;align-items:center;gap:7px;padding:5px 10px;border-bottom:1px solid var(--rule3);cursor:pointer;transition:background .1s}
+
+/* COMPANY ROW */
+.co-row{display:flex;align-items:center;gap:8px;padding:6px 8px;border-bottom:1px solid var(--rule3);cursor:pointer;transition:background .1s;user-select:none}
 .co-row:hover{background:var(--surf2)}
-.co-row.selected{background:var(--gb);border-left:2px solid var(--g);padding-left:8px}
-.co-av{width:24px;height:24px;border-radius:3px;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-family:'IBM Plex Mono',monospace;font-size:8px;font-weight:600;border:1px solid transparent}
+.co-row.selected{background:var(--gb);border-left:2px solid var(--g);padding-left:6px}
+.co-row.dead{opacity:.4}
+.co-av{width:26px;height:26px;border-radius:2px;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-family:'IBM Plex Mono',monospace;font-size:8px;font-weight:700;border:1px solid transparent}
 .co-info{flex:1;min-width:0}
-.co-name{font-size:11px;font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.co-url{font-family:'IBM Plex Mono',monospace;font-size:9px;color:var(--t3);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin-top:1px}
-/* dot groups */
-.dot-group{display:flex;gap:2px;align-items:center}
-.dot-sep{width:2px}
-.fd{width:7px;height:7px;border-radius:1px;flex-shrink:0}
-.fd.ok{background:var(--cc)}
-.fd.empty{background:var(--t4)}
-.fd.b2b{background:var(--pc)}   /* b2b fillable: blue */
-.fd.browser{background:var(--prc)} /* browser-use: amber */
-.cb{width:13px;height:13px;border:1px solid var(--rule);border-radius:2px;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:8px;transition:all .1s;color:transparent;flex-shrink:0}
-.co-row.selected .cb{background:var(--g);border-color:var(--g);color:#fff}
-.tag{font-family:'IBM Plex Mono',monospace;font-size:7px;font-weight:500;text-transform:uppercase;letter-spacing:.05em;padding:1px 4px;border-radius:2px;border:1px solid;white-space:nowrap;flex-shrink:0}
+.co-name{font-size:12px;font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.co-note{font-family:'IBM Plex Mono',monospace;font-size:9px;color:var(--t3);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin-top:1px}
+.co-right{display:flex;align-items:center;gap:4px;flex-shrink:0}
+.icp-num{font-family:'IBM Plex Mono',monospace;font-size:9px;color:var(--t4);min-width:14px;text-align:right}
+
+/* TAGS */
+.tag{font-family:'IBM Plex Mono',monospace;font-size:8px;font-weight:500;text-transform:uppercase;letter-spacing:.06em;padding:1px 5px;border-radius:2px;border:1px solid;white-space:nowrap;flex-shrink:0}
 .tc{color:var(--cc);background:var(--cb);border-color:var(--cr)}
+.tp{color:var(--pc);background:var(--pb);border-color:var(--pr)}
 .tpr{color:var(--prc);background:var(--prb);border-color:var(--prr)}
 .tn{color:var(--nc);background:var(--nb);border-color:var(--nr)}
+.tpo{color:var(--poc);background:var(--pob);border-color:var(--por)}
 
-/* RIGHT */
-.panel-right{flex:1;display:flex;flex-direction:column;overflow:hidden}
+/* CENTER */
+.panel-center{flex:1;overflow-y:auto;background:var(--surf2);padding:10px}
+.panel-center::-webkit-scrollbar{width:3px}
+.panel-center::-webkit-scrollbar-thumb{background:var(--surf4);border-radius:2px}
 
-/* CONFIG */
-.cfg{background:var(--surf);border-bottom:1px solid var(--rule);padding:10px 16px;flex-shrink:0}
-.cfg-phases{display:grid;grid-template-columns:1fr 1fr;gap:12px}
-.phase-block{border:1px solid var(--rule);border-radius:2px;padding:8px 10px}
-.phase-hdr{display:flex;align-items:center;gap:6px;margin-bottom:7px}
-.phase-badge{font-family:'IBM Plex Mono',monospace;font-size:8px;font-weight:500;text-transform:uppercase;letter-spacing:.06em;padding:2px 6px;border-radius:2px;border:1px solid}
-.ph1-badge{color:var(--pc);background:var(--pb);border-color:var(--pr)}
-.ph2-badge{color:var(--prc);background:var(--prb);border-color:var(--prr)}
-.phase-meta{font-family:'IBM Plex Mono',monospace;font-size:9px;color:var(--t3)}
-.field-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:3px;margin-bottom:7px}
-.fchk{display:flex;align-items:center;gap:3px;font-family:'IBM Plex Mono',monospace;font-size:9px;cursor:pointer;padding:2px 5px;border:1px solid var(--rule);border-radius:2px;transition:all .1s;user-select:none;white-space:nowrap}
-.fchk:hover{background:var(--surf2)}
-.fchk.on.p1{background:var(--pb);border-color:var(--pr);color:var(--pc)}
-.fchk.on.p2{background:var(--prb);border-color:var(--prr);color:var(--prc)}
-.fchk.on::before{content:'✓';margin-right:1px;font-size:8px}
-.cfg-row{display:flex;gap:7px;align-items:center;flex-wrap:wrap;margin-bottom:5px}
-.cfg-row:last-child{margin-bottom:0}
-.cfg-row label{font-family:'IBM Plex Mono',monospace;font-size:9px;color:var(--t3);white-space:nowrap}
-.num-inp{width:50px;height:22px;padding:0 5px;border:1px solid var(--rule);border-radius:2px;background:var(--surf2);color:var(--t1);font-family:'IBM Plex Mono',monospace;font-size:10px;outline:none}
-.num-inp:focus{border-color:var(--gr)}
-.txt-inp{flex:1;min-width:80px;height:22px;padding:0 6px;border:1px solid var(--rule);border-radius:2px;background:var(--surf2);color:var(--t1);font-family:'IBM Plex Mono',monospace;font-size:10px;outline:none}
-.txt-inp:focus{border-color:var(--gr)}
-.sel{height:22px;padding:0 6px;border:1px solid var(--rule);border-radius:2px;background:var(--surf2);color:var(--t2);font-family:'IBM Plex Mono',monospace;font-size:9px;outline:none;cursor:pointer}
-.skip-chk{display:flex;align-items:center;gap:4px;font-family:'IBM Plex Mono',monospace;font-size:9px;cursor:pointer;padding:2px 6px;border:1px solid var(--rule);border-radius:2px;transition:all .1s;user-select:none}
-.skip-chk.on{background:var(--gb);border-color:var(--gr);color:var(--g)}
+/* EMPTY STATE */
+.empty-state{display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:calc(100vh - 150px);gap:20px;padding:20px}
+.empty-logo{font-family:'IBM Plex Mono',monospace;font-size:40px;font-weight:200;letter-spacing:-2px;color:var(--t4)}
+.qa-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;width:100%;max-width:480px}
+.qa-card{background:var(--surf);border:1px solid var(--rule);border-radius:2px;padding:12px;cursor:pointer;transition:all .15s}
+.qa-card:hover{border-color:var(--g);background:var(--gb)}
+.qa-icon{font-size:16px;margin-bottom:6px}
+.qa-title{font-size:12px;font-weight:500;color:var(--t1);margin-bottom:2px}
+.qa-desc{font-family:'IBM Plex Mono',monospace;font-size:9px;color:var(--t3)}
 
-/* SCRIPT */
-.script-area{flex:1;display:flex;flex-direction:column;overflow:hidden;padding:10px 16px}
-.script-hdr{display:flex;align-items:center;gap:8px;margin-bottom:6px;flex-shrink:0}
-.script-title{font-family:'IBM Plex Mono',monospace;font-size:9px;text-transform:uppercase;letter-spacing:.06em;color:var(--t3)}
-.script-box{flex:1;overflow-y:auto;background:var(--surf);border:1px solid var(--rule);border-radius:2px;padding:10px 12px;font-family:'IBM Plex Mono',monospace;font-size:11px;line-height:1.7;color:var(--t2);white-space:pre}
-.kw{color:var(--poc)}.str{color:var(--cc)}.cmt{color:var(--t3)}.num{color:var(--prc)}.dec{color:var(--pc)}
+/* COMPANY DETAIL */
+.co-detail{max-width:700px}
+.banner{background:var(--surf);border:1px solid var(--rule);border-radius:2px;padding:14px;display:flex;align-items:flex-start;gap:12px;margin-bottom:6px;box-shadow:var(--sh)}
+.co-logo{width:40px;height:40px;border-radius:2px;background:var(--g);display:flex;align-items:center;justify-content:center;font-family:'IBM Plex Mono',monospace;font-size:12px;font-weight:700;color:#fff;flex-shrink:0}
+.co-hdr{flex:1;min-width:0}
+.co-hdr-name{font-size:15px;font-weight:500;display:flex;align-items:center;gap:7px;flex-wrap:wrap}
+.co-hdr-sub{font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--t3);margin-top:3px}
+.stars{color:var(--g);font-size:12px;letter-spacing:1px}
+.icp-row{display:flex;align-items:center;gap:8px;margin-top:5px}
+.icp-reason{font-family:'IBM Plex Mono',monospace;font-size:9px;color:var(--t3)}
+
+.section{background:var(--surf);border:1px solid var(--rule);border-radius:2px;overflow:hidden;margin-bottom:6px;box-shadow:var(--sh)}
+.sec-hdr{background:var(--surf2);padding:6px 12px;border-bottom:1px solid var(--rule);display:flex;align-items:center;gap:6px}
+.sec-label{font-family:'IBM Plex Mono',monospace;font-size:9px;font-weight:500;text-transform:uppercase;letter-spacing:.08em;color:var(--t3)}
+.sec-body{padding:10px 12px}
+
+table.info{width:100%;border-collapse:collapse;font-size:12px}
+table.info tr td{padding:4px 0;vertical-align:top;border-bottom:1px solid var(--rule3)}
+table.info tr:last-child td{border-bottom:none}
+table.info tr td:first-child{font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--t3);width:120px;padding-right:10px;text-transform:uppercase;letter-spacing:.04em}
+table.grid{width:100%;border-collapse:collapse;font-size:11px}
+table.grid th{font-family:'IBM Plex Mono',monospace;font-size:8px;text-transform:uppercase;letter-spacing:.08em;color:var(--t3);padding:5px 8px;border-bottom:1px solid var(--rule);background:var(--surf2);text-align:left;font-weight:500}
+table.grid td{padding:5px 8px;border-bottom:1px solid var(--rule3);color:var(--t1);vertical-align:top}
+table.grid tr:last-child td{border-bottom:none}
+table.grid tr:hover td{background:var(--surf2)}
+
+.contact-card{background:var(--surf2);border:1px solid var(--rule);border-radius:2px;padding:10px;margin-bottom:5px}
+.contact-card:last-child{margin-bottom:0}
+.ct-av{width:26px;height:26px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-family:'IBM Plex Mono',monospace;font-size:8px;font-weight:700;background:var(--pb);color:var(--pc);border:1px solid var(--pr);flex-shrink:0}
+.ct-name{font-size:12px;font-weight:500}
+.ct-role{font-family:'IBM Plex Mono',monospace;font-size:9px;color:var(--t3)}
+.ct-row-head{display:flex;align-items:flex-start;gap:8px;margin-bottom:5px}
+.ct-meta{flex:1}
+table.info2{width:100%;border-collapse:collapse;font-size:11px}
+table.info2 tr td{padding:3px 0;border-bottom:1px solid var(--rule3);vertical-align:top}
+table.info2 tr:last-child td{border-bottom:none}
+table.info2 tr td:first-child{font-family:'IBM Plex Mono',monospace;font-size:9px;color:var(--t3);width:70px;text-transform:uppercase;letter-spacing:.04em}
+.code-pill{font-family:'IBM Plex Mono',monospace;font-size:10px;background:var(--surf3);border:1px solid var(--rule);border-radius:2px;padding:1px 5px}
+.conf{font-family:'IBM Plex Mono',monospace;font-size:8px;padding:1px 5px;border-radius:2px;border:1px solid;margin-left:4px}
+.conf-hi{color:var(--cc);background:var(--cb);border-color:var(--cr)}
+.conf-med{color:var(--prc);background:var(--prb);border-color:var(--prr)}
+
+.rel-alert{background:var(--cb);border:1px solid var(--cr);border-left:3px solid var(--cc);border-radius:2px;padding:8px 10px;font-size:11px;color:var(--cc);margin-bottom:6px}
+.urg-alert{background:var(--pob);border:1px solid var(--por);border-left:3px solid var(--poc);border-radius:2px;padding:8px 10px;font-size:11px;color:var(--poc);margin-bottom:6px}
+.no-rel{background:var(--surf2);border:1px solid var(--rule);border-radius:2px;padding:8px 10px;font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--t3);text-transform:uppercase;letter-spacing:.05em}
+.note{background:var(--surf2);border-left:2px solid var(--g);padding:8px 10px;font-size:11px;color:var(--t2);margin-top:6px;line-height:1.6}
+.seg-pill{font-family:'IBM Plex Mono',monospace;font-size:9px;display:inline-block;padding:1px 6px;border:1px solid var(--rule);border-radius:2px;color:var(--t3);margin:2px}
+.btn-row{display:flex;gap:5px;flex-wrap:wrap;margin-top:8px}
+a.ml{font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--g);text-decoration:none}
+a.ml:hover{text-decoration:underline}
+
+/* CONTACTS LEFT TAB */
+.ct-list-row{display:flex;align-items:center;gap:8px;padding:6px 8px;border-bottom:1px solid var(--rule3);cursor:pointer;transition:background .1s}
+.ct-list-row:hover{background:var(--surf2)}
+.ct-av-sm{width:24px;height:24px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-family:'IBM Plex Mono',monospace;font-size:7px;font-weight:700;background:var(--pb);color:var(--pc);border:1px solid var(--pr);flex-shrink:0}
+.ct-info{flex:1;min-width:0}
+.ct-name-sm{font-size:12px;font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.ct-sub-sm{font-family:'IBM Plex Mono',monospace;font-size:9px;color:var(--t3);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+
+/* ENRICHER TAB */
+.enricher{display:flex;flex-direction:column;flex:1;overflow:hidden}
+
+/* Enricher left: company selector */
+.enr-stats{display:grid;grid-template-columns:repeat(4,1fr);border-bottom:1px solid var(--rule);flex-shrink:0}
+.enr-stat{padding:5px 6px;border-right:1px solid var(--rule);cursor:pointer;transition:background .12s}
+.enr-stat:last-child{border-right:none}
+.enr-stat:hover{background:var(--surf2)}
+.enr-stat.active{background:var(--gb)}
+.enr-sn{font-family:'IBM Plex Mono',monospace;font-size:14px;font-weight:400;line-height:1;color:var(--t1)}
+.enr-sl{font-family:'IBM Plex Mono',monospace;font-size:7px;text-transform:uppercase;letter-spacing:.06em;color:var(--t3);margin-top:2px}
+.enr-filter-bar{display:flex;gap:3px;flex-wrap:wrap;padding:5px 6px;border-bottom:1px solid var(--rule2);flex-shrink:0}
+.enr-fp{height:18px;padding:0 6px;border:1px solid var(--rule);border-radius:2px;font-family:'IBM Plex Mono',monospace;font-size:7px;text-transform:uppercase;letter-spacing:.04em;cursor:pointer;background:transparent;color:var(--t3);transition:all .12s;white-space:nowrap}
+.enr-fp:hover:not(.active){background:var(--surf3);color:var(--t1)}
+.enr-fp.active{background:var(--t1);color:var(--surf);border-color:var(--t1)}
+.enr-fp.gap{background:var(--prb);color:var(--prc);border-color:var(--prr)}
+.enr-fp.gap.active{background:var(--prc);color:#fff}
+.enr-sel-bar{display:flex;align-items:center;gap:4px;padding:4px 6px;border-bottom:1px solid var(--rule2);flex-shrink:0}
+.enr-sel-count{font-family:'IBM Plex Mono',monospace;font-size:9px;color:var(--t3);margin-left:auto}
+.enr-co-list{overflow-y:auto;flex:1}
+.enr-co-row{display:flex;align-items:center;gap:6px;padding:5px 6px;border-bottom:1px solid var(--rule3);cursor:pointer;transition:background .1s;user-select:none}
+.enr-co-row:hover{background:var(--surf2)}
+.enr-co-row.checked{background:var(--gb)}
+.enr-cb{width:14px;height:14px;border:1px solid var(--rule);border-radius:2px;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:9px;color:var(--g);background:var(--surf);transition:all .12s}
+.enr-co-row.checked .enr-cb{background:var(--g);border-color:var(--g);color:#fff}
+.enr-co-av{width:20px;height:20px;border-radius:2px;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-family:'IBM Plex Mono',monospace;font-size:7px;font-weight:700;border:1px solid transparent}
+.enr-co-info{flex:1;min-width:0}
+.enr-co-name{font-size:11px;font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.enr-co-domain{font-family:'IBM Plex Mono',monospace;font-size:8px;color:var(--t3);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.enr-gap-bars{display:flex;gap:2px;flex-shrink:0;align-items:center}
+.enr-gap-sq{width:7px;height:7px;border-radius:1px}
+.enr-gap-filled{background:#22C55E}
+.enr-gap-miss{background:var(--surf4)}
+.enr-gap-badge{font-family:'IBM Plex Mono',monospace;font-size:7px;color:var(--t3);min-width:14px;text-align:right}
+
+/* Enricher center: config + script */
+.enr-center{display:flex;flex-direction:column;height:100%;overflow:hidden}
+.enr-phases{display:grid;grid-template-columns:1fr 1fr;gap:0;border-bottom:1px solid var(--rule);flex-shrink:0}
+.enr-phase{padding:10px 12px;border-right:1px solid var(--rule)}
+.enr-phase:last-child{border-right:none}
+.enr-phase-hdr{display:flex;align-items:center;gap:8px;margin-bottom:8px}
+.enr-phase-tag{font-family:'IBM Plex Mono',monospace;font-size:8px;font-weight:600;text-transform:uppercase;letter-spacing:.06em;padding:2px 7px;border-radius:2px;border:1px solid}
+.enr-p1-tag{color:var(--pc);background:var(--pb);border-color:var(--pr)}
+.enr-p2-tag{color:var(--prc);background:var(--prb);border-color:var(--prr)}
+.enr-phase-meta{font-family:'IBM Plex Mono',monospace;font-size:9px;color:var(--t3)}
+.enr-checks{display:flex;flex-wrap:wrap;gap:4px;margin-bottom:7px}
+.enr-check{display:flex;align-items:center;gap:4px;cursor:pointer;padding:2px 6px;border:1px solid var(--rule);border-radius:2px;transition:all .12s;background:var(--surf2)}
+.enr-check:hover{border-color:var(--gr);background:var(--gb)}
+.enr-check.on{border-color:var(--gr);background:var(--gb)}
+.enr-check input{width:11px;height:11px;accent-color:var(--g);cursor:pointer}
+.enr-check-lbl{font-family:'IBM Plex Mono',monospace;font-size:9px;color:var(--t2)}
+.enr-skip{font-family:'IBM Plex Mono',monospace;font-size:8px;color:var(--t3);display:flex;align-items:center;gap:4px;cursor:pointer;margin-bottom:5px}
+.enr-skip input{accent-color:var(--g)}
+.enr-muted{font-family:'IBM Plex Mono',monospace;font-size:9px;color:var(--t3)}
+.enr-controls{display:flex;gap:8px;align-items:center;margin-top:6px;flex-wrap:wrap}
+.enr-ctrl-group{display:flex;align-items:center;gap:4px}
+.enr-ctrl-lbl{font-family:'IBM Plex Mono',monospace;font-size:8px;color:var(--t3);text-transform:uppercase;letter-spacing:.05em}
+.enr-ctrl-num{width:42px;height:22px;padding:0 5px;border:1px solid var(--rule);border-radius:2px;background:var(--surf2);color:var(--t1);font-family:'IBM Plex Mono',monospace;font-size:10px;text-align:center;outline:none}
+.enr-ctrl-num:focus{border-color:var(--gr)}
+.enr-sb-row{display:flex;align-items:center;gap:6px;margin-top:6px}
+.enr-sb-url{flex:1;height:22px;padding:0 6px;border:1px solid var(--rule);border-radius:2px;background:var(--surf2);color:var(--t1);font-family:'IBM Plex Mono',monospace;font-size:9px;outline:none}
+.enr-sb-url:focus{border-color:var(--gr)}
+
+.enr-desc-input{width:100%;padding:7px 8px;border:1px solid var(--rule);border-radius:2px;background:var(--surf2);color:var(--t1);font-family:'IBM Plex Sans',sans-serif;font-size:12px;outline:none;transition:border-color .15s;resize:none;line-height:1.5}
+.enr-desc-input:focus{border-color:var(--gr)}
+.enr-desc-input::placeholder{color:var(--t3)}
+.enr-script-area{flex:1;display:flex;flex-direction:column;overflow:hidden}
+.enr-script-bar{display:flex;align-items:center;gap:6px;padding:6px 12px;border-bottom:1px solid var(--rule);background:var(--surf);flex-shrink:0}
+.enr-script-title{font-family:'IBM Plex Mono',monospace;font-size:9px;text-transform:uppercase;letter-spacing:.07em;color:var(--t3)}
+.enr-script-info{font-family:'IBM Plex Mono',monospace;font-size:9px;color:var(--t3)}
+.enr-script-out{flex:1;overflow-y:auto;padding:10px 12px;background:var(--bg)}
+.enr-placeholder{display:flex;flex-direction:column;align-items:center;justify-content:center;height:100%;gap:8px;color:var(--t3)}
+.enr-placeholder-ico{font-family:'IBM Plex Mono',monospace;font-size:28px;font-weight:200;letter-spacing:-1px;color:var(--t4)}
+.enr-placeholder-txt{font-family:'IBM Plex Mono',monospace;font-size:9px;text-transform:uppercase;letter-spacing:.07em}
+.enr-placeholder-hint{font-size:11px;color:var(--t3);text-align:center;max-width:260px;line-height:1.5}
+pre.enr-code{font-family:'IBM Plex Mono',monospace;font-size:10px;line-height:1.7;color:var(--t2);white-space:pre-wrap;word-break:break-all}
+pre.enr-code .c{color:var(--t4)}
+pre.enr-code .k{color:var(--g)}
+pre.enr-code .s{color:var(--prc)}
+pre.enr-code .v{color:var(--pc)}
+
+/* CONTEXT MENU */
+.ctx-menu{position:fixed;background:var(--surf);border:1px solid var(--rule);border-radius:2px;padding:5px;z-index:9999;min-width:210px;box-shadow:var(--sh)}
+.ctx-label{font-family:'IBM Plex Mono',monospace;font-size:9px;color:var(--t3);padding:5px 10px 3px;text-transform:uppercase;letter-spacing:.06em}
+.ctx-sep{height:1px;background:var(--rule);margin:4px 0}
+.ctx-item{display:flex;align-items:center;gap:8px;padding:7px 10px;font-size:12px;color:var(--t1);border-radius:2px;cursor:pointer;transition:background .1s}
+.ctx-item:hover{background:var(--surf2)}
+.ctx-icon{font-size:12px;width:16px;text-align:center}
+
+/* CONTACT DRAWER */
+.drawer-overlay{position:fixed;inset:0;background:rgba(0,0,0,.3);z-index:800;display:none}
+.drawer-overlay.vis{display:block}
+.drawer{position:fixed;top:0;right:-380px;width:380px;height:100vh;background:var(--surf);border-left:1px solid var(--rule);z-index:900;transition:right .25s;overflow-y:auto;box-shadow:var(--sh)}
+.drawer.open{right:0}
+.drawer-hdr{padding:14px;border-bottom:1px solid var(--rule);display:flex;align-items:flex-start;gap:10px}
+.drawer-body{padding:14px}
+.drawer-close{margin-left:auto;cursor:pointer;font-size:16px;color:var(--t3)}
+.drawer-close:hover{color:var(--t1)}
+
+/* MODALS */
+#overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:1000;align-items:center;justify-content:center;backdrop-filter:blur(4px)}
+#overlay.vis{display:flex}
+.modal-box{background:var(--surf);border:1px solid var(--rule);border-radius:4px;padding:20px;max-width:480px;width:90%;box-shadow:var(--sh)}
+.modal-box h2{font-size:14px;font-weight:500;margin-bottom:6px}
+.modal-box p{font-size:12px;color:var(--t2);margin-bottom:12px;line-height:1.6}
+.modal-textarea{width:100%;height:100px;padding:8px;border:1px solid var(--rule);border-radius:2px;background:var(--surf2);color:var(--t1);font-family:'IBM Plex Mono',monospace;font-size:11px;resize:vertical;outline:none;line-height:1.5}
+.modal-textarea:focus{border-color:var(--gr)}
+.modal-actions{display:flex;gap:6px;justify-content:flex-end;margin-top:12px}
+
+#panelModal{display:none;position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:1100;align-items:center;justify-content:center}
+#panelModal.vis{display:flex}
+.panel-frame-wrap{width:760px;height:85vh;border-radius:4px;overflow:hidden;border:1px solid var(--rule);box-shadow:var(--sh)}
+
+/* SORT SELECT */
+.sort-sel{height:26px;padding:0 7px;border:1px solid var(--rule);border-radius:2px;background:var(--surf2);color:var(--t2);font-family:'IBM Plex Mono',monospace;font-size:10px;outline:none;cursor:pointer}
+
+/* ICP STARS */
+.stars-g{color:var(--g)}
+.stars-e{color:var(--surf4)}
+
+/* RELATIONS */
+#rel-body .no-rel{margin-bottom:0}
 </style>
 </head>
 <body>
@@ -145,645 +317,1153 @@ html,body{height:100%;background:var(--bg);color:var(--t1);font-family:'IBM Plex
 <!-- NAV -->
 <nav class="nav">
   <div class="nav-logo">oA</div>
-  <span class="nav-brand">Batch Enricher <span class="nav-sub">/ b2b → browser-use</span></span>
+  <span class="nav-brand">Sales Intelligence Hub <span class="nav-sub">/ onAudience</span></span>
   <div class="nav-right">
-    <div class="sdot" id="sdot"></div>
-    <span class="chip" id="dbChip">connecting…</span>
-    <button class="theme-btn" onclick="toggleTheme()" id="themeBtn">🌙</button>
+    <div class="sync-chip" onclick="reloadData()" title="Reload from Supabase">
+      <div class="sync-dot" id="syncDot"></div>
+      <span id="syncLabel">Loading…</span>
+    </div>
+    <button class="btn" onclick="openResearchModal()">+ Research</button>
+    <button class="btn" id="enrNavBtn" onclick="toggleEnricher()">⚡ Enricher</button>
+    <button class="btn" id="themeBtn" onclick="toggleTheme()">🌙</button>
   </div>
 </nav>
 
-<!-- STATS -->
+<!-- STATS BAR -->
 <div class="stats-bar">
-  <div class="sc active" id="sc-all" onclick="setFilter('all',this)"><div class="sn" id="sn-all">—</div><div class="sl">Total w/ URL</div></div>
-  <div class="sc" id="sc-nodesc" onclick="setFilter('nodesc',this)"><div class="sn" id="sn-nodesc">—</div><div class="sl w">No desc</div></div>
-  <div class="sc" id="sc-size" onclick="setFilter('size',this)"><div class="sn" id="sn-size">—</div><div class="sl w">No size</div></div>
-  <div class="sc" id="sc-funding" onclick="setFilter('funding',this)"><div class="sn" id="sn-funding">—</div><div class="sl r">No funding</div></div>
-  <div class="sc" id="sc-hq" onclick="setFilter('hq',this)"><div class="sn" id="sn-hq">—</div><div class="sl w">No HQ</div></div>
-  <div class="sc" id="sc-noproducts" onclick="setFilter('noproducts',this)"><div class="sn" id="sn-noproducts">—</div><div class="sl r">No products</div></div>
-  <div class="sc" id="sc-3plus" onclick="setFilter('3plus',this)"><div class="sn" id="sn-3plus">—</div><div class="sl r">3+ gaps</div></div>
-</div>
-
-<!-- TOOLBAR -->
-<div class="toolbar">
-  <div class="sbox">
-    <span class="sico">⌕</span>
-    <input class="sinp" id="searchQ" placeholder="Search companies…" oninput="renderList()"/>
-  </div>
-  <div class="t-sep"></div>
-  <button class="fp active" id="fp-all"       onclick="setFilter('all',this)">All</button>
-  <button class="fp" id="fp-nodesc"            onclick="setFilter('nodesc',this)">−desc</button>
-  <button class="fp" id="fp-size"              onclick="setFilter('size',this)">−size</button>
-  <button class="fp" id="fp-funding"           onclick="setFilter('funding',this)">−funding</button>
-  <button class="fp" id="fp-hq"                onclick="setFilter('hq',this)">−hq</button>
-  <button class="fp" id="fp-noproducts"        onclick="setFilter('noproducts',this)">−products</button>
-  <button class="fp" id="fp-3plus"             onclick="setFilter('3plus',this)">3+ gaps</button>
-  <div class="t-sep"></div>
-  <button class="btn" onclick="selectAll()">Select All</button>
-  <button class="btn" onclick="selectNone()">None</button>
-  <span class="chip" id="selChip">0 selected</span>
-  <div class="t-sep"></div>
-  <button class="btn p" onclick="generateScript()">⚡ Generate Script</button>
+  <div class="sc active" onclick="setFilter('all',this)"><div class="sn" id="st-all">—</div><div class="sl">All</div></div>
+  <div class="sc" onclick="setFilter('client',this)"><div class="sn" id="st-client">—</div><div class="sl">Clients</div></div>
+  <div class="sc" onclick="setFilter('poc',this)"><div class="sn" id="st-poc">—</div><div class="sl">Active Deal</div></div>
+  <div class="sc" onclick="setFilter('partner',this)"><div class="sn" id="st-partner">—</div><div class="sl">Partners</div></div>
+  <div class="sc" onclick="setFilter('prospect',this)"><div class="sn" id="st-prospect">—</div><div class="sl">Prospects</div></div>
+  <div class="sc" onclick="setFilter('nogo',this)"><div class="sn" id="st-nogo">—</div><div class="sl">No outreach</div></div>
+  <div class="sc" onclick="setFilter('fresh',this)"><div class="sn" id="st-fresh">—</div><div class="sl">Fresh Meat 🥩</div></div>
 </div>
 
 <!-- MAIN -->
 <div class="main">
 
-  <!-- LEFT -->
+  <!-- LEFT PANEL -->
   <div class="panel-left">
-    <div class="list-meta">
-      <span id="listMeta">loading…</span>
-      <span style="display:flex;align-items:center;gap:5px">
-        <span style="width:7px;height:7px;background:var(--pc);border-radius:1px;display:inline-block"></span><span>b2b</span>
-        <span style="width:7px;height:7px;background:var(--prc);border-radius:1px;display:inline-block;margin-left:3px"></span><span>browser</span>
-        <span style="width:7px;height:7px;background:var(--cc);border-radius:1px;display:inline-block;margin-left:3px"></span><span>ok</span>
-        <span style="width:7px;height:7px;background:var(--t4);border-radius:1px;display:inline-block;margin-left:3px"></span><span>miss</span>
-      </span>
+    <div class="tab-bar">
+      <div class="tab active" id="tab-companies" onclick="switchTab('companies')">🏢 Companies</div>
+      <div class="tab" id="tab-contacts" onclick="switchTab('contacts')">👤 Contacts</div>
+      <div class="tab" id="tab-enricher" onclick="switchTab('enricher')">⚡ Enricher</div>
     </div>
-    <div class="co-list" id="coList"></div>
+
+    <!-- COMPANIES TAB -->
+    <div class="tab-content active" id="tc-companies">
+      <div class="search-row">
+        <input class="sinp" id="coSearch" placeholder="Search…" oninput="renderCompanies()"/>
+        <select class="sort-sel" id="coSort" onchange="renderCompanies()">
+          <option value="icp">ICP ↓</option>
+          <option value="name">Name A–Z</option>
+          <option value="recent">Recent</option>
+        </select>
+        <button class="btn p sm" onclick="doResearch()" title="Research search term">↗</button>
+      </div>
+      <div class="filters" id="filterBar">
+        <button class="fp active" onclick="setFilter('all',this)">All</button>
+        <button class="fp" onclick="setFilter('client',this)">Client</button>
+        <button class="fp" onclick="setFilter('partner',this)">Partner</button>
+        <button class="fp" onclick="setFilter('prospect',this)">Prospect</button>
+        <button class="fp" onclick="setFilter('poc',this)">POC</button>
+        <button class="fp" onclick="setFilter('nogo',this)">No outreach</button>
+      </div>
+      <div class="list-meta"><span id="listMeta">—</span><span>click to open</span></div>
+      <div class="co-list" id="coList"></div>
+    </div>
+
+    <!-- CONTACTS TAB -->
+    <div class="tab-content" id="tc-contacts">
+      <div class="search-row">
+        <input class="sinp" id="ctSearch" placeholder="Search contacts…" oninput="renderContacts()"/>
+      </div>
+      <div class="list-meta"><span id="ctMeta">—</span><span>click to view</span></div>
+      <div class="co-list" id="ctList"></div>
+    </div>
+
+    <!-- ENRICHER TAB -->
+    <div class="tab-content enricher" id="tc-enricher">
+      <!-- Results — hidden until AI returns -->
+      <div id="enrResultsWrap" style="display:none;flex-direction:column;flex:1;overflow:hidden">
+        <div class="enr-sel-bar">
+          <button class="btn sm" onclick="enrSelectAll()">Select All</button>
+          <button class="btn sm" onclick="enrSelectNone()">None</button>
+          <span class="enr-sel-count" id="enrSelCount">0 selected</span>
+          <button class="btn p sm" onclick="generateScript()" style="margin-left:4px">⚡ Generate</button>
+        </div>
+        <div class="list-meta"><span id="enrListMeta">—</span><span style="font-family:'IBM Plex Mono',monospace;font-size:8px;color:var(--t3)">click to select</span></div>
+        <div class="enr-co-list" id="enrCoList"></div>
+      </div>
+      <!-- Idle hint -->
+      <div id="enrIdleHint" style="flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;padding:20px">
+        <div style="font-size:22px;opacity:.3">←</div>
+        <div style="font-family:'IBM Plex Mono',monospace;font-size:9px;text-transform:uppercase;letter-spacing:.07em;color:var(--t3)">Results appear here</div>
+        <div style="font-size:11px;color:var(--t3);text-align:center;max-width:180px;line-height:1.5">Describe companies in the panel on the right, then click Find</div>
+      </div>
+    </div>
+  </div><!-- /panel-left -->
+
+  <!-- CENTER PANEL -->
+  <div class="panel-center" id="center">
+    <!-- Enricher config panel (visible when enricher tab active) -->
+    <div id="enricherCenter" style="display:none;flex-direction:column;height:100%;overflow:hidden" class="enr-center">
+      <!-- Describe + find row -->
+      <div style="padding:10px 12px;border-bottom:1px solid var(--rule);flex-shrink:0;display:flex;gap:8px;align-items:flex-start">
+        <div style="flex:1">
+          <div class="enr-label" style="margin-bottom:4px">Describe companies to enrich</div>
+          <textarea class="enr-desc-input" id="enrDescInput" placeholder="e.g. all prospects missing funding info  ·  DSPs with 3+ data gaps  ·  UK agencies without description" rows="2" style="margin-bottom:0"></textarea>
+          <div id="enrFindStatus" style="display:none;margin-top:4px;font-family:'IBM Plex Mono',monospace;font-size:9px;color:var(--t3);letter-spacing:.05em"></div>
+        </div>
+        <div style="display:flex;flex-direction:column;gap:4px;flex-shrink:0;padding-top:18px">
+          <button class="btn p sm" onclick="findEnrCompanies()" id="enrFindBtn">🔍 Find</button>
+          <button class="btn sm" onclick="clearEnrResults()">✕ Clear</button>
+        </div>
+      </div>
+      <div class="enr-phases">
+        <!-- Phase 1 -->
+        <div class="enr-phase">
+          <div class="enr-phase-hdr">
+            <span class="enr-phase-tag enr-p1-tag">Phase 1 — B2B MCP</span>
+            <span class="enr-phase-meta">Haiku · instant · ~free</span>
+          </div>
+          <div class="enr-checks" id="p1checks">
+            <label class="enr-check on"><input type="checkbox" checked data-field="description"> <span class="enr-check-lbl">description</span></label>
+            <label class="enr-check on"><input type="checkbox" checked data-field="category"> <span class="enr-check-lbl">category</span></label>
+            <label class="enr-check on"><input type="checkbox" checked data-field="tags"> <span class="enr-check-lbl">tags</span></label>
+          </div>
+          <label class="enr-skip"><input type="checkbox" id="p1skip" checked> skip filled</label>
+          <div class="enr-muted">calls b2b.ctpl.dev/sse</div>
+        </div>
+        <!-- Phase 2 -->
+        <div class="enr-phase">
+          <div class="enr-phase-hdr">
+            <span class="enr-phase-tag enr-p2-tag">Phase 2 — Browser-Use</span>
+            <span class="enr-phase-meta">Sonnet 4.6 · ~$0.10/co</span>
+          </div>
+          <div class="enr-checks" id="p2checks">
+            <label class="enr-check on"><input type="checkbox" checked data-field="size"> <span class="enr-check-lbl">size</span></label>
+            <label class="enr-check on"><input type="checkbox" checked data-field="founded"> <span class="enr-check-lbl">founded</span></label>
+            <label class="enr-check on"><input type="checkbox" checked data-field="funding"> <span class="enr-check-lbl">funding</span></label>
+            <label class="enr-check on"><input type="checkbox" checked data-field="hq_city"> <span class="enr-check-lbl">hq city</span></label>
+            <label class="enr-check on"><input type="checkbox" checked data-field="linkedin"> <span class="enr-check-lbl">linkedin</span></label>
+            <label class="enr-check"><input type="checkbox" data-field="crunchbase"> <span class="enr-check-lbl">crunchbase</span></label>
+            <label class="enr-check on"><input type="checkbox" checked data-field="products"> <span class="enr-check-lbl">products</span></label>
+            <label class="enr-check on"><input type="checkbox" checked data-field="dsps"> <span class="enr-check-lbl">dsps</span></label>
+            <label class="enr-check"><input type="checkbox" data-field="acquired"> <span class="enr-check-lbl">acquired?</span></label>
+            <label class="enr-check"><input type="checkbox" data-field="parent_co"> <span class="enr-check-lbl">parent co</span></label>
+            <label class="enr-check"><input type="checkbox" data-field="funding_usd"> <span class="enr-check-lbl">funding $</span></label>
+            <label class="enr-check"><input type="checkbox" data-field="stage"> <span class="enr-check-lbl">stage</span></label>
+          </div>
+          <label class="enr-skip"><input type="checkbox" id="p2skip" checked> skip filled</label>
+          <div class="enr-controls">
+            <div class="enr-ctrl-group"><span class="enr-ctrl-lbl">Steps</span><input class="enr-ctrl-num" type="number" id="p2steps" value="35" min="5" max="100"></div>
+            <div class="enr-ctrl-group"><span class="enr-ctrl-lbl">Delay (s)</span><input class="enr-ctrl-num" type="number" id="p2delay" value="12" min="5" max="60"></div>
+            <div class="enr-ctrl-group"><span class="enr-ctrl-lbl">Concurrent</span><input class="enr-ctrl-num" type="number" id="p2conc" value="1" min="1" max="5"></div>
+            <label class="enr-skip" style="margin:0"><input type="checkbox" id="p2skipfilled" checked> skip filled</label>
+          </div>
+          <div class="enr-sb-row" style="margin-top:5px">
+            <span class="enr-ctrl-lbl" style="flex-shrink:0">Supabase URL</span>
+            <input class="enr-sb-url" id="p2sburl" value="https://nyzkkqqjnkctcmxoirdj.supabase.co" readonly/>
+          </div>
+        </div>
+      </div>
+      <!-- Script output -->
+      <div class="enr-script-area">
+        <div class="enr-script-bar">
+          <span class="enr-script-title">Script Output</span>
+          <span class="enr-script-info" id="enrScriptInfo">Select companies → Generate Script</span>
+          <div style="margin-left:auto;display:flex;gap:5px">
+            <button class="btn sm" onclick="copyScript()" id="enrCopyBtn" style="display:none">Copy</button>
+            <button class="btn sm" onclick="downloadScript()" id="enrDlBtn" style="display:none">↓ .py</button>
+          </div>
+        </div>
+        <div class="enr-script-out" id="enrScriptOut">
+          <div class="enr-placeholder">
+            <div class="enr-placeholder-ico">⚡</div>
+            <div class="enr-placeholder-txt">Batch Enricher</div>
+            <div class="enr-placeholder-hint">Select companies from the left panel and click <strong>Generate Script</strong> to produce a ready-to-run Python enrichment script.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="empty-state" id="emptyState">
+      <div class="empty-logo">oA</div>
+      <div class="qa-grid">
+        <div class="qa-card" onclick="openResearchModal()"><div class="qa-icon">🔍</div><div class="qa-title">Company Research</div><div class="qa-desc">Full contact report + ICP fit</div></div>
+        <div class="qa-card" onclick="openClaude('Find 10 new DSP, SSP, and media agency prospects for onAudience in EMEA — companies not in our database, strong programmatic data buying signals, ranked by ICP fit')"><div class="qa-icon">🎯</div><div class="qa-title">Find Prospects</div><div class="qa-desc">EMEA DSPs + agencies</div></div>
+        <div class="qa-card" onclick="openClaude('Show me the top 5 highest-priority onAudience prospects to contact this week — based on ICP fit and programmatic signals')"><div class="qa-icon">⭐</div><div class="qa-title">Top Picks This Week</div><div class="qa-desc">Priority outreach targets</div></div>
+        <div class="qa-card" onclick="openSimilarModal()"><div class="qa-icon">🔗</div><div class="qa-title">Find Similar</div><div class="qa-desc">Lookalike company discovery</div></div>
+        <div class="qa-card" onclick="openClaude('Find onAudience prospects that we contacted 3–12 months ago but never converted — re-engagement angles and updated outreach hooks')"><div class="qa-icon">♻️</div><div class="qa-title">Re-engage Dormant</div><div class="qa-desc">Warm up stale accounts</div></div>
+        <div class="qa-card" onclick="switchTab('enricher')"><div class="qa-icon">⚡</div><div class="qa-title">Batch Enricher</div><div class="qa-desc">Generate enrichment scripts</div></div>
+      </div>
+    </div>
   </div>
 
-  <!-- RIGHT -->
-  <div class="panel-right">
+</div><!-- /main -->
+</div><!-- /app -->
 
-    <!-- CONFIG -->
-    <div class="cfg">
-      <div class="cfg-phases">
+<!-- CONTEXT MENU -->
+<div id="ctxMenu" class="ctx-menu" style="display:none"></div>
 
-        <!-- PHASE 1: b2b MCP -->
-        <div class="phase-block" style="border-color:var(--pr)">
-          <div class="phase-hdr">
-            <span class="phase-badge ph1-badge">Phase 1 — b2b MCP</span>
-            <span class="phase-meta">Haiku · instant · ~free</span>
-          </div>
-          <div class="field-grid" id="p1Fields">
-            <span class="fchk on p1" data-f="description">description</span>
-            <span class="fchk on p1" data-f="category">category</span>
-            <span class="fchk on p1" data-f="tags">tags</span>
-          </div>
-          <div class="cfg-row">
-            <span class="skip-chk on" id="skipP1">skip filled</span>
-            <span class="phase-meta" style="margin-left:auto">calls <code style="font-size:9px">b2b.ctpl.dev/sse</code></span>
-          </div>
-        </div>
-
-        <!-- PHASE 2: browser-use -->
-        <div class="phase-block" style="border-color:var(--prr)">
-          <div class="phase-hdr">
-            <span class="phase-badge ph2-badge">Phase 2 — browser-use</span>
-            <span class="phase-meta">Sonnet 4.6 · ~$0.10/co</span>
-          </div>
-          <div class="field-grid" id="p2Fields" style="grid-template-columns:repeat(4,1fr)">
-            <span class="fchk on p2" data-f="size">size</span>
-            <span class="fchk on p2" data-f="founded_year">founded</span>
-            <span class="fchk on p2" data-f="funding">funding</span>
-            <span class="fchk on p2" data-f="hq_city">hq city</span>
-            <span class="fchk on p2" data-f="linkedin_slug">linkedin</span>
-            <span class="fchk on p2" data-f="crunchbase_url">crunchbase</span>
-            <span class="fchk on p2" data-f="products">products</span>
-            <span class="fchk on p2" data-f="dsps">dsps</span>
-            <span class="fchk p2" data-f="acquisition_status">acquired?</span>
-            <span class="fchk p2" data-f="parent_company">parent co</span>
-            <span class="fchk p2" data-f="funding_total_usd">funding $</span>
-            <span class="fchk p2" data-f="funding_stage">stage</span>
-          </div>
-          <div class="cfg-row">
-            <label>Steps</label><input class="num-inp" id="cfgSteps" type="number" value="35"/>
-            <label>Delay (s)</label><input class="num-inp" id="cfgDelay" type="number" value="12"/>
-            <label>Concurrent</label><input class="num-inp" id="cfgBatch" type="number" value="1" min="1" max="3"/>
-            <span class="skip-chk on" id="skipP2" style="margin-left:auto">skip filled</span>
-          </div>
-          <div class="cfg-row">
-            <label>Supabase URL</label>
-            <input class="txt-inp" id="cfgSbUrl" value="https://nyzkkqqjnkctcmxoirdj.supabase.co"/>
-          </div>
-        </div>
-      </div>
+<!-- CONTACT DRAWER -->
+<div class="drawer-overlay" id="drawerOverlay" onclick="closeDrawer()"></div>
+<div class="drawer" id="drawer">
+  <div class="drawer-hdr">
+    <div class="ct-av" style="width:36px;height:36px;border-radius:50%;font-size:11px" id="drawerAv"></div>
+    <div>
+      <div style="font-size:14px;font-weight:500" id="drawerName"></div>
+      <div style="font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--t3)" id="drawerRole"></div>
+      <div style="font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--t3)" id="drawerCompany"></div>
     </div>
+    <span class="drawer-close" onclick="closeDrawer()">✕</span>
+  </div>
+  <div class="drawer-body" id="drawerBody"></div>
+</div>
 
-    <!-- SCRIPT OUTPUT -->
-    <div class="script-area">
-      <div class="script-hdr">
-        <span class="script-title" id="scriptTitle">select companies → generate script</span>
-        <button class="btn" id="copyBtn" onclick="copyScript()" style="display:none">Copy</button>
-        <button class="btn" id="dlBtn"   onclick="downloadScript()" style="display:none">↓ enricher.py</button>
-      </div>
-      <div class="script-box" id="scriptBox"><span class="cmt"># ─────────────────────────────────────────────────────────────────
-# onAudience Batch Enricher — two-phase
-#
-# Phase 1 — b2b MCP (Anthropic API + b2b.ctpl.dev)
-#   Fills: description, category, tags
-#   Model: Haiku 4.5 — instant, nearly free
-#
-# Phase 2 — browser-use (AI browser agent)
-#   Fills: size, founded_year, funding, hq_city, linkedin_slug,
-#          crunchbase_url, products, dsps, acquisition_status
-#   Model: Sonnet 4.6 — navigates website, about/products pages
-#
-# NOT handled here (separate tools):
-#   tech_stack  → company-tech-scanner skill (Chrome network inspection)
-#   tcf_vendor_id → IAB GVL JSON fetch (simple HTTP)
-#   outreach_angle → AI synthesis after data is filled
-#
-# Setup:
-#   uv venv --python 3.11 &amp;&amp; source .venv/bin/activate
-#   uv pip install browser-use langchain-anthropic anthropic httpx python-dotenv
-#   uvx browser-use install
-#
-# .env:
-#   ANTHROPIC_API_KEY=sk-ant-...
-#   SUPABASE_URL=https://nyzkkqqjnkctcmxoirdj.supabase.co
-#   SUPABASE_KEY=eyJhbGci...
-#
-# 1. Select companies from the left (filter by gap type)
-# 2. Toggle fields per phase above
-# 3. Click "Generate Script"
-# ─────────────────────────────────────────────────────────────────</span></div>
+<!-- RESEARCH MODAL -->
+<div id="overlay">
+  <div class="modal-box">
+    <h2 id="modalTitle">Research a company</h2>
+    <p id="modalDesc">Enter the company name to open a full contact report in Claude.</p>
+    <textarea class="modal-textarea" id="modalInput" placeholder="Company name…"></textarea>
+    <div class="modal-actions">
+      <button class="btn" onclick="closeModal()">Cancel</button>
+      <button class="btn p" onclick="submitModal()">Open in Claude ↗</button>
     </div>
   </div>
 </div>
 
-</div><!-- /app -->
+<!-- PANEL MODAL (for email composer / panels) -->
+<div id="panelModal" onclick="if(event.target===this)closePanelModal()">
+  <div class="panel-frame-wrap">
+    <iframe id="panelIframe" src="" style="width:100%;height:100%;border:none"></iframe>
+  </div>
+</div>
 
 <script>
-const SB_URL='https://nyzkkqqjnkctcmxoirdj.supabase.co';
-const SB_KEY='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im55emtrcXFqbmtjdGNteG9pcmRqIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzM4NzMxMzYsImV4cCI6MjA4OTQ0OTEzNn0.jhAq_C68klOp4iTyj9HmsyyvoxsOI6ACld7t_87TAk0';
+/* ── Constants ── */
+const SB_URL = 'https://nyzkkqqjnkctcmxoirdj.supabase.co';
+const SB_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im55emtrcXFqbmtjdGNteG9pcmRqIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzM4NzMxMzYsImV4cCI6MjA4OTQ0OTEzNn0.jhAq_C68klOp4iTyj9HmsyyvoxsOI6ACld7t_87TAk0';
+const SB_HDR = { apikey: SB_KEY, Authorization: `Bearer ${SB_KEY}`, 'Content-Type': 'application/json', Prefer: 'resolution=merge-duplicates,return=minimal' };
 
-// Fields and which phase they belong to
-const P1_FIELDS=['description','category','tags'];
-const P2_FIELDS=['size','founded_year','funding','hq_city','linkedin_slug','crunchbase_url','products','dsps','acquisition_status','parent_company','funding_total_usd','funding_stage'];
-const ALL_INDICATOR_FIELDS=['description','category','size','founded_year','funding','hq_city','products','dsps']; // shown as dots
+/* ── Theme ── */
+let theme = localStorage.getItem('oaTheme') || 'light';
+document.documentElement.setAttribute('data-theme', theme);
+function toggleTheme() {
+  theme = theme === 'light' ? 'dark' : 'light';
+  document.documentElement.setAttribute('data-theme', theme);
+  localStorage.setItem('oaTheme', theme);
+  document.getElementById('themeBtn').textContent = theme === 'dark' ? '☀️' : '🌙';
+}
+document.getElementById('themeBtn').textContent = theme === 'dark' ? '☀️' : '🌙';
 
-let companies=[],selected=new Set(),activeFilter='all',generatedScript='';
+/* ── SEED fallback ── */
+const SEED = [
+  ['6sense','POC client','poc','Intent Data / ABM','USA',null,8,'6sense.com','6sense'],
+  ['Adform','integrated partner / DSP Europe','partner','DSP / AdTech','Denmark',null,8,'site.adform.com','adform'],
+  ['Adobe','partner — DMP integration','partner','DMP / MarTech','USA',null,7,'adobe.com','adobe'],
+  ['Adtonos','client','client','Audio AdTech','UK',null,7,'adtonos.com','adtonos'],
+  ['Alikeaudience','client','client','Audience Data / DMP','USA/APAC',null,10,'alikeaudience.com','alikeaudience'],
+  ['Anzu','POC client','poc','In-game Advertising','Global',null,7,'anzu.io','anzu'],
+  ['Amazon','partner','partner','DSP / E-commerce','USA',null,8,'amazon.com','amazon'],
+  ['Audigent','partner / curation','partner','Data / Curation','USA',null,8,'audigent.com','audigent'],
+  ['AudienceRate','active deal — DV360','poc','Data Monetization','UK',null,9,'audiencerate.com','audiencerate'],
+  ['Captify UK','client','client','Search Intent Data','UK',null,8,'captify.co.uk','captify'],
+  ['Criteo','partner — contact: Adrian','partner','DSP / Retargeting','France',null,7,'criteo.com','criteo'],
+  ['Datonics','client','client','Programmatic Data','USA',null,10,'datonics.com','datonics'],
+  ['Echo Analytics','POC client','poc','Location Data','France',null,7,'echo-analytics.fr','echo-analytics'],
+  ['Epsilon','partner — Matt deal','partner','Data / MarTech','USA',null,8,'epsilon.com','epsilon'],
+  ['Equativ','partner / SSP curation','partner','SSP / Curation','France',null,7,'equativ.com','equativ'],
+  ['Experian','prospect — Karo/Maciek','prospect','Data / Identity','USA',null,7,'experian.com','experian'],
+  ['Eyeota','partner','partner','Audience Data','Singapore',null,7,'eyeota.com','eyeota'],
+  ['Foursquare','partner','partner','Location Data','USA',null,7,'foursquare.com','foursquare'],
+  ['Fyllo','partner','partner','Compliance Data','USA',null,7,'fyllo.com','fyllo'],
+  ['Google','partner','partner','DSP / AdTech','USA',null,8,'google.com','google'],
+  ['Havas PL','client / agency','client','Media Agency','Poland',null,7,'havas.com','havas'],
+  ['Hybrid','partner','partner','DSP / Programmatic','Poland',null,7,'hybrid.ai','hybrid'],
+  ['ID5','partner / cookieless product','partner','Identity','France',null,8,'id5.io','id5-io'],
+  ['Intuizi','client — Adrian','client','Mobile Data','USA',null,7,'intuizi.com','intuizi'],
+  ['LiveRamp','partner / marketplace','partner','Data Connectivity','USA',null,8,'liveramp.com','liveramp'],
+  ['Madhive','prospect / DSP — Karolina','prospect','CTV / DSP','USA',null,8,'madhive.com','madhive'],
+  ['Mastercard','partner','partner','Financial Data','USA',null,8,'mastercard.com','mastercard'],
+  ['MediaWallah','partner / data exchange','partner','Data Exchange','USA',null,7,'mediawallah.com','mediawallah'],
+  ['MeMob','client','client','Mobile AdTech','Global',null,7,'memob.com','memob'],
+  ['MNTN','partner / DSP','partner','CTV DSP','USA',null,8,'mountain.com','mntn'],
+  ['Mobilewalla','client','client','Mobile Data','USA',null,7,'mobilewalla.com','mobilewalla'],
+  ['Multilocal','client — Adrian','client','Local Advertising','UK',null,7,'multilocal.com','multilocal'],
+  ['Nexxen','prospect','prospect','DSP / SSP','Global',null,7,'nexxen.com','nexxen'],
+  ['OpenSignal','client','client','Network Data','UK',null,7,'opensignal.com','opensignal'],
+  ['OpenX','prospect','prospect','SSP / Exchange','USA',null,7,'openx.com','openx'],
+  ['Permutive','client','client','Publisher Data','UK',null,7,'permutive.com','permutive'],
+  ['Pubmatic','partner','partner','SSP','USA',null,7,'pubmatic.com','pubmatic'],
+  ['Samba TV','prospect','prospect','CTV Data','USA',null,8,'samba.tv','samba-tv'],
+  ['Sovrn','client — Adrian','client','Publisher Monetization','USA',null,7,'sovrn.com','sovrn'],
+  ['Sportradar','prospect — Karolina','prospect','Sports Data','Switzerland',null,7,'sportradar.com','sportradar'],
+  ['Stackadapt','prospect','prospect','DSP','Canada',null,8,'stackadapt.com','stackadapt'],
+  ['Taboola','prospect — via MSFT Curate','prospect','Native Advertising','USA',null,7,'taboola.com','taboola'],
+  ['TheTradeDesk','partner','partner','DSP','USA',null,9,'thetradedesk.com','the-trade-desk'],
+  ['True Data','client','client','Purchase Data','Japan',null,7,'true-data.co.jp','true-data'],
+  ['VentiveIQ','prospect — Maciek + Adrian','prospect','Identity / Data','USA',null,7,'ventiveiq.com','ventiveiq'],
+  ['VistarMedia','prospect','prospect','OOH / DSP','USA',null,7,'vistarmedia.com','vistar-media'],
+  ['Weborama','prospect','prospect','Data / Semantic','France',null,7,'weborama.com','weborama'],
+  ['Wowcher','client','client','Deal / Commerce','UK',null,7,'wowcher.co.uk','wowcher'],
+  ['Zeotap','client','client','CDP / Identity','Germany',null,8,'zeotap.com','zeotap'],
+  ['Beklever','prospect','prospect','DSP','Poland',null,7,'beklever.com','beklever'],
+  ['Splicky DSP','prospect','prospect','DSP','Germany',null,7,'splicky.com','splicky'],
+  ['Aniview','no outreach — failed deal','nogo','Video AdTech','Israel',null,5,'aniview.com','aniview'],
+  ['Eskimi','no outreach — bad timing','nogo','DSP Africa','Lithuania',null,5,'eskimi.com','eskimi'],
+  ['Lifesight','no outreach — unwanted','nogo','Location Data','Singapore',null,4,'lifesight.io','lifesight'],
+  ['Lotame','no outreach — contract ended','nogo','DMP','USA',null,5,'lotame.com','lotame'],
+  ['Meta','no outreach — via LiveRamp only','nogo','Social / DSP','USA',null,5,'meta.com','meta'],
+  ['Nielsen','no outreach','nogo','Measurement','USA',null,5,'nielsen.com','nielsen'],
+  ['Oracle','no outreach — closed ad division','nogo','Data / Cloud','USA',null,4,'oracle.com','oracle'],
+  ['Dynata','no outreach — former client','nogo','Research / Data','USA',null,5,'dynata.com','dynata'],
+];
 
-/* theme */
-let theme=localStorage.getItem('oaTheme')||'light';
-document.documentElement.setAttribute('data-theme',theme);
-document.getElementById('themeBtn').textContent=theme==='dark'?'☀️':'🌙';
-function toggleTheme(){
-  theme=theme==='light'?'dark':'light';
-  document.documentElement.setAttribute('data-theme',theme);
-  localStorage.setItem('oaTheme',theme);
-  document.getElementById('themeBtn').textContent=theme==='dark'?'☀️':'🌙';
+const SEED_CONTACTS = [];
+
+/* ── Data ── */
+let companies = [], contacts = [], activeFilter = 'all', selectedCompany = null;
+
+function _slug(n) {
+  return (n||'')
+    .replace(/\s+(Ltd|Inc|LLC|S\.A\.|GmbH|Corp|B\.V\.|AG|PLC|SAS|Oy)\.?$/i,'')
+    .toLowerCase().trim()
+    .replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,'');
 }
 
-/* load */
-async function loadCompanies(){
-  document.getElementById('sdot').className='sdot loading';
-  document.getElementById('dbChip').textContent='loading…';
-  try{
-    const r=await fetch(
-      `${SB_URL}/rest/v1/companies?select=id,name,website,description,category,size,founded_year,funding,hq_city,products,dsps,linkedin_slug,crunchbase_url,icp,type&website=not.is.null&order=icp.desc.nullslast,name.asc&limit=800`,
-      {headers:{apikey:SB_KEY,Authorization:`Bearer ${SB_KEY}`}}
-    );
-    if(!r.ok)throw new Error('HTTP '+r.status);
-    const data=await r.json();
-    companies=data.filter(c=>c.website&&c.website.trim());
-    document.getElementById('sdot').className='sdot live';
-    document.getElementById('dbChip').textContent=companies.length+' companies';
-    updateStats();renderList();
-  }catch(e){
-    document.getElementById('sdot').className='sdot';
-    document.getElementById('dbChip').textContent='error: '+e.message;
+function classify(note) {
+  const s = (note||'').toLowerCase();
+  if (s.includes('no outreach')||s.includes('no fit')||s.includes('no business')||s.includes('internal')||s.includes('closed')||s.includes('unwanted')) return 'nogo';
+  if (s.includes('poc client')) return 'poc';
+  if (s.includes('client')) return 'client';
+  if (s.includes('partner')) return 'partner';
+  if (s.includes('prospect')||s.includes('to check')||s.includes('to continue')||s.includes('potential')) return 'prospect';
+  return 'prospect';
+}
+
+function loadSeed() {
+  companies = SEED.map(([n,note,t,cat,reg,sz,icp,web,li]) => ({
+    id:_slug(n), name:n, note:note||'', type:t||classify(note),
+    category:cat||null, region:reg||null, size:sz||null, icp:icp||null,
+    website:web||null, linkedin_slug:li||null, updated_at:null,
+    description:null, hq_city:reg||null, founded_year:null, funding:null,
+    tcf_vendor_id:null, tech_stack:null, products:null, dsps:null, outreach_angle:null
+  }));
+  contacts = [...SEED_CONTACTS];
+}
+
+async function reloadData() {
+  document.getElementById('syncDot').className = 'sync-dot dead';
+  document.getElementById('syncLabel').textContent = 'Loading…';
+  try {
+    const [cR, ctR] = await Promise.all([
+      fetch(`${SB_URL}/rest/v1/companies?select=*&order=name.asc`, { headers: SB_HDR }),
+      fetch(`${SB_URL}/rest/v1/contacts?select=*&order=full_name.asc`, { headers: SB_HDR })
+    ]);
+    if (!cR.ok) throw new Error('companies ' + cR.status);
+    const cData = await cR.json();
+    const ctData = ctR.ok ? await ctR.json() : [];
+    companies = cData.map(c => ({
+      ...c,
+      type: c.type || classify(c.note||''),
+      note: c.note||''
+    }));
+    contacts = Array.isArray(ctData) ? ctData : [];
+    document.getElementById('syncDot').className = 'sync-dot';
+    document.getElementById('syncLabel').textContent = `● Live · ${companies.length}`;
+  } catch(e) {
+    loadSeed();
+    document.getElementById('syncDot').className = 'sync-dot dead';
+    document.getElementById('syncLabel').textContent = `○ Seed · ${companies.length}`;
   }
+  updateStats();
+  renderCompanies();
+  renderContacts();
+  renderEnrichHistory();
 }
 
-function isEmpty(v){return v===null||v===undefined||String(v).trim()===''||(typeof v==='object'&&Object.keys(v).length===0);}
-function gaps(c){return ALL_INDICATOR_FIELDS.filter(f=>isEmpty(c[f]));}
-
-function updateStats(){
-  document.getElementById('sn-all').textContent=companies.length;
-  document.getElementById('sn-nodesc').textContent=companies.filter(c=>isEmpty(c.description)).length;
-  document.getElementById('sn-size').textContent=companies.filter(c=>isEmpty(c.size)).length;
-  document.getElementById('sn-funding').textContent=companies.filter(c=>isEmpty(c.funding)).length;
-  document.getElementById('sn-hq').textContent=companies.filter(c=>isEmpty(c.hq_city)).length;
-  document.getElementById('sn-noproducts').textContent=companies.filter(c=>isEmpty(c.products)).length;
-  document.getElementById('sn-3plus').textContent=companies.filter(c=>gaps(c).length>=3).length;
+/* ── Stats ── */
+function isFresh(c) {
+  return c.type === 'prospect' && !contacts.some(ct => (ct.company_name||'').toLowerCase() === c.name.toLowerCase());
+}
+function updateStats() {
+  document.getElementById('st-all').textContent = companies.length;
+  document.getElementById('st-client').textContent = companies.filter(c=>c.type==='client').length;
+  document.getElementById('st-poc').textContent = companies.filter(c=>c.type==='poc').length;
+  document.getElementById('st-partner').textContent = companies.filter(c=>c.type==='partner').length;
+  document.getElementById('st-prospect').textContent = companies.filter(c=>c.type==='prospect').length;
+  document.getElementById('st-nogo').textContent = companies.filter(c=>c.type==='nogo').length;
+  document.getElementById('st-fresh').textContent = companies.filter(isFresh).length;
 }
 
-function setFilter(f,el){
-  activeFilter=f;
+/* ── Filter ── */
+function setFilter(f, el) {
+  activeFilter = f;
   document.querySelectorAll('.sc,.fp').forEach(b=>b.classList.remove('active'));
-  [document.getElementById('sc-'+f),document.getElementById('fp-'+f)].forEach(e=>{if(e)e.classList.add('active');});
-  renderList();
+  // activate stats bar col
+  const scIdx = ['all','client','poc','partner','prospect','nogo','fresh'].indexOf(f);
+  const scs = document.querySelectorAll('.sc');
+  if (scs[scIdx]) scs[scIdx].classList.add('active');
+  // activate filter pill
+  const fps = document.querySelectorAll('.fp');
+  fps.forEach(fp => {
+    const ft = fp.textContent.toLowerCase().replace(' ','');
+    const match = (f==='all'&&ft==='all')||(f==='client'&&ft==='client')||(f==='partner'&&ft==='partner')||(f==='prospect'&&ft==='prospect')||(f==='poc'&&ft==='poc')||(f==='nogo'&&ft==='nooutreach');
+    if(match) fp.classList.add('active');
+  });
+  renderCompanies();
 }
 
-function getFiltered(){
-  const q=(document.getElementById('searchQ').value||'').toLowerCase();
-  return companies.filter(c=>{
-    if(q&&!c.name.toLowerCase().includes(q))return false;
-    if(activeFilter==='nodesc')return isEmpty(c.description);
-    if(activeFilter==='size')return isEmpty(c.size);
-    if(activeFilter==='funding')return isEmpty(c.funding);
-    if(activeFilter==='hq')return isEmpty(c.hq_city);
-    if(activeFilter==='noproducts')return isEmpty(c.products);
-    if(activeFilter==='3plus')return gaps(c).length>=3;
+/* ── Helpers ── */
+function av(n) {
+  const p=[['#9FE1CB30','#0F6E56'],['#B5D4F430','#1A4F8A'],['#FAC77530','#7A4200'],['#C0DD9730','#3B6D11'],['#F4C0D130','#993556']];
+  let h=0; for(let c of (n||'')) h=(h*31+c.charCodeAt(0))&0xffff;
+  return p[h%p.length];
+}
+function ini(n) { return (n||'').replace(/[^A-Za-z ]/g,'').split(' ').filter(Boolean).map(w=>w[0]).slice(0,2).join('').toUpperCase()||'?'; }
+function tagCls(s) { return {client:'tc',partner:'tp',prospect:'tpr',nogo:'tn',poc:'tpo'}[s]||'tpr'; }
+function tagLbl(s) { return {client:'Client',partner:'Partner',prospect:'Prospect',nogo:'No outreach',poc:'Active Deal'}[s]||s; }
+function stars(n) { const f=Math.min(5,Math.round((n||0)/2)); return `<span class="stars-g">${'★'.repeat(f)}</span><span class="stars-e">${'☆'.repeat(5-f)}</span>`; }
+function domainOf(url) { try{return new URL(url.includes('://')?url:'https://'+url).hostname.replace('www.','')}catch{return url} }
+function timeAgo(d) {
+  if(!d) return '—';
+  const ms=Date.now()-new Date(d);
+  const days=Math.floor(ms/86400000);
+  if(days<1) return 'today'; if(days<7) return days+'d ago';
+  if(days<30) return Math.floor(days/7)+'w ago';
+  return Math.floor(days/30)+'mo ago';
+}
+function dspBadges(arr) {
+  if(!arr||!arr.length) return '<span style="color:var(--t3);font-size:11px">—</span>';
+  return (Array.isArray(arr)?arr:[arr]).map(d=>`<span class="seg-pill">${d}</span>`).join('');
+}
+function techPills(arr) {
+  if(!arr||!arr.length) return '';
+  return arr.slice(0,8).map(t=>`<span class="seg-pill">${t.tool||t}</span>`).join('');
+}
+
+/* ── Company List ── */
+function getFiltered() {
+  const q = (document.getElementById('coSearch').value||'').toLowerCase();
+  const sort = document.getElementById('coSort').value;
+  let out = companies.filter(c => {
+    if (activeFilter === 'fresh' && !isFresh(c)) return false;
+    if (activeFilter !== 'all' && activeFilter !== 'fresh' && c.type !== activeFilter) return false;
+    if (q) { const h=(c.name+' '+(c.note||'')+' '+(c.category||'')+' '+(c.region||'')).toLowerCase(); if(!h.includes(q)) return false; }
     return true;
   });
+  if (sort==='name') out.sort((a,b)=>a.name.localeCompare(b.name));
+  else if (sort==='recent') out.sort((a,b)=>new Date(b.updated_at||0)-new Date(a.updated_at||0));
+  else out.sort((a,b)=>(b.icp||0)-(a.icp||0));
+  return out;
 }
 
-function av(n){
-  const p=[['#9FE1CB30','#0F6E56'],['#B5D4F430','#1A4F8A'],['#FAC77530','#7A4200'],['#C0DD9730','#3B6D11'],['#F4C0D130','#993556']];
-  let h=0;for(const c of n)h=(h*31+c.charCodeAt(0))&0xffff;return p[h%p.length];
-}
-function ini(n){return n.replace(/[^A-Za-z ]/g,'').split(' ').filter(Boolean).map(w=>w[0]).slice(0,2).join('').toUpperCase()||'?';}
-function dom(url){try{return new URL(url).hostname.replace('www.','');}catch{return url;}}
-
-function renderDots(c){
-  // P1 fields: description, category → blue if missing
-  // P2 fields: size, founded_year, funding, hq_city, products, dsps → amber if missing
-  const p1show=['description','category'];
-  const p2show=['size','founded_year','funding','hq_city','products','dsps'];
-  const d1=p1show.map(f=>{
-    const ok=!isEmpty(c[f]);
-    return `<div class="fd ${ok?'ok':'b2b'}" title="${f}${ok?' ✓':' (b2b fills)'}"></div>`;
-  }).join('');
-  const d2=p2show.map(f=>{
-    const ok=!isEmpty(c[f]);
-    return `<div class="fd ${ok?'ok':'browser'}" title="${f}${ok?' ✓':' (browser fills)'}"></div>`;
-  }).join('');
-  return `<div class="dot-group">${d1}<div class="dot-sep"></div>${d2}</div>`;
-}
-
-function renderList(){
-  const filtered=getFiltered();
-  document.getElementById('listMeta').textContent=`${filtered.length}/${companies.length} · ${selected.size} sel`;
-  document.getElementById('selChip').textContent=selected.size+' selected';
-  const list=document.getElementById('coList');
-  if(!filtered.length){list.innerHTML='<div style="padding:20px;text-align:center;font-family:IBM Plex Mono,monospace;font-size:10px;color:var(--t3)">No matches</div>';return;}
-  list.innerHTML=filtered.map(c=>{
-    const [bg,fg]=av(c.name);
-    const isSel=selected.has(c.id);
-    const g=gaps(c);
-    const tagCls=g.length===0?'tc':g.length>=3?'tpr':'tn';
-    return `<div class="co-row${isSel?' selected':''}" onclick="toggleSel('${c.id}')">
-      <div class="cb">${isSel?'✓':''}</div>
-      <div class="co-av" style="background:${bg};border-color:${fg}30;color:${fg}">${ini(c.name)}</div>
+function renderCompanies() {
+  const filtered = getFiltered();
+  document.getElementById('listMeta').textContent = `${filtered.length} of ${companies.length}`;
+  const list = document.getElementById('coList');
+  if (!filtered.length) { list.innerHTML = '<div style="padding:20px;text-align:center;font-family:\'IBM Plex Mono\',monospace;font-size:10px;color:var(--t3);text-transform:uppercase">No results</div>'; return; }
+  list.innerHTML = filtered.map(c => {
+    const [bg,fg] = av(c.name);
+    const sel = selectedCompany && selectedCompany.id === c.id;
+    const dead = c.type === 'nogo';
+    return `<div class="co-row${sel?' selected':''}${dead?' dead':''}" onclick="openCompany('${encodeURIComponent(c.id||_slug(c.name))}')" oncontextmenu="showCtx(event,'${encodeURIComponent(c.id||_slug(c.name))}');return false">
+      <div class="co-av" style="background:${bg};border-color:${fg}40;color:${fg}">${ini(c.name)}</div>
       <div class="co-info">
         <div class="co-name">${c.name}</div>
-        <div class="co-url">${dom(c.website||'')}</div>
+        <div class="co-note">${(c.note||c.category||'—').slice(0,42)}</div>
       </div>
-      ${renderDots(c)}
-      <span class="tag ${tagCls}" style="margin-left:3px">${g.length===0?'full':g.length+'g'}</span>
+      <div class="co-right">
+        ${c.icp?`<span class="icp-num">${c.icp}</span>`:''}
+        <span class="tag ${tagCls(c.type)}">${tagLbl(c.type)}</span>
+      </div>
     </div>`;
   }).join('');
 }
 
-function toggleSel(id){if(selected.has(id))selected.delete(id);else selected.add(id);renderList();}
-function selectAll(){getFiltered().forEach(c=>selected.add(c.id));renderList();}
-function selectNone(){selected.clear();renderList();}
-
-/* field toggle */
-document.querySelectorAll('#p1Fields .fchk').forEach(el=>el.addEventListener('click',()=>el.classList.toggle('on')));
-document.querySelectorAll('#p2Fields .fchk').forEach(el=>el.addEventListener('click',()=>el.classList.toggle('on')));
-document.getElementById('skipP1').addEventListener('click',function(){this.classList.toggle('on');});
-document.getElementById('skipP2').addEventListener('click',function(){this.classList.toggle('on');});
-
-function getP1Fields(){return[...document.querySelectorAll('#p1Fields .fchk.on')].map(e=>e.dataset.f);}
-function getP2Fields(){return[...document.querySelectorAll('#p2Fields .fchk.on')].map(e=>e.dataset.f);}
-
-/* ── GENERATE ── */
-function generateScript(){
-  const sel=companies.filter(c=>selected.has(c.id));
-  if(!sel.length){alert('Select at least one company.');return;}
-  const p1=getP1Fields(), p2=getP2Fields();
-  if(!p1.length&&!p2.length){alert('Enable at least one field in either phase.');return;}
-
-  const steps=parseInt(document.getElementById('cfgSteps').value)||35;
-  const delay=parseInt(document.getElementById('cfgDelay').value)||12;
-  const batch=parseInt(document.getElementById('cfgBatch').value)||1;
-  const sbUrl=document.getElementById('cfgSbUrl').value.trim();
-  const skipP1=document.getElementById('skipP1').classList.contains('on');
-  const skipP2=document.getElementById('skipP2').classList.contains('on');
-
-  const companiesJson=JSON.stringify(sel.map(c=>({id:c.id,name:c.name,website:c.website})),null,4);
-
-  const p2FieldDesc={
-    size:'headcount as integer — e.g. 150',
-    founded_year:'founding year as integer — e.g. 2014',
-    funding:'funding summary string — amounts, investors, rounds (e.g. "$12M Series A — Accel, 2022")',
-    hq_city:'headquarters city name only — e.g. "London"',
-    linkedin_slug:'LinkedIn company URL slug — e.g. "the-trade-desk"',
-    crunchbase_url:'full Crunchbase URL if found — e.g. "https://crunchbase.com/organization/..."',
-    products:'JSON {products:[{name,description,target_user}], integrations_advertised:[], pricing_model}',
-    dsps:'JSON array of DSP platform names — e.g. ["The Trade Desk","DV360","Amazon DSP"]',
-    acquisition_status:'"independent","acquired","merged","defunct" or null',
-    parent_company:'name of parent company if acquired — e.g. "Publicis Groupe"',
-    funding_total_usd:'total funding as integer USD — e.g. 12000000',
-    funding_stage:'latest funding stage — e.g. "Series B","PE","Public","Bootstrapped"',
-  };
-
-  const p2FieldBlock=p2.map(f=>`    "${f}": "${p2FieldDesc[f]||f}"`).join(',\n');
-  const p2SkipBlock=skipP2
-    ? `    current = await sb_get(co["id"])
-    phase2_fields = [f for f in P2_FIELDS if not current.get(f)]`
-    : `    phase2_fields = list(P2_FIELDS.keys())`;
-
-  const bt='`';
-
-  const script=`#!/usr/bin/env python3
-"""
-onAudience Batch Enricher — two-phase
-Generated by onAudience Sales Intelligence Hub
-
-Phase 1 — b2b MCP (Anthropic API + b2b.ctpl.dev)
-  Fills: ${p1.join(', ')||'(none selected)'}
-  Model: claude-haiku-4-5-20251001 (instant, ~free)
-
-Phase 2 — browser-use (AI browser agent)
-  Fills: ${p2.join(', ')||'(none selected)'}
-  Model: claude-sonnet-4-6 (~$0.10/company)
-
-Setup:
-  uv venv --python 3.11 && source .venv/bin/activate
-  uv pip install browser-use langchain-anthropic anthropic httpx python-dotenv
-  uvx browser-use install
-
-.env:
-  ANTHROPIC_API_KEY=sk-ant-...
-  SUPABASE_URL=${sbUrl}
-  SUPABASE_KEY=eyJhbGci...
-
-Run: python enricher.py
-Companies: ${sel.length}
-"""
-
-import asyncio, json, os, re
-import anthropic, httpx
-from dotenv import load_dotenv
-from browser_use import Agent
-from langchain_anthropic import ChatAnthropic
-
-load_dotenv()
-
-ANTHROPIC_API_KEY = os.getenv("ANTHROPIC_API_KEY")
-SUPABASE_URL      = os.getenv("SUPABASE_URL", "${sbUrl}")
-SUPABASE_KEY      = os.getenv("SUPABASE_KEY", "")
-B2B_MCP_URL       = "https://b2b.ctpl.dev/sse"
-
-# Phase 2 config
-P2_MAX_STEPS  = ${steps}
-P2_DELAY_S    = ${delay}
-P2_BATCH_SIZE = ${batch}
-
-# Fields per phase
-P1_FIELDS = ${JSON.stringify(p1)}   # b2b MCP
-P2_FIELDS = {
-${p2FieldBlock}
+/* ── Contact List ── */
+function renderContacts() {
+  const q = (document.getElementById('ctSearch').value||'').toLowerCase();
+  const filtered = contacts.filter(ct => !q || (ct.full_name+' '+(ct.company_name||'')+' '+(ct.title||'')).toLowerCase().includes(q));
+  document.getElementById('ctMeta').textContent = `${filtered.length} of ${contacts.length}`;
+  const list = document.getElementById('ctList');
+  if (!filtered.length) { list.innerHTML = '<div style="padding:20px;text-align:center;font-family:\'IBM Plex Mono\',monospace;font-size:10px;color:var(--t3);text-transform:uppercase">No contacts</div>'; return; }
+  list.innerHTML = filtered.map((ct,i) => {
+    const [bg,fg] = av(ct.full_name||ct.company_name||'');
+    return `<div class="ct-list-row" onclick="openContactDrawer(${i})">
+      <div class="ct-av-sm" style="background:${bg};border-color:${fg}40;color:${fg}">${ini(ct.full_name||'')}</div>
+      <div class="ct-info">
+        <div class="ct-name-sm">${ct.full_name||'—'}</div>
+        <div class="ct-sub-sm">${ct.title||''}${ct.company_name?(' · '+ct.company_name):''}</div>
+      </div>
+    </div>`;
+  }).join('');
 }
 
-# Companies
-COMPANIES = ${companiesJson}
+/* ── Contact Drawer ── */
+function openContactDrawer(idx) {
+  const q = (document.getElementById('ctSearch').value||'').toLowerCase();
+  const filtered = contacts.filter(ct => !q || (ct.full_name+' '+(ct.company_name||'')+' '+(ct.title||'')).toLowerCase().includes(q));
+  const ct = filtered[idx]; if (!ct) return;
+  const [bg,fg] = av(ct.full_name||'');
+  const avEl = document.getElementById('drawerAv');
+  avEl.textContent = ini(ct.full_name||'');
+  avEl.style.background = bg; avEl.style.borderColor = fg+'40'; avEl.style.color = fg;
+  document.getElementById('drawerName').textContent = ct.full_name||'—';
+  document.getElementById('drawerRole').textContent = ct.title||'';
+  document.getElementById('drawerCompany').textContent = ct.company_name||'';
+  document.getElementById('drawerBody').innerHTML = `
+    <table class="info2" style="margin-bottom:12px">
+      <tr><td>Email</td><td>${ct.email?`<span class="code-pill">${ct.email}</span>`:'—'}</td></tr>
+      <tr><td>LinkedIn</td><td>${ct.linkedin_url?`<a class="ml" href="${ct.linkedin_url}" target="_blank">Profile ↗</a>`:'—'}</td></tr>
+      <tr><td>Notes</td><td style="font-size:11px;color:var(--t2)">${ct.notes||'—'}</td></tr>
+    </table>
+    <div class="btn-row">
+      <button class="btn p sm" onclick="openClaude('Draft personalized outreach email to ${ct.full_name||'this contact'} at ${ct.company_name||''} — for onAudience data partnership')">Draft email ↗</button>
+      ${ct.linkedin_url?`<button class="btn sm" onclick="window.open('${ct.linkedin_url}','_blank')">LinkedIn ↗</button>`:''}
+      <button class="btn sm" onclick="openClaude('Research ${ct.full_name||''} at ${ct.company_name||''} — background, recent activity, outreach hooks')">Research ↗</button>
+    </div>`;
+  document.getElementById('drawerOverlay').classList.add('vis');
+  document.getElementById('drawer').classList.add('open');
+}
+function closeDrawer() {
+  document.getElementById('drawerOverlay').classList.remove('vis');
+  document.getElementById('drawer').classList.remove('open');
+}
 
+/* ── Company Detail ── */
+function openCompany(encId) {
+  const id = decodeURIComponent(encId);
+  const c = companies.find(x=>(x.id||_slug(x.name))===id);
+  if (!c) return;
+  selectedCompany = c;
+  renderCompanies();
+  document.getElementById('emptyState').style.display = 'none';
 
-# ── Supabase ──────────────────────────────────────────────────────
-def _hdrs():
-    return {
-        "apikey": SUPABASE_KEY,
-        "Authorization": f"Bearer {SUPABASE_KEY}",
-        "Content-Type": "application/json",
-        "Prefer": "resolution=merge-duplicates,return=minimal",
+  const [bg,fg] = av(c.name);
+  const domain = c.website ? domainOf(c.website) : '';
+  const cSlug = c.linkedin_slug || _slug(c.name);
+
+  // Build contacts for this company
+  const coContacts = contacts.filter(ct => (ct.company_name||'').toLowerCase() === c.name.toLowerCase() || (ct.company_id && ct.company_id === (c.id||_slug(c.name))));
+
+  let ctHtml = '';
+  if (coContacts.length) {
+    ctHtml = coContacts.map(ct => `<div class="contact-card">
+      <div class="ct-row-head">
+        <div class="ct-av">${ini(ct.full_name||'')}</div>
+        <div class="ct-meta"><div class="ct-name">${ct.full_name||'—'}</div><div class="ct-role">${ct.title||''}</div></div>
+      </div>
+      <table class="info2">
+        <tr><td>Email</td><td>${ct.email?`<span class="code-pill">${ct.email}</span>`:'—'}</td></tr>
+        ${ct.linkedin_url?`<tr><td>LinkedIn</td><td><a class="ml" href="${ct.linkedin_url}" target="_blank">Profile ↗</a></td></tr>`:''}
+        ${ct.notes?`<tr><td>Notes</td><td style="font-size:11px;color:var(--t2)">${ct.notes}</td></tr>`:''}
+      </table>
+    </div>`).join('');
+  } else {
+    ctHtml = `<div class="no-rel">No contacts in DB yet</div>`;
+  }
+
+  // Tech stack
+  const ts = c.tech_stack ? (Array.isArray(c.tech_stack)?c.tech_stack:JSON.parse(c.tech_stack)) : [];
+
+  // Products
+  let productsHtml = '';
+  if (c.products) {
+    const p = typeof c.products === 'string' ? JSON.parse(c.products) : c.products;
+    if (p.products && p.products.length) {
+      productsHtml = `<div class="section">
+        <div class="sec-hdr"><span>📦</span><span class="sec-label">Products</span></div>
+        <div class="sec-body">
+          <table class="grid">
+            <thead><tr><th>Product</th><th>Description</th></tr></thead>
+            <tbody>${p.products.map(pr=>`<tr><td style="font-weight:500">${pr.name||pr}</td><td style="color:var(--t2)">${pr.description||''}</td></tr>`).join('')}</tbody>
+          </table>
+          ${p.positioning?`<div class="note">${p.positioning}</div>`:''}
+        </div>
+      </div>`;
     }
+  }
 
-async def sb_get(company_id: str) -> dict:
-    async with httpx.AsyncClient(timeout=10) as c:
-        r = await c.get(
-            f"{SUPABASE_URL}/rest/v1/companies?id=eq.{company_id}&select=*",
-            headers=_hdrs(),
-        )
-        data = r.json()
-        return data[0] if data else {}
+  const dspsArr = c.dsps ? (Array.isArray(c.dsps)?c.dsps:JSON.parse(c.dsps)) : [];
 
-async def sb_upsert(company_id: str, updates: dict) -> bool:
-    clean = {k: v for k, v in updates.items() if v is not None and str(v).strip() != ""}
-    if not clean:
-        return False
-    async with httpx.AsyncClient(timeout=15) as c:
-        r = await c.post(
-            f"{SUPABASE_URL}/rest/v1/companies",
-            headers=_hdrs(),
-            json={"id": company_id, **clean},
-        )
-        return r.status_code in (200, 201, 204)
+  document.getElementById('center').innerHTML = `<div class="co-detail">
+    <div class="banner">
+      <div class="co-logo" style="background:${fg}">${ini(c.name)}</div>
+      <div class="co-hdr">
+        <div class="co-hdr-name">
+          ${c.name}
+          <span class="tag ${tagCls(c.type)}">${tagLbl(c.type)}</span>
+          ${domain?`<a class="ml" href="https://${domain}" target="_blank">${domain} ↗</a>`:''}
+        </div>
+        <div class="co-hdr-sub">${c.category||'Data / AdTech'}${c.hq_city||c.region?' · '+(c.hq_city||c.region):''}</div>
+        <div class="icp-row">
+          ${c.icp?`<span>${stars(c.icp)}</span><span class="icp-reason">${c.icp}/10 ICP</span>`:''}
+        </div>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:4px;flex-shrink:0">
+        <button class="btn p sm" onclick="openClaude('Research ${c.name.replace(/'/g,"\\'")} — full contact report: decision makers, tech stack, outreach angle and ICP fit for onAudience')">Full report ↗</button>
+        <button class="btn sm" onclick="openClaude('Draft personalized outreach email to ${c.name.replace(/'/g,"\\'")} for onAudience data partnership')">Draft email ↗</button>
+      </div>
+    </div>
 
-def clean_json(raw: str) -> str:
-    """Strip markdown fences and extract first JSON object."""
-    raw = raw.strip()
-    if raw.startswith(${bt}${bt}${bt}):
-        raw = raw.split("\\n", 1)[1].rsplit(${bt}${bt}${bt}, 1)[0].strip()
-    # find first { ... }
-    m = re.search(r"\\{[\\s\\S]*\\}", raw)
-    return m.group(0) if m else raw
+    <div class="section">
+      <div class="sec-hdr"><span>🏢</span><span class="sec-label">Company Overview</span></div>
+      <div class="sec-body">
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
+          <table class="info">
+            ${c.description?`<tr><td>Description</td><td>${c.description}</td></tr>`:''}
+            <tr><td>Category</td><td>${c.category||'—'}</td></tr>
+            <tr><td>Region / HQ</td><td>${c.hq_city||c.region||'—'}</td></tr>
+            <tr><td>Employees</td><td>${c.size||'—'}</td></tr>
+            <tr><td>DB Updated</td><td>${timeAgo(c.updated_at)}</td></tr>
+            ${c.founded_year?`<tr><td>Founded</td><td>${c.founded_year}</td></tr>`:''}
+            ${c.funding?`<tr><td>Funding</td><td style="font-size:11px">${c.funding}</td></tr>`:''}
+            ${c.tcf_vendor_id?`<tr><td>GVL / TCF ID</td><td><span class="code-pill">${c.tcf_vendor_id}</span></td></tr>`:''}
+            <tr><td>DSP Integrations</td><td>${dspBadges(dspsArr)}</td></tr>
+            ${c.website?`<tr><td>Website</td><td><a class="ml" href="https://${domain}" target="_blank">${domain} ↗</a></td></tr>`:''}
+            ${c.linkedin_slug?`<tr><td>LinkedIn</td><td><a class="ml" href="https://www.linkedin.com/company/${c.linkedin_slug}" target="_blank">Company page ↗</a></td></tr>`:''}
+          </table>
+          ${ts.length?`<div><div style="font-family:'IBM Plex Mono',monospace;font-size:9px;text-transform:uppercase;letter-spacing:.07em;color:var(--t3);margin-bottom:5px">Tech Stack</div><div>${techPills(ts)}</div></div>`:'<div></div>'}
+        </div>
+        ${c.note?`<div class="note">📋 ${c.note}</div>`:''}
+      </div>
+    </div>
 
-def extract_domain(url: str) -> str:
-    """Extract bare domain from URL."""
-    url = re.sub(r"^https?://(www\\.)?", "", url)
-    return url.split("/")[0]
+    ${productsHtml}
 
+    <div class="section">
+      <div class="sec-hdr"><span>👤</span><span class="sec-label">Contacts</span>
+        <span style="font-family:'IBM Plex Mono',monospace;font-size:9px;background:var(--surf3);padding:1px 6px;border-radius:2px;margin-left:4px">${coContacts.length}</span>
+        <button class="btn sm" style="margin-left:auto" onclick="openClaude('Find Head of Programmatic or Data Partnerships at ${c.name.replace(/'/g,"\\'")} — LinkedIn profile, email, background')">Find contacts ↗</button>
+      </div>
+      <div class="sec-body">${ctHtml}</div>
+    </div>
 
-# ── Phase 1: b2b MCP ─────────────────────────────────────────────
-async def phase1_b2b(co: dict) -> dict:
-    """
-    Call Anthropic API with b2b MCP server configured.
-    The agent calls get_company_details for the domain and returns
-    description, category, and tags as JSON.
-    """
-    if not P1_FIELDS:
-        return {}
+    <div class="section">
+      <div class="sec-hdr"><span>💡</span><span class="sec-label">Outreach Angle</span></div>
+      <div class="sec-body">
+        <div style="font-size:12px;color:var(--t2);line-height:1.7">${c.outreach_angle||`<span style="color:var(--t3);font-style:italic">Run full report to generate outreach angle for ${c.name}</span>`}</div>
+        <div class="btn-row">
+          <button class="btn p sm" onclick="openClaude('Draft personalized outreach email to ${c.name.replace(/'/g,"\\'")} — value-led and curiosity variants for onAudience data partnership')">Draft email ↗</button>
+          <button class="btn sm" onclick="openClaude('Draft LinkedIn connection note for ${c.name.replace(/'/g,"\\'")} — short, personalized for data partnership')">LinkedIn ↗</button>
+          <button class="btn sm" onclick="openClaude('Find companies similar to ${c.name.replace(/'/g,"\\'")} for onAudience data outreach — top 10 by ICP fit')">Find similar ↗</button>
+        </div>
+      </div>
+    </div>
 
-    domain = extract_domain(co["website"])
-    print(f"  [P1] b2b lookup → {domain}")
+    <div class="section">
+      <div class="sec-hdr"><span>🔗</span><span class="sec-label">Relations</span>
+        <span id="rel-count-badge" style="font-family:'IBM Plex Mono',monospace;font-size:9px;background:var(--surf3);padding:1px 6px;border-radius:2px;margin-left:4px"></span>
+      </div>
+      <div class="sec-body" id="rel-body"><div class="no-rel">Loading…</div></div>
+    </div>
 
-    client = anthropic.Anthropic(api_key=ANTHROPIC_API_KEY)
+    <div class="section">
+      <div class="sec-hdr"><span>🔗</span><span class="sec-label">Quick Links</span></div>
+      <div class="sec-body">
+        <table class="info">
+          <tr><td>People Search</td><td><a class="ml" href="https://www.linkedin.com/search/results/people/?keywords=${encodeURIComponent(c.name+' Head Programmatic Data Partnerships')}" target="_blank">Search LinkedIn ↗</a></td></tr>
+          ${c.linkedin_slug?`<tr><td>Company LI</td><td><a class="ml" href="https://www.linkedin.com/company/${c.linkedin_slug}" target="_blank">linkedin.com/company/${c.linkedin_slug} ↗</a></td></tr>`:''}
+          ${domain?`<tr><td>Website</td><td><a class="ml" href="https://${domain}" target="_blank">${domain} ↗</a></td></tr>`:''}
+          <tr><td>Gmail Check</td><td><a class="ml" href="#" onclick="openClaude('Check Gmail for any prior contact with ${c.name.replace(/'/g,"\\'")} — summarize email history');return false">Search Gmail ↗</a></td></tr>
+        </table>
+      </div>
+    </div>
+  </div>`;
 
-    field_lines = "\\n".join(f"- {f}" for f in P1_FIELDS)
-    prompt = f"""Use the b2b get_company_details tool for domain: "{domain}"
+  setTimeout(()=>loadRelations(_slug(c.name)), 80);
+}
 
-Then return ONLY a JSON object with these fields:
-{field_lines}
+/* ── loadRelations ── */
+async function loadRelations(slug) {
+  const body  = document.getElementById('rel-body');
+  const badge = document.getElementById('rel-count-badge');
+  if (!body) return;
+  try {
+    const res = await fetch(
+      `${SB_URL}/rest/v1/company_relations?or=(from_company.eq.${slug},to_company.eq.${slug})&select=*`,
+      { headers: { apikey: SB_KEY, Authorization: `Bearer ${SB_KEY}` } }
+    );
+    const rels = await res.json();
+    if (!Array.isArray(rels) || !rels.length) {
+      body.innerHTML = '<div class="no-rel">No relations recorded</div>';
+      if (badge) badge.textContent = '';
+      return;
+    }
+    const coMap = {};
+    companies.forEach(x => { if(x.name) coMap[_slug(x.name)] = x; });
+    const ti = {data_partner:'🤝',dsp_integration:'📡',marketplace_listed:'🛒',tech_integration:'⚙️',client_of:'💰',acquired_by:'🏢',subsidiary_of:'🏢',competes_with:'⚔️',co_sell:'🤲'};
+    const tl = {data_partner:'Data Partner',dsp_integration:'DSP Integration',marketplace_listed:'Marketplace Listed',tech_integration:'Tech Integration',client_of:'Client Of',acquired_by:'Acquired By',subsidiary_of:'Subsidiary Of',competes_with:'Competes With',co_sell:'Co-Sell'};
+    const groups = {};
+    rels.forEach(r => {
+      groups[r.relation_type] = groups[r.relation_type] || [];
+      const isSrc = r.from_company === slug;
+      const oid   = isSrc ? r.to_company : r.from_company;
+      const co    = coMap[oid];
+      groups[r.relation_type].push({oid,name:co?.name||oid,arrow:r.direction==='bidirectional'?'⇄':(isSrc?'→':'←'),scls:r.strength==='confirmed'?'tc':'tpr',strength:r.strength,notes:r.notes,has:!!co});
+    });
+    body.innerHTML = Object.entries(groups).map(([tp,items]) =>
+      `<div style="margin-bottom:10px">
+        <div style="font-family:'IBM Plex Mono',monospace;font-size:9px;text-transform:uppercase;letter-spacing:.06em;color:var(--t3);margin-bottom:4px;display:flex;align-items:center;gap:5px">
+          <span>${ti[tp]||'•'}</span><span>${tl[tp]||tp}</span>
+          <span style="margin-left:auto;background:var(--surf3);border-radius:2px;padding:0 5px">${items.length}</span>
+        </div>
+        ${items.map(it=>`<div style="display:flex;align-items:flex-start;gap:8px;padding:5px 0;border-bottom:1px solid var(--rule3)">
+          <span style="font-family:'IBM Plex Mono',monospace;font-size:13px;color:var(--g);flex-shrink:0">${it.arrow}</span>
+          <div style="flex:1;min-width:0">
+            <div style="display:flex;align-items:center;gap:6px">
+              ${it.has?`<span style="font-size:12px;font-weight:500;color:var(--g);cursor:pointer" onclick="openCompany('${encodeURIComponent(it.oid)}')">${it.name}</span>`:`<span style="font-size:12px;font-weight:500">${it.name}</span>`}
+              <span class="tag ${it.scls}" style="margin-left:auto">${it.strength}</span>
+            </div>
+            ${it.notes?`<div style="font-size:11px;color:var(--t3);margin-top:2px">${it.notes}</div>`:''}
+          </div></div>`).join('')}
+      </div>`
+    ).join('');
+    if (badge) badge.textContent = `(${rels.length})`;
+  } catch(e) {
+    body.innerHTML = `<div style="font-size:11px;color:var(--t3)">Error: ${e.message}</div>`;
+  }
+}
 
-Field guidance:
-- description: 1-2 factual sentences, no marketing language
-- category: short type label (e.g. "DSP", "Data Provider", "Agency", "SSP")
-- tags: array of 3-5 keyword strings
+/* ── Context Menu ── */
+function showCtx(e, encId) {
+  e.preventDefault(); e.stopPropagation();
+  const id = decodeURIComponent(encId);
+  const c = companies.find(x=>(x.id||_slug(x.name))===id);
+  if (!c) return;
+  const menu = document.getElementById('ctxMenu');
+  const actions = [
+    {icon:'🔍',text:'Full contact report',prompt:`Research ${c.name} — full contact report with decision makers, tech stack, outreach angle and ICP fit for onAudience`},
+    {icon:'👤',text:'Find decision makers',prompt:`Find Head of Programmatic or Data Partnerships at ${c.name} — LinkedIn, email, background`},
+    {icon:'✉',text:'Draft outreach email',prompt:`Draft a personalized outreach email to ${c.name} — value-led and curiosity variants for onAudience data partnership`},
+    {icon:'💬',text:'LinkedIn message',prompt:`Draft a LinkedIn connection note and InMail for ${c.name} — short, personalized for data partnership outreach`},
+    {icon:'🔗',text:'Find similar companies',prompt:`Find companies similar to ${c.name} for onAudience programmatic data outreach — top 10 ranked by ICP fit`},
+    {icon:'📧',text:'Check email history',prompt:`Check Gmail for any previous contact with ${c.name} — summarize relationship history and last touchpoints`},
+    {icon:'⚡',text:'Enrich this company',fn:()=>{switchTab('enricher');document.getElementById('enrInput').value=c.name;runEnrichment();}},
+  ];
+  if (c.type==='nogo') actions.push({icon:'⚠',text:'Why no outreach?',prompt:`Explain why ${c.name} is marked no-outreach in onAudience CRM and what happened historically`});
+  if (c.type==='prospect') actions.push({icon:'🚀',text:'Prioritize this account',prompt:`Make the case for prioritizing ${c.name} in onAudience outreach — urgency signals, competitive risk, and fast win potential`});
 
-Return only the JSON object. No markdown. No explanation."""
+  menu.innerHTML = `<div class="ctx-label">${c.name}</div><div class="ctx-sep"></div>`
+    + actions.map((a,i)=>`<div class="ctx-item" data-i="${i}"><span class="ctx-icon">${a.icon}</span>${a.text}</div>`).join('');
 
+  menu.querySelectorAll('.ctx-item').forEach((el,i)=>{
+    el.addEventListener('click',()=>{
+      menu.style.display='none';
+      if(actions[i].fn) actions[i].fn();
+      else openClaude(actions[i].prompt);
+    });
+  });
+
+  const x = Math.min(e.clientX, window.innerWidth-230);
+  const y = Math.min(e.clientY, window.innerHeight-320);
+  menu.style.left=x+'px'; menu.style.top=y+'px'; menu.style.display='block';
+}
+document.addEventListener('click',()=>document.getElementById('ctxMenu').style.display='none');
+
+/* ── Tabs ── */
+function switchTab(name) {
+  document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
+  document.querySelectorAll('.tab-content').forEach(t=>t.classList.remove('active'));
+  document.getElementById('tab-'+name).classList.add('active');
+  document.getElementById('tc-'+name).classList.add('active');
+  const ec = document.getElementById('enricherCenter');
+  const center = document.getElementById('center');
+  if (name === 'enricher') {
+    ec.style.display = 'flex';
+    document.getElementById('emptyState').style.display = 'none';
+    center.style.padding = '0';
+    center.style.overflow = 'hidden';
+    center.style.display = 'flex';
+    center.style.flexDirection = 'column';
+  } else {
+    ec.style.display = 'none';
+    center.style.padding = '10px';
+    center.style.overflow = 'auto';
+    center.style.display = 'block';
+    if (!selectedCompany) document.getElementById('emptyState').style.display = 'flex';
+  }
+}
+
+/* ── Modals ── */
+let _modalTemplate = '', _modalTitle = '', _modalDesc = '';
+function openResearchModal() {
+  _modalTitle='Research a company';_modalDesc='Enter company name to open a full contact report in Claude.';_modalTemplate='Research [COMPANY] — full contact report with decision makers, outreach angle, and ICP fit for onAudience data partnership';
+  document.getElementById('modalTitle').textContent=_modalTitle;document.getElementById('modalDesc').textContent=_modalDesc;
+  document.getElementById('modalInput').value='';document.getElementById('overlay').classList.add('vis');
+  setTimeout(()=>document.getElementById('modalInput').focus(),50);
+}
+function openSimilarModal() {
+  _modalTitle='Find similar companies';_modalDesc='Enter a reference company to find lookalikes.';_modalTemplate='Find companies similar to [COMPANY] for onAudience outreach — top 10 ranked by ICP fit and programmatic signals';
+  document.getElementById('modalTitle').textContent=_modalTitle;document.getElementById('modalDesc').textContent=_modalDesc;
+  document.getElementById('modalInput').value='';document.getElementById('overlay').classList.add('vis');
+  setTimeout(()=>document.getElementById('modalInput').focus(),50);
+}
+function closeModal(){document.getElementById('overlay').classList.remove('vis')}
+function submitModal(){
+  const val=document.getElementById('modalInput').value.trim();if(!val)return;
+  closeModal();openClaude(_modalTemplate.replace('[COMPANY]',val));
+}
+function closePanelModal(){document.getElementById('panelModal').classList.remove('vis');document.getElementById('panelIframe').src='';}
+function doResearch(){
+  const q=document.getElementById('coSearch').value.trim();
+  if(q) openClaude(`Research ${q} — full contact report with decision makers, outreach angle, and ICP fit for onAudience data partnership`);
+  else openResearchModal();
+}
+function openClaude(prompt){window.open('https://claude.ai/new?q='+encodeURIComponent(prompt),'_blank')}
+
+document.addEventListener('DOMContentLoaded',()=>{
+  const mi=document.getElementById('modalInput');
+  if(mi) mi.addEventListener('keydown',e=>{if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();submitModal();}});
+  document.getElementById('overlay').addEventListener('click',e=>{if(e.target===document.getElementById('overlay'))closeModal();});
+  // Ctrl+Enter / Cmd+Enter to find companies
+  const ei=document.getElementById('enrDescInput');
+  if(ei) ei.addEventListener('keydown',e=>{if(e.key==='Enter'&&(e.ctrlKey||e.metaKey)){e.preventDefault();findEnrCompanies();}});
+  document.querySelectorAll('.enr-check input').forEach(cb=>{
+    cb.addEventListener('change',function(){this.closest('.enr-check').classList.toggle('on',this.checked);});
+  });
+});
+
+/* ── BATCH ENRICHER ── */
+let enrSelected = new Set(), enrFilteredIds = [];
+
+const GAP_FIELDS = [
+  {id:'desc',  field:'description'},
+  {id:'size',  field:'size'},
+  {id:'fund',  field:'funding'},
+  {id:'hq',    field:'hq_city'},
+  {id:'prod',  field:'products'},
+  {id:'dsps',  field:'dsps'},
+  {id:'li',    field:'linkedin_slug'},
+];
+
+function getGaps(c) {
+  return GAP_FIELDS.filter(gf => {
+    const v = c[gf.field];
+    if (!v) return true;
+    if (Array.isArray(v)) return !v.length;
+    if (typeof v === 'string') return !v.trim();
+    if (typeof v === 'object') { const pp=v.products; return !pp||(Array.isArray(pp)&&!pp.length); }
+    return false;
+  });
+}
+
+async function findEnrCompanies() {
+  const desc = document.getElementById('enrDescInput').value.trim();
+  if (!desc) { document.getElementById('enrDescInput').focus(); return; }
+
+  const btn = document.getElementById('enrFindBtn');
+  const status = document.getElementById('enrFindStatus');
+  btn.disabled = true; btn.textContent = '⏳ Finding…';
+  status.style.display = 'block'; status.textContent = 'Asking AI…';
+  // make sure enricher tab is active so results panel is visible
+  if (!document.getElementById('tc-enricher').classList.contains('active')) switchTab('enricher');
+
+  try {
+    // Build a compact company list for the AI
+    const coList = companies.map(c => {
+      const gaps = getGaps(c).map(g=>g.id);
+      return `${c.id||_slug(c.name)}|${c.name}|${c.type}|${c.category||''}|${c.region||c.hq_city||''}|gaps:${gaps.join(',')||'none'}|desc:${c.description?'yes':'no'}|size:${c.size?'yes':'no'}|fund:${c.funding?'yes':'no'}`;
+    }).join('\n');
+
+    const prompt = `You are a database filter for the onAudience sales CRM.
+
+User wants: "${desc}"
+
+Company database (id|name|type|category|region|gaps|desc|size|fund):
+${coList}
+
+Return ONLY a JSON array of company IDs (the first column) that match the user's description.
+Be liberal — if unsure, include the company.
+Return only the array, no markdown, no explanation. Example: ["adform","zeotap","criteo"]`;
+
+    const res = await fetch('https://api.anthropic.com/v1/messages', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'x-api-key': getAntKey(), 'anthropic-version': '2023-06-01', 'anthropic-dangerous-direct-browser-access': 'true' },
+      body: JSON.stringify({ model: 'claude-haiku-4-5-20251001', max_tokens: 600, messages: [{ role: 'user', content: prompt }] })
+    });
+
+    const data = await res.json();
+    if (data.error) throw new Error(data.error.message);
+    const raw = data.content?.[0]?.text || '[]';
+    const clean = raw.replace(/```[a-z]*/g,'').replace(/```/g,'').trim();
+    const ids = JSON.parse(clean.match(/\[[\s\S]*\]/)?.[0] || '[]');
+
+    enrFilteredIds = ids;
+    enrSelected = new Set(ids); // auto-select all matches
+    status.textContent = `Found ${ids.length} companies`;
+    renderEnrList();
+    document.getElementById('enrResultsWrap').style.display = 'flex';
+    updateEnrSelCount();
+  } catch(e) {
+    status.textContent = `⚠ ${e.message}`;
+  }
+  btn.disabled = false; btn.textContent = '🔍 Find';
+}
+
+function clearEnrResults() {
+  enrFilteredIds = []; enrSelected.clear();
+  document.getElementById('enrDescInput').value = '';
+  document.getElementById('enrResultsWrap').style.display = 'none';
+  document.getElementById('enrFindStatus').style.display = 'none';
+  document.getElementById('enrIdleHint').style.display = 'flex';
+  document.getElementById('enrFindBtn').textContent = '🔍 Find';
+  document.getElementById('enrCoList').innerHTML = '';
+}
+
+function updateEnrSelCount() {
+  document.getElementById('enrSelCount').textContent = enrSelected.size+' selected';
+}
+
+function renderEnrList() {
+  const src = enrFilteredIds.length
+    ? companies.filter(c => enrFilteredIds.includes(c.id||_slug(c.name)))
+    : [];
+  document.getElementById('enrListMeta').textContent = `${src.length} companies`;
+  const list = document.getElementById('enrCoList');
+  if (!src.length) { list.innerHTML=''; return; }
+  list.innerHTML = src.map(c => {
+    const [bg,fg] = av(c.name);
+    const gaps = getGaps(c);
+    const cid = c.id||_slug(c.name);
+    const checked = enrSelected.has(cid);
+    const domain = c.website ? domainOf(c.website) : '';
+    const gapBars = GAP_FIELDS.map(gf =>
+      `<div class="enr-gap-sq ${gaps.some(g=>g.id===gf.id)?'enr-gap-miss':'enr-gap-filled'}" title="${gf.id}"></div>`
+    ).join('');
+    return `<div class="enr-co-row${checked?' checked':''}" onclick="toggleEnrRow('${encodeURIComponent(cid)}')">
+      <div class="enr-cb">${checked?'✓':''}</div>
+      <div class="enr-co-av" style="background:${bg};border-color:${fg}40;color:${fg}">${ini(c.name)}</div>
+      <div class="enr-co-info">
+        <div class="enr-co-name">${c.name}</div>
+        <div class="enr-co-domain">${domain||c.category||''}</div>
+      </div>
+      <div class="enr-gap-bars">${gapBars}</div>
+      ${gaps.length?`<div class="enr-gap-badge"><span style="color:var(--prc)">${gaps.length}G</span></div>`:'<div class="enr-gap-badge"></div>'}
+    </div>`;
+  }).join('');
+}
+
+function toggleEnrRow(encId) {
+  const id = decodeURIComponent(encId);
+  if (enrSelected.has(id)) enrSelected.delete(id); else enrSelected.add(id);
+  updateEnrSelCount(); renderEnrList();
+}
+function enrSelectAll() {
+  enrFilteredIds.forEach(id=>enrSelected.add(id));
+  updateEnrSelCount(); renderEnrList();
+}
+function enrSelectNone() {
+  enrSelected.clear(); updateEnrSelCount(); renderEnrList();
+}
+
+/* ── Anthropic key helper ── */
+function getAntKey() {
+  let k = localStorage.getItem('oaAntKey');
+  if (!k) {
+    k = prompt('Anthropic API key (stored locally, never sent to our servers):');
+    if (k) localStorage.setItem('oaAntKey', k.trim());
+  }
+  return k||'';
+}
+
+/* ── Script Generator ── */
+function generateScript() {
+  if (!enrSelected.size) {
+    document.getElementById('enrScriptOut').innerHTML='<div style="padding:20px;font-family:\'IBM Plex Mono\',monospace;font-size:10px;color:var(--prc)">⚠ No companies selected.</div>';
+    return;
+  }
+  const sel = companies.filter(c=>enrSelected.has(c.id||_slug(c.name)));
+  const p1f = [...document.querySelectorAll('#p1checks input:checked')].map(i=>i.dataset.field);
+  const p2f = [...document.querySelectorAll('#p2checks input:checked')].map(i=>i.dataset.field);
+  const p1skip = document.getElementById('p1skip').checked;
+  const p2skip = document.getElementById('p2skipfilled').checked;
+  const steps = document.getElementById('p2steps').value;
+  const delay = document.getElementById('p2delay').value;
+  const conc  = document.getElementById('p2conc').value;
+  const sbUrl = document.getElementById('p2sburl').value;
+
+  const coJson = JSON.stringify(
+    sel.map(c=>({id:c.id||_slug(c.name),name:c.name,website:c.website||'',gaps:getGaps(c).map(g=>g.id)})),null,2
+  );
+
+  const script = `#!/usr/bin/env python3
+# ─────────────────────────────────────────────────────────────
+# onAudience Batch Enricher — two-phase
+# Generated: ${new Date().toISOString().slice(0,16).replace('T',' ')} UTC
+# Companies: ${sel.length} selected
+#
+# Phase 1 — b2b MCP (Anthropic API + b2b.ctpl.dev)
+#   Fills: ${p1f.join(', ')||'(none selected)'}
+#   Model: claude-haiku-4-5 — instant, ~free
+#
+# Phase 2 — browser-use (AI browser agent)
+#   Fills: ${p2f.join(', ')||'(none selected)'}
+#   Model: claude-sonnet-4-6 — navigates website + about/products
+#   Steps: ${steps}  Delay: ${delay}s  Concurrent: ${conc}
+#
+# NOT handled here (separate tools):
+#   tech_stack    → company-tech-scanner skill (Chrome network)
+#   tcf_vendor_id → IAB GVL JSON fetch (simple HTTP)
+#   outreach_angle → AI synthesis after data is filled
+#
+# Setup:
+#   uv venv --python 3.11 && source .venv/bin/activate
+#   uv pip install browser-use langchain-anthropic anthropic httpx python-dotenv
+#   uvx browser-use install
+#
+# .env (optional — or just pass ANTHROPIC_API_KEY=... inline):
+#   ANTHROPIC_API_KEY=sk-ant-...
+#   (Supabase key is bundled — no config needed)
+# ─────────────────────────────────────────────────────────────
+import asyncio, json, os, re
+import httpx
+from dotenv import load_dotenv
+load_dotenv()
+
+ANTHROPIC_KEY = os.environ.get("ANTHROPIC_API_KEY") or input("Paste your Anthropic API key: ").strip()
+SUPABASE_URL  = "${sbUrl}"
+SUPABASE_KEY  = os.environ.get("SUPABASE_KEY", "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im55emtrcXFqbmtjdGNteG9pcmRqIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzM4NzMxMzYsImV4cCI6MjA4OTQ0OTEzNn0.jhAq_C68klOp4iTyj9HmsyyvoxsOI6ACld7t_87TAk0")
+B2B_MCP_URL   = "https://b2b.ctpl.dev/sse"
+
+SB_HEADERS = {
+    "apikey": SUPABASE_KEY,
+    "Authorization": f"Bearer {SUPABASE_KEY}",
+    "Content-Type": "application/json",
+    "Prefer": "resolution=merge-duplicates,return=minimal",
+}
+
+COMPANIES = ${coJson}
+
+async def sb_get(cid):
+    async with httpx.AsyncClient() as c:
+        r = await c.get(f"{SUPABASE_URL}/rest/v1/companies?id=eq.{cid}&select=*", headers=SB_HEADERS)
+        rows = r.json()
+        return rows[0] if rows else {}
+
+async def sb_upsert(data):
+    async with httpx.AsyncClient() as c:
+        await c.post(f"{SUPABASE_URL}/rest/v1/companies", headers=SB_HEADERS, json=data)
+
+${p1f.length?`async def phase1(co):
+    import anthropic
+    existing = await sb_get(co["id"])
+    needs = [f for f in ${JSON.stringify(p1f)} if not existing.get(f)]${p1skip?'\n    if not needs:\n        print(f"  [P1] {co[\'name\']}: already filled, skip")\n        return {}':''}
+    if not needs: return {}
+    client = anthropic.Anthropic(api_key=ANTHROPIC_KEY)
+    res = client.messages.create(
+        model="claude-haiku-4-5-20251001", max_tokens=400,
+        tools=[{"type":"mcp","mcp_server":{"type":"url","url":B2B_MCP_URL,"name":"b2b"}}],
+        messages=[{"role":"user","content":f"""Company: {co['name']}\\nWebsite: {co['website']}\\nFill ONLY these fields as JSON (no markdown): {needs}\\n- description: 1-2 sentence summary\\n- category: DSP/SSP/Data Provider/DMP/CDP/Media Agency/Publisher/Identity/AdTech/CTV\\n- tags: array of 3-5 tags"""}]
+    )
+    txt = next((b.text for b in res.content if hasattr(b,"text")), "{}")
     try:
-        response = client.beta.messages.create(
-            model="claude-haiku-4-5-20251001",
-            max_tokens=512,
-            betas=["mcp-client-2025-04-04"],
-            mcp_servers=[{"type": "url", "url": B2B_MCP_URL, "name": "b2b"}],
-            messages=[{"role": "user", "content": prompt}],
-        )
-        # Extract text blocks
-        text = "".join(b.text for b in response.content if hasattr(b, "text"))
-        result = json.loads(clean_json(text))
-        # Keep only requested fields
-        return {k: v for k, v in result.items() if k in P1_FIELDS and v}
+        clean = re.sub(r'\`\`\`[a-z]*','',txt).strip()
+        return json.loads(re.search(r'\\{[\\s\\S]+\\}', clean).group(0))
     except Exception as e:
-        print(f"  [P1] ⚠ {type(e).__name__}: {e}")
+        print(f"  [P1] parse error: {e}")
         return {}
 
-
-# ── Phase 2: browser-use ──────────────────────────────────────────
-def build_browser_task(co: dict, fields: list[str]) -> str:
-    lines = "\\n".join(f"  - {f}: {P2_FIELDS[f]}" for f in fields)
-    return f"""Research company: {co["name"]}
-Website: {co["website"]}
-
-Visit the website and extract:
-{lines}
-
-Steps:
-1. Go to {co["website"]}
-2. Read homepage and About/Company pages
-3. For products/integrations, also check /products /solutions /integrations /partners
-4. For funding/crunchbase, check if a Crunchbase link is shown; visit it if so
-
-Rules:
-- Return ONLY a JSON object — no markdown, no explanation
-- Use null for anything you cannot determine confidently
-- size: integer only (e.g. 250)
-- founded_year: integer only (e.g. 2014)
-- hq_city: city name only (e.g. "London")
-- dsps: JSON array of strings (e.g. ["The Trade Desk", "DV360"])
-- products: JSON object as specified
-
-Example: {{"size": 150, "founded_year": 2014, "hq_city": "London"}}
-"""
-
-async def phase2_browser(co: dict) -> dict:
-    """Use browser-use agent to extract fields that b2b cannot provide."""
-    if not P2_FIELDS:
-        return {}
-
-${p2SkipBlock}
-
-    if not phase2_fields:
-        print(f"  [P2] All target fields already filled — skipping")
-        return {}
-
-    print(f"  [P2] browser-use → {', '.join(phase2_fields)}")
-
+`:'# Phase 1 skipped\n'}${p2f.length?`async def phase2(co):
     try:
-        llm = ChatAnthropic(
-            model="claude-sonnet-4-6",
-            api_key=ANTHROPIC_API_KEY,
-            max_tokens=1024,
-        )
-        agent = Agent(
-            task=build_browser_task(co, phase2_fields),
-            llm=llm,
-            max_steps=P2_MAX_STEPS,
-        )
-        result = await agent.run()
-        raw = result.final_result() if hasattr(result, "final_result") else str(result)
-        extracted = json.loads(clean_json(raw))
-        return {k: v for k, v in extracted.items() if k in phase2_fields and v is not None}
-    except json.JSONDecodeError as e:
-        print(f"  [P2] ❌ JSON error: {e}")
+        from browser_use import Agent
+        from langchain_anthropic import ChatAnthropic
+    except ImportError:
+        print("  [P2] install browser-use first")
         return {}
+    existing = await sb_get(co["id"])
+    needs = [f for f in ${JSON.stringify(p2f)} if not existing.get(f)]${p2skip?'\n    if not needs:\n        print(f"  [P2] {co[\'name\']}: already filled, skip")\n        return {}':''}
+    if not needs: return {}
+    llm = ChatAnthropic(model="claude-sonnet-4-6", api_key=ANTHROPIC_KEY, temperature=0, max_tokens=1000)
+    task = f"""Navigate to {co['website']} and research the company.\\nAlso check /about and /products pages.\\nFill these fields: {needs}\\nReturn JSON only with these keys: {needs}\\n(size: "~200", founded: 2010, funding: "Series B — $20M", hq_city: "London, UK", linkedin: slug, products: {{products:[...],positioning:"..."}}, dsps: ["TTD","DV360"])"""
+    agent = Agent(task=task, llm=llm, max_steps=${steps})
+    result = await agent.run()
+    await asyncio.sleep(${delay})
+    try:
+        txt = str(result.final_result() or "")
+        clean = re.sub(r'\`\`\`[a-z]*','',txt).strip()
+        return json.loads(re.search(r'\\{[\\s\\S]+\\}', clean).group(0))
     except Exception as e:
-        print(f"  [P2] ❌ {type(e).__name__}: {e}")
+        print(f"  [P2] parse error: {e}")
         return {}
 
-
-# ── Enrich one company ────────────────────────────────────────────
-async def enrich(co: dict) -> bool:
-    name, cid = co["name"], co["id"]
-    print(f"\\n→ {name}  ({co['website']})")
-
+`:'# Phase 2 skipped\n'}async def enrich(co):
+    print(f"\\n→ {co['name']} ({co['website']})")
     updates = {}
-
-    # Phase 1: b2b MCP${skipP1?'\n    if P1_FIELDS:\n        current = await sb_get(cid)\n        p1_needed = [f for f in P1_FIELDS if not current.get(f)]\n        if p1_needed:\n            p1 = await phase1_b2b(co)\n            updates.update(p1)\n        else:\n            print("  [P1] All b2b fields filled — skipping")' : '\n    if P1_FIELDS:\n        p1 = await phase1_b2b(co)\n        updates.update(p1)'}
-
-    # Phase 2: browser-use
-    if P2_FIELDS:
-        p2 = await phase2_browser(co)
+${p1f.length?`    p1 = await phase1(co)
+    if p1:
+        print(f"  [P1] got: {list(p1.keys())}")
+        updates.update(p1)
+        await sb_upsert({"id": co["id"], **p1})
+`:''}${p2f.length?`    p2 = await phase2(co)
+    if p2:
+        print(f"  [P2] got: {list(p2.keys())}")
         updates.update(p2)
+        await sb_upsert({"id": co["id"], **p2})
+`:''}    print(f"  {'✅ '+str(len(updates))+' fields saved' if updates else '— no updates'}")
+    return updates
 
-    if not updates:
-        print("  ⏭ Nothing to write")
-        return True
-
-    print(f"  Writing: {list(updates.keys())}")
-    ok = await sb_upsert(cid, updates)
-    print(f"  {'✅ Saved' if ok else '❌ Save failed'}")
-    return ok
-
-
-# ── Main ──────────────────────────────────────────────────────────
 async def main():
-    print("onAudience Batch Enricher — two-phase")
-    print(f"P1 (b2b MCP): {P1_FIELDS or 'disabled'}")
-    print(f"P2 (browser): {list(P2_FIELDS.keys()) or 'disabled'}")
-    print(f"Companies: {len(COMPANIES)}  Steps: {P2_MAX_STEPS}  Delay: {P2_DELAY_S}s")
-    print("─" * 65)
-
-    ok = fail = 0
-
-    if P2_BATCH_SIZE == 1:
-        for i, co in enumerate(COMPANIES):
-            r = await enrich(co)
-            if r: ok += 1
-            else: fail += 1
-            if i < len(COMPANIES) - 1:
-                print(f"  ⏳ {P2_DELAY_S}s…")
-                await asyncio.sleep(P2_DELAY_S)
-    else:
-        for i in range(0, len(COMPANIES), P2_BATCH_SIZE):
-            batch = COMPANIES[i:i + P2_BATCH_SIZE]
-            results = await asyncio.gather(*[enrich(c) for c in batch], return_exceptions=True)
-            for r in results:
-                if isinstance(r, Exception): fail += 1
-                elif r: ok += 1
-                else:   fail += 1
-            if i + P2_BATCH_SIZE < len(COMPANIES):
-                await asyncio.sleep(P2_DELAY_S)
-
-    print("\\n" + "─" * 65)
-    print(f"Done  ✅ {ok} saved  ❌ {fail} failed")
-
+    print(f"onAudience Batch Enricher  |  {len(COMPANIES)} companies")
+    print(f"P1: ${p1f.join(', ')||'none'}  |  P2: ${p2f.join(', ')||'none'}")
+    print("─"*50)
+    sem = asyncio.Semaphore(${conc})
+    results = {}
+    async def run(co):
+        async with sem: results[co["id"]] = await enrich(co)
+    await asyncio.gather(*[run(co) for co in COMPANIES])
+    filled = sum(len(v) for v in results.values())
+    print(f"\\nDone — {filled} fields updated across {len(COMPANIES)} companies")
 
 if __name__ == "__main__":
     asyncio.run(main())
 `;
 
-  generatedScript=script;
-  document.getElementById('scriptTitle').textContent=
-    `enricher.py · ${sel.length} co · p1:[${p1.join(',')||'—'}] · p2:[${p2.slice(0,4).join(',')}${p2.length>4?'…':''}]`;
-  document.getElementById('copyBtn').style.display='';
-  document.getElementById('dlBtn').style.display='';
-  renderScript(script);
+  const esc = script.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+  const hi = esc
+    .replace(/(#[^\n]*)/g,'<span class="c">$1</span>')
+    .replace(/\b(import|from|async|def|await|if|for|not|in|return|True|False|None|try|except|else|pass|and|or|as|with|class)\b/g,'<span class="k">$1</span>')
+    .replace(/("(?:[^"\\]|\\.)*"|'(?:[^'\\]|\\.)*'|f"[^"]*"|f'[^']*')/g,'<span class="s">$1</span>')
+    .replace(/\b([A-Z_][A-Z_0-9]{2,})\b/g,'<span class="v">$1</span>');
+
+  document.getElementById('enrScriptOut').innerHTML = `<pre class="enr-code">${hi}</pre>`;
+  document.getElementById('enrScriptInfo').textContent = `${sel.length} co · P1:${p1f.length} P2:${p2f.length} fields`;
+  document.getElementById('enrCopyBtn').style.display='block';
+  document.getElementById('enrDlBtn').style.display='block';
+  window._lastScript = script;
 }
 
-/* syntax highlight */
-function esc(s){return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
-function renderScript(code){
-  let h=esc(code);
-  h=h.replace(/("""[\s\S]*?"""|f"[^"\n]*"|"[^"\n]*"|'[^'\n]*')/g,m=>`<span class="str">${m}</span>`);
-  h=h.replace(/(#[^\n]*)/g,m=>`<span class="cmt">${m}</span>`);
-  h=h.replace(/\b(import|from|def|async|await|return|if|else|elif|for|in|not|and|or|True|False|None|class|try|except|raise|with|as|pass|print)\b/g,m=>`<span class="kw">${m}</span>`);
-  h=h.replace(/\b(@\w+)\b/g,m=>`<span class="dec">${m}</span>`);
-  h=h.replace(/(?<![a-zA-Z_])\b(\d+)\b/g,m=>`<span class="num">${m}</span>`);
-  document.getElementById('scriptBox').innerHTML=h;
-}
-
-function copyScript(){
-  navigator.clipboard.writeText(generatedScript).then(()=>{
-    const b=document.getElementById('copyBtn');
-    b.textContent='Copied ✓';setTimeout(()=>{b.textContent='Copy';},2000);
+function copyScript() {
+  if (!window._lastScript) return;
+  navigator.clipboard.writeText(window._lastScript).then(()=>{
+    const b=document.getElementById('enrCopyBtn'); b.textContent='Copied!';
+    setTimeout(()=>b.textContent='Copy',1500);
   });
 }
-function downloadScript(){
+function downloadScript() {
+  if (!window._lastScript) return;
   const a=document.createElement('a');
-  a.href=URL.createObjectURL(new Blob([generatedScript],{type:'text/plain'}));
-  a.download='enricher.py';a.click();
+  a.href=URL.createObjectURL(new Blob([window._lastScript],{type:'text/plain'}));
+  a.download='enrich_batch.py'; a.click();
 }
 
-loadCompanies();
+/* ── Init ── */
+loadSeed();
+updateStats();
+renderCompanies();
+renderContacts();
+reloadData();
+
+document.addEventListener('DOMContentLoaded',()=>{
+  document.querySelectorAll('.enr-check input').forEach(cb=>{
+    cb.addEventListener('change',function(){this.closest('.enr-check').classList.toggle('on',this.checked);});
+  });
+});
 </script>
 </body>
 </html>
