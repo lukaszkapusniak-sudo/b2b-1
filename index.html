@@ -253,6 +253,17 @@ a.ml:hover{text-decoration:underline}
 .enr-desc-input{width:100%;padding:7px 8px;border:1px solid var(--rule);border-radius:2px;background:var(--surf2);color:var(--t1);font-family:'IBM Plex Sans',sans-serif;font-size:12px;outline:none;transition:border-color .15s;resize:none;line-height:1.5}
 .enr-desc-input:focus{border-color:var(--gr)}
 .enr-desc-input::placeholder{color:var(--t3)}
+.enr-tag{font-family:'IBM Plex Mono',monospace;font-size:8px;padding:2px 7px;border:1px solid var(--rule);border-radius:2px;cursor:pointer;color:var(--t3);background:var(--surf2);transition:all .12s;white-space:nowrap;display:inline-flex;align-items:center;gap:3px}
+.enr-tag:hover{border-color:var(--gr);color:var(--g);background:var(--gb)}
+.enr-tag.active{background:var(--g);color:#fff;border-color:var(--g)}
+.enr-tag-count{opacity:.65;font-size:7px}
+.enr-tag.gap{color:var(--prc);background:var(--prb);border-color:var(--prr)}
+.enr-tag.gap:hover,.enr-tag.gap.active{background:var(--prc);color:#fff;border-color:var(--prc)}
+.enr-tag.type-client{color:var(--cc);background:var(--cb);border-color:var(--cr)}
+.enr-tag.type-poc{color:var(--poc);background:var(--pob);border-color:var(--por)}
+.enr-tag.type-partner{color:var(--pc);background:var(--pb);border-color:var(--pr)}
+.enr-tag.type-client.active,.enr-tag.type-poc.active,.enr-tag.type-partner.active{color:#fff}
+.enr-tag-sep{font-family:'IBM Plex Mono',monospace;font-size:7px;color:var(--t4);padding:2px 2px;align-self:center}
 .enr-script-area{flex:1;display:flex;flex-direction:column;overflow:hidden}
 .enr-script-bar{display:flex;align-items:center;gap:6px;padding:6px 12px;border-bottom:1px solid var(--rule);background:var(--surf);flex-shrink:0}
 .enr-script-title{font-family:'IBM Plex Mono',monospace;font-size:9px;text-transform:uppercase;letter-spacing:.07em;color:var(--t3)}
@@ -385,22 +396,22 @@ pre.enr-code .v{color:var(--pc)}
 
     <!-- ENRICHER TAB -->
     <div class="tab-content enricher" id="tc-enricher">
-      <!-- Results — hidden until AI returns -->
-      <div id="enrResultsWrap" style="display:none;flex-direction:column;flex:1;overflow:hidden">
-        <div class="enr-sel-bar">
-          <button class="btn sm" onclick="enrSelectAll()">Select All</button>
-          <button class="btn sm" onclick="enrSelectNone()">None</button>
-          <span class="enr-sel-count" id="enrSelCount">0 selected</span>
-          <button class="btn p sm" onclick="generateScript()" style="margin-left:4px">⚡ Generate</button>
-        </div>
-        <div class="list-meta"><span id="enrListMeta">—</span><span style="font-family:'IBM Plex Mono',monospace;font-size:8px;color:var(--t3)">click to select</span></div>
-        <div class="enr-co-list" id="enrCoList"></div>
+      <!-- Select bar — always visible -->
+      <div class="enr-sel-bar" style="flex-shrink:0">
+        <button class="btn sm" onclick="enrSelectAll()">All</button>
+        <button class="btn sm" onclick="enrSelectNone()">None</button>
+        <span class="enr-sel-count" id="enrSelCount">0 selected</span>
+        <button class="btn p sm" onclick="generateScript()" style="margin-left:auto">⚡ Generate</button>
       </div>
-      <!-- Idle hint -->
-      <div id="enrIdleHint" style="flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;padding:20px">
-        <div style="font-size:22px;opacity:.3">←</div>
-        <div style="font-family:'IBM Plex Mono',monospace;font-size:9px;text-transform:uppercase;letter-spacing:.07em;color:var(--t3)">Results appear here</div>
-        <div style="font-size:11px;color:var(--t3);text-align:center;max-width:180px;line-height:1.5">Describe companies in the panel on the right, then click Find</div>
+      <div class="list-meta" style="flex-shrink:0"><span id="enrListMeta">Use tags or describe →</span><span style="font-family:'IBM Plex Mono',monospace;font-size:8px;color:var(--t3)">click to select</span></div>
+
+      <!-- Company list — takes all remaining space -->
+      <div class="enr-co-list" id="enrCoList" style="flex:1"></div>
+
+      <!-- Tag cloud — always visible at bottom -->
+      <div id="enrTagCloud" style="border-top:1px solid var(--rule);padding:6px 8px;flex-shrink:0;max-height:160px;overflow-y:auto">
+        <div style="font-family:'IBM Plex Mono',monospace;font-size:8px;text-transform:uppercase;letter-spacing:.07em;color:var(--t3);margin-bottom:5px">Quick select</div>
+        <div id="enrTags" style="display:flex;flex-wrap:wrap;gap:3px"></div>
       </div>
     </div>
   </div><!-- /panel-left -->
@@ -675,6 +686,7 @@ async function reloadData() {
     contacts = Array.isArray(ctData) ? ctData : [];
     document.getElementById('syncDot').className = 'sync-dot';
     document.getElementById('syncLabel').textContent = `● Live · ${companies.length}`;
+    buildTagCloud();
   } catch(e) {
     loadSeed();
     document.getElementById('syncDot').className = 'sync-dot dead';
@@ -1081,6 +1093,7 @@ function switchTab(name) {
     center.style.overflow = 'hidden';
     center.style.display = 'flex';
     center.style.flexDirection = 'column';
+    buildTagCloud();
   } else {
     ec.style.display = 'none';
     center.style.padding = '10px';
@@ -1130,16 +1143,13 @@ document.addEventListener('DOMContentLoaded',()=>{
 });
 
 /* ── BATCH ENRICHER ── */
-let enrSelected = new Set(), enrFilteredIds = [];
+let enrSelected = new Set(), enrFilteredIds = [], enrActiveTag = null;
 
 const GAP_FIELDS = [
-  {id:'desc',  field:'description'},
-  {id:'size',  field:'size'},
-  {id:'fund',  field:'funding'},
-  {id:'hq',    field:'hq_city'},
-  {id:'prod',  field:'products'},
-  {id:'dsps',  field:'dsps'},
-  {id:'li',    field:'linkedin_slug'},
+  {id:'desc', field:'description'}, {id:'size', field:'size'},
+  {id:'fund', field:'funding'},     {id:'hq',   field:'hq_city'},
+  {id:'prod', field:'products'},    {id:'dsps', field:'dsps'},
+  {id:'li',   field:'linkedin_slug'},
 ];
 
 function getGaps(c) {
@@ -1153,96 +1163,134 @@ function getGaps(c) {
   });
 }
 
-async function findEnrCompanies() {
-  const desc = document.getElementById('enrDescInput').value.trim();
-  if (!desc) { document.getElementById('enrDescInput').focus(); return; }
-
-  const btn = document.getElementById('enrFindBtn');
-  const status = document.getElementById('enrFindStatus');
-  btn.disabled = true; btn.textContent = '⏳ Finding…';
-  status.style.display = 'block'; status.textContent = 'Asking AI…';
-  // make sure enricher tab is active so results panel is visible
-  if (!document.getElementById('tc-enricher').classList.contains('active')) switchTab('enricher');
-
-  try {
-    // Build a compact company list for the AI
-    const coList = companies.map(c => {
-      const gaps = getGaps(c).map(g=>g.id);
-      return `${c.id||_slug(c.name)}|${c.name}|${c.type}|${c.category||''}|${c.region||c.hq_city||''}|gaps:${gaps.join(',')||'none'}|desc:${c.description?'yes':'no'}|size:${c.size?'yes':'no'}|fund:${c.funding?'yes':'no'}`;
-    }).join('\n');
-
-    const prompt = `You are a database filter for the onAudience sales CRM.
-
-User wants: "${desc}"
-
-Company database (id|name|type|category|region|gaps|desc|size|fund):
-${coList}
-
-Return ONLY a JSON array of company IDs (the first column) that match the user's description.
-Be liberal — if unsure, include the company.
-Return only the array, no markdown, no explanation. Example: ["adform","zeotap","criteo"]`;
-
-    const res = await fetch('https://api.anthropic.com/v1/messages', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json', 'x-api-key': getAntKey(), 'anthropic-version': '2023-06-01', 'anthropic-dangerous-direct-browser-access': 'true' },
-      body: JSON.stringify({ model: 'claude-haiku-4-5-20251001', max_tokens: 600, messages: [{ role: 'user', content: prompt }] })
-    });
-
-    const data = await res.json();
-    if (data.error) throw new Error(data.error.message);
-    const raw = data.content?.[0]?.text || '[]';
-    const clean = raw.replace(/```[a-z]*/g,'').replace(/```/g,'').trim();
-    const ids = JSON.parse(clean.match(/\[[\s\S]*\]/)?.[0] || '[]');
-
-    enrFilteredIds = ids;
-    enrSelected = new Set(ids); // auto-select all matches
-    status.textContent = `Found ${ids.length} companies`;
-    renderEnrList();
-    document.getElementById('enrResultsWrap').style.display = 'flex';
-    updateEnrSelCount();
-  } catch(e) {
-    status.textContent = `⚠ ${e.message}`;
+function buildTagCloud() {
+  const el = document.getElementById('enrTags');
+  if (!el || !companies.length) return;
+  const cats={}, regs={}, types={};
+  companies.forEach(c => {
+    const cat=(c.category||'').split('/')[0].trim();
+    if(cat&&cat.length>1) cats[cat]=(cats[cat]||0)+1;
+    const reg=(c.hq_city||c.region||'').split(',').pop().trim();
+    if(reg&&reg.length>1&&reg.length<20) regs[reg]=(regs[reg]||0)+1;
+    if(c.type) types[c.type]=(types[c.type]||0)+1;
+  });
+  const wu=companies.filter(c=>c.website);
+  const gapTags=GAP_FIELDS.map(gf=>({id:gf.id,n:wu.filter(c=>getGaps(c).some(g=>g.id===gf.id)).length})).filter(g=>g.n>0).sort((a,b)=>b.n-a.n);
+  const topCats=Object.entries(cats).filter(([,n])=>n>=2).sort((a,b)=>b[1]-a[1]).slice(0,8);
+  const topRegs=Object.entries(regs).filter(([,n])=>n>=2).sort((a,b)=>b[1]-a[1]).slice(0,5);
+  const typeCls={client:'type-client',poc:'type-poc',partner:'type-partner',prospect:'',nogo:''};
+  const typeOrder=['client','poc','partner','prospect','nogo'];
+  let h='';
+  typeOrder.filter(t=>types[t]).forEach(t=>{
+    h+=`<span class="enr-tag ${typeCls[t]||''}" onclick="selectByTag('type:${t}',this)">${tagLbl(t)} <span class="enr-tag-count">${types[t]}</span></span>`;
+  });
+  if(gapTags.length){
+    h+='<span class="enr-tag-sep">·</span>';
+    gapTags.slice(0,5).forEach(g=>{h+=`<span class="enr-tag gap" onclick="selectByTag('gap:${g.id}',this)">−${g.id} <span class="enr-tag-count">${g.n}</span></span>`;});
+    const g3=wu.filter(c=>getGaps(c).length>=3).length;
+    if(g3) h+=`<span class="enr-tag gap" onclick="selectByTag('gaps3',this)">3+ gaps <span class="enr-tag-count">${g3}</span></span>`;
   }
-  btn.disabled = false; btn.textContent = '🔍 Find';
+  if(topCats.length){
+    h+='<span class="enr-tag-sep">·</span>';
+    topCats.forEach(([cat,n])=>{h+=`<span class="enr-tag" onclick="selectByTag('cat:${encodeURIComponent(cat)}',this)">${cat} <span class="enr-tag-count">${n}</span></span>`;});
+  }
+  if(topRegs.length){
+    h+='<span class="enr-tag-sep">·</span>';
+    topRegs.forEach(([reg,n])=>{h+=`<span class="enr-tag" onclick="selectByTag('reg:${encodeURIComponent(reg)}',this)">${reg} <span class="enr-tag-count">${n}</span></span>`;});
+  }
+  el.innerHTML=h;
+}
+
+function selectByTag(tag, el) {
+  if(enrActiveTag===tag){
+    enrActiveTag=null; enrFilteredIds=[]; enrSelected.clear();
+    document.querySelectorAll('.enr-tag').forEach(t=>t.classList.remove('active'));
+    renderEnrList(); updateEnrSelCount();
+    setEnrStatus('');
+    return;
+  }
+  enrActiveTag=tag;
+  document.querySelectorAll('.enr-tag').forEach(t=>t.classList.remove('active'));
+  if(el) el.classList.add('active');
+  let matched=companies;
+  if(tag.startsWith('type:')) matched=companies.filter(c=>c.type===tag.slice(5));
+  else if(tag.startsWith('gap:')){const gid=tag.slice(4);matched=companies.filter(c=>c.website&&getGaps(c).some(g=>g.id===gid));}
+  else if(tag==='gaps3') matched=companies.filter(c=>c.website&&getGaps(c).length>=3);
+  else if(tag.startsWith('cat:')){const cat=decodeURIComponent(tag.slice(4)).toLowerCase();matched=companies.filter(c=>(c.category||'').toLowerCase().includes(cat));}
+  else if(tag.startsWith('reg:')){const reg=decodeURIComponent(tag.slice(4)).toLowerCase();matched=companies.filter(c=>((c.hq_city||c.region||'')).toLowerCase().includes(reg));}
+  enrFilteredIds=matched.map(c=>c.id||_slug(c.name));
+  enrSelected=new Set(enrFilteredIds);
+  renderEnrList(); updateEnrSelCount();
+  setEnrStatus(`${matched.length} companies matched`);
+}
+
+function setEnrStatus(txt) {
+  const s=document.getElementById('enrFindStatus');
+  if(!s) return;
+  if(txt){s.style.display='block';s.textContent=txt;}else{s.style.display='none';}
+}
+
+async function findEnrCompanies() {
+  const desc=document.getElementById('enrDescInput').value.trim();
+  if(!desc){document.getElementById('enrDescInput').focus();return;}
+  const btn=document.getElementById('enrFindBtn');
+  btn.disabled=true; btn.textContent='⏳ Finding…';
+  setEnrStatus('Asking AI…');
+  enrActiveTag=null;
+  document.querySelectorAll('.enr-tag').forEach(t=>t.classList.remove('active'));
+  if(!document.getElementById('tc-enricher').classList.contains('active')) switchTab('enricher');
+  try {
+    const coList=companies.map(c=>{
+      const gaps=getGaps(c).map(g=>g.id);
+      return `${c.id||_slug(c.name)}|${c.name}|${c.type}|${c.category||''}|${c.region||c.hq_city||''}|gaps:${gaps.join(',')||'none'}|desc:${c.description?'y':'n'}|size:${c.size?'y':'n'}|fund:${c.funding?'y':'n'}`;
+    }).join('\n');
+    const prompt=`You are a database filter for the onAudience sales CRM.\nUser wants: "${desc}"\nCompany database (id|name|type|category|region|gaps|desc|size|fund):\n${coList}\nReturn ONLY a JSON array of company IDs that best match. Be liberal.\nNo markdown, no explanation. Example: ["adform","zeotap"]`;
+    const res=await fetch('https://api.anthropic.com/v1/messages',{
+      method:'POST',
+      headers:{'Content-Type':'application/json','x-api-key':getAntKey(),'anthropic-version':'2023-06-01','anthropic-dangerous-direct-browser-access':'true'},
+      body:JSON.stringify({model:'claude-haiku-4-5-20251001',max_tokens:800,messages:[{role:'user',content:prompt}]})
+    });
+    const data=await res.json();
+    if(data.error) throw new Error(data.error.message);
+    const raw=data.content?.[0]?.text||'[]';
+    const ids=JSON.parse(raw.replace(/```[a-z]*/g,'').replace(/```/g,'').trim().match(/\[[\s\S]*\]/)?.[0]||'[]');
+    enrFilteredIds=ids; enrSelected=new Set(ids);
+    setEnrStatus(`Found ${ids.length} companies`);
+    renderEnrList(); updateEnrSelCount();
+  } catch(e){ setEnrStatus(`⚠ ${e.message}`); }
+  btn.disabled=false; btn.textContent='🔍 Find';
 }
 
 function clearEnrResults() {
-  enrFilteredIds = []; enrSelected.clear();
-  document.getElementById('enrDescInput').value = '';
-  document.getElementById('enrResultsWrap').style.display = 'none';
-  document.getElementById('enrFindStatus').style.display = 'none';
-  document.getElementById('enrIdleHint').style.display = 'flex';
-  document.getElementById('enrFindBtn').textContent = '🔍 Find';
-  document.getElementById('enrCoList').innerHTML = '';
+  enrFilteredIds=[]; enrSelected.clear(); enrActiveTag=null;
+  document.getElementById('enrDescInput').value='';
+  document.querySelectorAll('.enr-tag').forEach(t=>t.classList.remove('active'));
+  setEnrStatus('');
+  renderEnrList(); updateEnrSelCount();
 }
 
 function updateEnrSelCount() {
-  document.getElementById('enrSelCount').textContent = enrSelected.size+' selected';
+  const el=document.getElementById('enrSelCount');
+  if(el) el.textContent=enrSelected.size+' selected';
 }
 
 function renderEnrList() {
-  const src = enrFilteredIds.length
-    ? companies.filter(c => enrFilteredIds.includes(c.id||_slug(c.name)))
-    : [];
-  document.getElementById('enrListMeta').textContent = `${src.length} companies`;
-  const list = document.getElementById('enrCoList');
-  if (!src.length) { list.innerHTML=''; return; }
-  list.innerHTML = src.map(c => {
-    const [bg,fg] = av(c.name);
-    const gaps = getGaps(c);
-    const cid = c.id||_slug(c.name);
-    const checked = enrSelected.has(cid);
-    const domain = c.website ? domainOf(c.website) : '';
-    const gapBars = GAP_FIELDS.map(gf =>
-      `<div class="enr-gap-sq ${gaps.some(g=>g.id===gf.id)?'enr-gap-miss':'enr-gap-filled'}" title="${gf.id}"></div>`
-    ).join('');
+  const src=enrFilteredIds.length?companies.filter(c=>enrFilteredIds.includes(c.id||_slug(c.name))):[];
+  const meta=document.getElementById('enrListMeta');
+  if(meta) meta.textContent=src.length?`${src.length} companies`:'Use tags or describe →';
+  const list=document.getElementById('enrCoList');
+  if(!src.length){list.innerHTML='';return;}
+  list.innerHTML=src.map(c=>{
+    const [bg,fg]=av(c.name);
+    const gaps=getGaps(c);
+    const cid=c.id||_slug(c.name);
+    const checked=enrSelected.has(cid);
+    const domain=c.website?domainOf(c.website):'';
+    const gapBars=GAP_FIELDS.map(gf=>`<div class="enr-gap-sq ${gaps.some(g=>g.id===gf.id)?'enr-gap-miss':'enr-gap-filled'}" title="${gf.id}"></div>`).join('');
     return `<div class="enr-co-row${checked?' checked':''}" onclick="toggleEnrRow('${encodeURIComponent(cid)}')">
       <div class="enr-cb">${checked?'✓':''}</div>
       <div class="enr-co-av" style="background:${bg};border-color:${fg}40;color:${fg}">${ini(c.name)}</div>
-      <div class="enr-co-info">
-        <div class="enr-co-name">${c.name}</div>
-        <div class="enr-co-domain">${domain||c.category||''}</div>
-      </div>
+      <div class="enr-co-info"><div class="enr-co-name">${c.name}</div><div class="enr-co-domain">${domain||c.category||''}</div></div>
       <div class="enr-gap-bars">${gapBars}</div>
       ${gaps.length?`<div class="enr-gap-badge"><span style="color:var(--prc)">${gaps.length}G</span></div>`:'<div class="enr-gap-badge"></div>'}
     </div>`;
@@ -1250,25 +1298,20 @@ function renderEnrList() {
 }
 
 function toggleEnrRow(encId) {
-  const id = decodeURIComponent(encId);
-  if (enrSelected.has(id)) enrSelected.delete(id); else enrSelected.add(id);
+  const id=decodeURIComponent(encId);
+  if(enrSelected.has(id)) enrSelected.delete(id); else enrSelected.add(id);
   updateEnrSelCount(); renderEnrList();
 }
 function enrSelectAll() {
-  enrFilteredIds.forEach(id=>enrSelected.add(id));
+  (enrFilteredIds.length?enrFilteredIds:companies.map(c=>c.id||_slug(c.name))).forEach(id=>enrSelected.add(id));
   updateEnrSelCount(); renderEnrList();
 }
-function enrSelectNone() {
-  enrSelected.clear(); updateEnrSelCount(); renderEnrList();
-}
+function enrSelectNone() { enrSelected.clear(); updateEnrSelCount(); renderEnrList(); }
 
 /* ── Anthropic key helper ── */
 function getAntKey() {
-  let k = localStorage.getItem('oaAntKey');
-  if (!k) {
-    k = prompt('Anthropic API key (stored locally, never sent to our servers):');
-    if (k) localStorage.setItem('oaAntKey', k.trim());
-  }
+  let k=localStorage.getItem('oaAntKey');
+  if(!k){k=prompt('Anthropic API key (stored in browser localStorage):');if(k)localStorage.setItem('oaAntKey',k.trim());}
   return k||'';
 }
 
