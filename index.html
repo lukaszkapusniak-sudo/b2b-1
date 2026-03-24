@@ -7,880 +7,1184 @@
 <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@300;400;500;600&family=IBM+Plex+Sans:wght@300;400;500;600&display=swap" rel="stylesheet"/>
 <style>
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
-[data-theme="light"]{--bg:#F4F2EC;--surf:#FFFFFF;--surf2:#F8F6F0;--surf3:#EFEDE6;--surf4:#E8E6DE;--rule:rgba(0,0,0,0.09);--rule2:rgba(0,0,0,0.05);--rule3:rgba(0,0,0,0.03);--t1:#0C0C0A;--t2:#5C5C56;--t3:#9A9990;--t4:#C8C6BC;--g:#178066;--gd:#0F6E56;--gb:rgba(23,128,102,0.08);--gr:rgba(23,128,102,0.28);--cc:#146B3A;--cb:#E4F5EC;--cr:rgba(20,107,58,0.28);--pc:#1A4F8A;--pb:#E6EEFA;--pr:rgba(26,79,138,0.28);--prc:#7A4200;--prb:#FEF2E0;--prr:rgba(122,66,0,0.28);--nc:#6B6B64;--nb:#EFEDE6;--nr:rgba(107,107,100,0.28);--poc:#4B2D9E;--pob:#EDE8FD;--por:rgba(75,45,158,0.28);--sh:0 1px 3px rgba(0,0,0,0.06),0 4px 16px rgba(0,0,0,0.06)}
-[data-theme="dark"]{--bg:#0C0C0A;--surf:#141412;--surf2:#1C1C1A;--surf3:#242421;--surf4:#2E2E2B;--rule:rgba(255,255,255,0.08);--rule2:rgba(255,255,255,0.05);--rule3:rgba(255,255,255,0.03);--t1:#F0EFE8;--t2:#8A8A82;--t3:#555550;--t4:#38382E;--g:#1FA882;--gd:#178066;--gb:rgba(31,168,130,0.1);--gr:rgba(31,168,130,0.3);--cc:#4ADE80;--cb:rgba(74,222,128,0.1);--cr:rgba(74,222,128,0.25);--pc:#60A5FA;--pb:rgba(96,165,250,0.1);--pr:rgba(96,165,250,0.25);--prc:#FBBF24;--prb:rgba(251,191,36,0.1);--prr:rgba(251,191,36,0.25);--nc:#55554E;--nb:rgba(85,85,78,0.15);--nr:rgba(85,85,78,0.25);--poc:#C084FC;--pob:rgba(192,132,252,0.1);--por:rgba(192,132,252,0.25);--sh:0 1px 4px rgba(0,0,0,0.5),0 6px 20px rgba(0,0,0,0.35)}
-[data-theme="dark"] body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;background-image:linear-gradient(rgba(255,255,255,.016) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.016) 1px,transparent 1px);background-size:40px 40px}
-html,body{height:100%;background:var(--bg);color:var(--t1);font-family:'IBM Plex Sans',sans-serif;font-size:13px;line-height:1.5;transition:background .2s,color .2s}
+
+[data-theme="light"]{
+  --bg:#F4F2EC;--surf:#FFFFFF;--surf2:#F8F6F0;--surf3:#EFEDE6;--surf4:#E8E6DE;
+  --rule:rgba(0,0,0,0.09);--rule2:rgba(0,0,0,0.05);--rule3:rgba(0,0,0,0.03);
+  --t1:#0C0C0A;--t2:#5C5C56;--t3:#9A9990;--t4:#C8C6BC;
+  --g:#178066;--gd:#0F6E56;--gb:rgba(23,128,102,0.08);--gr:rgba(23,128,102,0.28);
+  --cc:#146B3A;--cb:#E4F5EC;--cr:rgba(20,107,58,0.28);
+  --pc:#1A4F8A;--pb:#E6EEFA;--pr:rgba(26,79,138,0.28);
+  --prc:#7A4200;--prb:#FEF2E0;--prr:rgba(122,66,0,0.28);
+  --nc:#6B6B64;--nb:#EFEDE6;--nr:rgba(107,107,100,0.28);
+  --poc:#4B2D9E;--pob:#EDE8FD;--por:rgba(75,45,158,0.28);
+  --sh:0 1px 2px rgba(0,0,0,0.06),0 4px 12px rgba(0,0,0,0.04);
+}
+[data-theme="dark"]{
+  --bg:#0C0C0A;--surf:#141412;--surf2:#1C1C1A;--surf3:#242421;--surf4:#2E2E2B;
+  --rule:rgba(255,255,255,0.08);--rule2:rgba(255,255,255,0.05);--rule3:rgba(255,255,255,0.03);
+  --t1:#F0EFE8;--t2:#8A8A82;--t3:#555550;--t4:#38382E;
+  --g:#1FA882;--gd:#178066;--gb:rgba(31,168,130,0.1);--gr:rgba(31,168,130,0.3);
+  --cc:#4ADE80;--cb:rgba(74,222,128,0.1);--cr:rgba(74,222,128,0.25);
+  --pc:#60A5FA;--pb:rgba(96,165,250,0.1);--pr:rgba(96,165,250,0.25);
+  --prc:#FBBF24;--prb:rgba(251,191,36,0.1);--prr:rgba(251,191,36,0.25);
+  --nc:#55554E;--nb:rgba(85,85,78,0.15);--nr:rgba(85,85,78,0.25);
+  --poc:#C084FC;--pob:rgba(192,132,252,0.1);--por:rgba(192,132,252,0.25);
+  --sh:0 1px 3px rgba(0,0,0,0.5),0 6px 20px rgba(0,0,0,0.35);
+}
+[data-theme="dark"] body::before{
+  content:'';position:fixed;inset:0;pointer-events:none;z-index:0;
+  background-image:linear-gradient(rgba(255,255,255,.016) 1px,transparent 1px),
+    linear-gradient(90deg,rgba(255,255,255,.016) 1px,transparent 1px);
+  background-size:40px 40px;
+}
+html,body{height:100%;background:var(--bg);color:var(--t1);
+  font-family:'IBM Plex Sans',sans-serif;font-size:13px;line-height:1.5;
+  transition:background .25s,color .25s}
 ::-webkit-scrollbar{width:3px;height:3px}
 ::-webkit-scrollbar-thumb{background:var(--surf4);border-radius:2px}
 
-.shell{display:flex;flex-direction:column;height:100vh;overflow:hidden;position:relative;z-index:1}
-.view{display:none;flex-direction:column;flex:1;overflow:hidden}
-.view.active{display:flex}
+/* ── TAGS ── */
+.tag{font-family:'IBM Plex Mono',monospace;font-size:8px;font-weight:500;
+     text-transform:uppercase;letter-spacing:.06em;padding:1px 5px;
+     border-radius:2px;border:1px solid;white-space:nowrap;flex-shrink:0}
+.tc {color:var(--cc);background:var(--cb);border-color:var(--cr)}
+.tp {color:var(--pc);background:var(--pb);border-color:var(--pr)}
+.tpr{color:var(--prc);background:var(--prb);border-color:var(--prr)}
+.tn {color:var(--nc);background:var(--nb);border-color:var(--nr)}
+.tpo{color:var(--poc);background:var(--pob);border-color:var(--por)}
 
-/* NAV */
-.nav{background:var(--surf);border-bottom:1px solid var(--rule);display:flex;align-items:center;height:42px;padding:0 16px;gap:8px;flex-shrink:0}
-.nav-logo{width:26px;height:26px;background:var(--g);border-radius:4px;display:flex;align-items:center;justify-content:center;font-family:'IBM Plex Mono',monospace;font-weight:700;font-size:9px;color:#fff;letter-spacing:-.5px;flex-shrink:0}
-.nav-brand{font-family:'IBM Plex Mono',monospace;font-size:10px;font-weight:500;letter-spacing:.06em;text-transform:uppercase;color:var(--t1);margin-left:4px;padding-right:14px;border-right:1px solid var(--rule);white-space:nowrap}
-.nav-tabs{display:flex;gap:2px}
-.nav-tab{height:26px;padding:0 11px;border-radius:2px;font-family:'IBM Plex Mono',monospace;font-size:9px;font-weight:500;text-transform:uppercase;letter-spacing:.06em;cursor:pointer;color:var(--t3);background:transparent;border:none;transition:all .15s}
-.nav-tab:hover{color:var(--t1);background:var(--surf2)}
-.nav-tab.active{color:var(--g);background:var(--gb)}
-.nav-right{margin-left:auto;display:flex;align-items:center;gap:5px}
-.sync-chip{display:flex;align-items:center;gap:5px;font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--t3);padding:2px 8px;border:1px solid var(--rule);border-radius:2px;cursor:pointer;height:24px;transition:background .12s}
-.sync-chip:hover{background:var(--surf2)}
-.sdot{width:5px;height:5px;border-radius:50%;background:var(--t4)}
-.sdot.live{background:#22C55E}
-.btn{height:24px;padding:0 9px;border:1px solid var(--rule);border-radius:2px;font-family:'IBM Plex Mono',monospace;font-size:9px;font-weight:500;text-transform:uppercase;letter-spacing:.06em;cursor:pointer;background:var(--surf2);color:var(--t2);transition:all .15s;white-space:nowrap;display:inline-flex;align-items:center;gap:4px}
+/* ── BUTTONS ── */
+.btn{height:26px;padding:0 10px;border:1px solid var(--rule);border-radius:2px;
+     font-family:'IBM Plex Mono',monospace;font-size:9px;font-weight:500;
+     text-transform:uppercase;letter-spacing:.06em;cursor:pointer;
+     background:var(--surf2);color:var(--t2);transition:all .15s}
 .btn:hover{background:var(--surf3);color:var(--t1)}
 .btn.p{background:var(--g);color:#fff;border-color:var(--g)}
 .btn.p:hover{background:var(--gd)}
-.btn.sm{height:20px;padding:0 6px;font-size:8px}
-.btn:disabled{opacity:.4;cursor:default}
+.btn.sm{height:22px;padding:0 7px;font-size:8px}
+.btn.full{width:100%}
 
-/* STATS BAR */
-.sbar{display:grid;grid-template-columns:repeat(7,1fr);border-bottom:1px solid var(--rule);background:var(--surf);flex-shrink:0}
-.sc{padding:5px 10px;border-right:1px solid var(--rule);cursor:pointer;transition:background .12s;user-select:none}
-.sc:last-child{border-right:none}
-.sc:hover{background:var(--surf2)}
-.sc.active{background:var(--gb)}
-.sn{font-family:'IBM Plex Mono',monospace;font-size:16px;font-weight:300;letter-spacing:-1px;line-height:1;color:var(--t1)}
-.sl{font-family:'IBM Plex Mono',monospace;font-size:8px;text-transform:uppercase;letter-spacing:.07em;color:var(--t3);margin-top:2px}
+/* ── APP SHELL ── */
+.app{display:flex;flex-direction:column;height:100vh;overflow:hidden;position:relative;z-index:1}
 
-/* TWO-PANEL MAIN */
-.main{display:flex;flex:1;overflow:hidden}
+/* ── NAV ── */
+.nav{height:42px;flex-shrink:0;display:flex;align-items:center;gap:10px;
+     padding:0 14px;background:var(--surf);border-bottom:1px solid var(--rule)}
+.nav-logo{font-family:'IBM Plex Mono',monospace;font-weight:600;font-size:12px;
+           background:var(--g);color:#fff;width:26px;height:26px;border-radius:2px;
+           display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.nav-title{font-family:'IBM Plex Mono',monospace;font-size:11px;font-weight:500;
+           color:var(--t1);letter-spacing:.02em}
+.nav-sub{color:var(--t3);font-weight:400}
+.nav-status{margin-left:4px;font-family:'IBM Plex Mono',monospace;font-size:9px;
+             padding:2px 7px;border-radius:2px;border:1px solid var(--rule);
+             background:var(--surf2);color:var(--t3)}
+.nav-status.live{color:var(--cc);border-color:var(--cr);background:var(--cb)}
+.nav-right{margin-left:auto;display:flex;align-items:center;gap:6px}
 
-/* LEFT PANEL */
-.left{width:310px;flex-shrink:0;border-right:1px solid var(--rule);background:var(--surf);display:flex;flex-direction:column;overflow:hidden}
-.left-toolbar{padding:7px 8px;border-bottom:1px solid var(--rule);display:flex;gap:5px;flex-shrink:0}
-.sw{position:relative;flex:1}
-.si{position:absolute;left:7px;top:50%;transform:translateY(-50%);color:var(--t3);font-size:10px;pointer-events:none;font-family:'IBM Plex Mono',monospace}
-.sinp{width:100%;height:26px;padding:0 7px 0 23px;border:1px solid var(--rule);border-radius:2px;background:var(--surf2);color:var(--t1);font-family:'IBM Plex Mono',monospace;font-size:11px;outline:none;transition:border-color .15s}
-.sinp:focus{border-color:var(--gr)}
-.sinp::placeholder{color:var(--t3)}
-.sort-sel{height:26px;padding:0 6px;border:1px solid var(--rule);border-radius:2px;background:var(--surf2);color:var(--t2);font-family:'IBM Plex Mono',monospace;font-size:9px;outline:none;cursor:pointer;flex-shrink:0}
-.fps{display:flex;gap:3px;padding:5px 8px;border-bottom:1px solid var(--rule2);flex-shrink:0;flex-wrap:wrap}
-.fp{height:20px;padding:0 7px;border:1px solid var(--rule);border-radius:2px;font-family:'IBM Plex Mono',monospace;font-size:8px;text-transform:uppercase;letter-spacing:.05em;cursor:pointer;background:transparent;color:var(--t3);transition:all .1s}
-.fp:hover:not(.active){background:var(--surf2);color:var(--t1)}
-.fp.active{background:var(--t1);color:var(--surf);border-color:var(--t1)}
-.list-meta{padding:3px 8px;border-bottom:1px solid var(--rule2);display:flex;justify-content:space-between;flex-shrink:0}
-.list-meta span{font-family:'IBM Plex Mono',monospace;font-size:9px;color:var(--t3)}
-.co-list{flex:1;overflow-y:auto}
+/* ── STATS BAR ── */
+.stats-bar{height:36px;flex-shrink:0;display:flex;align-items:stretch;
+            border-bottom:1px solid var(--rule);background:var(--surf2);overflow:hidden}
+.sb-col{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;
+         padding:0 6px;border-right:1px solid var(--rule);cursor:pointer;transition:background .1s;
+         min-width:0;gap:1px}
+.sb-col:last-child{border-right:none}
+.sb-col:hover{background:var(--surf3)}
+.sb-col.active{background:var(--gb)}
+.sb-num{font-family:'IBM Plex Mono',monospace;font-size:11px;font-weight:600;color:var(--t1)}
+.sb-lbl{font-family:'IBM Plex Mono',monospace;font-size:7px;font-weight:500;
+         text-transform:uppercase;letter-spacing:.06em;color:var(--t3);line-height:1}
 
-/* COMPANY ROW */
-.co-row{display:flex;align-items:center;gap:7px;padding:6px 8px;border-bottom:1px solid var(--rule3);cursor:pointer;transition:background .1s;user-select:none}
-.co-row:hover{background:var(--surf2)}
-.co-row.sel{background:var(--gb);border-left:2px solid var(--g);padding-left:6px}
-.co-row.dead{opacity:.42}
-.co-av{width:26px;height:26px;border-radius:2px;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-family:'IBM Plex Mono',monospace;font-size:8px;font-weight:700;border:1px solid transparent}
-.co-info{flex:1;min-width:0}
-.co-name{font-size:12px;font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.co-sub{font-family:'IBM Plex Mono',monospace;font-size:9px;color:var(--t3);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin-top:1px}
-.co-right{display:flex;align-items:center;gap:4px;flex-shrink:0}
-.icpn{font-family:'IBM Plex Mono',monospace;font-size:9px;color:var(--t4);min-width:12px;text-align:right}
-.gbar-sm{display:flex;gap:1px}
-.gsq-sm{width:5px;height:5px;border-radius:1px}
-.gfil{background:var(--cc)}
-.gmis{background:var(--surf4)}
-.tag{font-family:'IBM Plex Mono',monospace;font-size:8px;font-weight:500;text-transform:uppercase;letter-spacing:.06em;padding:1px 5px;border-radius:2px;border:1px solid;white-space:nowrap;display:inline-block}
-.tc{color:var(--cc);background:var(--cb);border-color:var(--cr)}
-.tp{color:var(--pc);background:var(--pb);border-color:var(--pr)}
-.tpr{color:var(--prc);background:var(--prb);border-color:var(--prr)}
-.tn{color:var(--nc);background:var(--nb);border-color:var(--nr)}
-.tpo{color:var(--poc);background:var(--pob);border-color:var(--por)}
+/* ── MAIN LAYOUT ── */
+.main{flex:1;display:flex;overflow:hidden}
 
-/* RIGHT / CENTER PANEL */
-.center{flex:1;overflow-y:auto;background:var(--surf2)}
-.center::-webkit-scrollbar{width:3px}
-.empty-state{display:flex;flex-direction:column;align-items:center;justify-content:center;height:100%;color:var(--t3);gap:8px}
-.empty-big{font-family:'IBM Plex Mono',monospace;font-size:36px;font-weight:200;color:var(--t4);letter-spacing:-2px}
-.empty-sub{font-family:'IBM Plex Mono',monospace;font-size:9px;text-transform:uppercase;letter-spacing:.07em}
+/* ── LEFT PANEL ── */
+.left{width:300px;flex-shrink:0;display:flex;flex-direction:column;
+       border-right:1px solid var(--rule);background:var(--surf);overflow:hidden}
+.left-tabs{display:flex;border-bottom:1px solid var(--rule);height:32px;flex-shrink:0}
+.left-tab{flex:1;display:flex;align-items:center;justify-content:center;
+           font-family:'IBM Plex Mono',monospace;font-size:9px;font-weight:500;
+           text-transform:uppercase;letter-spacing:.06em;color:var(--t3);
+           cursor:pointer;transition:all .15s;border-bottom:2px solid transparent}
+.left-tab.active{color:var(--g);border-bottom-color:var(--g);background:var(--gb)}
+.left-search{padding:8px;border-bottom:1px solid var(--rule2);flex-shrink:0;display:flex;gap:6px}
+.left-search input{flex:1;height:26px;padding:0 8px;border:1px solid var(--rule);border-radius:2px;
+                    font-family:'IBM Plex Mono',monospace;font-size:10px;
+                    background:var(--surf2);color:var(--t1);outline:none;transition:border-color .15s}
+.left-search input:focus{border-color:var(--g)}
+.left-search input::placeholder{color:var(--t4)}
+.left-filters{padding:6px 8px;border-bottom:1px solid var(--rule2);display:flex;gap:4px;flex-wrap:wrap;flex-shrink:0}
+.f-chip{font-family:'IBM Plex Mono',monospace;font-size:7px;font-weight:500;
+         text-transform:uppercase;letter-spacing:.06em;padding:2px 6px;border-radius:2px;
+         border:1px solid var(--rule);cursor:pointer;background:var(--surf2);
+         color:var(--t3);transition:all .15s}
+.f-chip:hover{background:var(--surf3);color:var(--t2)}
+.f-chip.active{background:var(--g);color:#fff;border-color:var(--g)}
+.list-meta{padding:5px 10px;font-family:'IBM Plex Mono',monospace;font-size:8px;
+            color:var(--t3);border-bottom:1px solid var(--rule3);flex-shrink:0;
+            text-transform:uppercase;letter-spacing:.04em}
+.list-scroll{flex:1;overflow-y:auto}
 
-/* DETAIL PANEL */
-.detail{max-width:680px;padding:14px 16px}
-.dbanner{display:flex;align-items:flex-start;gap:12px;padding-bottom:12px;border-bottom:1px solid var(--rule2);margin-bottom:10px}
-.dlogo{width:40px;height:40px;border-radius:2px;display:flex;align-items:center;justify-content:center;font-family:'IBM Plex Mono',monospace;font-size:12px;font-weight:700;color:#fff;flex-shrink:0}
-.dname{font-size:15px;font-weight:500;display:flex;align-items:center;gap:7px;flex-wrap:wrap}
-.dsub{font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--t3);margin-top:3px}
-.dstars{color:var(--g);font-size:12px;letter-spacing:1px;margin-top:4px}
-.dact{display:flex;gap:5px;flex-wrap:wrap;flex-shrink:0}
-.sec{background:var(--surf);border:1px solid var(--rule);border-radius:2px;overflow:hidden;margin-bottom:8px;box-shadow:var(--sh)}
-.sh2{padding:6px 10px;border-bottom:1px solid var(--rule);display:flex;align-items:center;gap:5px;background:var(--surf2)}
-.slbl{font-family:'IBM Plex Mono',monospace;font-size:8px;font-weight:500;text-transform:uppercase;letter-spacing:.08em;color:var(--t3)}
-.sbody{padding:10px}
-table.inf{width:100%;border-collapse:collapse;font-size:12px}
-table.inf tr td{padding:4px 0;border-bottom:1px solid var(--rule3);vertical-align:top}
-table.inf tr:last-child td{border-bottom:none}
-table.inf tr td:first-child{font-family:'IBM Plex Mono',monospace;font-size:9px;color:var(--t3);width:110px;padding-right:8px;text-transform:uppercase;letter-spacing:.04em}
-.ctcard{background:var(--surf2);border:1px solid var(--rule);border-radius:2px;padding:10px;margin-bottom:6px}
-.ctcard:last-child{margin-bottom:0}
-.ctav{width:26px;height:26px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-family:'IBM Plex Mono',monospace;font-size:8px;font-weight:700;background:var(--pb);color:var(--pc);border:1px solid var(--pr);flex-shrink:0}
-.cpill{font-family:'IBM Plex Mono',monospace;font-size:9px;background:var(--surf3);border:1px solid var(--rule);border-radius:2px;padding:1px 5px}
-.nblock{background:var(--surf2);border-left:2px solid var(--g);padding:8px 10px;font-size:11px;color:var(--t2);margin-top:8px;line-height:1.6}
-.spill{font-family:'IBM Plex Mono',monospace;font-size:9px;display:inline-block;padding:1px 5px;border:1px solid var(--rule);border-radius:2px;color:var(--t3);margin:2px}
-a.ml{font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--g);text-decoration:none}
-a.ml:hover{text-decoration:underline}
-.nodata{font-family:'IBM Plex Mono',monospace;font-size:9px;color:var(--t3);text-transform:uppercase;letter-spacing:.05em;padding:6px 0}
-.dtabs{display:flex;border-bottom:1px solid var(--rule);flex-shrink:0;margin-bottom:10px}
-.dtab{flex:1;height:30px;display:flex;align-items:center;justify-content:center;font-family:'IBM Plex Mono',monospace;font-size:8px;text-transform:uppercase;letter-spacing:.06em;cursor:pointer;color:var(--t3);border-bottom:2px solid transparent;transition:all .12s}
-.dtab:hover{color:var(--t1);background:var(--surf2)}
-.dtab.active{color:var(--g);border-bottom-color:var(--g)}
+/* ── COMPANY ROW ── */
+.c-row{display:flex;align-items:center;gap:8px;padding:8px 10px;
+        border-bottom:1px solid var(--rule3);cursor:pointer;transition:background .1s;user-select:none}
+.c-row:hover{background:var(--surf2)}
+.c-row.selected{background:var(--gb);border-right:2px solid var(--g)}
+.c-av{width:28px;height:28px;border-radius:2px;display:flex;align-items:center;
+       justify-content:center;font-family:'IBM Plex Mono',monospace;font-size:9px;
+       font-weight:600;flex-shrink:0}
+.c-info{flex:1;min-width:0}
+.c-name{font-size:12px;font-weight:500;color:var(--t1);white-space:nowrap;
+         overflow:hidden;text-overflow:ellipsis;line-height:1.3}
+.c-note{font-size:10px;color:var(--t3);white-space:nowrap;overflow:hidden;
+         text-overflow:ellipsis;line-height:1.3;margin-top:1px}
+.c-icp{font-family:'IBM Plex Mono',monospace;font-size:9px;color:var(--t3);flex-shrink:0}
 
-/* CONTACTS VIEW */
-.ctbl{width:100%;border-collapse:collapse}
-.ctbl th{position:sticky;top:0;background:var(--surf);border-bottom:1px solid var(--rule);padding:0 12px;height:28px;font-family:'IBM Plex Mono',monospace;font-size:8px;text-transform:uppercase;letter-spacing:.08em;color:var(--t3);font-weight:500;text-align:left;z-index:10}
-.ctbl td{padding:0 12px;height:36px;border-bottom:1px solid var(--rule3);vertical-align:middle;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-.ctbl tr:hover td{background:var(--surf2);cursor:pointer}
+/* ── CONTACT ROW ── */
+.ct-row{display:flex;align-items:center;gap:8px;padding:8px 10px;
+         border-bottom:1px solid var(--rule3);cursor:pointer;transition:background .1s}
+.ct-row:hover{background:var(--surf2)}
+.ct-av{width:28px;height:28px;border-radius:50%;display:flex;align-items:center;
+        justify-content:center;font-family:'IBM Plex Mono',monospace;font-size:9px;
+        font-weight:600;background:var(--surf3);color:var(--t2);flex-shrink:0}
+.ct-info{flex:1;min-width:0}
+.ct-name{font-size:12px;font-weight:500;color:var(--t1);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.ct-sub{font-size:10px;color:var(--t3);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin-top:1px}
 
-/* ENRICHER */
-.evw{display:flex;flex:1;overflow:hidden}
-.eleft{width:300px;flex-shrink:0;border-right:1px solid var(--rule);background:var(--surf);display:flex;flex-direction:column;overflow:hidden}
-.eright{flex:1;display:flex;flex-direction:column;overflow:hidden;background:var(--surf2)}
-.edwrap{padding:9px;border-bottom:1px solid var(--rule);flex-shrink:0}
-.elbl{font-family:'IBM Plex Mono',monospace;font-size:8px;text-transform:uppercase;letter-spacing:.07em;color:var(--t3);margin-bottom:4px}
-.edesc{width:100%;padding:6px 8px;border:1px solid var(--rule);border-radius:2px;background:var(--surf2);color:var(--t1);font-family:'IBM Plex Sans',sans-serif;font-size:11px;outline:none;resize:none;line-height:1.5;transition:border-color .15s}
-.edesc:focus{border-color:var(--gr)}
-.edesc::placeholder{color:var(--t3);font-size:10px}
-.ebtns{display:flex;gap:4px;margin-top:5px;align-items:center}
-.estat{font-family:'IBM Plex Mono',monospace;font-size:9px;color:var(--t3);flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-.eselbar{display:flex;align-items:center;gap:4px;padding:4px 8px;border-bottom:1px solid var(--rule2);flex-shrink:0}
-.emeta{padding:3px 8px;border-bottom:1px solid var(--rule2);display:flex;justify-content:space-between;flex-shrink:0}
-.emeta span{font-family:'IBM Plex Mono',monospace;font-size:9px;color:var(--t3)}
-.elist{overflow-y:auto;flex:1}
-.erow{display:flex;align-items:center;gap:5px;padding:5px 8px;border-bottom:1px solid var(--rule3);cursor:pointer;transition:background .1s;user-select:none}
-.erow:hover{background:var(--surf2)}
-.erow.chk{background:var(--gb)}
-.ecb{width:12px;height:12px;border:1px solid var(--rule);border-radius:2px;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:8px;color:var(--g);background:var(--surf);transition:all .1s}
-.erow.chk .ecb{background:var(--g);border-color:var(--g);color:#fff}
-.eav{width:18px;height:18px;border-radius:2px;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-family:'IBM Plex Mono',monospace;font-size:7px;font-weight:700;border:1px solid transparent}
-.enm{font-size:11px;font-weight:500;flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-.edom{font-family:'IBM Plex Mono',monospace;font-size:8px;color:var(--t3)}
-.egaps{display:flex;gap:2px;flex-shrink:0}
-.egsq{width:5px;height:5px;border-radius:1px}
-.egf{background:var(--cc)}.egm{background:var(--surf4)}
-.egn{font-family:'IBM Plex Mono',monospace;font-size:8px;color:var(--prc);min-width:12px;text-align:right}
-.tagcloud{border-top:1px solid var(--rule);padding:6px 8px;flex-shrink:0;max-height:120px;overflow-y:auto}
-.tclbl{font-family:'IBM Plex Mono',monospace;font-size:8px;text-transform:uppercase;letter-spacing:.07em;color:var(--t3);margin-bottom:4px}
-.tctags{display:flex;flex-wrap:wrap;gap:3px}
-.tctag{font-family:'IBM Plex Mono',monospace;font-size:8px;padding:2px 5px;border:1px solid var(--rule);border-radius:2px;cursor:pointer;color:var(--t3);background:var(--surf2);transition:all .1s;white-space:nowrap;display:inline-flex;align-items:center;gap:3px}
-.tctag:hover{border-color:var(--gr);color:var(--g);background:var(--gb)}
-.tctag.active{background:var(--g);color:#fff;border-color:var(--g)}
-.tctag.gap{color:var(--prc);background:var(--prb);border-color:var(--prr)}
-.tctag.gap:hover,.tctag.gap.active{background:var(--prc);color:#fff;border-color:var(--prc)}
-.tctag.tcc{color:var(--cc);background:var(--cb);border-color:var(--cr)}
-.tctag.tcp{color:var(--poc);background:var(--pob);border-color:var(--por)}
-.tctag.tca{color:var(--pc);background:var(--pb);border-color:var(--pr)}
-.tctag.tcc.active,.tctag.tcp.active,.tctag.tca.active{background:var(--g);color:#fff;border-color:var(--g)}
-.tcn{opacity:.6;font-size:7px}
-.tcsep{font-family:'IBM Plex Mono',monospace;font-size:8px;color:var(--t4);align-self:center}
-.eph{display:grid;grid-template-columns:1fr 1fr;border-bottom:1px solid var(--rule);flex-shrink:0;background:var(--surf)}
-.ephc{padding:9px 12px;border-right:1px solid var(--rule)}
-.ephc:last-child{border-right:none}
-.ephhdr{display:flex;align-items:center;gap:7px;margin-bottom:6px}
-.ephtag{font-family:'IBM Plex Mono',monospace;font-size:8px;font-weight:600;text-transform:uppercase;letter-spacing:.06em;padding:2px 5px;border-radius:2px;border:1px solid}
-.ep1t{color:var(--pc);background:var(--pb);border-color:var(--pr)}
-.ep2t{color:var(--prc);background:var(--prb);border-color:var(--prr)}
-.ephmeta{font-family:'IBM Plex Mono',monospace;font-size:9px;color:var(--t3)}
-.ecks{display:flex;flex-wrap:wrap;gap:3px;margin-bottom:5px}
-.eck{display:inline-flex;align-items:center;gap:3px;cursor:pointer;padding:2px 5px;border:1px solid var(--rule);border-radius:2px;background:var(--surf2);transition:all .1s}
-.eck:hover{border-color:var(--gr);background:var(--gb)}
-.eck.on{border-color:var(--gr);background:var(--gb)}
-.eck input{width:10px;height:10px;accent-color:var(--g);cursor:pointer}
-.ecklbl{font-family:'IBM Plex Mono',monospace;font-size:8px;color:var(--t2)}
-.eskip{display:flex;align-items:center;gap:4px;margin-bottom:3px}
-.eskiplbl{font-family:'IBM Plex Mono',monospace;font-size:8px;color:var(--t3);cursor:pointer}
-.ectrls{display:flex;gap:6px;flex-wrap:wrap;margin-top:4px}
-.ectl{display:flex;align-items:center;gap:3px}
-.ectllbl{font-family:'IBM Plex Mono',monospace;font-size:8px;color:var(--t3);text-transform:uppercase}
-.ectlnum{width:38px;height:20px;padding:0 4px;border:1px solid var(--rule);border-radius:2px;background:var(--surf2);color:var(--t1);font-family:'IBM Plex Mono',monospace;font-size:10px;text-align:center;outline:none}
-.ectlnum:focus{border-color:var(--gr)}
-.esbrow{display:flex;align-items:center;gap:4px;margin-top:4px}
-.esblbl{font-family:'IBM Plex Mono',monospace;font-size:8px;color:var(--t3);text-transform:uppercase;white-space:nowrap}
-.esburl{flex:1;height:18px;padding:0 4px;border:1px solid var(--rule);border-radius:2px;background:var(--surf2);color:var(--t1);font-family:'IBM Plex Mono',monospace;font-size:8px;outline:none}
-.esa{flex:1;display:flex;flex-direction:column;overflow:hidden}
-.esbar{display:flex;align-items:center;gap:6px;padding:6px 12px;border-bottom:1px solid var(--rule);background:var(--surf);flex-shrink:0}
-.eslbl{font-family:'IBM Plex Mono',monospace;font-size:9px;text-transform:uppercase;letter-spacing:.07em;color:var(--t3)}
-.esinfo{font-family:'IBM Plex Mono',monospace;font-size:9px;color:var(--t3);flex:1}
-.esout{flex:1;overflow-y:auto;padding:10px 12px}
-.eidle{display:flex;flex-direction:column;align-items:center;justify-content:center;height:100%;gap:7px;color:var(--t3)}
-.eidleico{font-family:'IBM Plex Mono',monospace;font-size:28px;font-weight:200;color:var(--t4)}
-.eidlesub{font-family:'IBM Plex Mono',monospace;font-size:9px;text-transform:uppercase;letter-spacing:.07em}
-.eidlehint{font-size:11px;text-align:center;max-width:260px;line-height:1.6;color:var(--t3)}
-pre.ecode{font-family:'IBM Plex Mono',monospace;font-size:10px;line-height:1.7;color:var(--t2);white-space:pre-wrap;word-break:break-all}
-pre.ecode .c{color:var(--t4)}pre.ecode .k{color:var(--g)}pre.ecode .s{color:var(--prc)}pre.ecode .v{color:var(--pc)}
+/* ── CENTER ── */
+.center{flex:1;overflow:hidden;display:flex;flex-direction:column;background:var(--bg)}
+.center-scroll{flex:1;overflow-y:auto;padding:20px}
 
-/* MODAL */
-#ov{display:none;position:fixed;inset:0;background:rgba(0,0,0,.4);z-index:500;align-items:center;justify-content:center;backdrop-filter:blur(3px)}
-#ov.vis{display:flex}
-.mbox{background:var(--surf);border:1px solid var(--rule);border-radius:4px;padding:20px;max-width:440px;width:90%;box-shadow:var(--sh)}
-.mbox h2{font-size:14px;font-weight:500;margin-bottom:6px}
-.mbox p{font-size:12px;color:var(--t2);margin-bottom:10px;line-height:1.6}
-.mta{width:100%;height:76px;padding:8px;border:1px solid var(--rule);border-radius:2px;background:var(--surf2);color:var(--t1);font-family:'IBM Plex Mono',monospace;font-size:11px;resize:vertical;outline:none;line-height:1.5}
-.mta:focus{border-color:var(--gr)}
-.macts{display:flex;gap:6px;justify-content:flex-end;margin-top:10px}
+/* ── EMPTY STATE ── */
+.empty-wrap{display:flex;flex-direction:column;align-items:center;justify-content:center;
+             height:100%;gap:20px}
+.empty-title{font-family:'IBM Plex Mono',monospace;font-size:11px;font-weight:500;
+              color:var(--t3);text-transform:uppercase;letter-spacing:.06em}
+.qa-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;max-width:520px;width:100%}
+.qa-card{background:var(--surf);border:1px solid var(--rule);border-radius:2px;
+          padding:12px 14px;cursor:pointer;transition:all .15s}
+.qa-card:hover{border-color:var(--g);background:var(--gb)}
+.qa-icon{font-size:16px;margin-bottom:5px}
+.qa-label{font-family:'IBM Plex Mono',monospace;font-size:9px;font-weight:500;
+           text-transform:uppercase;letter-spacing:.05em;color:var(--t1);margin-bottom:2px}
+.qa-desc{font-size:10px;color:var(--t3)}
+
+/* ── COMPANY PANEL ── */
+.co-panel{background:var(--surf);border:1px solid var(--rule);border-radius:2px;
+           max-width:700px}
+.co-header{display:flex;align-items:center;gap:10px;padding:14px 16px;
+            border-bottom:1px solid var(--rule)}
+.co-av-lg{width:40px;height:40px;border-radius:2px;display:flex;align-items:center;
+           justify-content:center;font-family:'IBM Plex Mono',monospace;font-size:13px;
+           font-weight:600;flex-shrink:0}
+.co-hname{font-size:16px;font-weight:500;color:var(--t1);line-height:1.2}
+.co-hmeta{display:flex;align-items:center;gap:6px;margin-top:3px}
+.icp-stars{font-size:9px;color:var(--g);letter-spacing:.02em}
+.co-close{margin-left:auto;font-size:16px;cursor:pointer;color:var(--t3);
+           padding:4px;transition:color .15s;flex-shrink:0}
+.co-close:hover{color:var(--t1)}
+
+/* ── PANEL SECTIONS ── */
+.ps{border-bottom:1px solid var(--rule)}
+.ps-head{display:flex;align-items:center;gap:8px;padding:10px 16px;cursor:pointer;
+          transition:background .1s;user-select:none}
+.ps-head:hover{background:var(--surf2)}
+.ps-title{font-family:'IBM Plex Mono',monospace;font-size:9px;font-weight:500;
+           text-transform:uppercase;letter-spacing:.06em;color:var(--t2)}
+.ps-badge{font-family:'IBM Plex Mono',monospace;font-size:8px;padding:1px 5px;
+           border-radius:2px;background:var(--surf3);border:1px solid var(--rule);color:var(--t3)}
+.ps-arrow{margin-left:auto;font-size:10px;color:var(--t3);transition:transform .2s}
+.ps-arrow.open{transform:rotate(90deg)}
+.ps-body{padding:12px 16px 14px;background:var(--surf2)}
+
+/* ── INFO TABLE ── */
+.info-table{width:100%;border-collapse:collapse;font-size:11px}
+.info-table td{padding:4px 0;vertical-align:top;border-bottom:1px solid var(--rule3)}
+.info-table td:first-child{width:100px;font-family:'IBM Plex Mono',monospace;font-size:9px;
+                             font-weight:500;text-transform:uppercase;letter-spacing:.04em;
+                             color:var(--t3);padding-right:12px;white-space:nowrap}
+.info-table td:last-child{color:var(--t1)}
+.info-table tr:last-child td{border-bottom:none}
+.desc-text{font-size:11px;color:var(--t2);line-height:1.6;margin-top:8px;
+            padding-top:8px;border-top:1px solid var(--rule2)}
+
+/* ── TECH PILLS ── */
+.tech-pills{display:flex;flex-wrap:wrap;gap:4px;margin-top:6px}
+.tech-pill{font-family:'IBM Plex Mono',monospace;font-size:7px;padding:2px 6px;
+            border-radius:2px;border:1px solid var(--rule);background:var(--surf3);
+            color:var(--t2);font-weight:500}
+
+/* ── ACTIONS GRID ── */
+.act-grid{display:grid;grid-template-columns:1fr 1fr;gap:6px}
+
+/* ── CONTACT CARDS ── */
+.ctc-card{background:var(--surf);border:1px solid var(--rule);border-radius:2px;
+           padding:10px;display:flex;align-items:flex-start;gap:8px;cursor:pointer;transition:border-color .15s}
+.ctc-card:hover{border-color:var(--g)}
+.ctc-name{font-size:12px;font-weight:500;color:var(--t1)}
+.ctc-role{font-size:10px;color:var(--t3);margin-top:1px}
+.ctc-email{font-family:'IBM Plex Mono',monospace;font-size:9px;color:var(--pc);margin-top:2px}
+
+/* ── CONTEXT MENU ── */
+.ctx-menu{position:fixed;background:var(--surf);border:1px solid var(--rule);
+           border-radius:2px;padding:5px;z-index:9998;min-width:210px;
+           box-shadow:var(--sh);display:none}
+.ctx-label{font-family:'IBM Plex Mono',monospace;font-size:8px;font-weight:500;
+            text-transform:uppercase;letter-spacing:.06em;padding:4px 8px 3px;color:var(--t3)}
+.ctx-sep{height:1px;background:var(--rule);margin:4px 0}
+.ctx-item{display:flex;align-items:center;gap:8px;padding:6px 8px;font-size:11px;
+           color:var(--t2);border-radius:2px;cursor:pointer;transition:background .1s}
+.ctx-item:hover{background:var(--surf2);color:var(--t1)}
+.ctx-ico{font-size:12px;width:16px;text-align:center;flex-shrink:0}
+
+/* ── CONTACT DRAWER ── */
+#ctDrawer{position:fixed;top:0;right:-390px;width:380px;height:100vh;
+           background:var(--surf);border-left:1px solid var(--rule);
+           z-index:9000;transition:right .25s;display:flex;flex-direction:column;
+           box-shadow:var(--sh);overflow:hidden}
+#ctDrawer.open{right:0}
+#ctDrawerOverlay{position:fixed;inset:0;background:rgba(0,0,0,.3);z-index:8999;
+                  display:none;backdrop-filter:blur(2px)}
+#ctDrawerOverlay.vis{display:block}
+.dr-head{display:flex;align-items:center;gap:10px;padding:14px;
+          border-bottom:1px solid var(--rule);flex-shrink:0}
+.dr-av{width:40px;height:40px;border-radius:50%;background:var(--surf3);
+        display:flex;align-items:center;justify-content:center;
+        font-family:'IBM Plex Mono',monospace;font-size:13px;font-weight:600;color:var(--t2)}
+.dr-name{font-size:14px;font-weight:500;color:var(--t1)}
+.dr-sub{font-size:11px;color:var(--t3);margin-top:1px}
+.dr-close{margin-left:auto;font-size:18px;cursor:pointer;color:var(--t3);padding:4px}
+.dr-close:hover{color:var(--t1)}
+.dr-body{flex:1;overflow-y:auto;padding:14px}
+.dr-field{margin-bottom:12px}
+.dr-field label{font-family:'IBM Plex Mono',monospace;font-size:8px;font-weight:500;
+                 text-transform:uppercase;letter-spacing:.06em;color:var(--t3);
+                 display:block;margin-bottom:3px}
+.dr-field p{font-size:11px;color:var(--t1)}
+.dr-actions{display:grid;grid-template-columns:1fr 1fr;gap:6px;padding:14px;
+              border-top:1px solid var(--rule);flex-shrink:0}
+
+/* ── MODALS ── */
+#overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.45);
+          z-index:10000;align-items:center;justify-content:center;backdrop-filter:blur(4px)}
+#overlay.vis{display:flex}
+.modal-box{background:var(--surf);border:1px solid var(--rule);border-radius:4px;
+            padding:20px;max-width:480px;width:90%;box-shadow:var(--sh)}
+.modal-box h2{font-family:'IBM Plex Mono',monospace;font-size:11px;font-weight:500;
+               text-transform:uppercase;letter-spacing:.06em;color:var(--t1);margin-bottom:8px}
+.modal-box p{font-size:11px;color:var(--t3);margin-bottom:12px;line-height:1.6}
+.modal-box textarea,.modal-box input[type=text]{
+  width:100%;padding:8px 10px;border:1px solid var(--rule);border-radius:2px;
+  font-family:'IBM Plex Mono',monospace;font-size:10px;background:var(--surf2);
+  color:var(--t1);outline:none;resize:vertical;transition:border-color .15s}
+.modal-box textarea{height:90px}
+.modal-box textarea:focus,.modal-box input[type=text]:focus{border-color:var(--g)}
+.modal-foot{display:flex;gap:6px;justify-content:flex-end;margin-top:12px}
+
+/* ── PANEL MODAL ── */
+#panelModal{display:none;position:fixed;inset:0;background:rgba(0,0,0,.5);
+             z-index:9999;align-items:center;justify-content:center}
+#panelModal.vis{display:flex}
+
+/* ── PRODUCTS TABLE ── */
+.prod-table{width:100%;border-collapse:collapse;font-size:11px}
+.prod-table th{font-family:'IBM Plex Mono',monospace;font-size:8px;text-transform:uppercase;
+                letter-spacing:.06em;color:var(--t3);padding:4px 8px;text-align:left;
+                border-bottom:1px solid var(--rule)}
+.prod-table td{padding:6px 8px;border-bottom:1px solid var(--rule3);color:var(--t1);
+                vertical-align:top}
+.prod-table tr:last-child td{border-bottom:none}
+.prod-table td:first-child{font-weight:500;color:var(--t1)}
+
+/* scrollable section body max height */
+.ps-body-scroll{max-height:320px;overflow-y:auto}
 </style>
 </head>
 <body>
-<div class="shell">
+<div class="app">
 
-<!-- NAV -->
-<nav class="nav">
-  <div class="nav-logo">oA</div>
-  <span class="nav-brand">Sales Hub</span>
-  <div class="nav-tabs">
-    <button class="nav-tab active" id="nav-co" onclick="sv('co')">🏢 Companies</button>
-    <button class="nav-tab" id="nav-ct" onclick="sv('ct')">👤 Contacts</button>
-    <button class="nav-tab" id="nav-en" onclick="sv('en')">⚡ Enricher</button>
-  </div>
-  <div class="nav-right">
-    <div class="sync-chip" onclick="reload()"><div class="sdot" id="sdot"></div><span id="slbl">Loading…</span></div>
-    <button class="btn" onclick="openR()">+ Research</button>
-    <button class="btn sm" id="tbtn" onclick="tth()">🌙</button>
-  </div>
-</nav>
+  <!-- NAV -->
+  <nav class="nav">
+    <div class="nav-logo">oA</div>
+    <span class="nav-title">Sales Intelligence Hub <span class="nav-sub">/ onAudience</span></span>
+    <span class="nav-status" id="dbStatus">○ Loading…</span>
+    <div class="nav-right">
+      <button class="btn sm" onclick="window.oaDB&&window.oaDB.reload()">↺ Sync</button>
+      <button class="btn sm p" onclick="promptResearch()">+ Research</button>
+      <button class="btn sm" onclick="toggleTheme()" id="themeBtn">🌙</button>
+    </div>
+  </nav>
 
-<!-- ═══ COMPANIES VIEW ═══ -->
-<div class="view active" id="view-co">
-  <div class="sbar">
-    <div class="sc active" onclick="sf('all',this)"><div class="sn" id="st-all">—</div><div class="sl">All</div></div>
-    <div class="sc" onclick="sf('client',this)"><div class="sn" id="st-cl">—</div><div class="sl">Clients</div></div>
-    <div class="sc" onclick="sf('poc',this)"><div class="sn" id="st-pc">—</div><div class="sl">Active Deal</div></div>
-    <div class="sc" onclick="sf('partner',this)"><div class="sn" id="st-pt">—</div><div class="sl">Partners</div></div>
-    <div class="sc" onclick="sf('prospect',this)"><div class="sn" id="st-pr">—</div><div class="sl">Prospects</div></div>
-    <div class="sc" onclick="sf('nogo',this)"><div class="sn" id="st-ng">—</div><div class="sl">No Outreach</div></div>
-    <div class="sc" onclick="sf('fresh',this)"><div class="sn" id="st-fr">—</div><div class="sl">Fresh Meat 🥩</div></div>
+  <!-- STATS BAR -->
+  <div class="stats-bar">
+    <div class="sb-col active" id="sbAll" onclick="setFilter('all',this)">
+      <div class="sb-num" id="stAll">—</div><div class="sb-lbl">All</div>
+    </div>
+    <div class="sb-col" id="sbClient" onclick="setFilter('client',this)">
+      <div class="sb-num" id="stClient">—</div><div class="sb-lbl">Clients</div>
+    </div>
+    <div class="sb-col" id="sbPoc" onclick="setFilter('poc',this)">
+      <div class="sb-num" id="stPoc">—</div><div class="sb-lbl">POC</div>
+    </div>
+    <div class="sb-col" id="sbPartner" onclick="setFilter('partner',this)">
+      <div class="sb-num" id="stPartner">—</div><div class="sb-lbl">Partners</div>
+    </div>
+    <div class="sb-col" id="sbProspect" onclick="setFilter('prospect',this)">
+      <div class="sb-num" id="stProspect">—</div><div class="sb-lbl">Prospects</div>
+    </div>
+    <div class="sb-col" id="sbNogo" onclick="setFilter('nogo',this)">
+      <div class="sb-num" id="stNogo">—</div><div class="sb-lbl">No Outreach</div>
+    </div>
+    <div class="sb-col" id="sbFresh" onclick="setFilter('fresh',this)">
+      <div class="sb-num" id="stFresh">—</div><div class="sb-lbl">Fresh Meat 🥩</div>
+    </div>
   </div>
+
+  <!-- MAIN -->
   <div class="main">
-    <!-- LEFT: list -->
+
+    <!-- LEFT PANEL -->
     <div class="left">
-      <div class="left-toolbar">
-        <div class="sw"><span class="si">⌕</span><input class="sinp" id="cosrch" placeholder="Search…" oninput="rl()" autocomplete="off"/></div>
-        <select class="sort-sel" id="cosort" onchange="rl()">
-          <option value="icp">ICP ↓</option>
-          <option value="name">A–Z</option>
-          <option value="type">Type</option>
-          <option value="recent">Recent</option>
-        </select>
+      <div class="left-tabs">
+        <div class="left-tab active" id="tabComp" onclick="switchTab('companies')">Companies</div>
+        <div class="left-tab" id="tabCont" onclick="switchTab('contacts')">Contacts</div>
       </div>
-      <div class="fps">
-        <button class="fp active" onclick="sf('all',this)">All</button>
-        <button class="fp" onclick="sf('client',this)">Client</button>
-        <button class="fp" onclick="sf('partner',this)">Partner</button>
-        <button class="fp" onclick="sf('prospect',this)">Prospect</button>
-        <button class="fp" onclick="sf('poc',this)">POC</button>
-        <button class="fp" onclick="sf('nogo',this)">No outreach</button>
+      <div class="left-search">
+        <input type="text" id="searchInput" placeholder="Search…" oninput="onSearch()"/>
+        <button class="btn sm" onclick="promptResearch()" title="Research company">↗</button>
       </div>
-      <div class="list-meta"><span id="lmeta">—</span><span>↑↓ J/K · Enter</span></div>
-      <div class="co-list" id="colist"></div>
+      <!-- companies filters -->
+      <div class="left-filters" id="filtersRow">
+        <span class="f-chip active" data-f="all" onclick="setFilter('all',this)">All</span>
+        <span class="f-chip" data-f="client" onclick="setFilter('client',this)">Clients</span>
+        <span class="f-chip" data-f="partner" onclick="setFilter('partner',this)">Partners</span>
+        <span class="f-chip" data-f="prospect" onclick="setFilter('prospect',this)">Prospects</span>
+        <span class="f-chip" data-f="poc" onclick="setFilter('poc',this)">POC</span>
+        <span class="f-chip" data-f="nogo" onclick="setFilter('nogo',this)">Nogo</span>
+      </div>
+      <div class="list-meta" id="listMeta">Loading…</div>
+      <div class="list-scroll" id="listScroll"></div>
     </div>
-    <!-- RIGHT: detail -->
-    <div class="center" id="center">
-      <div class="empty-state"><div class="empty-big">←</div><div class="empty-sub">Select a company</div></div>
+
+    <!-- CENTER PANEL -->
+    <div class="center">
+      <div class="center-scroll" id="centerScroll">
+        <div class="empty-wrap" id="emptyState">
+          <div class="empty-title">Sales Intelligence Hub</div>
+          <div class="qa-grid">
+            <div class="qa-card" onclick="promptResearch()">
+              <div class="qa-icon">🔍</div>
+              <div class="qa-label">Company research</div>
+              <div class="qa-desc">Full contact report</div>
+            </div>
+            <div class="qa-card" onclick="openClaude('Find new DSP, SSP, and media agency prospects for onAudience in EMEA — not in our database, strong programmatic data buying signals, ranked by ICP fit')">
+              <div class="qa-icon">🎯</div>
+              <div class="qa-label">Find prospects</div>
+              <div class="qa-desc">Search by criteria</div>
+            </div>
+            <div class="qa-card" onclick="openClaude('What are the top 5 highest-priority prospects in the onAudience database we should contact this week?')">
+              <div class="qa-icon">⭐</div>
+              <div class="qa-label">Top picks this week</div>
+              <div class="qa-desc">Priority ranking</div>
+            </div>
+            <div class="qa-card" onclick="promptSimilar()">
+              <div class="qa-icon">🔗</div>
+              <div class="qa-label">Find similar</div>
+              <div class="qa-desc">Lookalike discovery</div>
+            </div>
+            <div class="qa-card" onclick="openClaude('Which companies in the onAudience database have not been contacted in 30+ days and are worth re-engaging?')">
+              <div class="qa-icon">♻️</div>
+              <div class="qa-label">Re-engage dormant</div>
+              <div class="qa-desc">Warm up cold leads</div>
+            </div>
+            <div class="qa-card" onclick="openPanel('meeseeks',null)">
+              <div class="qa-icon">✉</div>
+              <div class="qa-label">Draft email</div>
+              <div class="qa-desc">AI outreach composer</div>
+            </div>
+          </div>
+        </div>
+        <div id="coPanel" style="display:none"></div>
+      </div>
+    </div>
+
+  </div><!-- /main -->
+</div><!-- /app -->
+
+<!-- CONTEXT MENU -->
+<div id="ctxMenu" class="ctx-menu"></div>
+
+<!-- CONTACT DRAWER OVERLAY -->
+<div id="ctDrawerOverlay" onclick="closeDrawer()"></div>
+<!-- CONTACT DRAWER -->
+<div id="ctDrawer">
+  <div class="dr-head">
+    <div class="dr-av" id="drAv">?</div>
+    <div>
+      <div class="dr-name" id="drName">—</div>
+      <div class="dr-sub" id="drSub">—</div>
+    </div>
+    <div class="dr-close" onclick="closeDrawer()">✕</div>
+  </div>
+  <div class="dr-body" id="drBody"></div>
+  <div class="dr-actions">
+    <button class="btn sm full" onclick="drEmail()">✉ Draft Email</button>
+    <button class="btn sm full" id="drLinkedInBtn" onclick="drLinkedIn()">LinkedIn ↗</button>
+    <button class="btn sm full" onclick="drGmail()">Gmail History</button>
+    <button class="btn sm full p" onclick="drResearch()">Full Research ↗</button>
+  </div>
+</div>
+
+<!-- RESEARCH MODAL -->
+<div id="overlay">
+  <div class="modal-box">
+    <h2 id="modalTitle">Research a Company</h2>
+    <p id="modalDesc">Enter a company name to generate a full contact report with decision makers, outreach angle, and ICP fit.</p>
+    <input type="text" id="modalInput" placeholder="Company name…"/>
+    <div class="modal-foot">
+      <button class="btn" onclick="closeModal()">Cancel</button>
+      <button class="btn p" onclick="submitModal()">Open in Claude ↗</button>
     </div>
   </div>
 </div>
 
-<!-- ═══ CONTACTS VIEW ═══ -->
-<div class="view" id="view-ct">
-  <div class="main" style="flex-direction:column">
-    <div style="padding:7px 12px;border-bottom:1px solid var(--rule);background:var(--surf);display:flex;align-items:center;gap:8px;flex-shrink:0">
-      <div class="sw" style="max-width:260px"><span class="si">⌕</span><input class="sinp" id="ctsrch" placeholder="Search contacts…" oninput="rct()" autocomplete="off"/></div>
-      <span style="font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--t3)" id="ctmeta">—</span>
-    </div>
-    <div style="flex:1;overflow-y:auto"><table class="ctbl">
-      <thead><tr>
-        <th style="width:36px"></th><th style="width:18%">Name</th><th style="width:20%">Title</th>
-        <th style="width:18%">Company</th><th style="width:22%">Email</th><th>Notes</th>
-      </tr></thead>
-      <tbody id="cttb"></tbody>
-    </table></div>
+<!-- PANEL MODAL (iframe host) -->
+<div id="panelModal" onclick="if(event.target===this)closePanel()">
+  <div style="width:780px;height:85vh;border-radius:4px;overflow:hidden;border:1px solid var(--rule);box-shadow:var(--sh)">
+    <iframe id="panelIframe" src="" style="width:100%;height:100%;border:none"></iframe>
   </div>
 </div>
-
-<!-- ═══ ENRICHER VIEW ═══ -->
-<div class="view" id="view-en">
-  <div class="evw">
-    <div class="eleft">
-      <div class="edwrap">
-        <div class="elbl">Describe companies to enrich</div>
-        <textarea class="edesc" id="edesc" rows="3" placeholder="e.g. prospects missing funding info&#10;DSPs with 3+ data gaps&#10;UK agencies without description"></textarea>
-        <div class="ebtns">
-          <button class="btn p sm" onclick="efind()" id="efbtn">🔍 Find</button>
-          <button class="btn sm" onclick="eclr()">✕</button>
-          <span class="estat" id="estat"></span>
-        </div>
-      </div>
-      <div class="eselbar">
-        <button class="btn sm" onclick="eall()">All</button>
-        <button class="btn sm" onclick="enone()">None</button>
-        <span style="font-family:'IBM Plex Mono',monospace;font-size:9px;color:var(--t3);margin-left:auto" id="eselcnt">0 selected</span>
-        <button class="btn p sm" onclick="genScript()" style="margin-left:5px">⚡ Gen</button>
-      </div>
-      <div class="emeta"><span id="emeta">Use tags or describe above</span><span>click to select</span></div>
-      <div class="elist" id="elist"></div>
-      <div class="tagcloud">
-        <div class="tclbl">Quick select</div>
-        <div class="tctags" id="tctags"></div>
-      </div>
-    </div>
-    <div class="eright">
-      <div class="eph">
-        <div class="ephc">
-          <div class="ephhdr"><span class="ephtag ep1t">Phase 1 — B2B MCP</span><span class="ephmeta">Haiku · ~free</span></div>
-          <div class="ecks" id="p1cks">
-            <label class="eck on"><input type="checkbox" checked data-f="description"><span class="ecklbl">description</span></label>
-            <label class="eck on"><input type="checkbox" checked data-f="category"><span class="ecklbl">category</span></label>
-            <label class="eck on"><input type="checkbox" checked data-f="tags"><span class="ecklbl">tags</span></label>
-          </div>
-          <div class="eskip"><input type="checkbox" id="p1sk" checked style="accent-color:var(--g)"><label class="eskiplbl" for="p1sk">skip filled</label><span style="margin-left:auto;font-family:'IBM Plex Mono',monospace;font-size:8px;color:var(--t3)">b2b.ctpl.dev/sse</span></div>
-        </div>
-        <div class="ephc">
-          <div class="ephhdr"><span class="ephtag ep2t">Phase 2 — Browser-Use</span><span class="ephmeta">Sonnet 4.6 · ~$0.10/co</span></div>
-          <div class="ecks" id="p2cks">
-            <label class="eck on"><input type="checkbox" checked data-f="size"><span class="ecklbl">size</span></label>
-            <label class="eck on"><input type="checkbox" checked data-f="founded"><span class="ecklbl">founded</span></label>
-            <label class="eck on"><input type="checkbox" checked data-f="funding"><span class="ecklbl">funding</span></label>
-            <label class="eck on"><input type="checkbox" checked data-f="hq_city"><span class="ecklbl">hq city</span></label>
-            <label class="eck on"><input type="checkbox" checked data-f="linkedin"><span class="ecklbl">linkedin</span></label>
-            <label class="eck"><input type="checkbox" data-f="crunchbase"><span class="ecklbl">crunchbase</span></label>
-            <label class="eck on"><input type="checkbox" checked data-f="products"><span class="ecklbl">products</span></label>
-            <label class="eck on"><input type="checkbox" checked data-f="dsps"><span class="ecklbl">dsps</span></label>
-            <label class="eck"><input type="checkbox" data-f="acquired"><span class="ecklbl">acquired?</span></label>
-            <label class="eck"><input type="checkbox" data-f="stage"><span class="ecklbl">stage</span></label>
-          </div>
-          <div class="eskip"><input type="checkbox" id="p2sk" checked style="accent-color:var(--g)"><label class="eskiplbl" for="p2sk">skip filled</label></div>
-          <div class="ectrls">
-            <div class="ectl"><span class="ectllbl">Steps</span><input class="ectlnum" id="p2st" type="number" value="35" min="5" max="100"></div>
-            <div class="ectl"><span class="ectllbl">Delay</span><input class="ectlnum" id="p2dl" type="number" value="12" min="5" max="60"></div>
-            <div class="ectl"><span class="ectllbl">Conc</span><input class="ectlnum" id="p2cn" type="number" value="1" min="1" max="5"></div>
-          </div>
-          <div class="esbrow"><span class="esblbl">SB URL</span><input class="esburl" id="p2sb" value="https://nyzkkqqjnkctcmxoirdj.supabase.co" readonly/></div>
-        </div>
-      </div>
-      <div class="esa">
-        <div class="esbar">
-          <span class="eslbl">Script Output</span>
-          <span class="esinfo" id="esinfo">Select companies → Generate</span>
-          <button class="btn sm" onclick="cpScript()" id="ecpbtn" style="display:none">Copy</button>
-          <button class="btn sm" onclick="dlScript()" id="edlbtn" style="display:none">↓ .py</button>
-        </div>
-        <div class="esout" id="esout">
-          <div class="eidle"><div class="eidleico">⚡</div><div class="eidlesub">Batch Enricher</div>
-          <div class="eidlehint">Select companies using tags or natural language, then ⚡ Generate for a ready-to-run Python script.</div></div>
-        </div>
-      </div>
-    </div>
-  </div>
-</div>
-
-</div><!-- /shell -->
-
-<!-- MODAL -->
-<div id="ov"><div class="mbox">
-  <h2 id="mt">Research a company</h2>
-  <p id="md">Enter company name to open a full contact report in Claude.</p>
-  <textarea class="mta" id="mi" placeholder="Company name…"></textarea>
-  <div class="macts"><button class="btn" onclick="cm()">Cancel</button><button class="btn p" onclick="sm()">Open in Claude ↗</button></div>
-</div></div>
 
 <script>
-const SB_URL='https://nyzkkqqjnkctcmxoirdj.supabase.co';
-const SB_KEY='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im55emtrcXFqbmtjdGNteG9pcmRqIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzM4NzMxMzYsImV4cCI6MjA4OTQ0OTEzNn0.jhAq_C68klOp4iTyj9HmsyyvoxsOI6ACld7t_87TAk0';
-const SBH={apikey:SB_KEY,Authorization:`Bearer ${SB_KEY}`,'Content-Type':'application/json',Prefer:'resolution=merge-duplicates,return=minimal'};
+/* ─────────────────────────────────────────────
+   CONSTANTS
+───────────────────────────────────────────── */
+const SB_URL = 'https://nyzkkqqjnkctcmxoirdj.supabase.co';
+const SB_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im55emtrcXFqbmtjdGNteG9pcmRqIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzM4NzMxMzYsImV4cCI6MjA4OTQ0OTEzNn0.jhAq_C68klOp4iTyj9HmsyyvoxsOI6ACld7t_87TAk0';
 
-let theme=localStorage.getItem('oaTheme')||'light';
-document.documentElement.setAttribute('data-theme',theme);
-function tth(){theme=theme==='light'?'dark':'light';document.documentElement.setAttribute('data-theme',theme);localStorage.setItem('oaTheme',theme);document.getElementById('tbtn').textContent=theme==='dark'?'☀️':'🌙';}
-document.getElementById('tbtn').textContent=theme==='dark'?'☀️':'🌙';
+const PANELS = {
+  meeseeks: { src: 'meeseeks-composer.html', label: 'Meeseeks Composer' },
+  composer: { src: 'email-composer-panel.html', label: 'Email Composer' },
+};
 
-const SEED=[
-  ['6sense','POC client','poc','Intent Data / ABM','USA',null,8,'6sense.com','6sense'],
-  ['Adform','integrated partner / DSP Europe','partner','DSP / AdTech','Denmark',null,8,'site.adform.com','adform'],
-  ['Adobe','partner — DMP integration','partner','DMP / MarTech','USA',null,7,'adobe.com','adobe'],
-  ['Adtonos','client','client','Audio AdTech','UK',null,7,'adtonos.com','adtonos'],
-  ['Alikeaudience','client','client','Audience Data / DMP','USA/APAC',null,10,'alikeaudience.com','alikeaudience'],
-  ['Anzu','POC client','poc','In-game Advertising','Global',null,7,'anzu.io','anzu'],
-  ['Amazon','partner','partner','DSP / E-commerce','USA',null,8,'amazon.com','amazon'],
-  ['Audigent','partner / curation','partner','Data / Curation','USA',null,8,'audigent.com','audigent'],
-  ['AudienceRate','active deal — DV360','poc','Data Monetization','UK',null,9,'audiencerate.com','audiencerate'],
-  ['Captify UK','client','client','Search Intent Data','UK',null,8,'captify.co.uk','captify'],
-  ['Criteo','partner — contact: Adrian','partner','DSP / Retargeting','France',null,7,'criteo.com','criteo'],
-  ['Datonics','client','client','Programmatic Data','USA',null,10,'datonics.com','datonics'],
-  ['Echo Analytics','POC client','poc','Location Data','France',null,7,'echo-analytics.fr','echo-analytics'],
-  ['Epsilon','partner — Matt deal','partner','Data / MarTech','USA',null,8,'epsilon.com','epsilon'],
-  ['Equativ','partner / SSP curation','partner','SSP / Curation','France',null,7,'equativ.com','equativ'],
-  ['Experian','prospect — Karo/Maciek','prospect','Data / Identity','USA',null,7,'experian.com','experian'],
-  ['Eyeota','partner','partner','Audience Data','Singapore',null,7,'eyeota.com','eyeota'],
-  ['Foursquare','partner','partner','Location Data','USA',null,7,'foursquare.com','foursquare'],
-  ['Fyllo','partner','partner','Compliance Data','USA',null,7,'fyllo.com','fyllo'],
-  ['Google','partner','partner','DSP / AdTech','USA',null,8,'google.com','google'],
-  ['Havas PL','client / agency','client','Media Agency','Poland',null,7,'havas.com','havas'],
-  ['Hybrid','partner','partner','DSP / Programmatic','Poland',null,7,'hybrid.ai','hybrid'],
-  ['ID5','partner / cookieless product','partner','Identity','France',null,8,'id5.io','id5-io'],
-  ['Intuizi','client — Adrian','client','Mobile Data','USA',null,7,'intuizi.com','intuizi'],
-  ['LiveRamp','partner / marketplace','partner','Data Connectivity','USA',null,8,'liveramp.com','liveramp'],
-  ['Madhive','prospect / DSP — Karolina','prospect','CTV / DSP','USA',null,8,'madhive.com','madhive'],
-  ['Mastercard','partner','partner','Financial Data','USA',null,8,'mastercard.com','mastercard'],
-  ['MediaWallah','partner / data exchange','partner','Data Exchange','USA',null,7,'mediawallah.com','mediawallah'],
-  ['MeMob','client','client','Mobile AdTech','Global',null,7,'memob.com','memob'],
-  ['MNTN','partner / DSP','partner','CTV DSP','USA',null,8,'mountain.com','mntn'],
-  ['Mobilewalla','client','client','Mobile Data','USA',null,7,'mobilewalla.com','mobilewalla'],
-  ['Multilocal','client — Adrian','client','Local Advertising','UK',null,7,'multilocal.com','multilocal'],
-  ['Nexxen','prospect','prospect','DSP / SSP','Global',null,7,'nexxen.com','nexxen'],
-  ['OpenSignal','client','client','Network Data','UK',null,7,'opensignal.com','opensignal'],
-  ['OpenX','prospect','prospect','SSP / Exchange','USA',null,7,'openx.com','openx'],
-  ['Permutive','client','client','Publisher Data','UK',null,7,'permutive.com','permutive'],
-  ['Pubmatic','partner','partner','SSP','USA',null,7,'pubmatic.com','pubmatic'],
-  ['Samba TV','prospect','prospect','CTV Data','USA',null,8,'samba.tv','samba-tv'],
-  ['Sovrn','client — Adrian','client','Publisher Monetization','USA',null,7,'sovrn.com','sovrn'],
-  ['Sportradar','prospect — Karolina','prospect','Sports Data','Switzerland',null,7,'sportradar.com','sportradar'],
-  ['Stackadapt','prospect','prospect','DSP','Canada',null,8,'stackadapt.com','stackadapt'],
-  ['Taboola','prospect — via MSFT Curate','prospect','Native Advertising','USA',null,7,'taboola.com','taboola'],
-  ['TheTradeDesk','partner','partner','DSP','USA',null,9,'thetradedesk.com','the-trade-desk'],
-  ['True Data','client','client','Purchase Data','Japan',null,7,'true-data.co.jp','true-data'],
-  ['VentiveIQ','prospect — Maciek + Adrian','prospect','Identity / Data','USA',null,7,'ventiveiq.com','ventiveiq'],
-  ['VistarMedia','prospect','prospect','OOH / DSP','USA',null,7,'vistarmedia.com','vistar-media'],
-  ['Weborama','prospect','prospect','Data / Semantic','France',null,7,'weborama.com','weborama'],
-  ['Wowcher','client','client','Deal / Commerce','UK',null,7,'wowcher.co.uk','wowcher'],
-  ['Zeotap','client','client','CDP / Identity','Germany',null,8,'zeotap.com','zeotap'],
-  ['Beklever','prospect','prospect','DSP','Poland',null,7,'beklever.com','beklever'],
-  ['Splicky DSP','prospect','prospect','DSP','Germany',null,7,'splicky.com','splicky'],
-  ['Aniview','no outreach — failed deal','nogo','Video AdTech','Israel',null,5,'aniview.com','aniview'],
-  ['Eskimi','no outreach — bad timing','nogo','DSP Africa','Lithuania',null,5,'eskimi.com','eskimi'],
-  ['Lifesight','no outreach — unwanted','nogo','Location Data','Singapore',null,4,'lifesight.io','lifesight'],
-  ['Lotame','no outreach — contract ended','nogo','DMP','USA',null,5,'lotame.com','lotame'],
-  ['Meta','no outreach — via LiveRamp only','nogo','Social / DSP','USA',null,5,'meta.com','meta'],
-  ['Nielsen','no outreach','nogo','Measurement','USA',null,5,'nielsen.com','nielsen'],
-  ['Oracle','no outreach — closed ad division','nogo','Data / Cloud','USA',null,4,'oracle.com','oracle'],
-  ['Dynata','no outreach — former client','nogo','Research / Data','USA',null,5,'dynata.com','dynata'],
+/* ─────────────────────────────────────────────
+   SEED DATA
+───────────────────────────────────────────── */
+const SEED_RAW = [
+  ['6sense','POC client'],['Adform','integrated partner / DSP Europe'],
+  ['Admixer','no outreach'],['Adobe','partner — DMP integration'],
+  ['Adtonos','client'],['Alikeaudience','client'],
+  ['Aniview','no outreach — failed deal'],['Anzu','POC client'],
+  ['Amazon','partner'],['Audience Network','internal — group company'],
+  ['Audigent','partner / curation'],['Bango','prospect — via LiveRamp'],
+  ['Beintoo','prospect — to continue'],['Belogic TR','partner'],
+  ['Bidberry / Carbon / Clickso','partner'],['Bidscube','no outreach — former client'],
+  ['Bidtheatre','partner / DSP Scandinavia'],['Big Village','to check'],
+  ['Bright Mountain Media','prospect — to continue'],['Bytedance (TikTok)','client — APAC only'],
+  ['Captify UK','client'],['Claritas','prospect — to continue'],
+  ['Clue','prospect — to continue'],['Criteo','partner — contact: Adrian'],
+  ['Datonics','client'],['Dynata','no outreach — former client'],
+  ['Echo Analytics','POC client'],['Entity X','client — Adrian'],
+  ['Epsilon','partner — Matt deal'],['Equativ','partner / SSP curation'],
+  ['Eskimi','no outreach — bad timing'],['Experian','prospect — Karo/Maciek'],
+  ['Eyeota','partner'],['Foursquare','partner'],['Fyllo','partner'],
+  ['Synthesi','partner — to be'],['GlobalDataResources','partner — NDR acquisition'],
+  ['Google','partner'],['Havas PL','client / agency'],['Hybrid','partner'],
+  ['ID5','partner / cookieless product'],['Intuizi','client — Adrian'],
+  ['Kochava','partner / data provider'],['Lifesight','no outreach — unwanted'],
+  ['LiveRamp','partner / marketplace'],['Lotame','no outreach — contract ended'],
+  ['Madhive','prospect / DSP — Karolina'],['Mastercard','partner'],
+  ['Medianation','no outreach'],['Mediasmart','no outreach — low revenue'],
+  ['MediaWallah','partner / data exchange'],['MeMob','client'],
+  ['Meta','no outreach — via LiveRamp only'],['Microsoft Advertising (Xandr)','partner'],
+  ['Mindvalley','POC client — no renewal'],['MNTN','partner / DSP'],
+  ['Mobilewalla','client'],['Moboost','client'],['Multilocal','client — Adrian'],
+  ['National Research Group','to check'],['Nexxen','prospect'],['Nielsen','no outreach'],
+  ['OpenSignal','client'],['OpenX','prospect'],['Oracle','no outreach — closed ad division'],
+  ['Permutive','client'],['Pubmatic','partner'],['Precisely','no outreach'],
+  ['Razorpod','no outreach'],['Roq Ad','no outreach — cross-device'],
+  ['RTB House','no business'],['Samba TV','prospect'],['Scoota','prospect'],
+  ['Semantec','client'],['Semasio','partner — acquired by Fyllo'],
+  ['Sharethrough','partner / data exchange'],['Sovrn','client — Adrian'],
+  ['Sportradar','prospect — Karolina'],['Taboola','prospect — via MSFT Curate'],
+  ['Tapad','no fit'],['TheTradeDesk','partner'],['TikTok','partner — via Bytedance'],
+  ['TL1','internal — our company'],['True Data','client'],['Twitch','no fit'],
+  ['Twitter','no fit'],['VentiveIQ','prospect — Maciek + Adrian'],
+  ['VistarMedia (T-Mobile)','prospect'],['Wowcher','client'],['Zeotap','client'],
+  ['Beklever','prospect'],['Havas Spain','prospect'],['Dentsu Thailand','prospect'],
+  ['OMD Thailand','prospect'],['Splicky DSP','prospect'],['Traveldesk Global','prospect'],
+  ['Liquid Advertising','prospect'],['Stackadapt','prospect'],['Weborama','prospect'],
+  ['Memob','client']
 ];
 
-let COS=[],CTS=[],AF='all',FI=-1,FR=[],CC=null,CDT='ov';
-let ES=new Set(),EF=[],EAT=null;
-
-const GF=[{id:'desc',f:'description'},{id:'size',f:'size'},{id:'fund',f:'funding'},{id:'hq',f:'hq_city'},{id:'prod',f:'products'},{id:'dsps',f:'dsps'},{id:'li',f:'linkedin_slug'}];
-
-function sl(n){return(n||'').replace(/\s+(Ltd|Inc|LLC|S\.A\.|GmbH|Corp|B\.V\.|AG|PLC|SAS|Oy)\.?$/i,'').toLowerCase().trim().replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,'');}
-function cls2(note){const s=(note||'').toLowerCase();if(s.includes('no outreach')||s.includes('no fit')||s.includes('no business')||s.includes('internal')||s.includes('unwanted'))return'nogo';if(s.includes('poc client'))return'poc';if(s.includes('client'))return'client';if(s.includes('partner'))return'partner';if(s.includes('prospect')||s.includes('to check')||s.includes('to continue'))return'prospect';return'prospect';}
-function av(n){const p=[['#9FE1CB30','#0F6E56'],['#B5D4F430','#1A4F8A'],['#FAC77530','#7A4200'],['#C0DD9730','#3B6D11'],['#F4C0D130','#993556']];let h=0;for(let c of(n||''))h=(h*31+c.charCodeAt(0))&0xffff;return p[h%p.length];}
-function ini(n){return(n||'').replace(/[^A-Za-z ]/g,'').split(' ').filter(Boolean).map(w=>w[0]).slice(0,2).join('').toUpperCase()||'?';}
-function tcls(s){return{client:'tc',partner:'tp',prospect:'tpr',nogo:'tn',poc:'tpo'}[s]||'tpr';}
-function tlbl(s){return{client:'Client',partner:'Partner',prospect:'Prospect',nogo:'No outreach',poc:'Active Deal'}[s]||s;}
-function stars(n){const f=Math.min(5,Math.round((n||0)/2));return'★'.repeat(f)+'☆'.repeat(5-f);}
-function dom(u){try{return new URL(u.includes('://')?u:'https://'+u).hostname.replace('www.','')}catch{return u}}
-function ta(d){if(!d)return'—';const ms=Date.now()-new Date(d);const dy=Math.floor(ms/86400000);if(dy<1)return'today';if(dy<7)return dy+'d';if(dy<30)return Math.floor(dy/7)+'w';return Math.floor(dy/30)+'mo';}
-function fresh(c){return c.type==='prospect'&&!CTS.some(ct=>(ct.company_name||'').toLowerCase()===c.name.toLowerCase());}
-function oc(p){window.open('https://claude.ai/new?q='+encodeURIComponent(p),'_blank');}
-function gaps(c){return GF.filter(gf=>{const v=c[gf.f];if(!v)return true;if(Array.isArray(v))return!v.length;if(typeof v==='string')return!v.trim();if(typeof v==='object'){const pp=v.products;return!pp||(Array.isArray(pp)&&!pp.length);}return false;});}
-
-function lseed(){
-  COS=SEED.map(([n,note,t,cat,reg,sz,icp,web,li])=>({id:sl(n),name:n,note:note||'',type:t||cls2(note),category:cat||null,region:reg||null,hq_city:reg||null,size:sz||null,icp:icp||null,website:web||null,linkedin_slug:li||null,updated_at:null,description:null,founded_year:null,funding:null,dsps:null,tech_stack:null,products:null,outreach_angle:null,tcf_vendor_id:null}));
-  CTS=[];
-}
-async function reload(){
-  document.getElementById('sdot').className='sdot';document.getElementById('slbl').textContent='Loading…';
-  try{
-    const[cr,ctr]=await Promise.all([fetch(`${SB_URL}/rest/v1/companies?select=*&order=name.asc`,{headers:SBH}),fetch(`${SB_URL}/rest/v1/contacts?select=*&order=full_name.asc`,{headers:SBH})]);
-    if(!cr.ok)throw new Error(cr.status);
-    const cd=await cr.json();const ctd=ctr.ok?await ctr.json():[];
-    COS=cd.map(c=>({...c,type:c.type||cls2(c.note||''),note:c.note||'',id:c.id||sl(c.name)}));CTS=Array.isArray(ctd)?ctd:[];
-    document.getElementById('sdot').className='sdot live';document.getElementById('slbl').textContent=`● Live · ${COS.length}`;
-  }catch(e){lseed();document.getElementById('slbl').textContent=`○ Seed · ${COS.length}`;}
-  ust();rl();rct();btc();
+function classify(n) {
+  const s = (n||'').toLowerCase();
+  if (s.includes('no outreach')||s.includes('no fit')||s.includes('no business')||s.includes('internal')||s.includes('closed')||s.includes('unwanted')) return 'nogo';
+  if (s.includes('poc client')) return 'poc';
+  if (s.includes('client')) return 'client';
+  if (s.includes('partner')) return 'partner';
+  if (s.includes('prospect')||s.includes('to check')||s.includes('to continue')) return 'prospect';
+  return 'partner';
 }
 
-function ust(){
-  document.getElementById('st-all').textContent=COS.length;
-  document.getElementById('st-cl').textContent=COS.filter(c=>c.type==='client').length;
-  document.getElementById('st-pc').textContent=COS.filter(c=>c.type==='poc').length;
-  document.getElementById('st-pt').textContent=COS.filter(c=>c.type==='partner').length;
-  document.getElementById('st-pr').textContent=COS.filter(c=>c.type==='prospect').length;
-  document.getElementById('st-ng').textContent=COS.filter(c=>c.type==='nogo').length;
-  document.getElementById('st-fr').textContent=COS.filter(fresh).length;
+const SEED = SEED_RAW.map(([name,note])=>({
+  name, note:note||'', type:classify(note),
+  id:_slug(name), category:null, region:null, size:null,
+  website:null, linkedin_slug:null, icp:null, description:null,
+  hq_city:null, founded_year:null, funding:null, tcf_vendor_id:null,
+  tech_stack:null, products:null, dsps:null, outreach_angle:null, updated_at:null
+}));
+
+/* ─────────────────────────────────────────────
+   STATE
+───────────────────────────────────────────── */
+let companies = [...SEED];
+let contacts  = [];
+let activeFilter = 'all';
+let searchQ = '';
+let activeTab = 'companies';
+let currentCompany = null;
+let currentContact = null;
+let _modalTemplate = '';
+let _modalMode = 'research';
+
+/* ─────────────────────────────────────────────
+   SLUG
+───────────────────────────────────────────── */
+function _slug(n){
+  return (n||'')
+    .replace(/\s+(Ltd|Inc|LLC|S\.A\.|GmbH|Corp|B\.V\.|AG|PLC|SAS)\.?$/i,'')
+    .toLowerCase().trim()
+    .replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,'');
 }
 
-function sf(f,el){
-  AF=f;FI=-1;
-  document.querySelectorAll('.sc,.fp').forEach(b=>b.classList.remove('active'));
-  const idx=['all','client','poc','partner','prospect','nogo','fresh'].indexOf(f);
-  document.querySelectorAll('.sc')[idx]?.classList.add('active');
-  document.querySelectorAll('.fp').forEach(fp=>{const t=fp.textContent.trim().toLowerCase().replace(' ','');if((f==='all'&&t==='all')||(f==='client'&&t==='client')||(f==='partner'&&t==='partner')||(f==='prospect'&&t==='prospect')||(f==='poc'&&t==='poc')||(f==='nogo'&&t==='nooutreach'))fp.classList.add('active');});
-  rl();
+/* ─────────────────────────────────────────────
+   THEME
+───────────────────────────────────────────── */
+let theme = localStorage.getItem('oaTheme')||'light';
+document.documentElement.setAttribute('data-theme', theme);
+function toggleTheme(){
+  theme = theme==='light'?'dark':'light';
+  document.documentElement.setAttribute('data-theme',theme);
+  localStorage.setItem('oaTheme',theme);
+  document.getElementById('themeBtn').textContent = theme==='dark'?'☀️':'🌙';
+}
+document.getElementById('themeBtn').textContent = theme==='dark'?'☀️':'🌙';
+
+/* ─────────────────────────────────────────────
+   SUPABASE
+───────────────────────────────────────────── */
+const HDR = { apikey:SB_KEY, Authorization:`Bearer ${SB_KEY}`, 'Content-Type':'application/json' };
+
+async function loadFromSupabase(){
+  const ctrl = new AbortController();
+  const timer = setTimeout(()=>ctrl.abort(), 8000);
+  try {
+    const [cr, ct] = await Promise.all([
+      fetch(`${SB_URL}/rest/v1/companies?select=*&order=name.asc`, {headers:HDR, signal:ctrl.signal}),
+      fetch(`${SB_URL}/rest/v1/contacts?select=*&order=full_name.asc`, {headers:HDR, signal:ctrl.signal})
+    ]);
+    clearTimeout(timer);
+    if (!cr.ok) throw new Error(cr.status);
+    const dbCos = await cr.json();
+    const dbCts = ct.ok ? await ct.json() : [];
+    if (Array.isArray(dbCos) && dbCos.length) {
+      companies = dbCos.map(r=>({
+        ...r,
+        type: r.type || classify(r.note||''),
+        note: r.note || ''
+      }));
+    }
+    if (Array.isArray(dbCts)) contacts = dbCts;
+    setStatus(true);
+  } catch(e) {
+    clearTimeout(timer);
+    console.warn('Supabase load failed, using seed', e.message);
+    setStatus(false);
+  }
+  renderStats(); renderList();
 }
 
-function getFiltered(){
-  const q=(document.getElementById('cosrch').value||'').toLowerCase();
-  const sel=document.getElementById('cosort').value;
-  let out=COS.filter(c=>{
-    if(AF==='fresh'&&!fresh(c))return false;
-    if(AF!=='all'&&AF!=='fresh'&&c.type!==AF)return false;
-    if(q){const h=(c.name+' '+(c.note||'')+' '+(c.category||'')+' '+(c.region||c.hq_city||'')).toLowerCase();if(!h.includes(q))return false;}
+function setStatus(live){
+  const el = document.getElementById('dbStatus');
+  if (live){ el.textContent=`● Live · ${companies.length}`; el.className='nav-status live'; }
+  else { el.textContent=`○ Seed · ${companies.length}`; el.className='nav-status'; }
+}
+
+async function saveCompany(r){
+  return fetch(`${SB_URL}/rest/v1/companies`, {
+    method:'POST', headers:{...HDR,'Prefer':'resolution=merge-duplicates,return=minimal'},
+    body:JSON.stringify(r)
+  });
+}
+async function saveContact(r){
+  return fetch(`${SB_URL}/rest/v1/contacts`, {
+    method:'POST', headers:{...HDR,'Prefer':'resolution=merge-duplicates,return=minimal'},
+    body:JSON.stringify(r)
+  });
+}
+
+window.oaDB = {
+  saveCompany, saveContact,
+  reload: ()=>{ document.getElementById('dbStatus').textContent='○ Syncing…'; loadFromSupabase(); }
+};
+
+/* ─────────────────────────────────────────────
+   STATS
+───────────────────────────────────────────── */
+function renderStats(){
+  const now = Date.now();
+  const thirtyDaysAgo = now - 30*24*60*60*1000;
+  const contactedIds = new Set(contacts.map(c=>_slug(c.company_name||'')));
+  const fresh = companies.filter(c=>
+    c.type==='prospect' &&
+    (!c.updated_at || new Date(c.updated_at).getTime() < thirtyDaysAgo) &&
+    !contactedIds.has(_slug(c.name))
+  ).length;
+  document.getElementById('stAll').textContent      = companies.length;
+  document.getElementById('stClient').textContent   = companies.filter(c=>c.type==='client').length;
+  document.getElementById('stPoc').textContent      = companies.filter(c=>c.type==='poc').length;
+  document.getElementById('stPartner').textContent  = companies.filter(c=>c.type==='partner').length;
+  document.getElementById('stProspect').textContent = companies.filter(c=>c.type==='prospect').length;
+  document.getElementById('stNogo').textContent     = companies.filter(c=>c.type==='nogo').length;
+  document.getElementById('stFresh').textContent    = fresh;
+}
+
+/* ─────────────────────────────────────────────
+   AVATAR
+───────────────────────────────────────────── */
+const PALETTES = [
+  {bg:'rgba(23,128,102,0.1)',fg:'#0F6E56'},
+  {bg:'rgba(26,79,138,0.1)',fg:'#1A4F8A'},
+  {bg:'rgba(122,66,0,0.1)',fg:'#7A4200'},
+  {bg:'rgba(75,45,158,0.1)',fg:'#4B2D9E'},
+  {bg:'rgba(107,107,100,0.1)',fg:'#6B6B64'},
+];
+function getAvatarStyle(name){
+  let h=0; for(let c of (name||'')) h=(h*31+c.charCodeAt(0))&0xffff;
+  return PALETTES[h%PALETTES.length];
+}
+function initials(name){
+  return (name||'').replace(/[^A-Za-z ]/g,'').split(' ')
+    .filter(Boolean).map(w=>w[0]).slice(0,2).join('').toUpperCase()||'?';
+}
+
+/* ─────────────────────────────────────────────
+   TAG CLASS
+───────────────────────────────────────────── */
+function tagClass(t){
+  return {client:'tc',partner:'tp',prospect:'tpr',nogo:'tn',poc:'tpo'}[t]||'tn';
+}
+function tagLabel(t){
+  return {client:'Client',partner:'Partner',prospect:'Prospect',nogo:'No Outreach',poc:'POC'}[t]||t;
+}
+function icpStars(n){
+  if (!n) return '';
+  return '★'.repeat(Math.min(n,5))+'☆'.repeat(Math.max(0,5-n));
+}
+
+/* ─────────────────────────────────────────────
+   TAB SWITCH
+───────────────────────────────────────────── */
+function switchTab(t){
+  activeTab = t;
+  document.getElementById('tabComp').className='left-tab'+(t==='companies'?' active':'');
+  document.getElementById('tabCont').className='left-tab'+(t==='contacts'?' active':'');
+  document.getElementById('filtersRow').style.display = t==='companies'?'flex':'none';
+  renderList();
+}
+
+/* ─────────────────────────────────────────────
+   FILTER / SEARCH
+───────────────────────────────────────────── */
+function setFilter(f, el){
+  activeFilter = f;
+  // sync chips
+  document.querySelectorAll('.f-chip').forEach(c=>c.classList.remove('active'));
+  if (el && el.classList) el.classList.add('active');
+  // sync stats bar
+  document.querySelectorAll('.sb-col').forEach(c=>c.classList.remove('active'));
+  const sbMap = {all:'sbAll',client:'sbClient',poc:'sbPoc',partner:'sbPartner',
+                  prospect:'sbProspect',nogo:'sbNogo',fresh:'sbFresh'};
+  const sbEl = document.getElementById(sbMap[f]);
+  if (sbEl) sbEl.classList.add('active');
+  renderList();
+}
+
+function onSearch(){
+  searchQ = document.getElementById('searchInput').value.toLowerCase().trim();
+  renderList();
+}
+
+/* ─────────────────────────────────────────────
+   RENDER LIST
+───────────────────────────────────────────── */
+function renderList(){
+  const scroll = document.getElementById('listScroll');
+  const meta   = document.getElementById('listMeta');
+
+  if (activeTab==='contacts'){
+    const filt = contacts.filter(c=>{
+      if (!searchQ) return true;
+      return (c.full_name||'').toLowerCase().includes(searchQ)||
+             (c.company_name||'').toLowerCase().includes(searchQ)||
+             (c.title||'').toLowerCase().includes(searchQ);
+    });
+    meta.textContent = `${filt.length} of ${contacts.length} contacts`;
+    if (!filt.length){ scroll.innerHTML='<div style="padding:20px 10px;font-family:\'IBM Plex Mono\',monospace;font-size:9px;color:var(--t3);text-transform:uppercase">No contacts</div>'; return; }
+    scroll.innerHTML = filt.map(ct=>{
+      const av = getAvatarStyle(ct.full_name||'?');
+      const ini = initials(ct.full_name||'?');
+      return `<div class="ct-row" onclick="openDrawer('${ct.id||_slug(ct.full_name||'')}')">
+        <div class="ct-av" style="background:${av.bg};color:${av.fg}">${ini}</div>
+        <div class="ct-info">
+          <div class="ct-name">${ct.full_name||'—'}</div>
+          <div class="ct-sub">${ct.title||''}${ct.company_name?' · '+ct.company_name:''}</div>
+        </div>
+      </div>`;
+    }).join('');
+    return;
+  }
+
+  // companies tab
+  const thirtyDaysAgo = Date.now()-30*24*60*60*1000;
+  const contactedIds = new Set(contacts.map(c=>_slug(c.company_name||'')));
+  let filt = companies.filter(c=>{
+    if (activeFilter==='fresh'){
+      if (c.type!=='prospect') return false;
+      if (c.updated_at && new Date(c.updated_at).getTime()>=thirtyDaysAgo) return false;
+      if (contactedIds.has(_slug(c.name))) return false;
+    } else if (activeFilter!=='all' && c.type!==activeFilter) return false;
+    if (searchQ) return (c.name||'').toLowerCase().includes(searchQ)||(c.note||'').toLowerCase().includes(searchQ);
     return true;
   });
-  out.sort((a,b)=>{
-    if(sel==='name')return a.name.localeCompare(b.name);
-    if(sel==='type')return(a.type||'').localeCompare(b.type||'');
-    if(sel==='recent')return new Date(b.updated_at||0)-new Date(a.updated_at||0);
-    return(b.icp||0)-(a.icp||0);
-  });
-  return out;
-}
+  meta.textContent = `${filt.length} of ${companies.length} companies`;
+  if (!filt.length){ scroll.innerHTML='<div style="padding:20px 10px;font-family:\'IBM Plex Mono\',monospace;font-size:9px;color:var(--t3);text-transform:uppercase">No results</div>'; return; }
 
-function rl(){
-  FR=getFiltered();
-  document.getElementById('lmeta').textContent=`${FR.length} of ${COS.length}`;
-  const list=document.getElementById('colist');
-  if(!FR.length){list.innerHTML=`<div style="padding:20px;text-align:center;font-family:'IBM Plex Mono',monospace;font-size:9px;color:var(--t3);text-transform:uppercase">No results</div>`;return;}
-  list.innerHTML=FR.map((c,i)=>{
-    const[bg,fg]=av(c.name);const gps=gaps(c);const sel=c===CC;
-    const d=c.website?dom(c.website):'';
-    const gb=GF.map(gf=>`<div class="gsq-sm ${gps.some(g=>g.id===gf.id)?'gmis':'gfil'}"></div>`).join('');
-    const sub=d||c.category||c.note||'';
-    return`<div class="co-row${sel?' sel':''}${c.type==='nogo'?' dead':''}" onclick="oc2('${encodeURIComponent(c.id||sl(c.name))}')" data-i="${i}">
-      <div class="co-av" style="background:${bg};border-color:${fg}40;color:${fg}">${ini(c.name)}</div>
-      <div class="co-info">
-        <div class="co-name">${c.name}</div>
-        <div class="co-sub">${sub.length>38?sub.slice(0,38)+'…':sub}</div>
+  scroll.innerHTML = filt.map(c=>{
+    const av  = getAvatarStyle(c.name);
+    const ini = initials(c.name);
+    const tc  = tagClass(c.type);
+    const tl  = tagLabel(c.type);
+    const note = (c.note||'').length>48?(c.note||'').slice(0,48)+'…':(c.note||'—');
+    const sel  = currentCompany && currentCompany.name===c.name?' selected':'';
+    return `<div class="c-row${sel}" onclick="openCompany(companies.find(x=>x.name===${JSON.stringify(c.name)}))" oncontextmenu="showCtx(event,${JSON.stringify(c.name)});return false;">
+      <div class="c-av" style="background:${av.bg};color:${av.fg};border:1px solid ${av.fg}33">${ini}</div>
+      <div class="c-info">
+        <div class="c-name">${c.name}</div>
+        <div class="c-note">${note}</div>
       </div>
-      <div class="co-right">
-        <div class="gbar-sm">${gb}</div>
-        <span class="icpn">${c.icp||'—'}</span>
-        <span class="tag ${tcls(c.type)}">${tlbl(c.type)}</span>
-      </div>
+      <span class="tag ${tc}" style="flex-shrink:0">${tl}</span>
     </div>`;
   }).join('');
 }
 
-function oc2(encId){
-  const id=decodeURIComponent(encId);const c=COS.find(x=>(x.id||sl(x.name))===id);if(!c)return;
-  CC=c;FI=FR.indexOf(c);rl();renderDetail(c);
-  const row=document.querySelector(`#colist .co-row[data-i="${FI}"]`);if(row)row.scrollIntoView({block:'nearest'});
-}
+/* ─────────────────────────────────────────────
+   OPEN COMPANY
+───────────────────────────────────────────── */
+function openCompany(c){
+  if (!c) return;
+  currentCompany = c;
+  document.getElementById('emptyState').style.display='none';
+  const panel = document.getElementById('coPanel');
+  panel.style.display='block';
 
-function renderDetail(c){
-  const[bg,fg]=av(c.name);
-  const ccts=CTS.filter(ct=>(ct.company_name||'').toLowerCase()===c.name.toLowerCase()||(ct.company_id&&ct.company_id===(c.id||sl(c.name))));
-  const d=c.website?dom(c.website):'';
-  const esc=c.name.replace(/'/g,"\\'");
-  const center=document.getElementById('center');
-  center.innerHTML=`<div class="detail">
-    <div class="dbanner">
-      <div class="dlogo" style="background:${fg}">${ini(c.name)}</div>
-      <div style="flex:1;min-width:0">
-        <div class="dname">${c.name}<span class="tag ${tcls(c.type)}">${tlbl(c.type)}</span>${d?`<a class="ml" href="https://${d}" target="_blank">${d} ↗</a>`:''}</div>
-        <div class="dsub">${c.category||'AdTech'}${c.hq_city||c.region?' · '+(c.hq_city||c.region):''}</div>
-        <div class="dstars">${stars(c.icp||0)} <span style="font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--t3);font-weight:400">${c.icp||'—'}/10</span></div>
+  const av   = getAvatarStyle(c.name);
+  const ini  = initials(c.name);
+  const tc   = tagClass(c.type);
+  const tl   = tagLabel(c.type);
+  const stars = icpStars(c.icp);
+
+  // overview rows
+  const ovRows = [
+    c.category    && ['Category', c.category],
+    (c.region||c.hq_city) && ['Region / HQ', [c.region,c.hq_city].filter(Boolean).join(' · ')],
+    c.size        && ['Employees', c.size],
+    c.founded_year && ['Founded', c.founded_year],
+    c.website     && ['Website', `<a href="https://${c.website}" target="_blank" style="color:var(--g);text-decoration:none">${c.website} ↗</a>`],
+    c.tcf_vendor_id && ['GVL / TCF ID', c.tcf_vendor_id],
+    c.funding     && ['Funding', c.funding],
+    c.dsps && c.dsps.length && ['DSPs', Array.isArray(c.dsps)?c.dsps.join(', '):c.dsps],
+    c.updated_at  && ['DB Updated', new Date(c.updated_at).toLocaleDateString('en-GB')],
+  ].filter(Boolean);
+
+  // tech pills
+  const techArr = Array.isArray(c.tech_stack) ? c.tech_stack : [];
+  const techHtml = techArr.length
+    ? `<div class="tech-pills">${techArr.map(t=>`<span class="tech-pill">${t.tool||t}</span>`).join('')}</div>`
+    : '';
+
+  // products section
+  let productsHtml = '';
+  const prods = c.products?.products || [];
+  if (prods.length){
+    productsHtml = `
+    <div class="ps" id="ps-products">
+      <div class="ps-head" onclick="toggleSection('ps-products')">
+        <span>📦</span>
+        <span class="ps-title">Products</span>
+        <span class="ps-badge">${prods.length}</span>
+        <span class="ps-arrow" id="arr-ps-products">›</span>
       </div>
-      <div class="dact">
-        <button class="btn p sm" onclick="oc('Research ${esc} — full contact report for onAudience')">↗ Research</button>
-        <button class="btn sm" onclick="oc('Draft personalized outreach email to ${esc} for onAudience data partnership')">✉ Draft</button>
+      <div class="ps-body" id="body-ps-products" style="display:none">
+        <table class="prod-table">
+          <thead><tr><th>Product</th><th>Description</th><th>Target</th></tr></thead>
+          <tbody>${prods.map(p=>`<tr><td>${p.name||''}</td><td>${p.description||''}</td><td>${p.target_user||''}</td></tr>`).join('')}</tbody>
+        </table>
+        ${c.products.integrations_advertised?.length?`<div style="margin-top:8px;font-family:'IBM Plex Mono',monospace;font-size:8px;text-transform:uppercase;color:var(--t3);margin-bottom:4px">Integrations</div><div class="tech-pills">${c.products.integrations_advertised.map(i=>`<span class="tech-pill">${i}</span>`).join('')}</div>`:''}
+        ${c.products.positioning?.length?`<div style="margin-top:10px;font-size:10px;color:var(--t2)">${Array.isArray(c.products.positioning)?c.products.positioning.join(' · '):c.products.positioning}</div>`:''}
+      </div>
+    </div>`;
+  }
+
+  // contacts in this company
+  const coCts = contacts.filter(ct=>ct.company_name && ct.company_name.toLowerCase()===c.name.toLowerCase());
+  const ctHtml = coCts.length
+    ? coCts.map(ct=>{
+        const av2=getAvatarStyle(ct.full_name||'');
+        const ini2=initials(ct.full_name||'');
+        return `<div class="ctc-card" onclick="openDrawer('${ct.id||_slug(ct.full_name||'')}')">
+          <div class="ct-av" style="width:32px;height:32px;border-radius:50%;background:${av2.bg};color:${av2.fg};font-family:'IBM Plex Mono',monospace;font-size:10px;font-weight:600;display:flex;align-items:center;justify-content:center;flex-shrink:0">${ini2}</div>
+          <div>
+            <div class="ctc-name">${ct.full_name||'—'}</div>
+            <div class="ctc-role">${ct.title||'—'}</div>
+            ${ct.email?`<div class="ctc-email">${ct.email}</div>`:''}
+          </div>
+        </div>`;
+      }).join('')
+    : `<button class="btn sm" onclick="openClaude('Find decision makers at ${c.name} — LinkedIn, email, title, background')">Find contacts ↗</button>`;
+
+  panel.innerHTML = `
+  <div class="co-panel">
+    <div class="co-header">
+      <div class="co-av-lg" style="background:${av.bg};color:${av.fg};border:1px solid ${av.fg}33">${ini}</div>
+      <div>
+        <div class="co-hname">${c.name}</div>
+        <div class="co-hmeta">
+          <span class="tag ${tc}">${tl}</span>
+          ${stars?`<span class="icp-stars" title="ICP ${c.icp}/10">${stars}</span>`:''}
+        </div>
+      </div>
+      <div class="co-close" onclick="closePanel()">✕</div>
+    </div>
+
+    <!-- 1. Overview -->
+    <div class="ps" id="ps-overview">
+      <div class="ps-head" onclick="toggleSection('ps-overview')">
+        <span>🏢</span>
+        <span class="ps-title">Company Overview</span>
+        <span class="ps-arrow open" id="arr-ps-overview">›</span>
+      </div>
+      <div class="ps-body" id="body-ps-overview">
+        <table class="info-table">
+          ${ovRows.map(([k,v])=>`<tr><td>${k}</td><td>${v}</td></tr>`).join('')}
+        </table>
+        ${c.description?`<div class="desc-text">${c.description}</div>`:''}
+        ${techHtml}
       </div>
     </div>
-    <div class="dtabs" id="dtabs">
-      <div class="dtab active" onclick="sdt('ov',this)">Overview</div>
-      <div class="dtab" onclick="sdt('ct',this)">Contacts${ccts.length?` (${ccts.length})`:''}</div>
-      <div class="dtab" onclick="sdt('out',this)">Outreach</div>
-      <div class="dtab" onclick="sdt('rel',this)">Relations</div>
+
+    ${productsHtml}
+
+    <!-- 3. Contacts -->
+    <div class="ps" id="ps-contacts">
+      <div class="ps-head" onclick="toggleSection('ps-contacts')">
+        <span>👤</span>
+        <span class="ps-title">Contacts</span>
+        ${coCts.length?`<span class="ps-badge">${coCts.length}</span>`:''}
+        <span class="ps-arrow" id="arr-ps-contacts">›</span>
+      </div>
+      <div class="ps-body" id="body-ps-contacts" style="display:none">
+        <div style="display:flex;flex-direction:column;gap:6px">${ctHtml}</div>
+      </div>
     </div>
-    <div id="dtbody"></div>
+
+    <!-- 4. Outreach Angle -->
+    <div class="ps" id="ps-angle">
+      <div class="ps-head" onclick="toggleSection('ps-angle')">
+        <span>💡</span>
+        <span class="ps-title">Outreach Angle</span>
+        <span class="ps-arrow" id="arr-ps-angle">›</span>
+      </div>
+      <div class="ps-body" id="body-ps-angle" style="display:none">
+        ${c.outreach_angle
+          ? `<div style="font-size:11px;color:var(--t2);line-height:1.7">${c.outreach_angle}</div>`
+          : `<button class="btn sm" onclick="openClaude('Generate outreach angle for ${c.name} — value proposition for onAudience data partnerships')">Generate angle ↗</button>`}
+      </div>
+    </div>
+
+    <!-- 5. Actions -->
+    <div class="ps" id="ps-actions">
+      <div class="ps-head" onclick="toggleSection('ps-actions')">
+        <span>⚡</span>
+        <span class="ps-title">Actions</span>
+        <span class="ps-arrow" id="arr-ps-actions">›</span>
+      </div>
+      <div class="ps-body" id="body-ps-actions" style="display:none">
+        <div class="act-grid">
+          <button class="btn sm" onclick="openClaude('Full contact report for ${c.name}')">🔍 Full report</button>
+          <button class="btn sm" onclick="openClaude('Find decision makers and head of data partnerships at ${c.name}')">👤 Find DMs</button>
+          <button class="btn sm p" onclick="openPanel('meeseeks',{company:'${c.name}',status:'${c.type}',icp:${c.icp||'null'},description:${JSON.stringify(c.description||'')},angle:${JSON.stringify(c.outreach_angle||'')}})">✉ Draft email</button>
+          ${c.linkedin_slug?`<button class="btn sm" onclick="window.open('https://linkedin.com/company/${c.linkedin_slug}','_blank')">LinkedIn ↗</button>`:`<button class="btn sm" onclick="window.open('https://linkedin.com/search/results/companies/?keywords=${encodeURIComponent(c.name)}','_blank')">LinkedIn ↗</button>`}
+          <button class="btn sm" onclick="openClaude('Find companies similar to ${c.name} for onAudience data partnerships — top 10 ranked by ICP fit')">🔗 Find similar</button>
+          <button class="btn sm" onclick="openClaude('Check Gmail for previous contact history with ${c.name} — summarize relationship')">📧 Gmail history</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- 6. Relations -->
+    <div class="ps" id="ps-relations">
+      <div class="ps-head" onclick="toggleSection('ps-relations')">
+        <span>🔗</span>
+        <span class="ps-title">Relations</span>
+        <span class="ps-badge" id="rel-count-badge"></span>
+        <span class="ps-arrow" id="arr-ps-relations">›</span>
+      </div>
+      <div class="ps-body ps-body-scroll" id="body-ps-relations" style="display:none">
+        <div id="rel-body" style="font-family:'IBM Plex Mono',monospace;font-size:9px;color:var(--t3);text-transform:uppercase">Loading…</div>
+      </div>
+    </div>
+
+    <!-- 7. Quick Links -->
+    <div class="ps" id="ps-links">
+      <div class="ps-head" onclick="toggleSection('ps-links')">
+        <span>🔗</span>
+        <span class="ps-title">Quick Links</span>
+        <span class="ps-arrow" id="arr-ps-links">›</span>
+      </div>
+      <div class="ps-body" id="body-ps-links" style="display:none">
+        <div style="display:flex;flex-direction:column;gap:5px">
+          <a href="https://linkedin.com/search/results/people/?keywords=${encodeURIComponent(c.name)}&origin=FACETED_SEARCH" target="_blank" style="font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--g);text-decoration:none">LinkedIn People Search ↗</a>
+          <a href="https://linkedin.com/search/results/companies/?keywords=${encodeURIComponent(c.name)}" target="_blank" style="font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--g);text-decoration:none">Company LinkedIn ↗</a>
+          ${c.website?`<a href="https://${c.website}" target="_blank" style="font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--g);text-decoration:none">Website: ${c.website} ↗</a>`:''}
+        </div>
+      </div>
+    </div>
+
   </div>`;
-  rdt('ov');
+
+  // highlight selected row in list
+  renderList();
+  // load relations async
+  if (c.name) setTimeout(()=>loadRelations(_slug(c.name)), 80);
+  // scroll center to top
+  document.getElementById('centerScroll').scrollTop=0;
 }
 
-function sdt(tab,el){
-  CDT=tab;
-  document.querySelectorAll('#dtabs .dtab').forEach(t=>t.classList.remove('active'));
-  if(el)el.classList.add('active');
-  rdt(tab);
-}
-
-function rdt(tab){
-  const c=CC;if(!c)return;
-  const b=document.getElementById('dtbody');if(!b)return;
-  const[bg,fg]=av(c.name);
-  const ccts=CTS.filter(ct=>(ct.company_name||'').toLowerCase()===c.name.toLowerCase()||(ct.company_id&&ct.company_id===(c.id||sl(c.name))));
-  const d=c.website?dom(c.website):'';
-  const esc=c.name.replace(/'/g,"\\'");
-  const dsps=c.dsps?(Array.isArray(c.dsps)?c.dsps:JSON.parse(c.dsps)):[];
-  const ts=c.tech_stack?(Array.isArray(c.tech_stack)?c.tech_stack:JSON.parse(c.tech_stack)):[];
-
-  if(tab==='ov'){
-    b.innerHTML=`<div class="sec"><div class="sh2"><span class="slbl">Company Overview</span></div><div class="sbody">
-      <table class="inf">
-        ${c.description?`<tr><td>About</td><td>${c.description}</td></tr>`:''}
-        <tr><td>Category</td><td>${c.category||'—'}</td></tr>
-        <tr><td>Region / HQ</td><td>${c.hq_city||c.region||'—'}</td></tr>
-        <tr><td>Employees</td><td>${c.size||'—'}</td></tr>
-        ${c.founded_year?`<tr><td>Founded</td><td>${c.founded_year}</td></tr>`:''}
-        ${c.funding?`<tr><td>Funding</td><td style="font-size:11px">${c.funding}</td></tr>`:''}
-        ${c.tcf_vendor_id?`<tr><td>GVL / TCF ID</td><td><span class="cpill">${c.tcf_vendor_id}</span></td></tr>`:''}
-        <tr><td>DSPs</td><td>${dsps.length?dsps.map(dp=>`<span class="spill">${dp}</span>`).join(''):'—'}</td></tr>
-        ${ts.length?`<tr><td>Tech Stack</td><td>${ts.slice(0,6).map(t=>`<span class="spill">${t.tool||t}</span>`).join('')}</td></tr>`:''}
-        <tr><td>Updated</td><td style="font-family:'IBM Plex Mono',monospace;font-size:10px">${ta(c.updated_at)}</td></tr>
-        ${c.linkedin_slug?`<tr><td>LinkedIn</td><td><a class="ml" href="https://www.linkedin.com/company/${c.linkedin_slug}" target="_blank">Company page ↗</a></td></tr>`:''}
-        ${d?`<tr><td>Website</td><td><a class="ml" href="https://${d}" target="_blank">${d} ↗</a></td></tr>`:''}
-      </table>${c.note?`<div class="nblock">📋 ${c.note}</div>`:''}
-    </div></div>`;
-  } else if(tab==='ct'){
-    const ch=ccts.length?ccts.map(ct=>`<div class="ctcard">
-      <div style="display:flex;align-items:flex-start;gap:8px;margin-bottom:6px">
-        <div class="ctav">${ini(ct.full_name||'')}</div>
-        <div><div style="font-size:12px;font-weight:500">${ct.full_name||'—'}</div><div style="font-family:'IBM Plex Mono',monospace;font-size:9px;color:var(--t3)">${ct.title||''}</div></div>
-      </div>
-      <table class="inf" style="font-size:11px">
-        <tr><td>Email</td><td>${ct.email?`<span class="cpill">${ct.email}</span>`:'—'}</td></tr>
-        ${ct.linkedin_url?`<tr><td>LinkedIn</td><td><a class="ml" href="${ct.linkedin_url}" target="_blank">Profile ↗</a></td></tr>`:''}
-        ${ct.notes?`<tr><td>Notes</td><td style="color:var(--t2)">${ct.notes}</td></tr>`:''}
-      </table></div>`).join(''):`<div class="nodata">No contacts in DB yet</div>`;
-    b.innerHTML=`<div style="text-align:right;margin-bottom:8px"><button class="btn sm" onclick="oc('Find Head of Programmatic or Data Partnerships at ${esc} — LinkedIn, email, background')">Find contacts ↗</button></div>${ch}`;
-  } else if(tab==='out'){
-    b.innerHTML=`<div class="sec"><div class="sh2"><span class="slbl">Outreach Angle</span></div><div class="sbody">
-      <div style="font-size:12px;color:var(--t2);line-height:1.7">${c.outreach_angle||`<span style="color:var(--t3);font-style:italic">Run full report to generate outreach angle</span>`}</div>
-      <div style="display:flex;gap:5px;flex-wrap:wrap;margin-top:10px">
-        <button class="btn p sm" onclick="oc('Draft personalized outreach email to ${esc} — value-led and curiosity variants for onAudience data partnership')">Draft email ↗</button>
-        <button class="btn sm" onclick="oc('Draft LinkedIn connection note for ${esc} — short, personalized for onAudience')">LinkedIn ↗</button>
-        <button class="btn sm" onclick="oc('Find companies similar to ${esc} for onAudience — top 10 by ICP fit')">Find similar ↗</button>
-        <button class="btn sm" onclick="oc('Check Gmail for any prior contact with ${esc} — summarize email history')">Gmail ↗</button>
-      </div>
-    </div></div>
-    <div class="sec"><div class="sh2"><span class="slbl">Quick Links</span></div><div class="sbody"><table class="inf">
-      <tr><td>People</td><td><a class="ml" href="https://www.linkedin.com/search/results/people/?keywords=${encodeURIComponent(c.name+' Head Programmatic Data Partnerships')}" target="_blank">LinkedIn search ↗</a></td></tr>
-      ${c.linkedin_slug?`<tr><td>Company LI</td><td><a class="ml" href="https://www.linkedin.com/company/${c.linkedin_slug}" target="_blank">linkedin.com/company/${c.linkedin_slug} ↗</a></td></tr>`:''}
-      ${d?`<tr><td>Website</td><td><a class="ml" href="https://${d}" target="_blank">${d} ↗</a></td></tr>`:''}
-    </table></div></div>`;
-  } else if(tab==='rel'){
-    b.innerHTML=`<div id="relb"><div class="nodata">Loading…</div></div>`;
-    setTimeout(()=>lrel(sl(c.name)),60);
+/* ─────────────────────────────────────────────
+   TOGGLE SECTION
+───────────────────────────────────────────── */
+function toggleSection(id){
+  const body  = document.getElementById('body-'+id);
+  const arrow = document.getElementById('arr-'+id);
+  if (!body) return;
+  const open = body.style.display!=='none';
+  body.style.display  = open?'none':'block';
+  if (arrow) arrow.classList.toggle('open', !open);
+  // if relations section just opened and empty — load
+  if (!open && id==='ps-relations' && currentCompany){
+    const rb = document.getElementById('rel-body');
+    if (rb && rb.textContent.trim()==='Loading…') loadRelations(_slug(currentCompany.name));
   }
 }
 
-async function lrel(slug){
-  const b=document.getElementById('relb');if(!b)return;
-  try{
-    const res=await fetch(`${SB_URL}/rest/v1/company_relations?or=(from_company.eq.${slug},to_company.eq.${slug})&select=*`,{headers:{apikey:SB_KEY,Authorization:`Bearer ${SB_KEY}`}});
-    const rels=await res.json();
-    if(!Array.isArray(rels)||!rels.length){b.innerHTML='<div class="nodata">No relations recorded</div>';return;}
-    const cm={};COS.forEach(x=>{if(x.name)cm[sl(x.name)]=x;});
+function closePanel(){
+  currentCompany=null;
+  document.getElementById('coPanel').style.display='none';
+  document.getElementById('emptyState').style.display='flex';
+  renderList();
+}
+
+/* ─────────────────────────────────────────────
+   LOAD RELATIONS
+───────────────────────────────────────────── */
+async function loadRelations(slug){
+  const body  = document.getElementById('rel-body');
+  const badge = document.getElementById('rel-count-badge');
+  if (!body) return;
+  try {
+    const res  = await fetch(
+      `${SB_URL}/rest/v1/company_relations?or=(from_company.eq.${slug},to_company.eq.${slug})&select=*`,
+      { headers: { apikey:SB_KEY, Authorization:`Bearer ${SB_KEY}` } }
+    );
+    const rels = await res.json();
+    if (!Array.isArray(rels)||!rels.length){
+      body.innerHTML='<div style="font-family:\'IBM Plex Mono\',monospace;font-size:9px;color:var(--t3);text-transform:uppercase">No relations recorded</div>';
+      if (badge) badge.textContent='';
+      return;
+    }
+    const coMap={};
+    companies.forEach(x=>{ if(x.name) coMap[_slug(x.name)]=x; });
     const ti={data_partner:'🤝',dsp_integration:'📡',marketplace_listed:'🛒',tech_integration:'⚙️',client_of:'💰',acquired_by:'🏢',subsidiary_of:'🏢',competes_with:'⚔️',co_sell:'🤲'};
-    const tl2={data_partner:'Data Partner',dsp_integration:'DSP Integration',marketplace_listed:'Marketplace',tech_integration:'Tech Integration',client_of:'Client Of',acquired_by:'Acquired By',subsidiary_of:'Subsidiary Of',competes_with:'Competes With',co_sell:'Co-Sell'};
-    const gr={};
-    rels.forEach(r=>{gr[r.relation_type]=gr[r.relation_type]||[];const isSrc=r.from_company===slug;const oid=isSrc?r.to_company:r.from_company;const co=cm[oid];gr[r.relation_type].push({oid,name:co?.name||oid,arrow:r.direction==='bidirectional'?'⇄':(isSrc?'→':'←'),scls:r.strength==='confirmed'?'tc':'tpr',strength:r.strength,notes:r.notes,has:!!co});});
-    b.innerHTML=Object.entries(gr).map(([tp,items])=>`<div style="margin-bottom:10px">
-      <div style="font-family:'IBM Plex Mono',monospace;font-size:8px;text-transform:uppercase;letter-spacing:.06em;color:var(--t3);margin-bottom:4px;display:flex;align-items:center;gap:4px">${ti[tp]||'•'} ${tl2[tp]||tp}<span style="background:var(--surf3);padding:0 5px;border-radius:2px;margin-left:auto">${items.length}</span></div>
-      ${items.map(it=>`<div style="display:flex;align-items:flex-start;gap:6px;padding:4px 0;border-bottom:1px solid var(--rule3)">
-        <span style="color:var(--g);font-size:13px;flex-shrink:0">${it.arrow}</span>
-        <div style="flex:1;min-width:0">
-          <div style="display:flex;align-items:center;gap:5px">
-            ${it.has?`<span style="font-size:12px;font-weight:500;color:var(--g);cursor:pointer" onclick="oc2('${encodeURIComponent(it.oid)}')">${it.name}</span>`:`<span style="font-size:12px;font-weight:500">${it.name}</span>`}
-            <span class="tag ${it.scls}" style="margin-left:auto">${it.strength}</span>
-          </div>
-          ${it.notes?`<div style="font-size:11px;color:var(--t3);margin-top:2px">${it.notes}</div>`:''}
-        </div></div>`).join('')}
-    </div>`).join('');
-  }catch(e){b.innerHTML=`<div class="nodata">Error: ${e.message}</div>`;}
+    const tl={data_partner:'Data Partner',dsp_integration:'DSP Integration',marketplace_listed:'Marketplace Listed',tech_integration:'Tech Integration',client_of:'Client Of',acquired_by:'Acquired By',subsidiary_of:'Subsidiary Of',competes_with:'Competes With',co_sell:'Co-Sell'};
+    const groups={};
+    rels.forEach(r=>{
+      groups[r.relation_type]=groups[r.relation_type]||[];
+      const isSrc=r.from_company===slug;
+      const oid=isSrc?r.to_company:r.from_company;
+      const co=coMap[oid];
+      groups[r.relation_type].push({oid,name:co?.name||oid,arrow:r.direction==='bidirectional'?'⇄':(isSrc?'→':'←'),scls:r.strength==='confirmed'?'tc':'tpr',strength:r.strength,notes:r.notes,has:!!co});
+    });
+    body.innerHTML=Object.entries(groups).map(([tp,items])=>
+      `<div style="margin-bottom:10px">
+        <div style="font-family:'IBM Plex Mono',monospace;font-size:9px;text-transform:uppercase;letter-spacing:.06em;color:var(--t3);margin-bottom:4px;display:flex;align-items:center;gap:5px">
+          <span>${ti[tp]||'•'}</span><span>${tl[tp]||tp}</span>
+          <span style="margin-left:auto;background:var(--surf3);border-radius:2px;padding:0 5px">${items.length}</span>
+        </div>
+        ${items.map(it=>`<div style="display:flex;align-items:flex-start;gap:8px;padding:5px 0;border-bottom:1px solid var(--rule3)">
+          <span style="font-family:'IBM Plex Mono',monospace;font-size:13px;color:var(--g);flex-shrink:0;margin-top:1px">${it.arrow}</span>
+          <div style="flex:1;min-width:0">
+            <div style="display:flex;align-items:center;gap:6px">
+              ${it.has?`<span style="font-size:12px;font-weight:500;color:var(--g);cursor:pointer" onclick="openCompany(companies.find(x=>_slug(x.name)==='${it.oid}'))">${it.name}</span>`:`<span style="font-size:12px;font-weight:500;color:var(--t1)">${it.name}</span>`}
+              <span class="tag ${it.scls}" style="margin-left:auto;flex-shrink:0">${it.strength}</span>
+            </div>
+            ${it.notes?`<div style="font-size:11px;color:var(--t3);margin-top:2px;line-height:1.4">${it.notes}</div>`:''}
+          </div></div>`).join('')}
+      </div>`
+    ).join('');
+    if (badge) badge.textContent=`(${rels.length})`;
+  } catch(e){
+    body.innerHTML=`<div style="font-size:11px;color:var(--t3)">Error: ${e.message}</div>`;
+  }
 }
 
-function rct(){
-  const q=(document.getElementById('ctsrch').value||'').toLowerCase();
-  const f=CTS.filter(ct=>!q||(ct.full_name+' '+(ct.company_name||'')+' '+(ct.title||'')).toLowerCase().includes(q));
-  document.getElementById('ctmeta').textContent=`${f.length} of ${CTS.length}`;
-  document.getElementById('cttb').innerHTML=f.map(ct=>{const[bg,fg]=av(ct.full_name||'');
-    return`<tr onclick="oc('Research ${(ct.full_name||'').replace(/'/g,"\\'")} at ${(ct.company_name||'').replace(/'/g,"\\'")} for onAudience outreach')">
-      <td><div style="width:26px;height:26px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-family:'IBM Plex Mono',monospace;font-size:8px;font-weight:700;background:${bg};border:1px solid ${fg}40;color:${fg}">${ini(ct.full_name||'')}</div></td>
-      <td style="font-weight:500">${ct.full_name||'—'}</td>
-      <td style="font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--t3)">${ct.title||'—'}</td>
-      <td>${ct.company_name||'—'}</td>
-      <td>${ct.email?`<span class="cpill">${ct.email}</span>`:'—'}</td>
-      <td style="font-size:11px;color:var(--t2)">${ct.notes||''}</td>
-    </tr>`;}).join('');
-}
+/* ─────────────────────────────────────────────
+   CONTEXT MENU
+───────────────────────────────────────────── */
+function showCtx(e, name){
+  e.preventDefault(); e.stopPropagation();
+  const co = companies.find(x=>x.name===name);
+  const menu = document.getElementById('ctxMenu');
+  const actions = [
+    {icon:'🔍',text:'Full contact report',fn:()=>openClaude(`Research ${name} — full contact report with decision makers, outreach angle, and ICP fit score`)},
+    {icon:'👤',text:'Find decision makers',fn:()=>openClaude(`Find Head of Programmatic or Data Partnerships at ${name} — LinkedIn, email, background`)},
+    {icon:'✉',text:'Draft outreach email',fn:()=>openPanel('meeseeks',{company:name,status:co?.type,description:co?.description||'',angle:co?.outreach_angle||''})},
+    {icon:'💬',text:'LinkedIn message',fn:()=>openClaude(`Draft LinkedIn connection note and InMail for ${name} — short, personalized, data partnership angle`)},
+    {icon:'🔗',text:'Find similar companies',fn:()=>openClaude(`Find companies similar to ${name} for onAudience data outreach — top 10 by ICP fit`)},
+    {icon:'📧',text:'Check email history',fn:()=>openClaude(`Check Gmail for previous contact with ${name} — summarize relationship history`)},
+  ];
+  if (co?.type==='nogo') actions.push({icon:'⚠️',text:'Why no outreach?',fn:()=>openClaude(`Explain why ${name} is marked no-outreach in onAudience database`)});
+  if (co?.type==='prospect') actions.push({icon:'🚀',text:'Prioritize',fn:()=>openClaude(`What is the best strategy to approach ${name} for data partnership — priority outreach plan`)});
 
-function sv(v){
-  document.querySelectorAll('.view,.nav-tab').forEach(el=>el.classList.remove('active'));
-  document.getElementById('view-'+v).classList.add('active');document.getElementById('nav-'+v).classList.add('active');
-  if(v==='en')btc();
+  menu.innerHTML = `<div class="ctx-label">${name}</div><div class="ctx-sep"></div>`
+    + actions.map((a,i)=>`<div class="ctx-item" data-i="${i}"><span class="ctx-ico">${a.icon}</span>${a.text}</div>`).join('');
+  menu.querySelectorAll('.ctx-item').forEach((el,i)=>{
+    el.addEventListener('click',()=>{ menu.style.display='none'; actions[i].fn(); });
+  });
+  const x=Math.min(e.clientX, window.innerWidth-230);
+  const y=Math.min(e.clientY, window.innerHeight-actions.length*36-30);
+  menu.style.left=x+'px'; menu.style.top=y+'px'; menu.style.display='block';
 }
+document.addEventListener('click',()=>document.getElementById('ctxMenu').style.display='none');
 
-/* KEYBOARD */
-document.addEventListener('keydown',e=>{
-  if(e.target.tagName==='INPUT'||e.target.tagName==='TEXTAREA')return;
-  if(e.key==='Escape'){cm();return;}
-  if(e.key==='/'){ e.preventDefault();document.getElementById('cosrch').focus();return;}
-  if(e.key==='n'||e.key==='N'){e.preventDefault();openR();return;}
-  if(e.key==='j'||e.key==='ArrowDown'){e.preventDefault();FI=Math.min(FI+1,FR.length-1);if(FR[FI])oc2(encodeURIComponent(FR[FI].id||sl(FR[FI].name)));return;}
-  if(e.key==='k'||e.key==='ArrowUp'){e.preventDefault();FI=Math.max(FI-1,0);if(FR[FI])oc2(encodeURIComponent(FR[FI].id||sl(FR[FI].name)));return;}
-  if(e.key==='e'||e.key==='E'){if(CC){e.preventDefault();oc('Research '+CC.name+' — full contact report for onAudience');}return;}
-  if(e.key==='ArrowLeft'&&CC){const t=['ov','ct','out','rel'];const i=t.indexOf(CDT);if(i>0){CDT=t[i-1];document.querySelectorAll('#dtabs .dtab')[i-1]?.click();}return;}
-  if(e.key==='ArrowRight'&&CC){const t=['ov','ct','out','rel'];const i=t.indexOf(CDT);if(i<t.length-1){CDT=t[i+1];document.querySelectorAll('#dtabs .dtab')[i+1]?.click();}return;}
+/* ─────────────────────────────────────────────
+   CONTACT DRAWER
+───────────────────────────────────────────── */
+function openDrawer(ctId){
+  const ct = contacts.find(c=>c.id===ctId||(c.full_name&&_slug(c.full_name)===ctId));
+  if (!ct) return;
+  currentContact = ct;
+  const av=getAvatarStyle(ct.full_name||'');
+  const ini=initials(ct.full_name||'');
+  document.getElementById('drAv').textContent=ini;
+  document.getElementById('drAv').style.background=av.bg;
+  document.getElementById('drAv').style.color=av.fg;
+  document.getElementById('drName').textContent=ct.full_name||'—';
+  document.getElementById('drSub').textContent=(ct.title||'')+(ct.company_name?' · '+ct.company_name:'');
+  const fields=[
+    ct.email&&['Email',`<a href="mailto:${ct.email}" style="color:var(--g);font-family:'IBM Plex Mono',monospace;font-size:9px">${ct.email}</a>`],
+    ct.linkedin_url&&['LinkedIn',`<a href="${ct.linkedin_url}" target="_blank" style="color:var(--g);font-family:'IBM Plex Mono',monospace;font-size:9px">${ct.linkedin_url}</a>`],
+    ct.notes&&['Notes',ct.notes],
+  ].filter(Boolean);
+  document.getElementById('drBody').innerHTML=fields.map(([l,v])=>`
+    <div class="dr-field"><label>${l}</label><p>${v}</p></div>`).join('');
+  document.getElementById('ctDrawer').classList.add('open');
+  document.getElementById('ctDrawerOverlay').classList.add('vis');
+}
+function closeDrawer(){
+  document.getElementById('ctDrawer').classList.remove('open');
+  document.getElementById('ctDrawerOverlay').classList.remove('vis');
+  currentContact=null;
+}
+function drEmail(){ if(currentContact) openPanel('meeseeks',{company:currentContact.company_name,contactName:currentContact.full_name,contactTitle:currentContact.title,linkedin:currentContact.linkedin_url}); }
+function drLinkedIn(){ if(currentContact&&currentContact.linkedin_url) window.open(currentContact.linkedin_url,'_blank'); }
+function drGmail(){ if(currentContact) openClaude(`Search Gmail for email history with ${currentContact.full_name} at ${currentContact.company_name||''}`); }
+function drResearch(){ if(currentContact) openClaude(`Full research on ${currentContact.full_name}, ${currentContact.title||''} at ${currentContact.company_name||''} — background, LinkedIn activity, interests, outreach hooks`); }
+
+/* ─────────────────────────────────────────────
+   PANELS
+───────────────────────────────────────────── */
+function openPanel(id, payload){
+  const p=PANELS[id];
+  if (!p){ openClaude('Compose outreach email'+(payload?.company?' for '+payload.company:'')); return; }
+  const modal=document.getElementById('panelModal');
+  const iframe=document.getElementById('panelIframe');
+  modal.classList.add('vis');
+  iframe.src=p.src;
+  iframe.onload=()=>{
+    iframe.contentWindow.postMessage({type:'COMPOSE_PREFILL',payload},'*');
+    iframe.contentWindow.postMessage({type:'THEME_SYNC',payload:{theme}},'*');
+  };
+}
+function closePanel2(){
+  document.getElementById('panelModal').classList.remove('vis');
+  document.getElementById('panelIframe').src='';
+}
+document.getElementById('panelModal').addEventListener('click',e=>{
+  if(e.target===document.getElementById('panelModal')) closePanel2();
+});
+window.addEventListener('message',e=>{
+  if(e.data?.type==='COMPOSE_READY'){ closePanel2(); }
 });
 
-/* MODAL */
-let _mt='';
-function openR(t){_mt=t||'Research [COMPANY] — full contact report with decision makers, outreach angle, and ICP fit for onAudience data partnership';document.getElementById('mt').textContent='Research a company';document.getElementById('md').textContent='Enter company name to open a full contact report in Claude.';document.getElementById('mi').value='';document.getElementById('ov').classList.add('vis');setTimeout(()=>document.getElementById('mi').focus(),50);}
-function cm(){document.getElementById('ov').classList.remove('vis');}
-function sm(){const v=document.getElementById('mi').value.trim();if(!v)return;cm();oc(_mt.replace('[COMPANY]',v));}
-
-/* ENRICHER */
-function btc(){
-  const el=document.getElementById('tctags');if(!el||!COS.length)return;
-  const cats={},regs={},types={};
-  COS.forEach(c=>{const cat=(c.category||'').split('/')[0].trim();if(cat&&cat.length>1)cats[cat]=(cats[cat]||0)+1;const reg=(c.hq_city||c.region||'').split(',').pop().trim();if(reg&&reg.length>1&&reg.length<20)regs[reg]=(regs[reg]||0)+1;if(c.type)types[c.type]=(types[c.type]||0)+1;});
-  const wu=COS.filter(c=>c.website);
-  const gt=GF.map(gf=>({id:gf.id,n:wu.filter(c=>gaps(c).some(g=>g.id===gf.id)).length})).filter(g=>g.n>0).sort((a,b)=>b.n-a.n);
-  const topC=Object.entries(cats).filter(([,n])=>n>=2).sort((a,b)=>b[1]-a[1]).slice(0,8);
-  const topR=Object.entries(regs).filter(([,n])=>n>=2).sort((a,b)=>b[1]-a[1]).slice(0,5);
-  const tcm={client:'tcc',poc:'tcp',partner:'tca',prospect:'',nogo:''};
-  let h='';
-  ['client','poc','partner','prospect','nogo'].filter(t=>types[t]).forEach(t=>{h+=`<span class="tctag ${tcm[t]||''}" onclick="etag('type:${t}',this)">${tlbl(t)} <span class="tcn">${types[t]}</span></span>`;});
-  if(gt.length){h+='<span class="tcsep">·</span>';gt.slice(0,5).forEach(g=>{h+=`<span class="tctag gap" onclick="etag('gap:${g.id}',this)">−${g.id} <span class="tcn">${g.n}</span></span>`;});const g3=wu.filter(c=>gaps(c).length>=3).length;if(g3)h+=`<span class="tctag gap" onclick="etag('gaps3',this)">3+ gaps <span class="tcn">${g3}</span></span>`;}
-  if(topC.length){h+='<span class="tcsep">·</span>';topC.forEach(([cat,n])=>{h+=`<span class="tctag" onclick="etag('cat:${encodeURIComponent(cat)}',this)">${cat} <span class="tcn">${n}</span></span>`;});}
-  if(topR.length){h+='<span class="tcsep">·</span>';topR.forEach(([reg,n])=>{h+=`<span class="tctag" onclick="etag('reg:${encodeURIComponent(reg)}',this)">${reg} <span class="tcn">${n}</span></span>`;});}
-  el.innerHTML=h;
+/* ─────────────────────────────────────────────
+   RESEARCH MODAL
+───────────────────────────────────────────── */
+function promptResearch(){
+  _modalMode='research';
+  document.getElementById('modalTitle').textContent='Research a Company';
+  document.getElementById('modalDesc').textContent='Enter company name to generate a full contact report with decision makers, outreach angle, and ICP fit.';
+  document.getElementById('modalInput').value='';
+  document.getElementById('overlay').classList.add('vis');
+  setTimeout(()=>document.getElementById('modalInput').focus(),60);
 }
-function etag(tag,el){
-  if(EAT===tag){EAT=null;EF=[];ES.clear();document.querySelectorAll('.tctag').forEach(t=>t.classList.remove('active'));erl();eusc();ess('');return;}
-  EAT=tag;document.querySelectorAll('.tctag').forEach(t=>t.classList.remove('active'));if(el)el.classList.add('active');
-  let m=COS;
-  if(tag.startsWith('type:'))m=COS.filter(c=>c.type===tag.slice(5));
-  else if(tag.startsWith('gap:')){const gid=tag.slice(4);m=COS.filter(c=>c.website&&gaps(c).some(g=>g.id===gid));}
-  else if(tag==='gaps3')m=COS.filter(c=>c.website&&gaps(c).length>=3);
-  else if(tag.startsWith('cat:')){const cat=decodeURIComponent(tag.slice(4)).toLowerCase();m=COS.filter(c=>(c.category||'').toLowerCase().includes(cat));}
-  else if(tag.startsWith('reg:')){const reg=decodeURIComponent(tag.slice(4)).toLowerCase();m=COS.filter(c=>((c.hq_city||c.region||'')).toLowerCase().includes(reg));}
-  EF=m.map(c=>c.id||sl(c.name));ES=new Set(EF);erl();eusc();ess(`${m.length} companies`);
+function promptSimilar(){
+  _modalMode='similar';
+  document.getElementById('modalTitle').textContent='Find Similar Companies';
+  document.getElementById('modalDesc').textContent='Enter a reference company to find lookalikes for onAudience outreach.';
+  document.getElementById('modalInput').value='';
+  document.getElementById('overlay').classList.add('vis');
+  setTimeout(()=>document.getElementById('modalInput').focus(),60);
 }
-function ess(t){const el=document.getElementById('estat');if(el)el.textContent=t;}
-async function efind(){
-  const d=document.getElementById('edesc').value.trim();if(!d){document.getElementById('edesc').focus();return;}
-  const btn=document.getElementById('efbtn');btn.disabled=true;btn.textContent='⏳…';ess('Asking AI…');
-  EAT=null;document.querySelectorAll('.tctag').forEach(t=>t.classList.remove('active'));
-  try{
-    const coList=COS.map(c=>{const gps=gaps(c).map(g=>g.id);return`${c.id||sl(c.name)}|${c.name}|${c.type}|${c.category||''}|${c.region||c.hq_city||''}|gaps:${gps.join(',')||'none'}|desc:${c.description?'y':'n'}|size:${c.size?'y':'n'}|fund:${c.funding?'y':'n'}`;}).join('\n');
-    const pr=`You are a database filter for the onAudience sales CRM.\nUser wants: "${d}"\nDatabase (id|name|type|category|region|gaps|desc|size|fund):\n${coList}\nReturn ONLY a JSON array of matching company IDs. No markdown. Example: ["adform","zeotap"]`;
-    const res=await fetch('https://api.anthropic.com/v1/messages',{method:'POST',headers:{'Content-Type':'application/json','x-api-key':gak(),'anthropic-version':'2023-06-01','anthropic-dangerous-direct-browser-access':'true'},body:JSON.stringify({model:'claude-haiku-4-5-20251001',max_tokens:800,messages:[{role:'user',content:pr}]})});
-    const data=await res.json();if(data.error)throw new Error(data.error.message);
-    const ids=JSON.parse((data.content?.[0]?.text||'[]').replace(/```[a-z]*/g,'').replace(/```/g,'').trim().match(/\[[\s\S]*\]/)?.[0]||'[]');
-    EF=ids;ES=new Set(ids);ess(`Found ${ids.length}`);erl();eusc();
-  }catch(e){ess(`⚠ ${e.message}`);}
-  btn.disabled=false;btn.textContent='🔍 Find';
+function closeModal(){ document.getElementById('overlay').classList.remove('vis'); }
+function submitModal(){
+  const val=document.getElementById('modalInput').value.trim(); if(!val) return;
+  closeModal();
+  if (_modalMode==='similar') openClaude(`Find companies similar to ${val} for onAudience data partnerships — top 10 ranked by ICP fit`);
+  else openClaude(`Research ${val} — full contact report with decision makers, outreach angle, and ICP fit score`);
 }
-function eclr(){EF=[];ES.clear();EAT=null;document.getElementById('edesc').value='';document.querySelectorAll('.tctag').forEach(t=>t.classList.remove('active'));ess('');erl();eusc();}
-function eusc(){const el=document.getElementById('eselcnt');if(el)el.textContent=ES.size+' selected';}
-function erl(){
-  const src=EF.length?COS.filter(c=>EF.includes(c.id||sl(c.name))):[];
-  const m=document.getElementById('emeta');if(m)m.textContent=src.length?`${src.length} companies`:'Use tags or describe above';
-  const list=document.getElementById('elist');
-  list.innerHTML=src.map(c=>{
-    const[bg,fg]=av(c.name);const gps=gaps(c);const cid=c.id||sl(c.name);const chk=ES.has(cid);const d=c.website?dom(c.website):'';
-    const gb=GF.map(gf=>`<div class="egsq ${gps.some(g=>g.id===gf.id)?'egm':'egf'}"></div>`).join('');
-    return`<div class="erow${chk?' chk':''}" onclick="etr('${encodeURIComponent(cid)}')">
-      <div class="ecb">${chk?'✓':''}</div>
-      <div class="eav" style="background:${bg};border-color:${fg}40;color:${fg}">${ini(c.name)}</div>
-      <div style="flex:1;min-width:0"><div class="enm">${c.name}</div><div class="edom">${d||c.category||''}</div></div>
-      <div class="egaps">${gb}</div><div class="egn">${gps.length?gps.length+'G':''}</div>
-    </div>`;
-  }).join('');
-}
-function etr(enc){const id=decodeURIComponent(enc);if(ES.has(id))ES.delete(id);else ES.add(id);eusc();erl();}
-function eall(){(EF.length?EF:COS.map(c=>c.id||sl(c.name))).forEach(id=>ES.add(id));eusc();erl();}
-function enone(){ES.clear();eusc();erl();}
-function gak(){let k=localStorage.getItem('oaAntKey');if(!k){k=prompt('Anthropic API key (stored in localStorage):');if(k)localStorage.setItem('oaAntKey',k.trim());}return k||'';}
-
-function genScript(){
-  if(!ES.size){document.getElementById('esout').innerHTML='<div style="padding:16px;font-family:\'IBM Plex Mono\',monospace;font-size:10px;color:var(--prc)">⚠ Select companies first.</div>';return;}
-  const sel=COS.filter(c=>ES.has(c.id||sl(c.name)));
-  const p1f=[...document.querySelectorAll('#p1cks input:checked')].map(i=>i.dataset.f);
-  const p2f=[...document.querySelectorAll('#p2cks input:checked')].map(i=>i.dataset.f);
-  const p1sk=document.getElementById('p1sk').checked;const p2sk=document.getElementById('p2sk').checked;
-  const sts=document.getElementById('p2st').value;const dly=document.getElementById('p2dl').value;const cnc=document.getElementById('p2cn').value;
-  const sbUrl=document.getElementById('p2sb').value;
-  const cj=JSON.stringify(sel.map(c=>({id:c.id||sl(c.name),name:c.name,website:c.website||'',gaps:gaps(c).map(g=>g.id)})),null,2);
-  const sc=`#!/usr/bin/env python3
-# onAudience Batch Enricher | ${new Date().toISOString().slice(0,16).replace('T',' ')} UTC | ${sel.length} companies
-# P1: ${p1f.join(', ')||'none'}  |  P2: ${p2f.join(', ')||'none'}
-# Run: ANTHROPIC_API_KEY=sk-ant-... python enrich_batch.py
-import asyncio, json, os, re
-import httpx
-from dotenv import load_dotenv
-load_dotenv()
-
-ANTHROPIC_KEY = os.environ.get("ANTHROPIC_API_KEY") or input("Paste Anthropic API key: ").strip()
-SUPABASE_URL  = "${sbUrl}"
-SUPABASE_KEY  = os.environ.get("SUPABASE_KEY", "${SB_KEY}")
-B2B_MCP_URL   = "https://b2b.ctpl.dev/sse"
-SBH = {"apikey": SUPABASE_KEY, "Authorization": f"Bearer {SUPABASE_KEY}", "Content-Type": "application/json", "Prefer": "resolution=merge-duplicates,return=minimal"}
-COMPANIES = ${cj}
-
-async def sbget(cid):
-    async with httpx.AsyncClient() as c:
-        r = await c.get(f"{SUPABASE_URL}/rest/v1/companies?id=eq.{cid}&select=*", headers=SBH)
-        rows = r.json(); return rows[0] if rows else {}
-
-async def sbupsert(data):
-    async with httpx.AsyncClient() as c:
-        await c.post(f"{SUPABASE_URL}/rest/v1/companies", headers=SBH, json=data)
-
-${p1f.length?`async def phase1(co):
-    import anthropic
-    existing = await sbget(co["id"])
-    needs = [f for f in ${JSON.stringify(p1f)} if not existing.get(f)]
-${p1sk?'    if not needs: print(f"  [P1] {co[\'name\']}: skip"); return {}':''}
-    if not needs: return {}
-    client = anthropic.Anthropic(api_key=ANTHROPIC_KEY)
-    res = client.messages.create(model="claude-haiku-4-5-20251001", max_tokens=400,
-        tools=[{"type":"mcp","mcp_server":{"type":"url","url":B2B_MCP_URL,"name":"b2b"}}],
-        messages=[{"role":"user","content":f"Company: {co['name']}\\nWebsite: {co['website']}\\nFill as JSON: {needs}"}])
-    txt = next((b.text for b in res.content if hasattr(b,"text")), "{}")
-    try: return json.loads(re.search(r'\\{[\\s\\S]+\\}', re.sub(r'\`\`\`[a-z]*','',txt).strip()).group(0))
-    except: return {}
-`:''}${p2f.length?`async def phase2(co):
-    from browser_use import Agent
-    from langchain_anthropic import ChatAnthropic
-    existing = await sbget(co["id"])
-    needs = [f for f in ${JSON.stringify(p2f)} if not existing.get(f)]
-${p2sk?'    if not needs: print(f"  [P2] {co[\'name\']}: skip"); return {}':''}
-    if not needs: return {}
-    llm = ChatAnthropic(model="claude-sonnet-4-6", api_key=ANTHROPIC_KEY, temperature=0, max_tokens=1000)
-    task = f"Navigate to {co['website']} + /about + /products. Fill: {needs}. Return JSON only."
-    agent = Agent(task=task, llm=llm, max_steps=${sts})
-    result = await agent.run(); await asyncio.sleep(${dly})
-    try: return json.loads(re.search(r'\\{[\\s\\S]+\\}', str(result.final_result() or "")).group(0))
-    except: return {}
-`:''}async def enrich(co):
-    print(f"→ {co['name']}")
-    updates = {}
-${p1f.length?`    p1 = await phase1(co)
-    if p1: updates.update(p1); await sbupsert({"id": co["id"], **p1}); print(f"  [P1] {list(p1.keys())}")`:''}
-${p2f.length?`    p2 = await phase2(co)
-    if p2: updates.update(p2); await sbupsert({"id": co["id"], **p2}); print(f"  [P2] {list(p2.keys())}")`:''}
-    print(f"  {'✅ '+str(len(updates))+' fields' if updates else '— no updates'}")
-
-async def main():
-    sem = asyncio.Semaphore(${cnc})
-    async def run(co):
-        async with sem: await enrich(co)
-    await asyncio.gather(*[run(co) for co in COMPANIES])
-
-if __name__ == "__main__":
-    asyncio.run(main())
-`;
-  const e2=sc.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
-  const hi=e2.replace(/(#[^\n]*)/g,'<span class="c">$1</span>').replace(/\b(import|from|async|def|await|if|for|not|in|return|True|False|None|try|except|else|pass|and|or|as|with|class)\b/g,'<span class="k">$1</span>').replace(/("(?:[^"\\]|\\.)*"|'(?:[^'\\]|\\.)*'|f"[^"]*"|f'[^']*')/g,'<span class="s">$1</span>').replace(/\b([A-Z_][A-Z_0-9]{2,})\b/g,'<span class="v">$1</span>');
-  document.getElementById('esout').innerHTML=`<pre class="ecode">${hi}</pre>`;
-  document.getElementById('esinfo').textContent=`${sel.length} co · P1:${p1f.length} P2:${p2f.length}`;
-  document.getElementById('ecpbtn').style.display='block';document.getElementById('edlbtn').style.display='block';
-  window._ls=sc;
-}
-function cpScript(){if(!window._ls)return;navigator.clipboard.writeText(window._ls).then(()=>{const b=document.getElementById('ecpbtn');b.textContent='Copied!';setTimeout(()=>b.textContent='Copy',1500);});}
-function dlScript(){if(!window._ls)return;const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([window._ls],{type:'text/plain'}));a.download='enrich_batch.py';a.click();}
 
 document.addEventListener('DOMContentLoaded',()=>{
-  document.getElementById('ov').addEventListener('click',e=>{if(e.target===document.getElementById('ov'))cm();});
-  document.getElementById('mi').addEventListener('keydown',e=>{if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();sm();}});
-  document.getElementById('edesc').addEventListener('keydown',e=>{if(e.key==='Enter'&&(e.ctrlKey||e.metaKey)){e.preventDefault();efind();}});
-  document.querySelectorAll('.eck input').forEach(cb=>cb.addEventListener('change',function(){this.closest('.eck').classList.toggle('on',this.checked);}));
+  const mi=document.getElementById('modalInput');
+  if(mi) mi.addEventListener('keydown',e=>{ if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();submitModal();} });
+});
+document.getElementById('overlay').addEventListener('click',e=>{
+  if(e.target===document.getElementById('overlay')) closeModal();
 });
 
-lseed();ust();rl();rct();reload();
+/* ─────────────────────────────────────────────
+   UTILITIES
+───────────────────────────────────────────── */
+function openClaude(prompt){ window.open('https://claude.ai/new?q='+encodeURIComponent(prompt),'_blank'); }
+
+/* ─────────────────────────────────────────────
+   INIT
+───────────────────────────────────────────── */
+setStatus(false);
+renderStats();
+renderList();
+loadFromSupabase();
 </script>
 </body>
 </html>
