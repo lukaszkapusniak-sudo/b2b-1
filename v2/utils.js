@@ -1,84 +1,16 @@
-/* ═══════════════════════════════════════════════════════════════
-   utils.js — Shared utility functions
-   ═══════════════════════════════════════════════════════════════ */
+/* ═══ utils.js — pure utility functions ═══ */
 
-import { TYPE_CLS, TYPE_COLOR } from './config.js';
+import { TAG_RULES, PAL } from './config.js';
 
-/* ── Slug — canonical company ID ────────────────────────────── */
-export function _slug(n) {
-  return (n || '')
-    .replace(/\s+(Ltd|Inc|LLC|S\.A\.|GmbH|Corp|B\.V\.|AG|PLC|SAS)\.?$/i, '')
-    .toLowerCase().trim()
-    .replace(/[^a-z0-9]+/g, '-')
-    .replace(/^-|-$/g, '');
-}
+export function classify(n){const s=(n||'').toLowerCase();if(s.includes('no outreach')||s.includes('no fit')||s.includes('no business')||s.includes('internal')||s.includes('closed')||s.includes('unwanted'))return'nogo';if(s.includes('poc client'))return'poc';if(s.includes('client'))return'client';if(s.includes('partner'))return'partner';if(s.includes('prospect')||s.includes('to check')||s.includes('to continue'))return'prospect';return'partner';}
 
-/* ── Classify note text → type ──────────────────────────────── */
-export function classify(note) {
-  if (!note) return 'prospect';
-  const n = note.toLowerCase();
-  if (n.includes('client') || n.includes('active'))  return 'client';
-  if (n.includes('partner') || n.includes('integ'))  return 'partner';
-  if (n.includes('nogo') || n.includes('no-go'))     return 'nogo';
-  if (n.includes('poc'))                              return 'poc';
-  return 'prospect';
-}
+export function _slug(n){return(n||'').replace(/\s+(Ltd|Inc|LLC|S\.A\.|GmbH|Corp|B\.V\.|AG|PLC|SAS)\.?$/i,'').toLowerCase().trim().replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,'');}
 
-/* ── Tag class for type ──────────────────────────────────────── */
-export function tagCls(type) {
-  return TYPE_CLS[type] || 'tpr';
-}
+export function getCoTags(c){const hay=((c.name||'')+' '+(c.note||'')+' '+(c.category||'')+' '+(c.region||'')+' '+(c.description||'')).toLowerCase();return TAG_RULES.filter(r=>r.kw.some(k=>hay.includes(k))).map(r=>r.tag);}
 
-/* ── Avatar color for type ───────────────────────────────────── */
-export function avatarColor(type) {
-  return TYPE_COLOR[type] || '#7A4200';
-}
-
-/* ── Avatar initials ─────────────────────────────────────────── */
-export function initials(name) {
-  if (!name) return '?';
-  const parts = name.trim().split(/\s+/);
-  if (parts.length === 1) return parts[0][0].toUpperCase();
-  return (parts[0][0] + parts[parts.length - 1][0]).toUpperCase();
-}
-
-/* ── Escape HTML ─────────────────────────────────────────────── */
-export function esc(s) {
-  if (!s) return '';
-  const d = document.createElement('div');
-  d.textContent = s;
-  return d.innerHTML;
-}
-
-/* ── Relative time ───────────────────────────────────────────── */
-export function relTime(iso) {
-  if (!iso) return '—';
-  const d = new Date(iso);
-  const diff = Date.now() - d.getTime();
-  const mins = Math.floor(diff / 60000);
-  if (mins < 60)  return `${mins}m ago`;
-  const hrs = Math.floor(mins / 60);
-  if (hrs < 24)   return `${hrs}h ago`;
-  const days = Math.floor(hrs / 24);
-  if (days < 30)  return `${days}d ago`;
-  return d.toLocaleDateString('en-GB', { day:'numeric', month:'short', year:'2-digit' });
-}
-
-/* ── Debounce ────────────────────────────────────────────────── */
-export function debounce(fn, ms = 200) {
-  let t;
-  return (...args) => { clearTimeout(t); t = setTimeout(() => fn(...args), ms); };
-}
-
-/* ── ICP stars ───────────────────────────────────────────────── */
-export function icpStars(n) {
-  if (!n) return '';
-  const full = Math.round(n / 2);
-  return '⭐'.repeat(full);
-}
-
-/* ── Open Claude with prompt ─────────────────────────────────── */
-export function openClaude(prompt) {
-  const url = 'https://claude.ai/new?q=' + encodeURIComponent(prompt);
-  window.open(url, '_blank');
-}
+export function getAv(n){let h=0;for(let c of(n||''))h=(h*31+c.charCodeAt(0))&0xffff;return PAL[h%PAL.length];}
+export function ini(n){return(n||'').replace(/[^A-Za-z ]/g,'').split(' ').filter(Boolean).map(w=>w[0]).slice(0,2).join('').toUpperCase()||'?';}
+export function tClass(t){return{client:'tc',partner:'tp',prospect:'tpr',nogo:'tn',poc:'tpo'}[t]||'tn';}
+export function tLabel(t){return{client:'Client',partner:'Partner',prospect:'Prospect',nogo:'No Outreach',poc:'POC'}[t]||t;}
+export function stars(n){if(!n)return'';return'★'.repeat(Math.min(n,5))+'☆'.repeat(Math.max(0,5-n));}
+export function esc(s){return(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}

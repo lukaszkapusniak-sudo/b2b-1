@@ -1,21 +1,33 @@
-/* ═══════════════════════════════════════════════════════════════
-   state.js — Reactive app state
-   All modules import from here. Mutations go through setters.
-   ═══════════════════════════════════════════════════════════════ */
+/* ═══ state.js — shared mutable state ═══ */
 
-export let companies = [];
-export let contacts  = [];
-export let currentCompany = null;
-export let currentTab = 'companies';  // companies | contacts | tcf | enricher
-export let activeFilter = 'all';      // all | client | partner | prospect | poc | nogo | fresh
-export let searchQuery = '';
-export let isLive = false;            // true when Supabase responded
+import { SEED_RAW } from './config.js';
+import { classify, _slug } from './utils.js';
 
-/* ── Setters ────────────────────────────────────────────────── */
-export function setCompanies(c) { companies = c; }
-export function setContacts(c)  { contacts = c; }
-export function setCurrent(c)   { currentCompany = c; }
-export function setTab(t)       { currentTab = t; }
-export function setFilter(f)    { activeFilter = f; }
-export function setSearch(q)    { searchQuery = q; }
-export function setLive(v)      { isLive = v; }
+const SEED = SEED_RAW.map(([name,note])=>({name,note:note||'',type:classify(note),id:_slug(name),category:null,region:null,size:null,website:null,linkedin_slug:null,icp:null,description:null,hq_city:null,founded_year:null,funding:null,tcf_vendor_id:null,tech_stack:null,products:null,dsps:null,outreach_angle:null,updated_at:null}));
+
+/* all state lives here — modules import and mutate S directly */
+const S = {
+  companies: [...SEED],
+  contacts: [],
+  activeFilter: 'all',
+  searchQ: '',
+  activeTab: 'companies',
+  activeTags: new Set(),
+  tagLogic: 'or',
+  tagPanelOpen: false,
+  aiSet: null,
+  currentCompany: null,
+  currentContact: null,
+  _modalMode: 'research',
+  /* meeseeks */
+  mcActivePId: 'steve',
+  mcPayload: {},
+  mcDbContacts: [],
+  mcAiContacts: [],
+  mcSelectedIdx: -1,
+  mcLastEmail: '',
+  /* tcf */
+  tcfSelected: new Set(),
+};
+
+export default S;

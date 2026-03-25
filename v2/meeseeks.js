@@ -1,174 +1,27 @@
-/* ═══════════════════════════════════════════════════════════════
-   meeseeks.js — Meeseeks / Composer modal
-   In-hub email composer with persona selection and AI generation
-   ═══════════════════════════════════════════════════════════════ */
+/* ═══ meeseeks.js — Meeseeks Composer ═══ */
 
-import { companies, contacts, currentCompany } from './state.js';
-import { _slug, esc } from './utils.js';
-import { fetchContactsForCompany } from './api.js';
+import { SB_URL, SB_KEY, MC_PERSONAS } from './config.js';
+import S from './state.js';
+import { _slug, getCoTags, getAv, ini, esc } from './utils.js';
 
-/* ── Personas ────────────────────────────────────────────────── */
-const PERSONAS = [
-  { id: 'steve', name: 'STEVE', desc: 'Direct, data-driven, concise. Default outreach persona.' },
-  { id: 'chill', name: 'CHILL', desc: 'Warm, conversational, relationship-first.' },
-  { id: 'exec',  name: 'EXEC',  desc: 'Formal, brief, C-level appropriate.' },
-];
+export function mcHint(el,id){const h=document.getElementById(id);if(h)h.textContent=`${el.value.length} chars`;}
+export function mcAllContacts(){const seen=new Set(S.mcDbContacts.map(c=>(c.full_name||'').toLowerCase()));const extra=S.mcAiContacts.filter(c=>!seen.has((c.full_name||'').toLowerCase()));return[...S.mcDbContacts,...extra];}
 
-let meesState = {
-  persona: 'steve',
-  company: '',
-  contact: null,
-  context: '',
-  angle: '',
-  output: '',
-};
+export function mcRenderPersonas(){const grid=document.getElementById('mcPersonaGrid');grid.innerHTML=MC_PERSONAS.map(p=>`<div class="mc-ptile${S.mcActivePId===p.id?' active':''}" style="${S.mcActivePId===p.id?`background:${p.color};border-color:${p.color}`:''}" data-id="${p.id}" onclick="mcPickPersona('${p.id}')"><div class="mc-pemoji">${p.emoji}</div><div class="mc-pname">${p.name}</div><div class="mc-pvibe">${p.vibe}</div></div>`).join('');const p=MC_PERSONAS.find(x=>x.id===S.mcActivePId);if(p){const nb=document.getElementById('mcNavBadge');nb.textContent=p.name.toUpperCase();nb.style.background=p.color;}}
+export function mcPickPersona(id){S.mcActivePId=id;mcRenderPersonas();}
 
-/* ═══ Open Meeseeks ══════════════════════════════════════════ */
+export function openComposer(payload){S.mcPayload=payload||{};S.mcDbContacts=[];S.mcSelectedIdx=-1;S.mcLastEmail='';const p=S.mcPayload;if(p.company){document.getElementById('mcCoEmpty').style.display='none';const ne=document.getElementById('mcCoName');ne.style.display='';ne.textContent=p.company;const no=document.getElementById('mcCoNote');if(p.note){no.style.display='';no.textContent=p.note;}else{no.style.display='none';}document.getElementById('mcCoAv').textContent=ini(p.company);document.getElementById('mcCoBlock').className='mc-co filled';const tags=getCoTags(p);const te=document.getElementById('mcCoTags');if(tags.length){te.style.display='flex';te.innerHTML=tags.map(t=>`<span class="mc-co-tag">${t}</span>`).join('');}else{te.style.display='none';}mcLoadContacts(p.company,p.contactName);}else{document.getElementById('mcCoEmpty').style.display='';document.getElementById('mcCoName').style.display='none';document.getElementById('mcCoNote').style.display='none';document.getElementById('mcCoBlock').className='mc-co';document.getElementById('mcCoTags').style.display='none';document.getElementById('mcCtList').innerHTML='<div class="mc-ctempty">No company selected</div>';}if(p.company&&S.currentCompany?.name===p.company&&S.mcAiContacts.length===0){S.mcAiContacts=[];}document.getElementById('mcCtx').value=p.description||'';document.getElementById('mcAngle').value=p.angle||'';mcHint(document.getElementById('mcCtx'),'mcCtxHint');mcHint(document.getElementById('mcAngle'),'mcAngleHint');document.getElementById('mcOutContent').style.display='none';document.getElementById('mcEmpty').style.display='flex';document.getElementById('mcOutActs').style.display='none';document.getElementById('mcOutLabel').textContent='Output';document.getElementById('mcRScroll').style.padding='40px 52px';document.getElementById('mcDrawer').classList.add('open');document.getElementById('mcOverlay').classList.add('vis');mcRenderPersonas();}
+export function closeComposer(){document.getElementById('mcDrawer').classList.remove('open');document.getElementById('mcOverlay').classList.remove('vis');}
 
-export function openMeeseeks(prefill) {
-  const modal = document.getElementById('meeseeksModal');
-  if (!modal) return;
+export function openPanel(id,payload){if(id==='meeseeks'||id==='composer')openComposer(payload);else window.openClaude?.('Compose outreach email'+(payload?.company?' for '+payload.company:''));}
 
-  /* apply prefill */
-  if (prefill) {
-    meesState.company = prefill.company || currentCompany?.name || '';
-    meesState.contact = prefill.contactName ? { full_name: prefill.contactName, title: prefill.contactTitle || '' } : null;
-    meesState.context = prefill.description || currentCompany?.description || '';
-    meesState.angle   = prefill.angle || currentCompany?.outreach_angle || '';
-  } else if (currentCompany) {
-    meesState.company = currentCompany.name || '';
-    meesState.context = currentCompany.description || '';
-    meesState.angle   = currentCompany.outreach_angle || '';
-  }
+async function mcLoadContacts(companyName,preferName){S.mcDbContacts=[];S.mcSelectedIdx=-1;document.getElementById('mcCtList').innerHTML='<div class="mc-ctempty">Loading contacts…</div>';if(S.currentCompany?.name===companyName)S.mcAiContacts=S.mcAiContacts;try{const res=await fetch(`${SB_URL}/rest/v1/contacts?company_name=eq.${encodeURIComponent(companyName)}&select=*`,{headers:{apikey:SB_KEY,Authorization:`Bearer ${SB_KEY}`}});const data=await res.json();if(Array.isArray(data))S.mcDbContacts=data;}catch(e){console.warn('mc contacts',e);}if(preferName){const idx=mcAllContacts().findIndex(c=>(c.full_name||'').toLowerCase()===preferName.toLowerCase());if(idx>=0)S.mcSelectedIdx=idx;}mcRenderPicker();}
 
-  renderMeeseeks();
-  modal.classList.add('vis');
-}
+export function mcRenderPicker(loadingMsg){const list=document.getElementById('mcCtList');if(loadingMsg){list.innerHTML=`<div class="mc-ctempty">${loadingMsg}</div>`;return;}const cts=mcAllContacts();if(!cts.length){list.innerHTML=`<div class="mc-ctempty">No contacts in DB — run "Find DMs" first</div>`;return;}list.innerHTML=cts.map((ct,i)=>{const av=getAv(ct.full_name||'');const n=ini(ct.full_name||'?');const active=S.mcSelectedIdx===i?' active':'';const isAI=i>=S.mcDbContacts.length;return`<div class="mc-ctcard${active}" data-i="${i}" onclick="mcPickContact(${i})"><div class="mc-ctav" style="background:${av.bg};color:${av.fg};border:1px solid ${av.fg}22">${n}</div><div class="mc-ctbody"><div class="mc-ctnm">${ct.full_name||'—'}${isAI?` <span style="font-family:'IBM Plex Mono',monospace;font-size:6px;color:var(--poc);border:1px solid var(--por);border-radius:2px;padding:0 3px;margin-left:3px">AI</span>`:''}</div><div class="mc-ctti">${ct.title||''}</div>${ct.email?`<div class="mc-ctemail">${ct.email}</div>`:''}</div><span class="mc-ctcheck">✓</span></div>`;}).join('');}
+export function mcPickContact(i){S.mcSelectedIdx=S.mcSelectedIdx===i?-1:i;mcRenderPicker();}
 
-export function closeMeeseeks() {
-  const modal = document.getElementById('meeseeksModal');
-  if (modal) modal.classList.remove('vis');
-}
+export async function mcGenerate(){const persona=MC_PERSONAS.find(p=>p.id===S.mcActivePId)||MC_PERSONAS[0];const company=S.mcPayload.company||'the company';const cts=mcAllContacts();const ct=S.mcSelectedIdx>=0?cts[S.mcSelectedIdx]:null;const contactName=ct?.full_name||'there';const contactTitle=ct?.title||'';const ctx=document.getElementById('mcCtx').value.trim();const angle=document.getElementById('mcAngle').value.trim();const tags=getCoTags(S.mcPayload);const btn=document.getElementById('mcGenBtn');btn.disabled=true;btn.innerHTML=`<span class="mc-spin"></span><span>Generating…</span>`;document.getElementById('mcEmpty').style.display='none';document.getElementById('mcOutContent').style.display='none';document.getElementById('mcOutActs').style.display='none';document.getElementById('mcOutLabel').textContent='Generating…';const prompt=`Write a cold outreach email FROM a sales person at onAudience TO ${contactName}${contactTitle?' ('+contactTitle+')':''} at ${company}.\n\nonAudience: European first-party audience data company. 500M+ profiles, demographic+behavioral+purchase-intent segments across 30+ EU countries, Web + Mobile + CTV coverage, GDPR-compliant, TCF v2.0 certified. Direct integrations with major DSPs.\n\nCompany signals: ${tags.length?tags.join(', '):'n/a'}\nCompany context: ${ctx||'n/a'}\nOutreach angle: ${angle||'n/a'}\n\nRespond with:\nSUBJECT: [subject line]\n---\n[email body only — no sign-off name]\n\nKeep it 3–4 short paragraphs. End with a low-friction CTA.`;try{const res=await fetch('https://api.anthropic.com/v1/messages',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({model:'claude-sonnet-4-20250514',max_tokens:700,system:persona.system,messages:[{role:'user',content:prompt}]})});const data=await res.json();if(data.error)throw new Error(data.error.message||'API error');const raw=(data.content||[]).filter(b=>b.type==='text').map(b=>b.text).join('').trim();let subject='',body=raw;const sm=raw.match(/^SUBJECT:\s*(.+?)(?:\n---|\n\n)/is);if(sm){subject=sm[1].trim();body=raw.replace(/^SUBJECT:.+?\n(?:---\n)?/is,'').trim();}S.mcLastEmail=body;mcRenderOutput(persona,subject,body,contactName,company);}catch(e){document.getElementById('mcEmpty').style.display='none';const oc=document.getElementById('mcOutContent');oc.style.display='block';oc.innerHTML=`<div class="mc-wrap"><div class="mc-error">Error: ${e.message}</div></div>`;document.getElementById('mcOutLabel').textContent='Error';}btn.disabled=false;btn.innerHTML=`<span>✉</span><span>Generate Email</span>`;}
 
-/* ═══ Render ═════════════════════════════════════════════════ */
+function mcRenderOutput(persona,subject,body,contact,company){const oc=document.getElementById('mcOutContent');const largePad=['steve','barack','winston','gary','maya','elon','oprah'];document.getElementById('mcRScroll').style.padding=largePad.includes(persona.id)?'48px 60px':'40px 52px';oc.style.display='block';oc.innerHTML=`<div class="mc-wrap mc-out-${persona.id}"><div class="mc-badge" style="background:${persona.color}"><span class="mc-bdot"></span><span class="mc-bemoji">${persona.emoji}</span><span>${persona.name.toUpperCase()}</span><span class="mc-bvibe">/ ${persona.vibe}</span></div>${subject?`<div class="mc-subject"><span>Subject</span><span class="mc-subject-val">${esc(subject)}</span></div>`:''}<div class="mc-email">${esc(body)}</div></div>`;document.getElementById('mcOutActs').style.display='flex';document.getElementById('mcOutLabel').textContent=`${persona.name} · ${company}${contact&&contact!=='there'?' → '+contact:''}`;document.getElementById('mcEmpty').style.display='none';document.getElementById('mcRScroll').scrollTop=0;}
 
-function renderMeeseeks() {
-  const box = document.querySelector('.meesBox');
-  if (!box) return;
-
-  box.innerHTML = `
-    <!-- Header -->
-    <div style="padding:10px 14px;border-bottom:1px solid var(--rule);display:flex;align-items:center;gap:8px">
-      <div class="nav-logo" style="width:24px;height:24px;font-size:11px">oA</div>
-      <span style="font-family:'IBM Plex Mono',monospace;font-size:11px;font-weight:500">
-        Meeseeks <span style="color:var(--t3);font-weight:300">/ Composer</span>
-      </span>
-      <span class="tag tpo" style="margin-left:4px">${meesState.persona.toUpperCase()}</span>
-      <button onclick="window.closeMeeseeks()" style="margin-left:auto;background:none;border:none;font-size:16px;cursor:pointer;color:var(--t3)">✕</button>
-    </div>
-
-    <!-- Body -->
-    <div style="flex:1;overflow-y:auto;padding:14px;display:flex;flex-direction:column;gap:10px">
-
-      <!-- Persona -->
-      <div>
-        <div style="font-family:'IBM Plex Mono',monospace;font-size:8px;text-transform:uppercase;letter-spacing:.06em;color:var(--t3);margin-bottom:4px">Pick Meeseeks</div>
-        <div style="display:flex;gap:4px">
-          ${PERSONAS.map(p => `<button class="btn sm ${p.id === meesState.persona ? 'p' : ''}" onclick="window.meesSetPersona('${p.id}')">${p.name}</button>`).join('')}
-        </div>
-      </div>
-
-      <!-- Company -->
-      <div>
-        <div style="font-family:'IBM Plex Mono',monospace;font-size:8px;text-transform:uppercase;letter-spacing:.06em;color:var(--t3);margin-bottom:4px">Company</div>
-        <input id="meesCompany" value="${esc(meesState.company)}" placeholder="Company name"
-          style="width:100%;height:26px;padding:0 8px;border:1px solid var(--rule);border-radius:2px;
-                 font-family:'IBM Plex Mono',monospace;font-size:11px;background:var(--surf2);color:var(--t1);outline:none">
-      </div>
-
-      <!-- Contact -->
-      <div>
-        <div style="font-family:'IBM Plex Mono',monospace;font-size:8px;text-transform:uppercase;letter-spacing:.06em;color:var(--t3);margin-bottom:4px">Contact</div>
-        <div id="meesContactSlot" style="font-size:11px;color:var(--t2)">
-          ${meesState.contact ? `${esc(meesState.contact.full_name)} — ${esc(meesState.contact.title)}` : 'Open a company from the hub to load contacts'}
-        </div>
-      </div>
-
-      <!-- Context -->
-      <div>
-        <div style="font-family:'IBM Plex Mono',monospace;font-size:8px;text-transform:uppercase;letter-spacing:.06em;color:var(--t3);margin-bottom:4px">
-          Context — signals, news, what they do
-        </div>
-        <textarea id="meesContext" rows="3" placeholder="What you know about them…"
-          style="width:100%;resize:vertical;padding:6px 8px;border:1px solid var(--rule);border-radius:2px;
-                 font-family:'IBM Plex Mono',monospace;font-size:10px;background:var(--surf2);color:var(--t1);outline:none;line-height:1.4"
-        >${esc(meesState.context)}</textarea>
-        <div style="font-family:'IBM Plex Mono',monospace;font-size:8px;color:var(--t4);text-align:right">${meesState.context.length} chars</div>
-      </div>
-
-      <!-- Angle -->
-      <div>
-        <div style="font-family:'IBM Plex Mono',monospace;font-size:8px;text-transform:uppercase;letter-spacing:.06em;color:var(--t3);margin-bottom:4px">Outreach angle</div>
-        <textarea id="meesAngle" rows="2" placeholder="Positioning / hook"
-          style="width:100%;resize:vertical;padding:6px 8px;border:1px solid var(--rule);border-radius:2px;
-                 font-family:'IBM Plex Mono',monospace;font-size:10px;background:var(--surf2);color:var(--t1);outline:none;line-height:1.4"
-        >${esc(meesState.angle)}</textarea>
-      </div>
-
-      <!-- Generate -->
-      <button class="btn p full" onclick="window.meesGenerate()">✉ Generate Email</button>
-
-      <!-- Output -->
-      <div id="meesOutput" style="display:${meesState.output ? 'block' : 'none'}">
-        <div style="font-family:'IBM Plex Mono',monospace;font-size:8px;text-transform:uppercase;letter-spacing:.06em;color:var(--t3);margin-bottom:4px">Output</div>
-        <div id="meesOutputText" style="padding:10px;background:var(--surf2);border:1px solid var(--rule);border-radius:2px;
-             font-size:12px;line-height:1.5;white-space:pre-wrap;max-height:200px;overflow-y:auto">${esc(meesState.output)}</div>
-        <div style="display:flex;gap:4px;margin-top:6px">
-          <button class="btn sm" onclick="window.meesCopy()">Copy</button>
-          <button class="btn sm" onclick="window.meesGenerate()">↺ Regen</button>
-          <button class="btn sm p" onclick="window.closeMeeseeks()">Done ✓</button>
-        </div>
-      </div>
-
-    </div>
-
-    <!-- Footer hint -->
-    <div style="padding:6px 14px;border-top:1px solid var(--rule2);font-family:'IBM Plex Mono',monospace;font-size:8px;color:var(--t4);text-align:center">
-      ← Pick persona · select contact · generate
-    </div>
-  `;
-}
-
-/* ═══ Actions ════════════════════════════════════════════════ */
-
-export function meesSetPersona(id) {
-  meesState.persona = id;
-  renderMeeseeks();
-}
-
-export function meesGenerate() {
-  /* Collect current form state */
-  meesState.company = document.getElementById('meesCompany')?.value || meesState.company;
-  meesState.context = document.getElementById('meesContext')?.value || '';
-  meesState.angle   = document.getElementById('meesAngle')?.value || '';
-
-  /* Build Claude prompt and open */
-  const parts = [
-    `Write a ${meesState.persona === 'exec' ? 'formal C-level' : meesState.persona === 'chill' ? 'warm conversational' : 'direct data-driven'} outreach email`,
-    `from onAudience (EU audience data provider) to ${meesState.company}`,
-  ];
-  if (meesState.contact) parts.push(`addressed to ${meesState.contact.full_name}, ${meesState.contact.title}`);
-  if (meesState.context) parts.push(`Context: ${meesState.context}`);
-  if (meesState.angle) parts.push(`Angle: ${meesState.angle}`);
-  parts.push('Keep it under 150 words. No fluff. Include a specific ask.');
-
-  const prompt = parts.join('. ');
-
-  /* For now, open in Claude. Replace with Anthropic API call for in-hub generation. */
-  window.open('https://claude.ai/new?q=' + encodeURIComponent(prompt), '_blank');
-}
-
-export function meesCopy() {
-  const text = document.getElementById('meesOutputText')?.textContent;
-  if (text) navigator.clipboard.writeText(text);
-}
+export function mcCopy(){const el=document.querySelector('.mc-email');if(!el)return;const txt=el.innerText||el.textContent||'';navigator.clipboard.writeText(txt).then(()=>{const btn=event.target;btn.textContent='Copied!';setTimeout(()=>btn.textContent='Copy',1600);}).catch(()=>{});}
