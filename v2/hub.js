@@ -3,7 +3,7 @@
 import { SB_URL, SB_KEY, HDR, TAG_RULES, MODEL_CREATIVE, MODEL_RESEARCH } from './config.js';
 import S from './state.js';
 import { classify, _slug, getCoTags, getAv, ini, tClass, tLabel, stars, esc, relTime } from './utils.js';
-import { renderStats, fetchGoogleNews, saveIntelligence, anthropicFetch, researchFetch } from './api.js';
+import { renderStats, fetchGoogleNews, saveIntelligence, anthropicFetch, researchFetch, refreshRelationsCache } from './api.js';
 
 /* ═══ Tag helpers ════════════════════════════════════════════ */
 export function tagCountsFor(pool){const m={};TAG_RULES.forEach(r=>{m[r.tag]=0;});pool.forEach(c=>getCoTags(c).forEach(t=>{m[t]=(m[t]||0)+1;}));return m;}
@@ -452,7 +452,6 @@ export async function loadRelationsBrief(slug, forceRefresh){
     /* refresh the global cache if forced or empty */
     if(forceRefresh||!S.allRelations.length){
       body.innerHTML='<div class="ib-loading">Refreshing relations…</div>';
-      const {refreshRelationsCache}=await import('./api.js');
       await refreshRelationsCache();
     }
     /* filter from cache */
@@ -467,7 +466,7 @@ export async function loadRelationsBrief(slug, forceRefresh){
     const listHtml=_relCache.map(r=>{const isSrc=r.from_company===slug;const oid=isSrc?r.to_company:r.from_company;const co=coMap[oid];const arrow=r.direction==='bidirectional'?'⇄':(isSrc?'→':'←');const nameDisp=co?.name||oid;const type=TL[r.relation_type]||r.relation_type;return`<div class="ib-rel-item"><div class="ib-rel-arrow">${arrow}</div>${co?`<div class="ib-rel-name" data-slug="${oid}" onclick="openBySlug(this.dataset.slug)">${nameDisp}</div>`:`<div class="ib-rel-name no-link">${nameDisp}</div>`}<div class="ib-rel-type">${type}</div><span class="tag ${r.strength==='confirmed'?'tc':'tpr'}" style="flex-shrink:0">${r.strength||'—'}</span></div>${r.notes?`<div class="ib-rel-notes">${r.notes}</div>`:''}`;}).join('');
     body.innerHTML=`<div style="display:flex;gap:3px;margin-bottom:8px"><button id="ib-rel-btn-list" class="ib-ct-btn active" onclick="setRelView('list')" style="height:20px;padding:0 8px;font-size:7px">☰ List</button><button id="ib-rel-btn-graph" class="ib-ct-btn" onclick="setRelView('graph')" style="height:20px;padding:0 8px;font-size:7px">◎ Graph</button></div><div id="ib-rels-list">${listHtml}</div><div id="ib-rels-graph" style="display:none"></div>`;
     _relView='list';
-  }catch(e){body.innerHTML=`<div style="font-size:11px;color:var(--t3)">Error loading relations</div>`;}
+  }catch(e){clog('info',`Relations error: ${e.message}`);body.innerHTML=`<div style="font-size:11px;color:var(--t3)">Error loading relations — <span style="cursor:pointer;color:var(--g)" onclick="loadRelationsBrief('${slug}',true)">retry</span></div>`;}
 }
 
 /* ═══ Force-directed Relation Graph ═════════════════════════ */
