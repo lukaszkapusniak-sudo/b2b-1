@@ -258,26 +258,41 @@ export function ctAction(action,ctSlug){const ct=S.contacts.find(c=>c.id===ctSlu
 export async function bgGenerateAngle(){const c=S.currentCompany;if(!c)return;const card=document.getElementById('ib-angle-card'),btn=document.getElementById('ib-angle-btn');if(card){card.className='ib-angle';card.innerHTML=`<div class="ib-angle-lbl"><span class="bg-running">✦ Generating…</span></div>`;}if(btn)btn.style.display='none';const tags=getCoTags(c).join(', ');const techArr2=(Array.isArray(c.tech_stack)?c.tech_stack:[]).slice(0,6).map(t=>typeof t==='string'?t:(t&&t.tool)?String(t.tool):'?').join(', ');try{const data=await anthropicFetch({model:MODEL_CREATIVE,max_tokens:350,system:'You are a senior B2B data partnership sales specialist at onAudience, a European first-party audience data company. Write a concise, specific outreach angle (3–5 sentences) for approaching this company. Focus on what onAudience data solves for their business model, timing signals, and clearest value hook. No bullet points. Flowing prose only.',messages:[{role:'user',content:`Company: ${c.name}\nType: ${c.type}\nCategory: ${c.category||'unknown'}\nNote: ${c.note||''}\nDescription: ${c.description||''}\nTech: ${techArr2}\nDSPs: ${JSON.stringify(c.dsps||[])}\nSignals: ${tags}`}]});const angle=(data.content||[]).filter(b=>b.type==='text').map(b=>b.text).join('').trim();if(!angle)throw new Error('empty');S.currentCompany.outreach_angle=angle;S.companies.forEach(co=>{if(co.name===c.name)co.outreach_angle=angle;});if(card){card.className='ib-angle';card.innerHTML=`<div class="ib-angle-lbl">Recommended positioning <span class="bg-done">✓ generated</span></div><div class="ib-angle-text">${angle}</div>`;}if(btn){btn.textContent='↺ Regen';btn.style.display='';}await fetch(`${SB_URL}/rest/v1/companies?name=eq.${encodeURIComponent(c.name)}`,{method:'PATCH',headers:{...HDR,'Prefer':'return=minimal'},body:JSON.stringify({outreach_angle:angle})}).catch(()=>{});}catch(e){if(card)card.innerHTML=`<div class="ib-angle-lbl"><span class="bg-err">Error — ${e.message}</span></div>`;if(btn){btn.textContent='↺ Retry';btn.style.display='';}}}
 
 /* ═══ BG Find DMs (Opus + web_search — zero hallucination) ═══ */
-const FIND_DMS_SYSTEM=`You are a B2B sales researcher finding REAL decision makers for data partnership outreach.
+const FIND_DMS_SYSTEM=`You are a B2B sales researcher finding REAL decision makers and outreach signals for data partnership outreach.
 
 CRITICAL RULES — ABSOLUTE:
 1. ONLY return people you have VERIFIED via web search. Use the web_search tool to find real LinkedIn profiles, company team pages, press releases, and conference speakers.
-2. NEVER invent names. NEVER guess titles. If web search returns no results for a company's team, return an EMPTY array [].
+2. NEVER invent names. NEVER guess titles. If web search returns no results for a company's team, return an EMPTY contacts array [].
 3. Every person you return MUST have appeared in at least one web search result. Include the source URL.
 4. LinkedIn URLs must be REAL profile URLs found via search (https://www.linkedin.com/in/real-slug), NOT constructed search queries.
    If you cannot find a real LinkedIn URL, set linkedin_url to "" (empty string).
 5. Uncertainty is ALWAYS better than fiction. Return fewer verified people rather than more guessed ones.
 
-RESPONSE FORMAT — raw JSON array, no markdown, no explanation:
-[{"full_name":"string","title":"string","linkedin_url":"string (real URL or empty)","source_url":"string (where you found them)","confidence":"verified|probable","reason":"string (1 sentence)"}]
+ALSO EXTRACT outreach signals — things a sales person would care about:
+- Hiring for data/programmatic/partnership roles (buying_signal)
+- New leadership hires or departures (org_change)
+- Technology adoption/migration — new DSP, CDP, identity solution (tech_change)
+- Conference appearances, speaking, panel participation (event)
+- Existing data partnerships with competitors (competitive_intel)
+- Funding rounds, expansion, new market entry (timing_signal)
 
-Search strategy:
+RESPONSE FORMAT — raw JSON object, no markdown:
+{
+  "contacts": [{"full_name":"string","title":"string","linkedin_url":"string","source_url":"string","confidence":"verified|probable","reason":"string"}],
+  "signals": [{"signal_type":"buying_signal|org_change|tech_change|event|competitive_intel|timing_signal","title":"string (short)","detail":"string (1-2 sentences)","source_url":"string","confidence":"verified|probable","relevance":1-5}]
+}
+
+Search strategy for contacts:
 - Search: "[company name] head of data partnerships" or "VP programmatic"
 - Search: "site:linkedin.com/in [company name] data partnerships"
-- Search: "[company name] team leadership" or "about us"
-- Check company website /about or /team pages via search
+- Search: "[company name] team leadership"
 - If a name appears in multiple sources, confidence = "verified"
-- If only one source, confidence = "probable"`;
+
+Search strategy for signals:
+- Search: "[company name] hiring data partnerships"
+- Search: "[company name] data partnership announcement"
+- Note tech vendors mentioned on their website or in job postings
+- Check for recent funding, expansion, conference talks`;
 
 export async function bgFindDMs(){
   const c=S.currentCompany;if(!c)return;
@@ -285,31 +300,69 @@ export async function bgFindDMs(){
   body.innerHTML=`<div class="ib-loading" style="text-align:left"><span class="bg-running">🔍 Researching</span> decision makers at ${esc(c.name)}…<br><span style="font-size:8px;color:var(--t4);animation:none">Using Opus + web search — this takes 15–30s</span></div>`;
   clog('ai',`🔍 Finding DMs at <b>${esc(c.name)}</b> (Opus + web search)`);
   const tags=getCoTags(c).join(', ');
+  const slug=_slug(c.name);
   try{
     const data=await anthropicFetch({
       model:MODEL_RESEARCH,
-      max_tokens:1500,
+      max_tokens:2000,
       system:FIND_DMS_SYSTEM,
       tools:[{type:'web_search_20250305',name:'web_search',max_uses:8}],
-      messages:[{role:'user',content:`Find 3–5 REAL decision makers at ${c.name} (${c.category||'ad tech'}, ${c.website||'no website'}) relevant for data partnership discussions with onAudience.\nFocus: Head/VP/Director of Programmatic, Data Partnerships, Product, Revenue, or Platform.\nCompany context: ${c.note||'none'}\nCompany description: ${(c.description||'').slice(0,200)}\nSignals: ${tags||'none'}\n\nUse web search to find REAL people. Return [] if you can't verify anyone.`}]
+      messages:[{role:'user',content:`Find 3–5 REAL decision makers AND outreach signals at ${c.name} (${c.category||'ad tech'}, ${c.website||'no website'}) relevant for data partnership discussions with onAudience.\nFocus: Head/VP/Director of Programmatic, Data Partnerships, Product, Revenue, or Platform.\nCompany context: ${c.note||'none'}\nCompany description: ${(c.description||'').slice(0,200)}\nSignals: ${tags||'none'}\n\nUse web search to find REAL people and signals. Return empty arrays if you can't verify anything.`}]
     });
 
-    /* extract text from multi-block response (web_search produces tool_use + tool_result + text blocks) */
+    /* extract text from multi-block response */
     const textBlocks=(data.content||[]).filter(b=>b.type==='text').map(b=>b.text).join('\n');
-    /* find JSON array in the text */
-    const jsonMatch=textBlocks.match(/\[[\s\S]*\]/);
-    if(!jsonMatch)throw new Error('No results — model could not verify any contacts');
-    const raw=jsonMatch[0].replace(/```json|```/g,'').trim();
-    const dms=JSON.parse(raw);
-    if(!Array.isArray(dms))throw new Error('Invalid response format');
-    if(!dms.length)throw new Error('No verified contacts found — try manual LinkedIn search');
 
-    /* tag with source */
+    /* parse — try object format first, fall back to array (contacts only) */
+    let dms=[],signals=[];
+    const objMatch=textBlocks.match(/\{[\s\S]*"contacts"[\s\S]*\}/);
+    if(objMatch){
+      try{
+        const parsed=JSON.parse(objMatch[0].replace(/```json|```/g,'').trim());
+        dms=Array.isArray(parsed.contacts)?parsed.contacts:[];
+        signals=Array.isArray(parsed.signals)?parsed.signals:[];
+      }catch(e2){/* fall through to array parse */}
+    }
+    if(!dms.length){
+      const arrMatch=textBlocks.match(/\[[\s\S]*\]/);
+      if(arrMatch){
+        try{dms=JSON.parse(arrMatch[0].replace(/```json|```/g,'').trim());}catch(e3){}
+      }
+    }
+
+    /* tag contacts with source */
     dms.forEach(dm=>{dm.source=dm.confidence==='verified'?'web_verified':'ai_probable';});
     S.mcAiContacts=dms;
-    clog('ai',`✓ Found <b>${dms.length}</b> contacts at ${esc(c.name)} (${dms.filter(d=>d.confidence==='verified').length} verified)`);
 
-    body.innerHTML=`
+    /* ── Store signals to Supabase ── */
+    if(signals.length){
+      const expiry={buying_signal:60,org_change:90,tech_change:180,event:30,competitive_intel:120,timing_signal:60};
+      const rows=signals.map(s=>({
+        company_id:slug,
+        signal_type:s.signal_type||'timing_signal',
+        title:(s.title||'').slice(0,200),
+        detail:s.detail||'',
+        source_url:s.source_url||'',
+        source:'web_search',
+        confidence:s.confidence||'probable',
+        relevance:Math.min(5,Math.max(1,s.relevance||3)),
+      }));
+      /* upsert each signal */
+      for(const r of rows){
+        const days=expiry[r.signal_type]||60;
+        fetch(`${SB_URL}/rest/v1/outreach_signals`,{
+          method:'POST',
+          headers:{...HDR,'Prefer':'resolution=merge-duplicates,return=minimal'},
+          body:JSON.stringify({...r,expires_at:new Date(Date.now()+days*86400000).toISOString()})
+        }).catch(()=>{});
+      }
+      clog('db',`Stored <b>${rows.length}</b> outreach signals for ${esc(c.name)}`);
+    }
+
+    clog('ai',`✓ Found <b>${dms.length}</b> contacts + <b>${signals.length}</b> signals at ${esc(c.name)} (${dms.filter(d=>d.confidence==='verified').length} verified)`);
+
+    /* ── Render contacts ── */
+    const contactsHtml=dms.length?`
       <div style="font-family:'IBM Plex Mono',monospace;font-size:7px;font-weight:600;text-transform:uppercase;letter-spacing:.07em;margin-bottom:8px;display:flex;align-items:center;gap:5px">
         <span style="color:var(--g)">✓ Web-verified</span>
         <span style="color:var(--t4)">·</span>
@@ -334,7 +387,41 @@ export async function bgFindDMs(){
             <button class="ib-ct-btn" onclick="openClaude('Research ${esc(dm.full_name)} at ${esc(c.name)} — LinkedIn, background, outreach hooks')">Research ↗</button>
           </div>
         </div>`;
-      }).join('')}</div>`;
+      }).join('')}</div>`:'<div style="font-size:11px;color:var(--t3)">No contacts verified via web search</div>';
+
+    /* ── Render signals ── */
+    const sigIcons={buying_signal:'🎯',org_change:'👤',tech_change:'⚙️',event:'🎤',competitive_intel:'🏁',timing_signal:'⏱️'};
+    const sigLabels={buying_signal:'Buying Signal',org_change:'Org Change',tech_change:'Tech Change',event:'Event',competitive_intel:'Competitive',timing_signal:'Timing'};
+    const signalsHtml=signals.length?`
+      <div style="margin-top:12px;padding-top:10px;border-top:1px solid var(--rule2)">
+        <div style="font-family:'IBM Plex Mono',monospace;font-size:7px;font-weight:600;text-transform:uppercase;letter-spacing:.07em;color:var(--poc);margin-bottom:6px">⚡ Outreach Signals · ${signals.length}</div>
+        ${signals.map(s=>{
+          const icon=sigIcons[s.signal_type]||'📌';
+          const label=sigLabels[s.signal_type]||s.signal_type;
+          const relBar='█'.repeat(Math.min(5,s.relevance||3))+'░'.repeat(5-Math.min(5,s.relevance||3));
+          return`<div style="display:flex;gap:6px;padding:4px 0;border-bottom:1px solid var(--rule3);font-family:'IBM Plex Mono',monospace;font-size:9px">
+            <span style="flex-shrink:0">${icon}</span>
+            <div style="flex:1;min-width:0">
+              <div style="display:flex;align-items:center;gap:4px;margin-bottom:2px">
+                <span style="font-size:6px;text-transform:uppercase;letter-spacing:.05em;padding:1px 4px;border-radius:2px;background:var(--pob);color:var(--poc);border:1px solid var(--por)">${label}</span>
+                <span style="font-size:7px;color:var(--t4);letter-spacing:.05em">${relBar}</span>
+                ${s.confidence==='verified'?'<span style="font-size:6px;color:var(--cc);border:1px solid var(--cr);background:var(--cb);border-radius:2px;padding:0 3px">✓</span>':''}
+              </div>
+              <div style="color:var(--t1);font-weight:500">${esc(s.title)}</div>
+              ${s.detail?`<div style="color:var(--t3);font-size:8px;margin-top:1px">${esc(s.detail)}</div>`:''}
+              ${s.source_url?`<a href="${s.source_url}" target="_blank" style="color:var(--g);font-size:7px;text-decoration:none">source ↗</a>`:''}
+            </div>
+          </div>`;
+        }).join('')}
+      </div>`:'';
+
+    body.innerHTML=contactsHtml+signalsHtml;
+
+    /* ── Also show signals in company panel if no contacts but signals exist ── */
+    if(!dms.length&&signals.length){
+      body.innerHTML=`<div style="font-size:11px;color:var(--t3);margin-bottom:8px">No contacts verified — <a href="https://www.linkedin.com/search/results/people/?keywords=${encodeURIComponent(c.name+' data partnerships')}" target="_blank" style="color:var(--g)">Manual LI search ↗</a></div>`+signalsHtml;
+    }
+
   }catch(e){
     clog('ai',`✗ DM search failed for ${esc(c.name)}: ${esc(e.message)}`);
     body.innerHTML=`<div style="font-size:11px;color:var(--t3)">
