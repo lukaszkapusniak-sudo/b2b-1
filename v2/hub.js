@@ -477,13 +477,38 @@ function renderRelGraph(){
 
   /* build nodes + edges */
   const nodeSet=new Map();
-  const addNode=(id)=>{if(!nodeSet.has(id)){const co=coMap[id];nodeSet.set(id,{id,name:co?.name||id,type:co?.type||'unknown',isCenter:id===slug,inDB:!!co});}};
+  const addNode=(id,overrides={})=>{
+    if(!nodeSet.has(id)){const co=coMap[id];nodeSet.set(id,{id,name:co?.name||id,type:co?.type||'unknown',isCenter:id===slug,inDB:!!co,...overrides});}
+  };
   addNode(slug);
   const edges=[];
   _relCache.forEach(r=>{
     addNode(r.from_company);addNode(r.to_company);
     edges.push({source:r.from_company,target:r.to_company,type:r.relation_type,strength:r.strength,direction:r.direction});
   });
+
+  /* ── Integration nodes: inject DSP/platform integrations from current company's dsps[] ── */
+  const centerCo=S.companies.find(x=>_slug(x.name)===slug);
+  const dspList=Array.isArray(centerCo?.dsps)?centerCo.dsps:[];
+  dspList.forEach(dspName=>{
+    if(!dspName)return;
+    const dspId='integ-'+dspName.toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,'');
+    /* check if this DSP already exists as a company node — fuzzy match */
+    const existingId=Object.keys(coMap).find(k=>{
+      const n=coMap[k].name.toLowerCase();
+      return n.includes(dspName.toLowerCase())||dspName.toLowerCase().includes(n.split(' ')[0]);
+    });
+    const targetId=existingId||dspId;
+    if(!existingId)addNode(targetId,{name:dspName,type:'integration',isIntegration:true,inDB:false});
+    const linked=edges.some(e=>(e.source===slug&&e.target===targetId)||(e.source===targetId&&e.target===slug));
+    if(!linked)edges.push({source:slug,target:targetId,type:'dsp_integration',strength:'confirmed',direction:'unidirectional',synthetic:true});
+  });
+
+  /* ── Media house aggregators: mark parent nodes that have subsidiary children ── */
+  const subsidiaryCounts={};
+  edges.forEach(e=>{if(e.type==='subsidiary_of')subsidiaryCounts[e.target]=(subsidiaryCounts[e.target]||0)+1;});
+  nodeSet.forEach((n,id)=>{if(subsidiaryCounts[id]>=1)n.isAggregator=true;});
+
   const nodes=[...nodeSet.values()];
 
   /* layout dimensions */
@@ -560,50 +585,132 @@ function renderRelGraph(){
   /* render nodes */
   nodes.forEach(n=>{
     const g=document.createElementNS('http://www.w3.org/2000/svg','g');
-    g.style.cursor=n.inDB?'pointer':'default';
+    g.style.cursor=(n.inDB||n.isIntegration)?'pointer':'default';
     if(n.inDB)g.addEventListener('click',()=>openBySlug(n.id));
 
-    const r=n.isCenter?20:13;
-    const circle=document.createElementNS('http://www.w3.org/2000/svg','circle');
-    circle.setAttribute('cx',n.x);circle.setAttribute('cy',n.y);circle.setAttribute('r',r);
-    if(n.isCenter){circle.setAttribute('fill','var(--g)');circle.setAttribute('stroke','var(--gd)');circle.setAttribute('stroke-width','1.5');}
-    else{
-      const tc={client:'var(--cb)',partner:'var(--pb)',prospect:'var(--prb)',nogo:'var(--nb)',poc:'var(--pob)'};
-      const ts={client:'var(--cr)',partner:'var(--pr)',prospect:'var(--prr)',nogo:'var(--nr)',poc:'var(--por)'};
-      circle.setAttribute('fill',tc[n.type]||'var(--surf)');
-      circle.setAttribute('stroke',ts[n.type]||'var(--rule)');
-      circle.setAttribute('stroke-width','1');
+    /* ── Node radius & shape by kind ── */
+    const r=n.isCenter?20:n.isAggregator?18:n.isIntegration?10:13;
+    let shape;
+
+    if(n.isIntegration){
+      /* Diamond shape for integration/DSP nodes */
+      const d=r*1.3;
+      shape=document.createElementNS('http://www.w3.org/2000/svg','polygon');
+      shape.setAttribute('points',`${n.x},${n.y-d} ${n.x+d},${n.y} ${n.x},${n.y+d} ${n.x-d},${n.y}`);
+      shape.setAttribute('fill','#1A4F8A18');
+      shape.setAttribute('stroke','var(--pc)');
+      shape.setAttribute('stroke-width','1.5');
+    } else if(n.isAggregator&&!n.isCenter){
+      /* Larger ring for media house / holding company aggregators */
+      /* Outer glow ring */
+      const ring=document.createElementNS('http://www.w3.org/2000/svg','circle');
+      ring.setAttribute('cx',n.x);ring.setAttribute('cy',n.y);ring.setAttribute('r',r+5);
+      ring.setAttribute('fill','none');ring.setAttribute('stroke','var(--nc)');
+      ring.setAttribute('stroke-width','1');ring.setAttribute('stroke-dasharray','3 3');ring.setAttribute('opacity','0.5');
+      g.appendChild(ring);
+      shape=document.createElementNS('http://www.w3.org/2000/svg','circle');
+      shape.setAttribute('cx',n.x);shape.setAttribute('cy',n.y);shape.setAttribute('r',r);
+      shape.setAttribute('fill','var(--nb)');shape.setAttribute('stroke','var(--nc)');shape.setAttribute('stroke-width','1.5');
+    } else {
+      shape=document.createElementNS('http://www.w3.org/2000/svg','circle');
+      shape.setAttribute('cx',n.x);shape.setAttribute('cy',n.y);shape.setAttribute('r',r);
+      if(n.isCenter){shape.setAttribute('fill','var(--g)');shape.setAttribute('stroke','var(--gd)');shape.setAttribute('stroke-width','1.5');}
+      else{
+        const tc={client:'var(--cb)',partner:'var(--pb)',prospect:'var(--prb)',nogo:'var(--nb)',poc:'var(--pob)'};
+        const ts={client:'var(--cr)',partner:'var(--pr)',prospect:'var(--prr)',nogo:'var(--nr)',poc:'var(--por)'};
+        shape.setAttribute('fill',tc[n.type]||'var(--surf)');
+        shape.setAttribute('stroke',ts[n.type]||'var(--rule)');
+        shape.setAttribute('stroke-width','1');
+      }
     }
-    g.appendChild(circle);
+    g.appendChild(shape);
+
+    /* Aggregator label badge */
+    if(n.isAggregator&&!n.isCenter){
+      const badge=document.createElementNS('http://www.w3.org/2000/svg','text');
+      badge.setAttribute('x',n.x+r+2);badge.setAttribute('y',n.y-r+2);
+      badge.setAttribute('font-family','IBM Plex Mono,monospace');badge.setAttribute('font-size','5');
+      badge.setAttribute('fill','var(--nc)');badge.textContent='⬡';
+      g.appendChild(badge);
+    }
+
+    /* Integration platform badge */
+    if(n.isIntegration){
+      const badge=document.createElementNS('http://www.w3.org/2000/svg','text');
+      badge.setAttribute('x',n.x);badge.setAttribute('y',n.y-r*1.3-4);
+      badge.setAttribute('text-anchor','middle');badge.setAttribute('font-family','IBM Plex Mono,monospace');
+      badge.setAttribute('font-size','5');badge.setAttribute('fill','var(--pc)');badge.textContent='DSP';
+      g.appendChild(badge);
+    }
 
     /* initials inside node */
     const ini2=document.createElementNS('http://www.w3.org/2000/svg','text');
-    ini2.setAttribute('x',n.x);ini2.setAttribute('y',n.y+(n.isCenter?1:1));
+    ini2.setAttribute('x',n.x);ini2.setAttribute('y',n.y+1);
     ini2.setAttribute('text-anchor','middle');ini2.setAttribute('dominant-baseline','central');
     ini2.setAttribute('font-family','IBM Plex Mono,monospace');
-    ini2.setAttribute('font-size',n.isCenter?'8':'7');
+    ini2.setAttribute('font-size',n.isCenter?'8':n.isAggregator?'8':'7');
     ini2.setAttribute('font-weight','600');
-    ini2.setAttribute('fill',n.isCenter?'#fff':'var(--t2)');
+    ini2.setAttribute('fill',n.isCenter?'#fff':n.isIntegration?'var(--pc)':'var(--t2)');
     ini2.textContent=ini(n.name);
     g.appendChild(ini2);
 
     /* name label */
     const lbl=document.createElementNS('http://www.w3.org/2000/svg','text');
-    lbl.setAttribute('x',n.x);lbl.setAttribute('y',n.y+r+10);
+    const lblY=n.isIntegration?n.y+r*1.3+10:n.y+r+10;
+    lbl.setAttribute('x',n.x);lbl.setAttribute('y',lblY);
     lbl.setAttribute('text-anchor','middle');
     lbl.setAttribute('font-family','IBM Plex Mono,monospace');
-    lbl.setAttribute('font-size',n.isCenter?'9':'8');
-    lbl.setAttribute('font-weight',n.isCenter?'600':'400');
-    lbl.setAttribute('fill',n.isCenter?'var(--g)':'var(--t1)');
+    lbl.setAttribute('font-size',n.isCenter?'9':n.isAggregator?'8':'8');
+    lbl.setAttribute('font-weight',n.isCenter||n.isAggregator?'600':'400');
+    lbl.setAttribute('fill',n.isCenter?'var(--g)':n.isIntegration?'var(--pc)':n.isAggregator?'var(--nc)':'var(--t1)');
     const dispName=n.name.length>16?n.name.slice(0,14)+'…':n.name;
     lbl.textContent=dispName;
     g.appendChild(lbl);
 
-    /* hover effects */
-    g.addEventListener('mouseenter',()=>{circle.setAttribute('stroke','var(--g)');circle.setAttribute('stroke-width','2');lbl.setAttribute('fill','var(--g)');});
-    g.addEventListener('mouseleave',()=>{if(!n.isCenter){circle.setAttribute('stroke',{client:'var(--cr)',partner:'var(--pr)',prospect:'var(--prr)',nogo:'var(--nr)',poc:'var(--por)'}[n.type]||'var(--rule)');circle.setAttribute('stroke-width','1');}else{circle.setAttribute('stroke','var(--gd)');circle.setAttribute('stroke-width','1.5');}lbl.setAttribute('fill',n.isCenter?'var(--g)':'var(--t1)');});
+    /* hover */
+    g.addEventListener('mouseenter',()=>{
+      shape.setAttribute('stroke','var(--g)');shape.setAttribute('stroke-width','2');lbl.setAttribute('fill','var(--g)');
+    });
+    g.addEventListener('mouseleave',()=>{
+      if(n.isCenter){shape.setAttribute('stroke','var(--gd)');shape.setAttribute('stroke-width','1.5');}
+      else if(n.isIntegration){shape.setAttribute('stroke','var(--pc)');shape.setAttribute('stroke-width','1.5');}
+      else if(n.isAggregator){shape.setAttribute('stroke','var(--nc)');shape.setAttribute('stroke-width','1.5');}
+      else{shape.setAttribute('stroke',{client:'var(--cr)',partner:'var(--pr)',prospect:'var(--prr)',nogo:'var(--nr)',poc:'var(--por)'}[n.type]||'var(--rule)');shape.setAttribute('stroke-width','1');}
+      lbl.setAttribute('fill',n.isCenter?'var(--g)':n.isIntegration?'var(--pc)':n.isAggregator?'var(--nc)':'var(--t1)');
+    });
 
     svg.appendChild(g);
+  });
+
+  /* ── Legend ── */
+  const legendItems=[
+    {color:'var(--g)',label:'Center'},
+    {color:'var(--pc)',label:'DSP/Platform',shape:'diamond'},
+    {color:'var(--nc)',label:'Media House / Holding'},
+    {color:'var(--cb)',label:'Client'},
+    {color:'var(--pb)',label:'Partner'},
+    {color:'var(--prb)',label:'Prospect'},
+  ];
+  const lgX=8,lgY=H-legendItems.length*12-4;
+  legendItems.forEach((item,i)=>{
+    const ly=lgY+i*12;
+    if(item.shape==='diamond'){
+      const d=4;
+      const poly=document.createElementNS('http://www.w3.org/2000/svg','polygon');
+      poly.setAttribute('points',`${lgX+4},${ly-d} ${lgX+8},${ly} ${lgX+4},${ly+d} ${lgX},${ly}`);
+      poly.setAttribute('fill',item.color+'30');poly.setAttribute('stroke',item.color);poly.setAttribute('stroke-width','1');
+      svg.appendChild(poly);
+    }else{
+      const dot=document.createElementNS('http://www.w3.org/2000/svg','circle');
+      dot.setAttribute('cx',lgX+4);dot.setAttribute('cy',ly);dot.setAttribute('r','4');
+      dot.setAttribute('fill',item.color+'40');dot.setAttribute('stroke',item.color);dot.setAttribute('stroke-width','1');
+      svg.appendChild(dot);
+    }
+    const ltxt=document.createElementNS('http://www.w3.org/2000/svg','text');
+    ltxt.setAttribute('x',lgX+13);ltxt.setAttribute('y',ly+3);
+    ltxt.setAttribute('font-family','IBM Plex Mono,monospace');ltxt.setAttribute('font-size','6');ltxt.setAttribute('fill','var(--t3)');
+    ltxt.textContent=item.label;
+    svg.appendChild(ltxt);
   });
 }
 
