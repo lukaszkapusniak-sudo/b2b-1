@@ -19,6 +19,10 @@ const S = {
   currentCompany: null,
   currentContact: null,
   _modalMode: 'research',
+  /* sort */
+  sortBy: 'recent', // recent | name | icp
+  /* console */
+  consoleLog: [], // {ts, type:'ai'|'db'|'enrich'|'info', msg}
   /* meeseeks */
   mcActivePId: 'steve',
   mcPayload: {},

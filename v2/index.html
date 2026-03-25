@@ -65,6 +65,14 @@
       <span id="metaTxt">Loading…</span>
       <div id="metaPills" style="display:flex;gap:3px;flex-wrap:wrap;margin-left:auto"></div>
     </div>
+    <div class="sort-bar" id="sortBar">
+      <label>Sort</label>
+      <select class="sort-sel" id="sortSel" onchange="setSort(this.value)">
+        <option value="recent" selected>Recently updated</option>
+        <option value="name">Name A→Z</option>
+        <option value="icp">ICP score ↓</option>
+      </select>
+    </div>
     <div id="tcf-sel-bar" style="display:none;align-items:center;gap:5px;padding:5px 8px;border-bottom:1px solid var(--rule2);background:var(--surf2);flex-shrink:0;min-height:32px"></div>
     <div class="list-scroll" id="listScroll"></div>
     <div class="ai-bar" id="aiBar">
@@ -78,6 +86,22 @@
         <span id="aiTxt"></span>
         <span class="ai-clr" onclick="clearAI()">✕ clear</span>
       </div>
+      <div class="ai-quick">
+        <span class="ai-qchip" onclick="aiQuick('EU DSPs not yet contacted')">EU DSPs</span>
+        <span class="ai-qchip" onclick="aiQuick('companies with CTV capabilities')">CTV</span>
+        <span class="ai-qchip" onclick="aiQuick('cookieless identity partners')">Cookieless</span>
+        <span class="ai-qchip" onclick="aiQuick('high ICP prospects missing outreach angle')">No angle</span>
+        <span class="ai-qchip" onclick="aiQuick('marketplace or curation platforms')">Marketplace</span>
+      </div>
+    </div>
+    <!-- Console -->
+    <div class="console-panel" id="consolePanel">
+      <div class="console-head" onclick="toggleConsole()">
+        <span class="console-head-lbl">⚡ Console</span>
+        <span class="console-cnt" id="consoleCnt">0</span>
+        <span class="console-clear" onclick="event.stopPropagation();clearConsole()">clear</span>
+      </div>
+      <div class="console-scroll" id="consoleScroll"></div>
     </div>
   </div>
   <div class="center">

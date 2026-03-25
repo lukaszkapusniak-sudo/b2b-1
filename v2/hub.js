@@ -2,7 +2,7 @@
 
 import { SB_URL, SB_KEY, HDR, TAG_RULES } from './config.js';
 import S from './state.js';
-import { classify, _slug, getCoTags, getAv, ini, tClass, tLabel, stars, esc } from './utils.js';
+import { classify, _slug, getCoTags, getAv, ini, tClass, tLabel, stars, esc, relTime } from './utils.js';
 import { renderStats, fetchGoogleNews, saveIntelligence, anthropicFetch } from './api.js';
 
 /* ═══ Tag helpers ════════════════════════════════════════════ */
@@ -18,8 +18,9 @@ export function clearTags(){S.activeTags.clear();renderTagPanel();renderList();}
 export function setTagLogic(l){S.tagLogic=l;document.getElementById('tlOr').className='tp-logic-btn'+(l==='or'?' active':'');document.getElementById('tlAnd').className='tp-logic-btn'+(l==='and'?' active':'');if(S.activeTags.size)renderList();}
 
 /* ═══ AI Bar ═════════════════════════════════════════════════ */
-export async function runAI(){const q=document.getElementById('aiInp').value.trim();if(!q)return;const btn=document.getElementById('aiBtn'),stat=document.getElementById('aiStat'),dot=document.getElementById('aiDot'),txt=document.getElementById('aiTxt');btn.disabled=true;stat.className='ai-stat vis';dot.className='ai-dot';dot.style.background='';txt.textContent='Thinking…';const list=S.companies.map(c=>`${c.name} (${c.type}${c.note?' – '+c.note.slice(0,60):''})`).join('\n');try{const data=await anthropicFetch({model:'claude-sonnet-4-20250514',max_tokens:800,system:'You are a B2B sales filter for onAudience. Given a company list and a query, return ONLY a raw JSON array of matching company names. No markdown, no explanation. Return [] if nothing matches.',messages:[{role:'user',content:`Query: "${q}"\n\nCompany list:\n${list}`}]});const raw=(data.content||[]).filter(b=>b.type==='text').map(b=>b.text).join('').replace(/```json|```/g,'').trim();const names=JSON.parse(raw);if(!Array.isArray(names))throw new Error('not array');S.aiSet=new Set(names);dot.className='ai-dot done';txt.textContent=`${names.length} matches — "${q.length>30?q.slice(0,30)+'…':q}"`;renderList();}catch(e){dot.className='ai-dot err';txt.textContent='Error — try again';console.error(e);}btn.disabled=false;}
+export async function runAI(){const q=document.getElementById('aiInp').value.trim();if(!q)return;const btn=document.getElementById('aiBtn'),stat=document.getElementById('aiStat'),dot=document.getElementById('aiDot'),txt=document.getElementById('aiTxt');btn.disabled=true;stat.className='ai-stat vis';dot.className='ai-dot';dot.style.background='';txt.textContent='Thinking…';clog('ai',`Query: <b>${esc(q)}</b>`);const list=S.companies.map(c=>`${c.name} (${c.type}${c.category?' / '+c.category:''}${c.hq_city?' / '+c.hq_city:''}${c.note?' – '+c.note.slice(0,40):''})`).join('\n');try{const data=await anthropicFetch({model:'claude-sonnet-4-20250514',max_tokens:800,system:'You are a B2B sales filter for onAudience. Given a company list and a query, return ONLY a raw JSON array of matching company names. No markdown, no explanation. Return [] if nothing matches.',messages:[{role:'user',content:`Query: "${q}"\n\nCompany list:\n${list}`}]});const raw=(data.content||[]).filter(b=>b.type==='text').map(b=>b.text).join('').replace(/```json|```/g,'').trim();const names=JSON.parse(raw);if(!Array.isArray(names))throw new Error('not array');S.aiSet=new Set(names);dot.className='ai-dot done';txt.textContent=`${names.length} matches — "${q.length>30?q.slice(0,30)+'…':q}"`;clog('ai',`✓ Found <b>${names.length}</b> matches for "${esc(q.slice(0,30))}"`);renderList();}catch(e){dot.className='ai-dot err';txt.textContent='Error — try again';clog('ai',`✗ Error: ${esc(e.message)}`);console.error(e);}btn.disabled=false;}
 export function clearAI(){S.aiSet=null;document.getElementById('aiStat').className='ai-stat';document.getElementById('aiInp').value='';renderList();}
+export function aiQuick(q){document.getElementById('aiInp').value=q;runAI();}
 
 function renderMetaPills(){const el=document.getElementById('metaPills');const parts=[];S.activeTags.forEach(t=>{parts.push(`<span class="m-pill tag" data-tag="${t.replace(/"/g,'&quot;')}" onclick="toggleTagEl(this)" title="Remove">${t}</span>`);});if(S.aiSet){parts.push(`<span class="m-pill ai" onclick="clearAI()" title="Clear AI">AI: ${S.aiSet.size}</span>`);}el.innerHTML=parts.join('');}
 
@@ -37,17 +38,93 @@ export function switchTab(t){
 export function setFilter(f,el){S.activeFilter=f;document.querySelectorAll('.f-chip').forEach(c=>c.classList.remove('active'));if(el&&el.classList)el.classList.add('active');const sm={all:'sbAll',client:'sbClient',poc:'sbPoc',partner:'sbPartner',prospect:'sbProspect',nogo:'sbNogo',fresh:'sbFresh'};document.querySelectorAll('.sb-col').forEach(c=>c.classList.remove('active'));const s=document.getElementById(sm[f]);if(s)s.classList.add('active');if(S.tagPanelOpen)renderTagPanel();renderList();}
 export function onSearch(){S.searchQ=document.getElementById('searchInput').value.toLowerCase().trim();if(S.tagPanelOpen)renderTagPanel();renderList();}
 
+/* ═══ Console ════════════════════════════════════════════════ */
+export function clog(type,msg){S.consoleLog.unshift({ts:new Date().toLocaleTimeString('en-GB',{hour:'2-digit',minute:'2-digit',second:'2-digit'}),type,msg});if(S.consoleLog.length>100)S.consoleLog.length=100;renderConsole();}
+function renderConsole(){const el=document.getElementById('consoleScroll');const cnt=document.getElementById('consoleCnt');if(!el)return;if(cnt)cnt.textContent=S.consoleLog.length;el.innerHTML=S.consoleLog.map(l=>`<div class="console-line"><span class="console-ts">${l.ts}</span><span class="console-type ${l.type}">${l.type}</span><span class="console-msg">${l.msg}</span></div>`).join('');}
+export function toggleConsole(){const p=document.getElementById('consolePanel');if(p)p.classList.toggle('open');}
+export function clearConsole(){S.consoleLog=[];renderConsole();}
+
+/* ═══ Sort ═══════════════════════════════════════════════════ */
+export function setSort(v){S.sortBy=v;renderList();}
+function sortCompanies(arr){
+  if(S.sortBy==='recent')return[...arr].sort((a,b)=>{const ta=a.updated_at?new Date(a.updated_at).getTime():0;const tb=b.updated_at?new Date(b.updated_at).getTime():0;return tb-ta;});
+  if(S.sortBy==='icp')return[...arr].sort((a,b)=>(b.icp||0)-(a.icp||0));
+  return[...arr].sort((a,b)=>(a.name||'').localeCompare(b.name||''));
+}
+
+/* ═══ Bold keywords helper ═══════════════════════════════════ */
+function boldKw(text){
+  if(!text)return'—';
+  const kw=['client','partner','prospect','poc','dsp','ssp','agency','data','identity','cookieless','ctv','mobile','marketplace','programmatic','eu','emea','us','apac','integrated','active','expired','failed','no outreach','via','contact'];
+  let s=esc(text);
+  kw.forEach(k=>{const re=new RegExp('\\b('+k.replace(/[.*+?^${}()|[\]\\]/g,'\\$&')+')\\b','gi');s=s.replace(re,'<b>$1</b>');});
+  return s;
+}
+
+/* ═══ One-click enrich ═══════════════════════════════════════ */
+export async function quickEnrich(slug){
+  const c=S.companies.find(x=>(x.id||_slug(x.name))===slug);if(!c)return;
+  clog('enrich',`Starting lookup for <b>${c.name}</b>…`);
+  openClaude(`Research ${c.name} — full contact report with decision makers, outreach angle, ICP fit, tech stack, and activation path for onAudience`);
+}
+
+/* ═══ Completeness indicator ═════════════════════════════════ */
+function completeness(c){
+  const fields=[c.description,c.category,c.region||c.hq_city,c.size,c.website,c.icp,c.outreach_angle,c.tech_stack?.length,c.dsps?.length];
+  const filled=fields.filter(Boolean).length;
+  return Math.round(filled/fields.length*100);
+}
+
 /* ═══ List Rendering ═════════════════════════════════════════ */
 export function renderList(){
   const scroll=document.getElementById('listScroll'),meta=document.getElementById('metaTxt');
   if(S.activeTab==='tcf'){window.renderTCFList?.();return;}
   if(S.activeTab==='contacts'){const filt=S.contacts.filter(c=>{if(!S.searchQ)return true;return(c.full_name||'').toLowerCase().includes(S.searchQ)||(c.company_name||'').toLowerCase().includes(S.searchQ)||(c.title||'').toLowerCase().includes(S.searchQ);});meta.textContent=`${filt.length} of ${S.contacts.length} contacts`;if(!filt.length){scroll.innerHTML='<div style="padding:20px 10px;font-family:\'IBM Plex Mono\',monospace;font-size:9px;color:var(--t3);text-transform:uppercase">No contacts</div>';return;}scroll.innerHTML=filt.map(ct=>{const av=getAv(ct.full_name||'');const n=ini(ct.full_name||'');return`<div class="ct-row" onclick="openDrawer('${ct.id||_slug(ct.full_name||'')}')"><div class="ct-av" style="background:${av.bg};color:${av.fg}">${n}</div><div class="ct-info"><div class="ct-name">${ct.full_name||'—'}</div><div class="ct-sub">${ct.title||''}${ct.company_name?' · '+ct.company_name:''}</div></div></div>`;}).join('');return;}
   const t30=Date.now()-30*24*60*60*1000,cids=new Set(S.contacts.map(c=>_slug(c.company_name||'')));
-  const filt=S.companies.filter(c=>{if(S.activeFilter==='fresh'){if(c.type!=='prospect')return false;if(c.updated_at&&new Date(c.updated_at).getTime()>=t30)return false;if(cids.has(_slug(c.name)))return false;}else if(S.activeFilter!=='all'&&c.type!==S.activeFilter)return false;if(S.searchQ&&!(c.name||'').toLowerCase().includes(S.searchQ)&&!(c.note||'').toLowerCase().includes(S.searchQ))return false;if(!matchTags(c))return false;if(S.aiSet&&!S.aiSet.has(c.name))return false;return true;});
+  let filt=S.companies.filter(c=>{if(S.activeFilter==='fresh'){if(c.type!=='prospect')return false;if(c.updated_at&&new Date(c.updated_at).getTime()>=t30)return false;if(cids.has(_slug(c.name)))return false;}else if(S.activeFilter!=='all'&&c.type!==S.activeFilter)return false;if(S.searchQ&&!(c.name||'').toLowerCase().includes(S.searchQ)&&!(c.note||'').toLowerCase().includes(S.searchQ)&&!(c.category||'').toLowerCase().includes(S.searchQ)&&!(c.hq_city||'').toLowerCase().includes(S.searchQ)&&!(c.region||'').toLowerCase().includes(S.searchQ))return false;if(!matchTags(c))return false;if(S.aiSet&&!S.aiSet.has(c.name))return false;return true;});
+  filt=sortCompanies(filt);
   const parts=[`${filt.length} of ${S.companies.length}`];if(S.activeTags.size)parts.push(`· ${S.activeTags.size} tag${S.activeTags.size>1?'s':''} ${S.tagLogic.toUpperCase()}`);if(S.aiSet)parts.push('· AI');meta.textContent=parts.join(' ');renderMetaPills();
   if(!filt.length){scroll.innerHTML='<div style="padding:20px 10px;font-family:\'IBM Plex Mono\',monospace;font-size:9px;color:var(--t3);text-transform:uppercase">No results</div>';return;}
-  const showTagRow=S.tagPanelOpen||S.activeTags.size||S.aiSet;
-  scroll.innerHTML=filt.map(c=>{const av=getAv(c.name);const n=ini(c.name);const tc=tClass(c.type),tl=tLabel(c.type);const note=(c.note||'').length>48?(c.note||'').slice(0,48)+'…':(c.note||'—');const sel=S.currentCompany&&S.currentCompany.name===c.name?' selected':'';const coTags=getCoTags(c);const tagRow=showTagRow&&coTags.length?`<div class="c-tags-row">${coTags.slice(0,5).map(t=>`<span class="c-tag-micro${S.activeTags.has(t)?' hit':''}">${t}</span>`).join('')}</div>`:'';return`<div class="c-row${sel}" data-slug="${_slug(c.name)}" onclick="openBySlug(this.dataset.slug)" oncontextmenu="showCtxSlug(event,this);return false;"><div class="c-av" style="background:${av.bg};color:${av.fg};border:1px solid ${av.fg}33">${n}</div><div class="c-info"><div class="c-name">${c.name}</div><div class="c-note">${note}</div>${tagRow}</div><span class="tag ${tc}" style="flex-shrink:0;margin-top:2px">${tl}</span></div>`;}).join('');
+
+  scroll.innerHTML=filt.map(c=>{
+    const av=getAv(c.name),n=ini(c.name);
+    const tc=tClass(c.type),tl=tLabel(c.type);
+    const sel=S.currentCompany&&S.currentCompany.name===c.name?' selected':'';
+    const slug=_slug(c.name);
+    const coTags=getCoTags(c);
+    const pct=completeness(c);
+
+    /* detail line: city · headcount · category · icp */
+    const details=[];
+    if(c.hq_city||c.region)details.push(`<span class="c-detail-item">📍 <b>${esc(c.hq_city||c.region)}</b></span>`);
+    if(c.size)details.push(`<span class="c-detail-item">👥 <b>${esc(c.size)}</b></span>`);
+    if(c.category)details.push(`<span class="c-detail-item">${esc(c.category)}</span>`);
+    if(c.icp)details.push(`<span class="c-detail-item" style="color:var(--g)">ICP ${c.icp}</span>`);
+    if(c.website)details.push(`<a class="c-detail-item" href="https://${c.website}" target="_blank" onclick="event.stopPropagation()" style="color:var(--g);text-decoration:none">${c.website}</a>`);
+    const detailHtml=details.length?`<div class="c-detail">${details.join('<span class="c-detail-sep"></span>')}</div>`:'';
+
+    /* note with bold keywords */
+    const noteHtml=boldKw((c.note||'').length>60?(c.note||'').slice(0,58)+'…':(c.note||''));
+
+    /* tags row */
+    const tagRow=coTags.length?`<div class="c-tags-row">${coTags.slice(0,6).map(t=>`<span class="c-tag-micro${S.activeTags.has(t)?' hit':''}" onclick="event.stopPropagation();toggleTag('${t}')">${t}</span>`).join('')}</div>`:'';
+
+    /* enrich button for incomplete records */
+    const enrichBtn=pct<50?`<span class="c-enrich" onclick="event.stopPropagation();quickEnrich('${slug}')" title="${pct}% complete — click to research">✦ enrich</span>`:'';
+
+    /* updated_at relative */
+    const updStr=c.updated_at?`<span class="c-detail-item" style="opacity:.7">${relTime(c.updated_at)}</span>`:'';
+
+    return`<div class="c-row${sel}" data-slug="${slug}" onclick="openBySlug(this.dataset.slug)" oncontextmenu="showCtxSlug(event,this);return false;">
+      <div class="c-av" style="background:${av.bg};color:${av.fg};border:1px solid ${av.fg}33">${n}</div>
+      <div class="c-info">
+        <div style="display:flex;align-items:center;gap:4px"><div class="c-name" style="flex:1">${c.name}</div><span class="tag ${tc}" style="flex-shrink:0">${tl}</span>${enrichBtn}</div>
+        <div class="c-note">${noteHtml}</div>
+        ${detailHtml}
+        ${tagRow}
+      </div>
+    </div>`;
+  }).join('');
 }
 
 /* ═══ Company Detail Panel ═══════════════════════════════════ */
