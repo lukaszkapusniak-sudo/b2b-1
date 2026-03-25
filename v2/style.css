@@ -178,13 +178,13 @@ textarea.mc-tf{width:100%;padding:8px 10px;border:1px solid var(--rule);border-r
 .mc-bdot{width:5px;height:5px;border-radius:50%;background:rgba(255,255,255,.5);flex-shrink:0}.mc-bemoji{font-size:16px;line-height:1}.mc-bvibe{font-weight:400;opacity:.75;letter-spacing:.06em}
 .mc-email{color:var(--t1);white-space:pre-wrap;word-break:break-word}
 .mc-error{font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--prc);background:var(--prb);border:1px solid var(--prr);border-radius:2px;padding:12px 14px;line-height:1.6}
-.mc-out-steve .mc-email{font-family:'IBM Plex Sans',sans-serif;font-size:26px;line-height:2.05;font-weight:300;letter-spacing:.005em}.mc-out-steve .mc-badge{background:#1d1d1f}
-.mc-out-barack .mc-email{font-family:'IBM Plex Sans',sans-serif;font-size:22px;line-height:2.1;font-weight:400}.mc-out-barack .mc-badge{background:#1a3a5c}
-.mc-out-margaret .mc-email{font-family:'IBM Plex Sans',sans-serif;font-size:18px;line-height:1.72;font-weight:500;letter-spacing:.01em}.mc-out-margaret .mc-badge{background:#2c2c54}
-.mc-out-winston .mc-email{font-family:'IBM Plex Serif',serif;font-size:24px;line-height:1.95;font-weight:400;letter-spacing:.01em}.mc-out-winston .mc-badge{background:#7b341e}
-.mc-out-david .mc-email{font-family:'IBM Plex Mono',monospace;font-size:13px;line-height:1.8;font-weight:400;letter-spacing:.01em;color:var(--t2)}.mc-out-david .mc-badge{background:#2d6a4f}
-.mc-out-jeff .mc-email{font-family:'IBM Plex Mono',monospace;font-size:12px;line-height:1.75;font-weight:500;letter-spacing:-.005em}.mc-out-jeff .mc-badge{background:#1a4b6e}
-.mc-out-gary .mc-email{font-family:'IBM Plex Sans',sans-serif;font-size:24px;line-height:2.1;font-weight:400;letter-spacing:.018em}.mc-out-gary .mc-badge{background:#c05621}
-.mc-out-maya .mc-email{font-family:'IBM Plex Serif',serif;font-size:22px;line-height:2.2;font-weight:300;font-style:italic;letter-spacing:.012em}.mc-out-maya .mc-badge{background:#553c9a}
-.mc-out-elon .mc-email{font-family:'IBM Plex Sans',sans-serif;font-size:28px;line-height:1.6;font-weight:700;letter-spacing:-.02em}.mc-out-elon .mc-badge{background:#000}
-.mc-out-oprah .mc-email{font-family:'IBM Plex Sans',sans-serif;font-size:22px;line-height:2.1;font-weight:400;letter-spacing:.012em}.mc-out-oprah .mc-badge{background:#8b4513}
+.mc-out-steve .mc-email{font-family:'IBM Plex Sans',sans-serif;font-size:13px;line-height:1.75;font-weight:300;letter-spacing:.005em}.mc-out-steve .mc-badge{background:#1d1d1f}
+.mc-out-barack .mc-email{font-family:'IBM Plex Sans',sans-serif;font-size:13px;line-height:1.75;font-weight:400}.mc-out-barack .mc-badge{background:#1a3a5c}
+.mc-out-margaret .mc-email{font-family:'IBM Plex Sans',sans-serif;font-size:12px;line-height:1.7;font-weight:500;letter-spacing:.01em}.mc-out-margaret .mc-badge{background:#2c2c54}
+.mc-out-winston .mc-email{font-family:'IBM Plex Serif',serif;font-size:13px;line-height:1.75;font-weight:400;letter-spacing:.01em}.mc-out-winston .mc-badge{background:#7b341e}
+.mc-out-david .mc-email{font-family:'IBM Plex Mono',monospace;font-size:11px;line-height:1.7;font-weight:400;letter-spacing:.01em;color:var(--t2)}.mc-out-david .mc-badge{background:#2d6a4f}
+.mc-out-jeff .mc-email{font-family:'IBM Plex Mono',monospace;font-size:11px;line-height:1.7;font-weight:500;letter-spacing:-.005em}.mc-out-jeff .mc-badge{background:#1a4b6e}
+.mc-out-gary .mc-email{font-family:'IBM Plex Sans',sans-serif;font-size:13px;line-height:1.75;font-weight:400;letter-spacing:.018em}.mc-out-gary .mc-badge{background:#c05621}
+.mc-out-maya .mc-email{font-family:'IBM Plex Serif',serif;font-size:13px;line-height:1.8;font-weight:300;font-style:italic;letter-spacing:.012em}.mc-out-maya .mc-badge{background:#553c9a}
+.mc-out-elon .mc-email{font-family:'IBM Plex Sans',sans-serif;font-size:14px;line-height:1.65;font-weight:700;letter-spacing:-.02em}.mc-out-elon .mc-badge{background:#000}
+.mc-out-oprah .mc-email{font-family:'IBM Plex Sans',sans-serif;font-size:13px;line-height:1.75;font-weight:400;letter-spacing:.012em}.mc-out-oprah .mc-badge{background:#8b4513}
