@@ -241,6 +241,8 @@ ${sec('ib-ct-body','👤','Contacts',ctGridHtml,
 ${sec('ib-intel-body','📰','Intelligence','<div class="ib-loading">Loading…</div>',
   `<span class="ib-sh-cnt" id="ib-intel-cnt"></span><span id="ib-intel-live" style="display:none" class="live-label"><span class="live-dot"></span>Live</span><span class="ib-sh-act" id="ib-intel-refresh" onclick="event.stopPropagation();bgRefreshIntel()">↺ Refresh</span>`,true)}
 ${prodsHtml?sec('ib-prods-body','📦','Products',prodsHtml,`<span class="ib-sh-cnt">${prods.length}</span>`,false):''}
+${sec('ib-segments-body','🎯','Segment Mapper','<div class="ib-loading" id="ib-seg-loading">Loading taxonomy…</div>',
+  `<span class="ib-sh-cnt" id="ib-seg-cnt"></span><span class="ib-sh-act" onclick="event.stopPropagation();mapSegments()">↺ Remap</span>`,false)}
 ${sec('ib-rels-body','🔗','Relations','<div class="ib-loading">Loading…</div>',
   `<span class="ib-sh-cnt" id="ib-rels-cnt"></span><span class="ib-sh-act" id="ib-rels-refresh" onclick="event.stopPropagation();loadRelationsBrief(_slug('${c.name.replace(/'/g,"\\'")}'),true)">↺ Refresh</span>`,true)}
 <div class="ib-sec"><div class="ib-sh" style="cursor:pointer" onclick="ibToggle('ib-links-body')"><span id="ib-links-body-arrow" style="font-size:9px;color:var(--t3)">▾</span><span class="ib-sh-lbl">🔗 Quick Links</span></div><div class="ib-links" id="ib-links-body"><a class="ib-link" href="https://www.linkedin.com/search/results/people/?keywords=${encodeURIComponent(c.name+' data partnerships')}" target="_blank">LI People ↗</a><a class="ib-link" href="https://www.linkedin.com/search/results/companies/?keywords=${encodeURIComponent(c.name)}" target="_blank">LI Company ↗</a>${c.website?`<a class="ib-link" href="https://${c.website}" target="_blank">${c.website} ↗</a>`:''}<a class="ib-link" href="https://news.google.com/search?q=${encodeURIComponent(c.name)}" target="_blank">Google News ↗</a><span class="ib-link" onclick="coAction('gmail')">Gmail History</span></div></div>
@@ -627,3 +629,155 @@ export function promptSimilar(){S._modalMode='similar';document.getElementById('
 export function closeModal(){document.getElementById('overlay').classList.remove('vis');}
 export function submitModal(){const v=document.getElementById('modalInput').value.trim();if(!v)return;closeModal();if(S._modalMode==='similar')openClaude(`Find companies similar to ${v} for onAudience data partnerships`);else openClaude(`Research ${v} — full contact report with decision makers, outreach angle, and ICP fit score`);}
 export function openClaude(p){window.open('https://claude.ai/new?q='+encodeURIComponent(p),'_blank');}
+
+/* ═══ Segment Mapper ════════════════════════════════════════ */
+let _taxData=null; // flat array: [[depth, name, desc], ...]
+let _taxLoading=false;
+
+async function loadTaxonomy(){
+  if(_taxData)return _taxData;
+  if(_taxLoading)return null;
+  _taxLoading=true;
+  try{
+    const res=await fetch('./taxonomy.json');
+    _taxData=await res.json();
+    clog('info',`Taxonomy loaded: <b>${_taxData.length}</b> segments`);
+  }catch(e){clog('info',`Taxonomy load failed: ${e.message}`);_taxData=[];}
+  _taxLoading=false;
+  return _taxData;
+}
+
+/* keyword extraction from company context */
+function extractKeywords(c){
+  const text=[c.name,c.category,c.description,c.note,(Array.isArray(c.dsps)?c.dsps:[]).join(' '),(Array.isArray(c.tech_stack)?c.tech_stack.map(t=>typeof t==='string'?t:t?.tool||'').join(' '):'')].filter(Boolean).join(' ').toLowerCase();
+  /* common stopwords */
+  const stop=new Set(['the','and','for','with','that','this','from','our','are','has','its','will','can','all','about','into','over','also','they','their','been','who','which','more','other','than','each','but','not','data','company','users','user','provider']);
+  const words=text.replace(/[^a-z0-9 ]/g,' ').split(/\s+/).filter(w=>w.length>2&&!stop.has(w));
+  /* dedupe, keep order */
+  const seen=new Set();
+  return words.filter(w=>{if(seen.has(w))return false;seen.add(w);return true;});
+}
+
+/* match segments against company context */
+function matchSegments(c, tax){
+  const kw=extractKeywords(c);
+  if(!kw.length||!tax.length)return[];
+
+  /* build full path strings with descriptions for matching */
+  const results=[];
+  let currentPath=[];
+
+  for(const[depth,name,desc]of tax){
+    currentPath=currentPath.slice(0,depth);
+    currentPath.push(name);
+    const fullPath=currentPath.join(' > ');
+    const searchText=(fullPath+' '+desc).toLowerCase();
+
+    let score=0;
+    const matchedKw=[];
+    for(const w of kw){
+      if(searchText.includes(w)){
+        /* exact name match scores higher */
+        const inName=name.toLowerCase().includes(w);
+        const s=inName?3:1;
+        score+=s;
+        matchedKw.push(w);
+      }
+    }
+    if(score>=2){
+      results.push({path:currentPath.slice(),name,desc,depth,score,keywords:matchedKw.slice(0,5)});
+    }
+  }
+
+  /* sort by score desc, dedupe leaves only */
+  results.sort((a,b)=>b.score-a.score);
+  return results.slice(0,50);
+}
+
+/* render segment tree from flat matches */
+function renderSegTree(matches){
+  if(!matches.length)return'<div style="font-size:11px;color:var(--t3)">No matching segments. Add more company details to improve matching.</div>';
+
+  /* group by top-level taxonomy (Interest / Brands / CTV) */
+  const groups={};
+  for(const m of matches){
+    const top=m.path[0]||'Other';
+    if(!groups[top])groups[top]=[];
+    groups[top].push(m);
+  }
+
+  const topIcons={'Interest':'📊','Brands':'🏷️','Connected TV (CTV)':'📺'};
+
+  let html='';
+  for(const[top,items]of Object.entries(groups)){
+    const icon=topIcons[top]||'📁';
+    /* group by second level */
+    const subs={};
+    for(const m of items){
+      const sub=m.path.length>=2?m.path[1]:'General';
+      if(!subs[sub])subs[sub]=[];
+      subs[sub].push(m);
+    }
+    const subCount=Object.keys(subs).length;
+    const segCount=items.length;
+    const topId='seg-'+top.replace(/[^a-z0-9]/gi,'');
+
+    html+=`<div style="margin-bottom:8px">
+      <div style="display:flex;align-items:center;gap:4px;cursor:pointer;padding:3px 0" onclick="ibToggle('${topId}')">
+        <span id="${topId}-arrow" style="font-size:9px;color:var(--t3)">▾</span>
+        <span style="font-family:'IBM Plex Mono',monospace;font-size:8px;font-weight:600;color:var(--t1)">${icon} ${esc(top)}</span>
+        <span style="font-family:'IBM Plex Mono',monospace;font-size:7px;color:var(--t3)">${segCount} segments · ${subCount} categories</span>
+      </div>
+      <div id="${topId}" style="margin-left:12px">`;
+
+    for(const[sub,segs]of Object.entries(subs).sort((a,b)=>b[1].reduce((s,m)=>s+m.score,0)-a[1].reduce((s,m)=>s+m.score,0))){
+      const subId=topId+'-'+sub.replace(/[^a-z0-9]/gi,'');
+      const subScore=segs.reduce((s,m)=>s+m.score,0);
+      const barW=Math.min(100,Math.round(subScore/segs[0].score*20));
+
+      html+=`<div style="margin-bottom:4px">
+        <div style="display:flex;align-items:center;gap:4px;cursor:pointer;padding:2px 0" onclick="ibToggle('${subId}')">
+          <span id="${subId}-arrow" style="font-size:8px;color:var(--t4)">▸</span>
+          <span style="font-family:'IBM Plex Mono',monospace;font-size:8px;color:var(--t2)">${esc(sub)}</span>
+          <span style="font-family:'IBM Plex Mono',monospace;font-size:6px;color:var(--t4)">${segs.length}</span>
+          <span style="display:inline-block;width:${barW}px;height:3px;border-radius:1px;background:var(--g);opacity:.5;margin-left:auto"></span>
+        </div>
+        <div id="${subId}" style="display:none;margin-left:14px">`;
+
+      for(const seg of segs.slice(0,10)){
+        const leaf=seg.path[seg.path.length-1];
+        const kwHtml=seg.keywords.map(k=>`<span style="background:var(--gb);color:var(--g);padding:0 3px;border-radius:1px;font-size:6px">${k}</span>`).join(' ');
+        html+=`<div style="display:flex;align-items:baseline;gap:4px;padding:2px 0;border-bottom:1px solid var(--rule3)">
+          <span style="font-family:'IBM Plex Mono',monospace;font-size:8px;color:var(--t1)">${esc(leaf)}</span>
+          <span style="font-family:'IBM Plex Mono',monospace;font-size:6px;color:var(--t4);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:180px">${esc(seg.desc)}</span>
+          <div style="display:flex;gap:2px;margin-left:auto;flex-shrink:0">${kwHtml}</div>
+        </div>`;
+      }
+      if(segs.length>10)html+=`<div style="font-size:7px;color:var(--t4);padding:2px 0">… and ${segs.length-10} more</div>`;
+      html+=`</div></div>`;
+    }
+    html+=`</div></div>`;
+  }
+  return html;
+}
+
+export async function mapSegments(){
+  const c=S.currentCompany;if(!c)return;
+  const body=document.getElementById('ib-segments-body');
+  const cnt=document.getElementById('ib-seg-cnt');
+  if(!body)return;
+
+  body.innerHTML='<div class="ib-loading">Loading taxonomy…</div>';
+
+  const tax=await loadTaxonomy();
+  if(!tax||!tax.length){
+    body.innerHTML='<div style="font-size:11px;color:var(--t3)">Taxonomy not available — check taxonomy.json</div>';
+    return;
+  }
+
+  const matches=matchSegments(c,tax);
+  if(cnt)cnt.textContent=matches.length||'';
+  clog('info',`Segment mapper: <b>${matches.length}</b> matches for ${esc(c.name)}`);
+
+  body.innerHTML=renderSegTree(matches);
+}
