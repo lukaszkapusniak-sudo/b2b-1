@@ -244,7 +244,7 @@ ${prodsHtml?sec('ib-prods-body','📦','Products',prodsHtml,`<span class="ib-sh-
 ${sec('ib-segments-body','🎯','Segment Mapper','<div class="ib-loading" id="ib-seg-loading">Loading taxonomy…</div>',
   `<span class="ib-sh-cnt" id="ib-seg-cnt"></span><span class="ib-sh-act" onclick="event.stopPropagation();mapSegments()">↺ Remap</span>`,false)}
 ${sec('ib-rels-body','🔗','Relations','<div class="ib-loading">Loading…</div>',
-  `<span class="ib-sh-cnt" id="ib-rels-cnt"></span><span class="ib-sh-act" id="ib-rels-refresh" onclick="event.stopPropagation();loadRelationsBrief(_slug('${c.name.replace(/'/g,"\\'")}'),true)">↺ Refresh</span>`,true)}
+  `<span class="ib-sh-cnt" id="ib-rels-cnt"></span><span class="ib-sh-act" id="ib-rels-refresh" onclick="event.stopPropagation();loadRelationsBrief(_slug('${c.name.replace(/'/g,"\\'")}'),true)">↺ Refresh</span><span class="ib-sh-act" onclick="event.stopPropagation();openAddRelation(_slug('${c.name}'))">+ Add</span>`,true)}
 <div class="ib-sec"><div class="ib-sh" style="cursor:pointer" onclick="ibToggle('ib-links-body')"><span id="ib-links-body-arrow" style="font-size:9px;color:var(--t3)">▾</span><span class="ib-sh-lbl">🔗 Quick Links</span></div><div class="ib-links" id="ib-links-body"><a class="ib-link" href="https://www.linkedin.com/search/results/people/?keywords=${encodeURIComponent(c.name+' data partnerships')}" target="_blank">LI People ↗</a><a class="ib-link" href="https://www.linkedin.com/search/results/companies/?keywords=${encodeURIComponent(c.name)}" target="_blank">LI Company ↗</a>${c.website?`<a class="ib-link" href="https://${c.website}" target="_blank">${c.website} ↗</a>`:''}<a class="ib-link" href="https://news.google.com/search?q=${encodeURIComponent(c.name)}" target="_blank">Google News ↗</a><span class="ib-link" onclick="coAction('gmail')">Gmail History</span></div></div>
 </div>`;
   renderList();document.getElementById('centerScroll').scrollTop=0;
@@ -457,7 +457,7 @@ export async function loadRelationsBrief(slug, forceRefresh){
     /* filter from cache */
     const rels=S.allRelations.filter(r=>r.from_company===slug||r.to_company===slug);
     _relCache=rels;
-    if(!_relCache.length){body.innerHTML=`<div style="font-size:11px;color:var(--t3)">No relations recorded</div>`;if(cnt)cnt.textContent='';return;}
+    if(!_relCache.length){body.innerHTML=`<div style="font-size:11px;color:var(--t3)">No relations — <span style="cursor:pointer;color:var(--g)" onclick="openAddRelation('${slug}')">+ Add one</span></div>`;if(cnt)cnt.textContent='';return;}
     if(cnt)cnt.textContent=_relCache.length;
     clog('info',`Relations for <b>${slug}</b>: ${_relCache.length} (from cache of ${S.allRelations.length})`);
     const coMap={};S.companies.forEach(x=>{if(x.name)coMap[_slug(x.name)]=x;});
@@ -779,4 +779,49 @@ export async function mapSegments(){
   clog('info',`Segment mapper: <b>${matches.length}</b> matches for ${esc(c.name)}`);
 
   body.innerHTML=renderSegTree(matches);
+}
+
+/* ═══ Add Relation Modal ═════════════════════════════════════ */
+export function openAddRelation(fromSlug=''){
+  const overlay=document.getElementById('addRelOverlay');if(!overlay)return;
+  const opts=[...S.companies].sort((a,b)=>(a.name||'').localeCompare(b.name||'')).map(c=>`<option value="${_slug(c.name)}">${esc(c.name)}</option>`).join('');
+  const blank='<option value="">— select company —</option>';
+  const frEl=document.getElementById('arFrom');const toEl=document.getElementById('arTo');
+  if(frEl){frEl.innerHTML=blank+opts;if(fromSlug)frEl.value=fromSlug;}
+  if(toEl)toEl.innerHTML=blank+opts;
+  overlay.style.display='flex';
+  clog('info',`Open Add Relation from <b>${fromSlug||'—'}</b>`);
+}
+
+export function closeAddRelation(){
+  const overlay=document.getElementById('addRelOverlay');
+  if(overlay)overlay.style.display='none';
+}
+
+export async function submitAddRelation(){
+  const from=document.getElementById('arFrom').value;
+  const to=document.getElementById('arTo').value;
+  const type=document.getElementById('arType').value;
+  const dir=document.getElementById('arDir').value;
+  const str=document.getElementById('arStrength').value;
+  const src2=document.getElementById('arSource').value;
+  const notes=document.getElementById('arNotes').value.trim();
+  const btn=document.getElementById('arSubmitBtn');
+  if(!from||!to){alert('Select both companies.');return;}
+  if(from===to){alert('Cannot link a company to itself.');return;}
+  btn.textContent='Saving…';btn.disabled=true;
+  try{
+    const res=await fetch(`${SB_URL}/rest/v1/company_relations`,{
+      method:'POST',
+      headers:{...HDR,'Prefer':'resolution=merge-duplicates,return=minimal'},
+      body:JSON.stringify({from_company:from,to_company:to,relation_type:type,direction:dir,strength:str,source:src2||'manual',notes:notes||null}),
+    });
+    if(!res.ok)throw new Error(`HTTP ${res.status}`);
+    clog('db',`Relation saved: <b>${from}</b> → <b>${to}</b> [${type}]`);
+    closeAddRelation();
+    await refreshRelationsCache();
+    const cur=S.currentCompany;
+    if(cur)loadRelationsBrief(_slug(cur.name),false);
+  }catch(e){alert('Save failed: '+e.message);}
+  btn.textContent='+ Add Relation';btn.disabled=false;
 }
