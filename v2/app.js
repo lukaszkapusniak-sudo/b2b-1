@@ -1,7 +1,7 @@
 /* ═══ app.js — boot + window exports ═══ */
 
 import S from './state.js';
-import { renderStats, loadFromSupabase, setStatus, saveCompany, saveContact } from './api.js';
+import { renderStats, loadFromSupabase, setStatus, saveCompany, saveContact, promptApiKey, updateKeyBtn } from './api.js';
 import { renderList, switchTab as _switchTab, setFilter, onSearch, renderTagPanel, toggleTagPanel, toggleTag, toggleTagEl, clearTags, setTagLogic, matchTags, runAI, clearAI, openCompany, closePanel, coAction, ctAction, bgGenerateAngle, bgFindDMs, bgRefreshIntel, openBySlug, showCtxSlug, showCtx, openDrawer, closeDrawer, drEmail, drLinkedIn, drGmail, drResearch, promptResearch, promptSimilar, closeModal, submitModal, openClaude } from './hub.js';
 import { openComposer, closeComposer, openPanel, mcRenderPersonas, mcPickPersona, mcGenerate, mcCopy, mcHint, mcPickContact, mcRenderPicker } from './meeseeks.js';
 import { extendSwitchTab, renderTCFList, renderTCFCenter, tcfSelectRow, tcfClearSel, updateTCFSelBar, loadGVL, doGVLMatch, promptGVLConfirm, closeGVLConfirm, executeGVLConfirm } from './tcf.js';
@@ -42,6 +42,8 @@ Object.assign(window, {
   /* modals */
   promptResearch, promptSimilar, closeModal, submitModal,
   openClaude,
+  /* API key */
+  promptApiKey,
   /* composer */
   openComposer, closeComposer, openPanel,
   mcPickPersona, mcGenerate, mcCopy, mcHint, mcPickContact,
@@ -79,5 +81,6 @@ document.addEventListener('DOMContentLoaded', () => {
 setStatus(false);
 renderStats();
 renderList();
+updateKeyBtn();
 loadFromSupabase(renderStats, renderList, renderTagPanel);
 mcRenderPersonas();

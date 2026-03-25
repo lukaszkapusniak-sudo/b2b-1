@@ -15,6 +15,7 @@
   <span class="nav-status" id="dbStatus">○ Loading…</span>
   <div class="nav-right">
     <button class="btn sm" onclick="window.oaDB&&window.oaDB.reload()">↺ Sync</button>
+    <button class="btn sm" id="apiKeyBtn" onclick="window.promptApiKey&&window.promptApiKey()" title="Set Anthropic API key">🔑</button>
     <button class="btn sm" onclick="openComposer(null)">✉ Compose</button>
     <button class="btn sm p" onclick="promptResearch()">+ Research</button>
     <button class="btn sm" onclick="toggleTheme()" id="themeBtn">🌙</button>
