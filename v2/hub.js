@@ -172,7 +172,163 @@ export async function bgRefreshIntel(){const c=S.currentCompany;if(!c)return;con
 export async function loadIntelligence(slug,name){const body=document.getElementById('ib-intel-body');if(!body)return;const[storedRes,liveRes]=await Promise.allSettled([fetch(`${SB_URL}/rest/v1/intelligence?company_id=eq.${slug}&type=eq.press_links`,{headers:{apikey:SB_KEY,Authorization:`Bearer ${SB_KEY}`}}).then(r=>r.json()),fetchGoogleNews(name)]);const stored=storedRes.status==='fulfilled'&&Array.isArray(storedRes.value)?storedRes.value:[];const live=liveRes.status==='fulfilled'?liveRes.value:[];renderIntelBody(stored,live);if(live.length)saveIntelligence(slug,live);}
 
 /* ═══ Relations ══════════════════════════════════════════════ */
-export async function loadRelationsBrief(slug){const body=document.getElementById('ib-rels-body'),cnt=document.getElementById('ib-rels-cnt');if(!body)return;try{const res=await fetch(`${SB_URL}/rest/v1/company_relations?or=(from_company.eq.${slug},to_company.eq.${slug})&select=*`,{headers:{apikey:SB_KEY,Authorization:`Bearer ${SB_KEY}`}});const rels=await res.json();if(!Array.isArray(rels)||!rels.length){body.innerHTML=`<div style="font-size:11px;color:var(--t3)">No relations recorded</div>`;return;}if(cnt)cnt.textContent=rels.length;const coMap={};S.companies.forEach(x=>{if(x.name)coMap[_slug(x.name)]=x;});const TL={data_partner:'Data Partner',dsp_integration:'DSP Integration',marketplace_listed:'Marketplace',tech_integration:'Tech Integration',client_of:'Client Of',acquired_by:'Acquired By',subsidiary_of:'Subsidiary Of',competes_with:'Competes With',co_sell:'Co-Sell'};body.innerHTML=rels.map(r=>{const isSrc=r.from_company===slug;const oid=isSrc?r.to_company:r.from_company;const co=coMap[oid];const arrow=r.direction==='bidirectional'?'⇄':(isSrc?'→':'←');const nameDisp=co?.name||oid;const type=TL[r.relation_type]||r.relation_type;return`<div class="ib-rel-item"><div class="ib-rel-arrow">${arrow}</div>${co?`<div class="ib-rel-name" data-slug="${oid}" onclick="openBySlug(this.dataset.slug)">${nameDisp}</div>`:`<div class="ib-rel-name no-link">${nameDisp}</div>`}<div class="ib-rel-type">${type}</div><span class="tag ${r.strength==='confirmed'?'tc':'tpr'}" style="flex-shrink:0">${r.strength||'—'}</span></div>${r.notes?`<div class="ib-rel-notes">${r.notes}</div>`:''}`;}).join('');}catch(e){body.innerHTML=`<div style="font-size:11px;color:var(--t3)">Error loading relations</div>`;}}
+let _relCache=[];let _relView='list';
+window.setRelView=function(v){_relView=v;const listEl=document.getElementById('ib-rels-list');const graphEl=document.getElementById('ib-rels-graph');const btnL=document.getElementById('ib-rel-btn-list');const btnG=document.getElementById('ib-rel-btn-graph');if(!listEl||!graphEl)return;listEl.style.display=v==='list'?'':'none';graphEl.style.display=v==='graph'?'':'none';if(btnL){btnL.className='ib-ct-btn'+(v==='list'?' active':'');}if(btnG){btnG.className='ib-ct-btn'+(v==='graph'?' active':'');}if(v==='graph'&&_relCache.length)renderRelGraph();};
+
+export async function loadRelationsBrief(slug){
+  const body=document.getElementById('ib-rels-body'),cnt=document.getElementById('ib-rels-cnt');if(!body)return;
+  try{
+    const res=await fetch(`${SB_URL}/rest/v1/company_relations?or=(from_company.eq.${slug},to_company.eq.${slug})&select=*`,{headers:{apikey:SB_KEY,Authorization:`Bearer ${SB_KEY}`}});
+    const rels=await res.json();
+    _relCache=Array.isArray(rels)?rels:[];
+    if(!_relCache.length){body.innerHTML=`<div style="font-size:11px;color:var(--t3)">No relations recorded</div>`;if(cnt)cnt.textContent='';return;}
+    if(cnt)cnt.textContent=_relCache.length;
+    const coMap={};S.companies.forEach(x=>{if(x.name)coMap[_slug(x.name)]=x;});
+    const TL={data_partner:'Data Partner',dsp_integration:'DSP Integration',marketplace_listed:'Marketplace',tech_integration:'Tech Integration',client_of:'Client Of',acquired_by:'Acquired By',subsidiary_of:'Subsidiary Of',competes_with:'Competes With',co_sell:'Co-Sell',reseller:'Reseller'};
+    /* toggle bar + containers */
+    const listHtml=_relCache.map(r=>{const isSrc=r.from_company===slug;const oid=isSrc?r.to_company:r.from_company;const co=coMap[oid];const arrow=r.direction==='bidirectional'?'⇄':(isSrc?'→':'←');const nameDisp=co?.name||oid;const type=TL[r.relation_type]||r.relation_type;return`<div class="ib-rel-item"><div class="ib-rel-arrow">${arrow}</div>${co?`<div class="ib-rel-name" data-slug="${oid}" onclick="openBySlug(this.dataset.slug)">${nameDisp}</div>`:`<div class="ib-rel-name no-link">${nameDisp}</div>`}<div class="ib-rel-type">${type}</div><span class="tag ${r.strength==='confirmed'?'tc':'tpr'}" style="flex-shrink:0">${r.strength||'—'}</span></div>${r.notes?`<div class="ib-rel-notes">${r.notes}</div>`:''}`;}).join('');
+    body.innerHTML=`<div style="display:flex;gap:3px;margin-bottom:8px"><button id="ib-rel-btn-list" class="ib-ct-btn active" onclick="setRelView('list')" style="height:20px;padding:0 8px;font-size:7px">☰ List</button><button id="ib-rel-btn-graph" class="ib-ct-btn" onclick="setRelView('graph')" style="height:20px;padding:0 8px;font-size:7px">◎ Graph</button></div><div id="ib-rels-list">${listHtml}</div><div id="ib-rels-graph" style="display:none"></div>`;
+    _relView='list';
+  }catch(e){body.innerHTML=`<div style="font-size:11px;color:var(--t3)">Error loading relations</div>`;}
+}
+
+/* ═══ Force-directed Relation Graph ═════════════════════════ */
+function renderRelGraph(){
+  const container=document.getElementById('ib-rels-graph');if(!container||!_relCache.length)return;
+  const slug=_slug(S.currentCompany?.name||'');
+  const coMap={};S.companies.forEach(x=>{if(x.name)coMap[_slug(x.name)]=x;});
+
+  /* build nodes + edges */
+  const nodeSet=new Map();
+  const addNode=(id)=>{if(!nodeSet.has(id)){const co=coMap[id];nodeSet.set(id,{id,name:co?.name||id,type:co?.type||'unknown',isCenter:id===slug,inDB:!!co});}};
+  addNode(slug);
+  const edges=[];
+  _relCache.forEach(r=>{
+    addNode(r.from_company);addNode(r.to_company);
+    edges.push({source:r.from_company,target:r.to_company,type:r.relation_type,strength:r.strength,direction:r.direction});
+  });
+  const nodes=[...nodeSet.values()];
+
+  /* layout dimensions */
+  const W=620,H=Math.max(320,nodes.length*18);
+  container.innerHTML=`<svg id="rel-svg" viewBox="0 0 ${W} ${H}" width="100%" style="max-height:440px;border:1px solid var(--rule);border-radius:2px;background:var(--surf2);cursor:grab"><defs><marker id="rel-arr" viewBox="0 0 10 10" refX="22" refY="5" markerWidth="4" markerHeight="4" orient="auto-start-reverse"><path d="M2 1L8 5L2 9" fill="none" stroke="var(--t3)" stroke-width="1.5" stroke-linecap="round"/></marker></defs></svg>`;
+  const svg=document.getElementById('rel-svg');if(!svg)return;
+
+  /* color by relation type */
+  const typeColors={data_partner:'var(--g)',dsp_integration:'var(--pc)',marketplace_listed:'var(--prc)',tech_integration:'var(--poc)',client_of:'var(--cc)',acquired_by:'var(--nc)',subsidiary_of:'var(--nc)',competes_with:'#F87171',co_sell:'var(--g)',reseller:'var(--prc)'};
+
+  /* init positions — center node in middle, others in circle */
+  const cx=W/2,cy=H/2;
+  nodes.forEach((n,i)=>{
+    if(n.isCenter){n.x=cx;n.y=cy;n.fx=cx;n.fy=cy;}
+    else{const a=(2*Math.PI*i)/nodes.length;const r=Math.min(W,H)*0.35;n.x=cx+r*Math.cos(a)+Math.random()*20;n.y=cy+r*Math.sin(a)+Math.random()*20;}
+    n.vx=0;n.vy=0;
+  });
+
+  /* simple force sim */
+  const nodeById=new Map(nodes.map(n=>[n.id,n]));
+  function tick(){
+    /* repulsion between all nodes */
+    for(let i=0;i<nodes.length;i++){
+      for(let j=i+1;j<nodes.length;j++){
+        let dx=nodes[j].x-nodes[i].x,dy=nodes[j].y-nodes[i].y;
+        let dist=Math.sqrt(dx*dx+dy*dy)||1;
+        let force=800/(dist*dist);
+        let fx=dx/dist*force,fy=dy/dist*force;
+        if(!nodes[i].fx){nodes[i].vx-=fx;nodes[i].vy-=fy;}
+        if(!nodes[j].fx){nodes[j].vx+=fx;nodes[j].vy+=fy;}
+      }
+    }
+    /* attraction along edges */
+    edges.forEach(e=>{
+      const s=nodeById.get(e.source),t=nodeById.get(e.target);if(!s||!t)return;
+      let dx=t.x-s.x,dy=t.y-s.y,dist=Math.sqrt(dx*dx+dy*dy)||1;
+      let force=(dist-120)*0.02;
+      let fx=dx/dist*force,fy=dy/dist*force;
+      if(!s.fx){s.vx+=fx;s.vy+=fy;}
+      if(!t.fx){t.vx-=fx;t.vy-=fy;}
+    });
+    /* gravity toward center */
+    nodes.forEach(n=>{
+      if(n.fx)return;
+      n.vx+=(cx-n.x)*0.003;n.vy+=(cy-n.y)*0.003;
+      n.vx*=0.85;n.vy*=0.85;
+      n.x+=n.vx;n.y+=n.vy;
+      n.x=Math.max(40,Math.min(W-40,n.x));n.y=Math.max(25,Math.min(H-25,n.y));
+    });
+  }
+  for(let i=0;i<120;i++)tick();
+
+  /* render edges */
+  edges.forEach(e=>{
+    const s=nodeById.get(e.source),t=nodeById.get(e.target);if(!s||!t)return;
+    const line=document.createElementNS('http://www.w3.org/2000/svg','line');
+    line.setAttribute('x1',s.x);line.setAttribute('y1',s.y);
+    line.setAttribute('x2',t.x);line.setAttribute('y2',t.y);
+    line.setAttribute('stroke',typeColors[e.type]||'var(--rule)');
+    line.setAttribute('stroke-width',e.strength==='confirmed'?'1.5':'1');
+    if(e.strength!=='confirmed')line.setAttribute('stroke-dasharray','4 3');
+    if(e.direction!=='bidirectional')line.setAttribute('marker-end','url(#rel-arr)');
+    svg.appendChild(line);
+    /* edge label */
+    const TL={data_partner:'partner',dsp_integration:'DSP',marketplace_listed:'mkt',tech_integration:'tech',client_of:'client',acquired_by:'acq',subsidiary_of:'sub',competes_with:'compete',co_sell:'co-sell',reseller:'resell'};
+    const lbl=document.createElementNS('http://www.w3.org/2000/svg','text');
+    lbl.setAttribute('x',(s.x+t.x)/2);lbl.setAttribute('y',(s.y+t.y)/2-4);
+    lbl.setAttribute('text-anchor','middle');lbl.setAttribute('font-family','IBM Plex Mono,monospace');
+    lbl.setAttribute('font-size','6');lbl.setAttribute('fill','var(--t3)');
+    lbl.textContent=TL[e.type]||e.type;
+    svg.appendChild(lbl);
+  });
+
+  /* render nodes */
+  nodes.forEach(n=>{
+    const g=document.createElementNS('http://www.w3.org/2000/svg','g');
+    g.style.cursor=n.inDB?'pointer':'default';
+    if(n.inDB)g.addEventListener('click',()=>openBySlug(n.id));
+
+    const r=n.isCenter?20:13;
+    const circle=document.createElementNS('http://www.w3.org/2000/svg','circle');
+    circle.setAttribute('cx',n.x);circle.setAttribute('cy',n.y);circle.setAttribute('r',r);
+    if(n.isCenter){circle.setAttribute('fill','var(--g)');circle.setAttribute('stroke','var(--gd)');circle.setAttribute('stroke-width','1.5');}
+    else{
+      const tc={client:'var(--cb)',partner:'var(--pb)',prospect:'var(--prb)',nogo:'var(--nb)',poc:'var(--pob)'};
+      const ts={client:'var(--cr)',partner:'var(--pr)',prospect:'var(--prr)',nogo:'var(--nr)',poc:'var(--por)'};
+      circle.setAttribute('fill',tc[n.type]||'var(--surf)');
+      circle.setAttribute('stroke',ts[n.type]||'var(--rule)');
+      circle.setAttribute('stroke-width','1');
+    }
+    g.appendChild(circle);
+
+    /* initials inside node */
+    const ini2=document.createElementNS('http://www.w3.org/2000/svg','text');
+    ini2.setAttribute('x',n.x);ini2.setAttribute('y',n.y+(n.isCenter?1:1));
+    ini2.setAttribute('text-anchor','middle');ini2.setAttribute('dominant-baseline','central');
+    ini2.setAttribute('font-family','IBM Plex Mono,monospace');
+    ini2.setAttribute('font-size',n.isCenter?'8':'7');
+    ini2.setAttribute('font-weight','600');
+    ini2.setAttribute('fill',n.isCenter?'#fff':'var(--t2)');
+    ini2.textContent=ini(n.name);
+    g.appendChild(ini2);
+
+    /* name label */
+    const lbl=document.createElementNS('http://www.w3.org/2000/svg','text');
+    lbl.setAttribute('x',n.x);lbl.setAttribute('y',n.y+r+10);
+    lbl.setAttribute('text-anchor','middle');
+    lbl.setAttribute('font-family','IBM Plex Mono,monospace');
+    lbl.setAttribute('font-size',n.isCenter?'9':'8');
+    lbl.setAttribute('font-weight',n.isCenter?'600':'400');
+    lbl.setAttribute('fill',n.isCenter?'var(--g)':'var(--t1)');
+    const dispName=n.name.length>16?n.name.slice(0,14)+'…':n.name;
+    lbl.textContent=dispName;
+    g.appendChild(lbl);
+
+    /* hover effects */
+    g.addEventListener('mouseenter',()=>{circle.setAttribute('stroke','var(--g)');circle.setAttribute('stroke-width','2');lbl.setAttribute('fill','var(--g)');});
+    g.addEventListener('mouseleave',()=>{if(!n.isCenter){circle.setAttribute('stroke',{client:'var(--cr)',partner:'var(--pr)',prospect:'var(--prr)',nogo:'var(--nr)',poc:'var(--por)'}[n.type]||'var(--rule)');circle.setAttribute('stroke-width','1');}else{circle.setAttribute('stroke','var(--gd)');circle.setAttribute('stroke-width','1.5');}lbl.setAttribute('fill',n.isCenter?'var(--g)':'var(--t1)');});
+
+    svg.appendChild(g);
+  });
+}
 
 /* ═══ Navigation helpers ═════════════════════════════════════ */
 export function openBySlug(s){const c=S.companies.find(x=>_slug(x.name)===s);if(c)openCompany(c);}
