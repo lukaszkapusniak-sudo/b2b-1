@@ -51,31 +51,92 @@ export function renderList(){
 }
 
 /* ═══ Company Detail Panel ═══════════════════════════════════ */
+
+/* fold toggle helper — used by onclick in section headers */
+function ibToggle(id){const b=document.getElementById(id);if(!b)return;const closed=b.style.display==='none';b.style.display=closed?'':'none';const arrow=document.getElementById(id+'-arrow');if(arrow)arrow.textContent=closed?'▾':'▸';}
+/* expose for onclick */
+window.ibToggle=ibToggle;
+
 export function openCompany(c){
   if(!c)return;S.currentCompany=c;window.currentCompany=c;
   document.getElementById('emptyState').style.display='none';
   const panel=document.getElementById('coPanel');panel.style.display='block';
   const av=getAv(c.name),n=ini(c.name),tc=tClass(c.type),tl=tLabel(c.type),st=stars(c.icp);
-  const facts=[c.category&&['Category',c.category],(c.region||c.hq_city)&&['HQ',[c.region,c.hq_city].filter(Boolean).join(', ')],c.size&&['Size',c.size],c.founded_year&&['Founded',c.founded_year],c.funding&&['Funding',c.funding],c.tcf_vendor_id&&['GVL/TCF',c.tcf_vendor_id],c.website&&['Website',`<a href="https://${c.website}" target="_blank" style="color:var(--g);text-decoration:none">${c.website} ↗</a>`],c.dsps&&c.dsps.length&&['DSPs',(Array.isArray(c.dsps)?c.dsps:c.dsps.split(',')).join(', ')],c.updated_at&&['Updated',new Date(c.updated_at).toLocaleDateString('en-GB',{day:'numeric',month:'short',year:'2-digit'})]].filter(Boolean);
+
+  /* ── facts table ── */
+  const facts=[
+    c.category&&['Category',c.category],
+    (c.region||c.hq_city)&&['HQ',[c.region,c.hq_city].filter(Boolean).join(', ')],
+    c.size&&['Size',c.size],
+    c.founded_year&&['Founded',c.founded_year],
+    c.funding&&['Funding',c.funding],
+    c.tcf_vendor_id&&['GVL/TCF',c.tcf_vendor_id],
+    c.privacy_risk_score&&['Privacy Risk',`${'█'.repeat(c.privacy_risk_score)}${'░'.repeat(5-c.privacy_risk_score)} (${c.privacy_risk_score}/5)`],
+    c.website&&['Website',`<a href="https://${c.website}" target="_blank" style="color:var(--g);text-decoration:none">${c.website} ↗</a>`],
+    c.dsps&&c.dsps.length&&['DSPs',(Array.isArray(c.dsps)?c.dsps:c.dsps.split(',')).join(', ')],
+    c.updated_at&&['Updated',new Date(c.updated_at).toLocaleDateString('en-GB',{day:'numeric',month:'short',year:'2-digit'})]
+  ].filter(Boolean);
+
+  /* ── signals bar ── */
   const semnTags=getCoTags(c);const techArr=Array.isArray(c.tech_stack)?c.tech_stack:[];
   const signalHtml=[semnTags.length?`<span class="ib-sig-lbl">Signals</span>${semnTags.map(t=>`<span class="ib-sig-tag">${t}</span>`).join('')}`:'',semnTags.length&&techArr.length?'<span class="ib-sig-div"></span>':'',techArr.length?`<span class="ib-sig-lbl">Tech</span>${techArr.slice(0,8).map(t=>`<span class="ib-tech-pill">${t.tool||t}</span>`).join('')}`:''].filter(Boolean).join('');
+
+  /* ── contacts grid ── */
   const coCts=S.contacts.filter(ct=>(ct.company_name||'').toLowerCase()===c.name.toLowerCase());
   const ctGridHtml=coCts.length?`<div class="ib-cts-grid">${coCts.map(ct=>{const a2=getAv(ct.full_name||''),n2=ini(ct.full_name||'');const ctSlug=ct.id||_slug(ct.full_name||'');return`<div class="ib-ct" data-ctslug="${ctSlug}" onclick="openDrawer('${ctSlug}')"><div class="ib-ct-top"><div class="ib-ct-av" style="background:${a2.bg};color:${a2.fg}">${n2}</div><div><div class="ib-ct-name">${ct.full_name||'—'}</div><div class="ib-ct-title">${ct.title||''}</div></div></div>${ct.email?`<div class="ib-ct-email">${ct.email}</div>`:''}<div class="ib-ct-actions"><button class="ib-ct-btn" onclick="event.stopPropagation();ctAction('email','${ctSlug}')">✉ Email</button>${ct.linkedin_url?`<button class="ib-ct-btn" onclick="event.stopPropagation();window.open('${ct.linkedin_url}','_blank')">LI ↗</button>`:''}<button class="ib-ct-btn" onclick="event.stopPropagation();ctAction('research','${ctSlug}')">Research ↗</button></div></div>`;}).join('')}</div>`:`<div style="display:flex;align-items:center;gap:8px"><div style="font-size:11px;color:var(--t3)">No contacts stored</div><button class="ib-cta-btn" onclick="bgFindDMs()" style="margin-left:auto">✨ Find DMs</button></div>`;
+
+  /* ── products ── */
   const prods=c.products?.products||[];
   const prodsHtml=prods.length?prods.map(p=>`<div class="ib-prod-row"><div class="ib-prod-name">${p.name||''}</div><div class="ib-prod-desc">${p.description||''}${p.target_user?` <span style="color:var(--t3)">· ${p.target_user}</span>`:''}</div></div>`).join(''):'';
+
+  /* ── tech stack block (for under outreach angle) ── */
+  const techBlock=techArr.length?`<div style="margin-top:10px;padding-top:8px;border-top:1px solid var(--rule2)"><div style="font-family:'IBM Plex Mono',monospace;font-size:7px;font-weight:600;text-transform:uppercase;letter-spacing:.07em;color:var(--t3);margin-bottom:5px">Tech Stack</div><div style="display:flex;flex-wrap:wrap;gap:3px">${techArr.map(t=>`<span class="ib-tech-pill">${esc(t.tool||t)}${t.category?` <span style="opacity:.5">· ${t.category}</span>`:''}</span>`).join('')}</div></div>`:'';
+
+  /* ── integrations block ── */
+  const integ=c.products?.integrations_advertised||[];
+  const integBlock=integ.length?`<div style="margin-top:8px"><div style="font-family:'IBM Plex Mono',monospace;font-size:7px;font-weight:600;text-transform:uppercase;letter-spacing:.07em;color:var(--t3);margin-bottom:5px">Integrations</div><div style="display:flex;flex-wrap:wrap;gap:3px">${integ.map(i=>`<span class="ib-sig-tag">${esc(i)}</span>`).join('')}</div></div>`:'';
+
+  /* ── TCF / CCPA / Privacy compliance block ── */
+  let privacyHtml='';
+  if(c.tcf_vendor_id||c.privacy_risk_score){
+    const parts=[];
+    if(c.tcf_vendor_id)parts.push(`<span class="tag tc" style="cursor:default">TCF GVL ${c.tcf_vendor_id}</span>`);
+    if(c.privacy_risk_score){
+      const cl=['','#4ADE80','#86EFAC','#FDE68A','#FBBF24','#F87171'];
+      const lb=['','Very Low','Low','Medium','High','Critical'];
+      let bar='';for(let i=1;i<=5;i++)bar+=`<span style="display:inline-block;width:10px;height:7px;border-radius:1px;margin-right:1px;background:${i<=c.privacy_risk_score?cl[c.privacy_risk_score]:'var(--rule)'}"></span>`;
+      parts.push(`<span style="display:inline-flex;align-items:center;gap:4px">${bar}<span style="font-size:8px;font-family:'IBM Plex Mono',monospace;color:var(--t2)">${lb[c.privacy_risk_score]}</span></span>`);
+    }
+    privacyHtml=`<div class="ib-sec"><div class="ib-sh" style="cursor:pointer" onclick="ibToggle('ib-privacy-body')"><span id="ib-privacy-body-arrow" style="font-size:9px;color:var(--t3)">▾</span><span class="ib-sh-lbl">🛡️ Privacy / TCF / CCPA</span><span class="ib-sh-act" onclick="event.stopPropagation();switchTab('tcf')">Open TCF Analyser →</span></div><div class="ib-body" id="ib-privacy-body"><div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap;margin-bottom:8px">${parts.join('')}</div><table class="ib-facts">${c.tcf_vendor_id?`<tr><td>TCF v2.0</td><td>Vendor ID ${c.tcf_vendor_id} — registered in IAB GVL</td></tr>`:''}<tr><td>GDPR</td><td>${c.tcf_vendor_id?'TCF certified — consent-based processing':'No TCF registration found'}</td></tr><tr><td>CCPA</td><td>${c.website?`Check <a href="https://${c.website}/privacy" target="_blank" style="color:var(--g)">privacy policy ↗</a> for CCPA/CPRA disclosures`:'Unknown — no website stored'}</td></tr></table></div></div>`;
+  }
+
+  /* ── section helper ── */
+  const sec=(id,icon,label,body,extra,startOpen)=>{
+    const arrow=startOpen!==false?'▾':'▸';
+    const disp=startOpen!==false?'':'display:none';
+    return`<div class="ib-sec"><div class="ib-sh" style="cursor:pointer" onclick="ibToggle('${id}')"><span id="${id}-arrow" style="font-size:9px;color:var(--t3)">${arrow}</span><span class="ib-sh-lbl">${icon} ${label}</span>${extra||''}</div><div class="ib-body" id="${id}" style="${disp}">${body}</div></div>`;
+  };
+
+  /* ── assemble panel ── */
   panel.innerHTML=`<div class="ib">
 <div class="ib-head"><div class="ib-av${c.type==='nogo'?' nogo':''}">${n}</div><div class="ib-meta"><div class="ib-name">${c.name}</div><div class="ib-row2"><span class="tag ${tc}">${tl}</span>${st?`<span class="ib-icp">${st}</span>`:''}</div>${c.note?`<div class="ib-note">${c.note}</div>`:''}</div><div class="ib-close" onclick="closePanel()">✕</div></div>
 <div class="ib-cta"><button class="ib-cta-btn primary" onclick="coAction('email')">✉ Draft Email</button><button class="ib-cta-btn" onclick="bgFindDMs()">👤 Find DMs</button><button class="ib-cta-btn" onclick="bgGenerateAngle()">💡 Gen Angle</button><button class="ib-cta-btn" onclick="bgRefreshIntel()">📰 Refresh News</button><button class="ib-cta-btn" onclick="coAction('similar')">🔗 Find Similar</button><button class="ib-cta-btn" onclick="coAction('linkedin')" style="margin-left:auto">LinkedIn ↗</button></div>
 <div class="ib-top">
-  <div class="ib-sec" style="margin-bottom:0"><div class="ib-sh"><span class="ib-sh-lbl">🏢 Company</span></div><div class="ib-body">${facts.length?`<table class="ib-facts">${facts.map(([k,v])=>`<tr><td>${k}</td><td>${v}</td></tr>`).join('')}</table>`:'<span style="font-size:11px;color:var(--t3)">No details stored</span>'}${c.description?`<div class="ib-desc">${c.description}</div>`:''}</div></div>
-  <div class="ib-sec" style="margin-bottom:0"><div class="ib-sh"><span class="ib-sh-lbl">💡 Outreach Angle</span><span class="ib-sh-act" id="ib-angle-btn" onclick="bgGenerateAngle()">${c.outreach_angle?'↺ Regen':'✨ Generate'}</span></div><div class="ib-body" style="padding:0"><div class="ib-angle${c.outreach_angle?'':' empty'}" id="ib-angle-card" style="border:none;border-radius:0;min-height:100px"><div class="ib-angle-lbl">${c.outreach_angle?'Recommended positioning':'No angle stored yet'}</div>${c.outreach_angle?`<div class="ib-angle-text">${c.outreach_angle}</div>`:`<div class="ib-angle-text" style="color:var(--t3);font-size:10px">Click "✨ Generate" to create a personalised positioning for onAudience.</div>`}</div></div></div>
+  ${sec('ib-company','🏢','Company',
+    (facts.length?`<table class="ib-facts">${facts.map(([k,v])=>`<tr><td>${k}</td><td>${v}</td></tr>`).join('')}</table>`:'<span style="font-size:11px;color:var(--t3)">No details stored</span>')+(c.description?`<div class="ib-desc">${c.description}</div>`:''),
+    null,true)}
+  <div class="ib-sec"><div class="ib-sh" style="cursor:pointer" onclick="ibToggle('ib-angle-wrap')"><span id="ib-angle-wrap-arrow" style="font-size:9px;color:var(--t3)">▾</span><span class="ib-sh-lbl">💡 Outreach Angle</span><span class="ib-sh-act" id="ib-angle-btn" onclick="event.stopPropagation();bgGenerateAngle()">${c.outreach_angle?'↺ Regen':'✨ Generate'}</span></div><div class="ib-body" id="ib-angle-wrap" style="padding:0"><div class="ib-angle${c.outreach_angle?'':' empty'}" id="ib-angle-card" style="border:none;border-radius:0;min-height:60px"><div class="ib-angle-lbl">${c.outreach_angle?'Recommended positioning':'No angle stored yet'}</div>${c.outreach_angle?`<div class="ib-angle-text">${c.outreach_angle}</div>`:`<div class="ib-angle-text" style="color:var(--t3);font-size:10px">Click "✨ Generate" to create a personalised positioning.</div>`}</div>${techBlock}${integBlock}</div></div>
 </div>
 ${signalHtml?`<div class="ib-sec"><div class="ib-signals">${signalHtml}</div></div>`:''}
-<div class="ib-sec" id="ib-contacts"><div class="ib-sh"><span class="ib-sh-lbl">👤 Contacts</span>${coCts.length?`<span class="ib-sh-cnt">${coCts.length}</span>`:''}<span class="ib-sh-act" onclick="bgFindDMs()">✨ Find DMs</span></div><div class="ib-body" id="ib-ct-body">${ctGridHtml}</div></div>
-<div class="ib-sec" id="ib-intel"><div class="ib-sh"><span class="ib-sh-lbl">📰 Intelligence</span><span class="ib-sh-cnt" id="ib-intel-cnt"></span><span id="ib-intel-live" style="display:none" class="live-label"><span class="live-dot"></span>Live</span><span class="ib-sh-act" id="ib-intel-refresh" onclick="bgRefreshIntel()">↺ Refresh</span></div><div class="ib-body" id="ib-intel-body"><div class="ib-loading">Loading…</div></div></div>
-${prodsHtml?`<div class="ib-sec"><div class="ib-sh"><span class="ib-sh-lbl">📦 Products</span><span class="ib-sh-cnt">${prods.length}</span></div><div class="ib-body">${prodsHtml}</div></div>`:''}
-<div class="ib-sec" id="ib-rels"><div class="ib-sh"><span class="ib-sh-lbl">🔗 Relations</span><span class="ib-sh-cnt" id="ib-rels-cnt"></span></div><div class="ib-body" id="ib-rels-body"><div class="ib-loading">Loading…</div></div></div>
-<div class="ib-sec"><div class="ib-sh"><span class="ib-sh-lbl">🔗 Quick Links</span></div><div class="ib-links"><a class="ib-link" href="https://www.linkedin.com/search/results/people/?keywords=${encodeURIComponent(c.name+' data partnerships')}" target="_blank">LI People ↗</a><a class="ib-link" href="https://www.linkedin.com/search/results/companies/?keywords=${encodeURIComponent(c.name)}" target="_blank">LI Company ↗</a>${c.website?`<a class="ib-link" href="https://${c.website}" target="_blank">${c.website} ↗</a>`:''}<a class="ib-link" href="https://news.google.com/search?q=${encodeURIComponent(c.name)}" target="_blank">Google News ↗</a><span class="ib-link" onclick="coAction('gmail')">Gmail History</span></div></div>
+${privacyHtml}
+${sec('ib-ct-body','👤','Contacts',ctGridHtml,
+  `${coCts.length?`<span class="ib-sh-cnt">${coCts.length}</span>`:''}<span class="ib-sh-act" onclick="event.stopPropagation();bgFindDMs()">✨ Find DMs</span>`,true)}
+${sec('ib-intel-body','📰','Intelligence','<div class="ib-loading">Loading…</div>',
+  `<span class="ib-sh-cnt" id="ib-intel-cnt"></span><span id="ib-intel-live" style="display:none" class="live-label"><span class="live-dot"></span>Live</span><span class="ib-sh-act" id="ib-intel-refresh" onclick="event.stopPropagation();bgRefreshIntel()">↺ Refresh</span>`,true)}
+${prodsHtml?sec('ib-prods-body','📦','Products',prodsHtml,`<span class="ib-sh-cnt">${prods.length}</span>`,false):''}
+${sec('ib-rels-body','🔗','Relations','<div class="ib-loading">Loading…</div>',
+  `<span class="ib-sh-cnt" id="ib-rels-cnt"></span><span class="ib-sh-act" id="ib-rels-refresh" onclick="event.stopPropagation();loadRelationsBrief(_slug('${c.name.replace(/'/g,"\\'")}'))">↺ Refresh</span>`,true)}
+<div class="ib-sec"><div class="ib-sh" style="cursor:pointer" onclick="ibToggle('ib-links-body')"><span id="ib-links-body-arrow" style="font-size:9px;color:var(--t3)">▾</span><span class="ib-sh-lbl">🔗 Quick Links</span></div><div class="ib-links" id="ib-links-body"><a class="ib-link" href="https://www.linkedin.com/search/results/people/?keywords=${encodeURIComponent(c.name+' data partnerships')}" target="_blank">LI People ↗</a><a class="ib-link" href="https://www.linkedin.com/search/results/companies/?keywords=${encodeURIComponent(c.name)}" target="_blank">LI Company ↗</a>${c.website?`<a class="ib-link" href="https://${c.website}" target="_blank">${c.website} ↗</a>`:''}<a class="ib-link" href="https://news.google.com/search?q=${encodeURIComponent(c.name)}" target="_blank">Google News ↗</a><span class="ib-link" onclick="coAction('gmail')">Gmail History</span></div></div>
 </div>`;
   renderList();document.getElementById('centerScroll').scrollTop=0;
   if(c.name){const slug=_slug(c.name);setTimeout(()=>loadRelationsBrief(slug),60);setTimeout(()=>loadIntelligence(slug,c.name),80);}

@@ -1,8 +1,9 @@
 /* ═══ app.js — boot + window exports ═══ */
 
 import S from './state.js';
+import { _slug } from './utils.js';
 import { renderStats, loadFromSupabase, setStatus, saveCompany, saveContact, promptApiKey, updateKeyBtn } from './api.js';
-import { renderList, switchTab as _switchTab, setFilter, onSearch, renderTagPanel, toggleTagPanel, toggleTag, toggleTagEl, clearTags, setTagLogic, matchTags, runAI, clearAI, openCompany, closePanel, coAction, ctAction, bgGenerateAngle, bgFindDMs, bgRefreshIntel, openBySlug, showCtxSlug, showCtx, openDrawer, closeDrawer, drEmail, drLinkedIn, drGmail, drResearch, promptResearch, promptSimilar, closeModal, submitModal, openClaude } from './hub.js';
+import { renderList, switchTab as _switchTab, setFilter, onSearch, renderTagPanel, toggleTagPanel, toggleTag, toggleTagEl, clearTags, setTagLogic, matchTags, runAI, clearAI, openCompany, closePanel, coAction, ctAction, bgGenerateAngle, bgFindDMs, bgRefreshIntel, loadRelationsBrief, openBySlug, showCtxSlug, showCtx, openDrawer, closeDrawer, drEmail, drLinkedIn, drGmail, drResearch, promptResearch, promptSimilar, closeModal, submitModal, openClaude } from './hub.js';
 import { openComposer, closeComposer, openPanel, mcRenderPersonas, mcPickPersona, mcGenerate, mcCopy, mcHint, mcPickContact, mcRenderPicker } from './meeseeks.js';
 import { extendSwitchTab, renderTCFList, renderTCFCenter, tcfSelectRow, tcfClearSel, updateTCFSelBar, loadGVL, doGVLMatch, promptGVLConfirm, closeGVLConfirm, executeGVLConfirm } from './tcf.js';
 
@@ -36,7 +37,7 @@ Object.assign(window, {
   /* company detail */
   openCompany, closePanel, coAction, ctAction,
   openBySlug, showCtxSlug, showCtx,
-  bgGenerateAngle, bgFindDMs, bgRefreshIntel,
+  bgGenerateAngle, bgFindDMs, bgRefreshIntel, loadRelationsBrief, _slug,
   /* drawer */
   openDrawer, closeDrawer, drEmail, drLinkedIn, drGmail, drResearch,
   /* modals */
