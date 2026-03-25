@@ -1,9 +1,9 @@
 /* ═══ hub.js — main hub logic ═══ */
 
-import { SB_URL, SB_KEY, HDR, TAG_RULES } from './config.js';
+import { SB_URL, SB_KEY, HDR, TAG_RULES, MODEL_CREATIVE, MODEL_RESEARCH } from './config.js';
 import S from './state.js';
 import { classify, _slug, getCoTags, getAv, ini, tClass, tLabel, stars, esc, relTime } from './utils.js';
-import { renderStats, fetchGoogleNews, saveIntelligence, anthropicFetch } from './api.js';
+import { renderStats, fetchGoogleNews, saveIntelligence, anthropicFetch, researchFetch } from './api.js';
 
 /* ═══ Tag helpers ════════════════════════════════════════════ */
 export function tagCountsFor(pool){const m={};TAG_RULES.forEach(r=>{m[r.tag]=0;});pool.forEach(c=>getCoTags(c).forEach(t=>{m[t]=(m[t]||0)+1;}));return m;}
@@ -18,7 +18,7 @@ export function clearTags(){S.activeTags.clear();renderTagPanel();renderList();}
 export function setTagLogic(l){S.tagLogic=l;document.getElementById('tlOr').className='tp-logic-btn'+(l==='or'?' active':'');document.getElementById('tlAnd').className='tp-logic-btn'+(l==='and'?' active':'');if(S.activeTags.size)renderList();}
 
 /* ═══ AI Bar ═════════════════════════════════════════════════ */
-export async function runAI(){const q=document.getElementById('aiInp').value.trim();if(!q)return;const btn=document.getElementById('aiBtn'),stat=document.getElementById('aiStat'),dot=document.getElementById('aiDot'),txt=document.getElementById('aiTxt');btn.disabled=true;stat.className='ai-stat vis';dot.className='ai-dot';dot.style.background='';txt.textContent='Thinking…';clog('ai',`Query: <b>${esc(q)}</b>`);const list=S.companies.map(c=>`${c.name} (${c.type}${c.category?' / '+c.category:''}${c.hq_city?' / '+c.hq_city:''}${c.note?' – '+c.note.slice(0,40):''})`).join('\n');try{const data=await anthropicFetch({model:'claude-sonnet-4-20250514',max_tokens:800,system:'You are a B2B sales filter for onAudience. Given a company list and a query, return ONLY a raw JSON array of matching company names. No markdown, no explanation. Return [] if nothing matches.',messages:[{role:'user',content:`Query: "${q}"\n\nCompany list:\n${list}`}]});const raw=(data.content||[]).filter(b=>b.type==='text').map(b=>b.text).join('').replace(/```json|```/g,'').trim();const names=JSON.parse(raw);if(!Array.isArray(names))throw new Error('not array');S.aiSet=new Set(names);dot.className='ai-dot done';txt.textContent=`${names.length} matches — "${q.length>30?q.slice(0,30)+'…':q}"`;clog('ai',`✓ Found <b>${names.length}</b> matches for "${esc(q.slice(0,30))}"`);renderList();}catch(e){dot.className='ai-dot err';txt.textContent='Error — try again';clog('ai',`✗ Error: ${esc(e.message)}`);console.error(e);}btn.disabled=false;}
+export async function runAI(){const q=document.getElementById('aiInp').value.trim();if(!q)return;const btn=document.getElementById('aiBtn'),stat=document.getElementById('aiStat'),dot=document.getElementById('aiDot'),txt=document.getElementById('aiTxt');btn.disabled=true;stat.className='ai-stat vis';dot.className='ai-dot';dot.style.background='';txt.textContent='Thinking…';clog('ai',`Query: <b>${esc(q)}</b>`);const list=S.companies.map(c=>`${c.name} (${c.type}${c.category?' / '+c.category:''}${c.hq_city?' / '+c.hq_city:''}${c.note?' – '+c.note.slice(0,40):''})`).join('\n');try{const data=await anthropicFetch({model:MODEL_CREATIVE,max_tokens:800,system:'You are a B2B sales filter for onAudience. Given a company list and a query, return ONLY a raw JSON array of matching company names. No markdown, no explanation. Return [] if nothing matches.',messages:[{role:'user',content:`Query: "${q}"\n\nCompany list:\n${list}`}]});const raw=(data.content||[]).filter(b=>b.type==='text').map(b=>b.text).join('').replace(/```json|```/g,'').trim();const names=JSON.parse(raw);if(!Array.isArray(names))throw new Error('not array');S.aiSet=new Set(names);dot.className='ai-dot done';txt.textContent=`${names.length} matches — "${q.length>30?q.slice(0,30)+'…':q}"`;clog('ai',`✓ Found <b>${names.length}</b> matches for "${esc(q.slice(0,30))}"`);renderList();}catch(e){dot.className='ai-dot err';txt.textContent='Error — try again';clog('ai',`✗ Error: ${esc(e.message)}`);console.error(e);}btn.disabled=false;}
 export function clearAI(){S.aiSet=null;document.getElementById('aiStat').className='ai-stat';document.getElementById('aiInp').value='';renderList();}
 export function aiQuick(q){document.getElementById('aiInp').value=q;runAI();}
 
@@ -255,10 +255,98 @@ export function coAction(a){const c=S.currentCompany;if(!c)return;const n=c.name
 export function ctAction(action,ctSlug){const ct=S.contacts.find(c=>c.id===ctSlug||(c.full_name&&_slug(c.full_name)===ctSlug));if(!ct)return;if(action==='email')window.openComposer({company:ct.company_name,contactName:ct.full_name,contactTitle:ct.title,linkedin:ct.linkedin_url});if(action==='research')openClaude(`Full research on ${ct.full_name}, ${ct.title||''} at ${ct.company_name||''} — background, LinkedIn activity, outreach hooks`);}
 
 /* ═══ BG Generate Angle ══════════════════════════════════════ */
-export async function bgGenerateAngle(){const c=S.currentCompany;if(!c)return;const card=document.getElementById('ib-angle-card'),btn=document.getElementById('ib-angle-btn');if(card){card.className='ib-angle';card.innerHTML=`<div class="ib-angle-lbl"><span class="bg-running">✦ Generating…</span></div>`;}if(btn)btn.style.display='none';const tags=getCoTags(c).join(', ');const techArr2=(Array.isArray(c.tech_stack)?c.tech_stack:[]).slice(0,6).map(t=>typeof t==='string'?t:(t&&t.tool)?String(t.tool):'?').join(', ');try{const data=await anthropicFetch({model:'claude-sonnet-4-20250514',max_tokens:350,system:'You are a senior B2B data partnership sales specialist at onAudience, a European first-party audience data company. Write a concise, specific outreach angle (3–5 sentences) for approaching this company. Focus on what onAudience data solves for their business model, timing signals, and clearest value hook. No bullet points. Flowing prose only.',messages:[{role:'user',content:`Company: ${c.name}\nType: ${c.type}\nCategory: ${c.category||'unknown'}\nNote: ${c.note||''}\nDescription: ${c.description||''}\nTech: ${techArr2}\nDSPs: ${JSON.stringify(c.dsps||[])}\nSignals: ${tags}`}]});const angle=(data.content||[]).filter(b=>b.type==='text').map(b=>b.text).join('').trim();if(!angle)throw new Error('empty');S.currentCompany.outreach_angle=angle;S.companies.forEach(co=>{if(co.name===c.name)co.outreach_angle=angle;});if(card){card.className='ib-angle';card.innerHTML=`<div class="ib-angle-lbl">Recommended positioning <span class="bg-done">✓ generated</span></div><div class="ib-angle-text">${angle}</div>`;}if(btn){btn.textContent='↺ Regen';btn.style.display='';}await fetch(`${SB_URL}/rest/v1/companies?name=eq.${encodeURIComponent(c.name)}`,{method:'PATCH',headers:{...HDR,'Prefer':'return=minimal'},body:JSON.stringify({outreach_angle:angle})}).catch(()=>{});}catch(e){if(card)card.innerHTML=`<div class="ib-angle-lbl"><span class="bg-err">Error — ${e.message}</span></div>`;if(btn){btn.textContent='↺ Retry';btn.style.display='';}}}
+export async function bgGenerateAngle(){const c=S.currentCompany;if(!c)return;const card=document.getElementById('ib-angle-card'),btn=document.getElementById('ib-angle-btn');if(card){card.className='ib-angle';card.innerHTML=`<div class="ib-angle-lbl"><span class="bg-running">✦ Generating…</span></div>`;}if(btn)btn.style.display='none';const tags=getCoTags(c).join(', ');const techArr2=(Array.isArray(c.tech_stack)?c.tech_stack:[]).slice(0,6).map(t=>typeof t==='string'?t:(t&&t.tool)?String(t.tool):'?').join(', ');try{const data=await anthropicFetch({model:MODEL_CREATIVE,max_tokens:350,system:'You are a senior B2B data partnership sales specialist at onAudience, a European first-party audience data company. Write a concise, specific outreach angle (3–5 sentences) for approaching this company. Focus on what onAudience data solves for their business model, timing signals, and clearest value hook. No bullet points. Flowing prose only.',messages:[{role:'user',content:`Company: ${c.name}\nType: ${c.type}\nCategory: ${c.category||'unknown'}\nNote: ${c.note||''}\nDescription: ${c.description||''}\nTech: ${techArr2}\nDSPs: ${JSON.stringify(c.dsps||[])}\nSignals: ${tags}`}]});const angle=(data.content||[]).filter(b=>b.type==='text').map(b=>b.text).join('').trim();if(!angle)throw new Error('empty');S.currentCompany.outreach_angle=angle;S.companies.forEach(co=>{if(co.name===c.name)co.outreach_angle=angle;});if(card){card.className='ib-angle';card.innerHTML=`<div class="ib-angle-lbl">Recommended positioning <span class="bg-done">✓ generated</span></div><div class="ib-angle-text">${angle}</div>`;}if(btn){btn.textContent='↺ Regen';btn.style.display='';}await fetch(`${SB_URL}/rest/v1/companies?name=eq.${encodeURIComponent(c.name)}`,{method:'PATCH',headers:{...HDR,'Prefer':'return=minimal'},body:JSON.stringify({outreach_angle:angle})}).catch(()=>{});}catch(e){if(card)card.innerHTML=`<div class="ib-angle-lbl"><span class="bg-err">Error — ${e.message}</span></div>`;if(btn){btn.textContent='↺ Retry';btn.style.display='';}}}
 
-/* ═══ BG Find DMs ════════════════════════════════════════════ */
-export async function bgFindDMs(){const c=S.currentCompany;if(!c)return;const body=document.getElementById('ib-ct-body');if(!body)return;body.innerHTML=`<div class="ib-loading" style="text-align:left">Finding decision makers at ${c.name}…</div>`;const tags=getCoTags(c).join(', ');try{const data=await anthropicFetch({model:'claude-sonnet-4-20250514',max_tokens:700,system:'You are a B2B sales researcher. Return ONLY a raw JSON array — no markdown, no explanation. Each element: {"full_name":"string","title":"string","linkedin_url":"string","reason":"string (1 sentence why relevant for data partnerships)"}. Construct linkedin_url as: https://www.linkedin.com/search/results/people/?keywords=FIRSTNAME+LASTNAME+COMPANY',messages:[{role:'user',content:`Find 3–5 decision makers at ${c.name} (${c.category||'ad tech'}) relevant for data partnership discussions with onAudience.\nFocus: Head/VP/Director of Programmatic, Data Partnerships, Product, or Platform.\nContext: ${c.note||''} Tags: ${tags}`}]});const raw=(data.content||[]).filter(b=>b.type==='text').map(b=>b.text).join('').replace(/```json|```/g,'').trim();const dms=JSON.parse(raw);if(!Array.isArray(dms)||!dms.length)throw new Error('none found');S.mcAiContacts=dms;body.innerHTML=`<div style="font-family:'IBM Plex Mono',monospace;font-size:7px;font-weight:600;text-transform:uppercase;letter-spacing:.07em;color:var(--poc);margin-bottom:8px;display:flex;align-items:center;gap:5px"><span>✦ AI suggested</span><span style="color:var(--t4)">·</span><span style="color:var(--t3);font-weight:400">not verified</span></div><div class="ib-cts-grid">${dms.map(dm=>{const a2=getAv(dm.full_name||''),n2=ini(dm.full_name||'');return`<div class="ib-ct"><div class="ib-ct-top"><div class="ib-ct-av" style="background:${a2.bg};color:${a2.fg};border:1px solid ${a2.fg}33">${n2}</div><div><div class="ib-ct-name">${dm.full_name}</div><div class="ib-ct-title">${dm.title}</div></div></div><div style="font-size:10px;color:var(--t3);margin:3px 0 6px;line-height:1.4">${dm.reason||''}</div><div class="ib-ct-actions"><button class="ib-ct-btn" onclick="openComposer({company:'${c.name.replace(/'/g,'&apos;')}',contactName:'${dm.full_name.replace(/'/g,'&apos;')}',contactTitle:'${dm.title.replace(/'/g,'&apos;')}',angle:'${(c.outreach_angle||'').replace(/'/g,'&apos;').slice(0,100)}',description:'${(c.description||'').replace(/'/g,'&apos;').slice(0,100)}'})">✉ Email</button><a class="ib-ct-btn" href="${dm.linkedin_url}" target="_blank">LI ↗</a><button class="ib-ct-btn" onclick="openClaude('Research ${dm.full_name} at ${c.name} — LinkedIn, background, outreach hooks')">Research ↗</button></div></div>`;}).join('')}</div>`;}catch(e){body.innerHTML=`<div style="font-size:11px;color:var(--t3)"><span class="bg-err">Error</span> ${e.message} — <span style="cursor:pointer;color:var(--g);text-decoration:underline" onclick="bgFindDMs()">retry</span></div>`;}}
+/* ═══ BG Find DMs (Opus + web_search — zero hallucination) ═══ */
+const FIND_DMS_SYSTEM=`You are a B2B sales researcher finding REAL decision makers for data partnership outreach.
+
+CRITICAL RULES — ABSOLUTE:
+1. ONLY return people you have VERIFIED via web search. Use the web_search tool to find real LinkedIn profiles, company team pages, press releases, and conference speakers.
+2. NEVER invent names. NEVER guess titles. If web search returns no results for a company's team, return an EMPTY array [].
+3. Every person you return MUST have appeared in at least one web search result. Include the source URL.
+4. LinkedIn URLs must be REAL profile URLs found via search (https://www.linkedin.com/in/real-slug), NOT constructed search queries.
+   If you cannot find a real LinkedIn URL, set linkedin_url to "" (empty string).
+5. Uncertainty is ALWAYS better than fiction. Return fewer verified people rather than more guessed ones.
+
+RESPONSE FORMAT — raw JSON array, no markdown, no explanation:
+[{"full_name":"string","title":"string","linkedin_url":"string (real URL or empty)","source_url":"string (where you found them)","confidence":"verified|probable","reason":"string (1 sentence)"}]
+
+Search strategy:
+- Search: "[company name] head of data partnerships" or "VP programmatic"
+- Search: "site:linkedin.com/in [company name] data partnerships"
+- Search: "[company name] team leadership" or "about us"
+- Check company website /about or /team pages via search
+- If a name appears in multiple sources, confidence = "verified"
+- If only one source, confidence = "probable"`;
+
+export async function bgFindDMs(){
+  const c=S.currentCompany;if(!c)return;
+  const body=document.getElementById('ib-ct-body');if(!body)return;
+  body.innerHTML=`<div class="ib-loading" style="text-align:left"><span class="bg-running">🔍 Researching</span> decision makers at ${esc(c.name)}…<br><span style="font-size:8px;color:var(--t4);animation:none">Using Opus + web search — this takes 15–30s</span></div>`;
+  clog('ai',`🔍 Finding DMs at <b>${esc(c.name)}</b> (Opus + web search)`);
+  const tags=getCoTags(c).join(', ');
+  try{
+    const data=await anthropicFetch({
+      model:MODEL_RESEARCH,
+      max_tokens:1500,
+      system:FIND_DMS_SYSTEM,
+      tools:[{type:'web_search_20250305',name:'web_search',max_uses:8}],
+      messages:[{role:'user',content:`Find 3–5 REAL decision makers at ${c.name} (${c.category||'ad tech'}, ${c.website||'no website'}) relevant for data partnership discussions with onAudience.\nFocus: Head/VP/Director of Programmatic, Data Partnerships, Product, Revenue, or Platform.\nCompany context: ${c.note||'none'}\nCompany description: ${(c.description||'').slice(0,200)}\nSignals: ${tags||'none'}\n\nUse web search to find REAL people. Return [] if you can't verify anyone.`}]
+    });
+
+    /* extract text from multi-block response (web_search produces tool_use + tool_result + text blocks) */
+    const textBlocks=(data.content||[]).filter(b=>b.type==='text').map(b=>b.text).join('\n');
+    /* find JSON array in the text */
+    const jsonMatch=textBlocks.match(/\[[\s\S]*\]/);
+    if(!jsonMatch)throw new Error('No results — model could not verify any contacts');
+    const raw=jsonMatch[0].replace(/```json|```/g,'').trim();
+    const dms=JSON.parse(raw);
+    if(!Array.isArray(dms))throw new Error('Invalid response format');
+    if(!dms.length)throw new Error('No verified contacts found — try manual LinkedIn search');
+
+    /* tag with source */
+    dms.forEach(dm=>{dm.source=dm.confidence==='verified'?'web_verified':'ai_probable';});
+    S.mcAiContacts=dms;
+    clog('ai',`✓ Found <b>${dms.length}</b> contacts at ${esc(c.name)} (${dms.filter(d=>d.confidence==='verified').length} verified)`);
+
+    body.innerHTML=`
+      <div style="font-family:'IBM Plex Mono',monospace;font-size:7px;font-weight:600;text-transform:uppercase;letter-spacing:.07em;margin-bottom:8px;display:flex;align-items:center;gap:5px">
+        <span style="color:var(--g)">✓ Web-verified</span>
+        <span style="color:var(--t4)">·</span>
+        <span style="color:var(--t3);font-weight:400">Opus + search · ${dms.length} found</span>
+      </div>
+      <div class="ib-cts-grid">${dms.map(dm=>{
+        const a2=getAv(dm.full_name||''),n2=ini(dm.full_name||'');
+        const confBadge=dm.confidence==='verified'
+          ?'<span style="font-family:\'IBM Plex Mono\',monospace;font-size:6px;color:var(--cc);border:1px solid var(--cr);background:var(--cb);border-radius:2px;padding:0 3px;margin-left:3px">VERIFIED</span>'
+          :'<span style="font-family:\'IBM Plex Mono\',monospace;font-size:6px;color:var(--prc);border:1px solid var(--prr);background:var(--prb);border-radius:2px;padding:0 3px;margin-left:3px">PROBABLE</span>';
+        const srcLink=dm.source_url?`<a href="${dm.source_url}" target="_blank" style="font-family:'IBM Plex Mono',monospace;font-size:7px;color:var(--g);text-decoration:none;display:block;margin-top:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">source ↗</a>`:'';
+        return`<div class="ib-ct">
+          <div class="ib-ct-top">
+            <div class="ib-ct-av" style="background:${a2.bg};color:${a2.fg};border:1px solid ${a2.fg}33">${n2}</div>
+            <div><div class="ib-ct-name">${esc(dm.full_name)}${confBadge}</div><div class="ib-ct-title">${esc(dm.title)}</div></div>
+          </div>
+          <div style="font-size:10px;color:var(--t3);margin:3px 0 4px;line-height:1.4">${esc(dm.reason||'')}</div>
+          ${srcLink}
+          <div class="ib-ct-actions">
+            <button class="ib-ct-btn" onclick="openComposer({company:'${c.name.replace(/'/g,'&apos;')}',contactName:'${(dm.full_name||'').replace(/'/g,'&apos;')}',contactTitle:'${(dm.title||'').replace(/'/g,'&apos;')}',angle:'${(c.outreach_angle||'').replace(/'/g,'&apos;').slice(0,100)}',description:'${(c.description||'').replace(/'/g,'&apos;').slice(0,100)}'})">✉ Email</button>
+            ${dm.linkedin_url?`<a class="ib-ct-btn" href="${dm.linkedin_url}" target="_blank">LI ↗</a>`:`<a class="ib-ct-btn" href="https://www.linkedin.com/search/results/people/?keywords=${encodeURIComponent(dm.full_name+' '+c.name)}" target="_blank">LI Search ↗</a>`}
+            <button class="ib-ct-btn" onclick="openClaude('Research ${esc(dm.full_name)} at ${esc(c.name)} — LinkedIn, background, outreach hooks')">Research ↗</button>
+          </div>
+        </div>`;
+      }).join('')}</div>`;
+  }catch(e){
+    clog('ai',`✗ DM search failed for ${esc(c.name)}: ${esc(e.message)}`);
+    body.innerHTML=`<div style="font-size:11px;color:var(--t3)">
+      <span class="bg-err">Error</span> ${esc(e.message)}
+      <div style="margin-top:6px;display:flex;gap:4px">
+        <span style="cursor:pointer;color:var(--g);text-decoration:underline" onclick="bgFindDMs()">↺ retry with Opus</span>
+        <span style="color:var(--t4)">·</span>
+        <a href="https://www.linkedin.com/search/results/people/?keywords=${encodeURIComponent(c.name+' data partnerships')}" target="_blank" style="color:var(--g)">Manual LI search ↗</a>
+      </div>
+    </div>`;
+  }
+}
 
 /* ═══ Intelligence ═══════════════════════════════════════════ */
 export function renderIntelBody(stored,live){const body=document.getElementById('ib-intel-body'),cnt=document.getElementById('ib-intel-cnt'),liveLabel=document.getElementById('ib-intel-live');if(!body)return;const storedItems=[];(Array.isArray(stored)?stored:[]).forEach(row=>{if(Array.isArray(row.content))storedItems.push(...row.content);else if(row.title||row.url)storedItems.push(row);});const total=storedItems.length+live.length;if(cnt)cnt.textContent=total||'';if(liveLabel)liveLabel.style.display=live.length?'flex':'none';if(!total){body.innerHTML=`<div style="display:flex;align-items:center;gap:8px"><span style="font-size:11px;color:var(--t3)">No intelligence yet</span><button class="ib-ct-btn" style="height:22px;padding:0 8px;font-size:7px;margin-left:auto" onclick="bgRefreshIntel()">↺ Fetch news</button></div>`;return;}const itemHtml=(items,dotColor)=>items.map(r=>{const url=r.url||r.link||'';const title=r.title||r.summary||'—';const src=r.source||r.type||'';const date=r.date||(r.created_at?new Date(r.created_at).toLocaleDateString('en-GB',{day:'numeric',month:'short',year:'2-digit'}):'');return`<div class="ib-news-item"><div class="ib-news-dot" style="background:${dotColor}"></div><div class="ib-news-body">${url?`<a class="ib-news-title" href="${url}" target="_blank">${title} ↗</a>`:`<div class="ib-news-title" style="cursor:default">${title}</div>`}<div class="ib-news-meta"><span class="ib-news-src">${src}</span><span class="ib-news-date">${date}</span></div></div></div>`;}).join('');let html='';if(live.length){html+=`<div style="display:flex;align-items:center;gap:5px;margin-bottom:6px"><span class="live-label"><span class="live-dot"></span>Live — Google News</span><span style="font-family:'IBM Plex Mono',monospace;font-size:7px;color:var(--t4)">${live.length} results</span></div>${itemHtml(live,'#E53935')}`;}if(storedItems.length){if(live.length)html+=`<div style="height:10px;border-top:1px solid var(--rule2);margin:8px 0"></div>`;html+=`<div style="font-family:'IBM Plex Mono',monospace;font-size:7px;font-weight:600;text-transform:uppercase;letter-spacing:.07em;color:var(--t3);margin-bottom:6px">📁 Stored</div>${itemHtml(storedItems,'var(--g)')}`;}body.innerHTML=html;}

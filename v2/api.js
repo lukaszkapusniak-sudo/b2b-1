@@ -1,6 +1,6 @@
 /* ═══ api.js — Supabase, status, stats, Google News, Anthropic ═══ */
 
-import { SB_URL, SB_KEY, HDR } from './config.js';
+import { SB_URL, SB_KEY, HDR, MODEL_RESEARCH } from './config.js';
 import S from './state.js';
 import { classify, _slug } from './utils.js';
 
@@ -47,10 +47,24 @@ export async function anthropicFetch(body){
       await new Promise(r=>setTimeout(r,wait));
       continue;
     }
-    if(!res.ok){const txt=await res.text().catch(()=>'');throw new Error(`API ${res.status}: ${txt.slice(0,120)}`);}
+    if(!res.ok){const txt=await res.text().catch(()=>'');throw new Error(`API ${res.status}: ${txt.slice(0,200)}`);}
     return res.json();
   }
   throw new Error('API overloaded after 3 retries — try again in a minute');
+}
+
+/* ── Research fetch — Opus + web_search, extracts text from multi-block responses ── */
+export async function researchFetch(system, userPrompt){
+  const data = await anthropicFetch({
+    model: MODEL_RESEARCH,
+    max_tokens: 1600,
+    system,
+    tools: [{ type: 'web_search_20250305', name: 'web_search' }],
+    messages: [{ role: 'user', content: userPrompt }],
+  });
+  /* Opus + web_search returns mixed blocks: text, tool_use, tool_result, etc. */
+  const textParts = (data.content || []).filter(b => b.type === 'text').map(b => b.text);
+  return { raw: data, text: textParts.join('\n').trim(), content: data.content };
 }
 
 /* ── Status ───────────────────────────────────────────────── */

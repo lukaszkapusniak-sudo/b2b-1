@@ -4,6 +4,10 @@ export const SB_URL='https://nyzkkqqjnkctcmxoirdj.supabase.co';
 export const SB_KEY='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im55emtrcXFqbmtjdGNteG9pcmRqIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzM4NzMxMzYsImV4cCI6MjA4OTQ0OTEzNn0.jhAq_C68klOp4iTyj9HmsyyvoxsOI6ACld7t_87TAk0';
 export const HDR={apikey:SB_KEY,Authorization:`Bearer ${SB_KEY}`,'Content-Type':'application/json'};
 
+/* ── Model tiers ─────────────────────────────────────────── */
+export const MODEL_RESEARCH = 'claude-opus-4-20250514';     // factual tasks — contacts, relations, company data
+export const MODEL_CREATIVE = 'claude-sonnet-4-20250514';   // emails, angles, filtering, creative writing
+
 export const TAG_RULES=[
   {tag:'DSP',kw:['dsp','demand-side','demand side','madhive','mntn','bidtheatre','splicky','xandr','thetradedesk','criteo','stackadapt','liquid advertising']},
   {tag:'SSP',kw:['ssp','supply-side','supply side','pubmatic','equativ','openx','sharethrough','sovrn','scoota']},
