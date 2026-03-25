@@ -1,0 +1,328 @@
+/* ═══════════════════════════════════════════════════════════════
+   onAudience Sales Intelligence Hub — style.css
+   Design System v2.2 — single CSS source of truth
+   ═══════════════════════════════════════════════════════════════ */
+
+/* ── Reset ──────────────────────────────────────────────────── */
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+
+/* ── Light Theme Tokens ─────────────────────────────────────── */
+[data-theme="light"]{
+  --bg:#F4F2EC;--surf:#FFFFFF;--surf2:#F8F6F0;--surf3:#EFEDE6;--surf4:#E8E6DE;
+  --rule:rgba(0,0,0,0.09);--rule2:rgba(0,0,0,0.05);--rule3:rgba(0,0,0,0.03);
+  --t1:#0C0C0A;--t2:#5C5C56;--t3:#9A9990;--t4:#C8C6BC;
+  --g:#178066;--gd:#0F6E56;--gb:rgba(23,128,102,0.08);--gr:rgba(23,128,102,0.28);
+  --cc:#146B3A;--cb:#E4F5EC;--cr:rgba(20,107,58,0.28);
+  --pc:#1A4F8A;--pb:#E6EEFA;--pr:rgba(26,79,138,0.28);
+  --prc:#7A4200;--prb:#FEF2E0;--prr:rgba(122,66,0,0.28);
+  --nc:#6B6B64;--nb:#EFEDE6;--nr:rgba(107,107,100,0.28);
+  --poc:#4B2D9E;--pob:#EDE8FD;--por:rgba(75,45,158,0.28);
+  --sh:0 1px 2px rgba(0,0,0,0.06),0 4px 12px rgba(0,0,0,0.04);
+}
+
+/* ── Dark Theme Tokens ──────────────────────────────────────── */
+[data-theme="dark"]{
+  --bg:#0C0C0A;--surf:#141412;--surf2:#1C1C1A;--surf3:#242421;--surf4:#2E2E2B;
+  --rule:rgba(255,255,255,0.08);--rule2:rgba(255,255,255,0.05);--rule3:rgba(255,255,255,0.03);
+  --t1:#F0EFE8;--t2:#8A8A82;--t3:#555550;--t4:#38382E;
+  --g:#1FA882;--gd:#178066;--gb:rgba(31,168,130,0.1);--gr:rgba(31,168,130,0.3);
+  --cc:#4ADE80;--cb:rgba(74,222,128,0.1);--cr:rgba(74,222,128,0.25);
+  --pc:#60A5FA;--pb:rgba(96,165,250,0.1);--pr:rgba(96,165,250,0.25);
+  --prc:#FBBF24;--prb:rgba(251,191,36,0.1);--prr:rgba(251,191,36,0.25);
+  --nc:#55554E;--nb:rgba(85,85,78,0.15);--nr:rgba(85,85,78,0.25);
+  --poc:#C084FC;--pob:rgba(192,132,252,0.1);--por:rgba(192,132,252,0.25);
+  --sh:0 1px 3px rgba(0,0,0,0.5),0 6px 20px rgba(0,0,0,0.35);
+}
+
+/* ── Dark Grid Overlay ──────────────────────────────────────── */
+[data-theme="dark"] body::before{
+  content:'';position:fixed;inset:0;pointer-events:none;z-index:0;
+  background-image:
+    linear-gradient(rgba(255,255,255,.016) 1px,transparent 1px),
+    linear-gradient(90deg,rgba(255,255,255,.016) 1px,transparent 1px);
+  background-size:40px 40px;
+}
+
+/* ── Base ────────────────────────────────────────────────────── */
+html,body{
+  height:100%;background:var(--bg);color:var(--t1);
+  font-family:'IBM Plex Sans',sans-serif;font-size:13px;line-height:1.5;
+  transition:background .25s,color .25s;
+}
+::-webkit-scrollbar{width:3px;height:3px}
+::-webkit-scrollbar-thumb{background:var(--surf4);border-radius:2px}
+
+/* ── App Shell ──────────────────────────────────────────────── */
+.app{display:flex;flex-direction:column;height:100vh;overflow:hidden;position:relative;z-index:1}
+
+/* ── Nav ─────────────────────────────────────────────────────── */
+.nav{
+  height:42px;padding:0 12px;display:flex;align-items:center;gap:10px;
+  border-bottom:1px solid var(--rule);background:var(--surf);flex-shrink:0;
+}
+.nav-logo{
+  font-family:'IBM Plex Mono',monospace;font-size:14px;font-weight:600;
+  color:var(--g);width:28px;height:28px;display:flex;align-items:center;
+  justify-content:center;background:var(--gb);border-radius:2px;flex-shrink:0;
+}
+.nav-title{
+  font-family:'IBM Plex Mono',monospace;font-size:11px;font-weight:500;
+  color:var(--t1);white-space:nowrap;
+}
+.nav-sub{font-weight:300;color:var(--t3)}
+.nav-right{margin-left:auto;display:flex;align-items:center;gap:6px}
+.nav-status{
+  font-family:'IBM Plex Mono',monospace;font-size:9px;color:var(--t3);
+  display:flex;align-items:center;gap:4px;
+}
+.nav-status .dot{width:6px;height:6px;border-radius:50%;flex-shrink:0}
+.dot-live{background:var(--g)}
+.dot-seed{background:var(--t4)}
+
+/* ── Stats Bar ───────────────────────────────────────────────── */
+.stats{
+  display:flex;border-bottom:1px solid var(--rule);background:var(--surf);
+  flex-shrink:0;
+}
+.stat{
+  flex:1;padding:6px 8px;text-align:center;cursor:pointer;
+  border-right:1px solid var(--rule2);transition:background .15s;
+}
+.stat:last-child{border-right:none}
+.stat:hover{background:var(--surf2)}
+.stat.act{background:var(--gb)}
+.stat-n{font-family:'IBM Plex Mono',monospace;font-size:16px;font-weight:500;color:var(--t1)}
+.stat-l{font-family:'IBM Plex Mono',monospace;font-size:8px;text-transform:uppercase;letter-spacing:.06em;color:var(--t3)}
+
+/* ── Main Body ───────────────────────────────────────────────── */
+.body{display:flex;flex:1;overflow:hidden}
+
+/* ── Left Panel ──────────────────────────────────────────────── */
+#left{
+  width:320px;flex-shrink:0;display:flex;flex-direction:column;
+  border-right:1px solid var(--rule);background:var(--surf);overflow:hidden;
+}
+.tabs{
+  display:flex;border-bottom:1px solid var(--rule);flex-shrink:0;
+}
+.tab{
+  flex:1;padding:7px 0;text-align:center;cursor:pointer;border:none;background:none;
+  font-family:'IBM Plex Mono',monospace;font-size:9px;font-weight:500;
+  text-transform:uppercase;letter-spacing:.06em;color:var(--t3);
+  border-bottom:2px solid transparent;transition:all .15s;
+}
+.tab:hover{color:var(--t1)}
+.tab.act{color:var(--g);border-bottom-color:var(--g)}
+.search-bar{
+  padding:6px 8px;border-bottom:1px solid var(--rule2);display:flex;gap:6px;
+  align-items:center;flex-shrink:0;
+}
+.search-bar input{
+  flex:1;height:26px;padding:0 8px;border:1px solid var(--rule);border-radius:2px;
+  font-family:'IBM Plex Mono',monospace;font-size:10px;background:var(--surf2);
+  color:var(--t1);outline:none;
+}
+.search-bar input:focus{border-color:var(--g)}
+.filter-bar{
+  padding:4px 8px;display:flex;flex-wrap:wrap;gap:3px;
+  border-bottom:1px solid var(--rule2);flex-shrink:0;
+}
+.list-meta{
+  padding:4px 8px;font-family:'IBM Plex Mono',monospace;font-size:9px;
+  color:var(--t3);border-bottom:1px solid var(--rule3);flex-shrink:0;
+}
+#coList,#ctList,#tcfList,#enrCoList{flex:1;overflow-y:auto}
+
+/* ── Company Row ─────────────────────────────────────────────── */
+.co-row{
+  display:flex;align-items:center;gap:8px;padding:6px 8px;cursor:pointer;
+  border-bottom:1px solid var(--rule3);transition:background .1s;
+}
+.co-row:hover{background:var(--surf2)}
+.co-row.act{background:var(--gb)}
+.co-av{
+  width:28px;height:28px;border-radius:2px;display:flex;align-items:center;
+  justify-content:center;font-family:'IBM Plex Mono',monospace;font-size:11px;
+  font-weight:600;flex-shrink:0;color:#fff;
+}
+.co-info{flex:1;min-width:0}
+.co-name{font-size:12px;font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.co-note{font-size:10px;color:var(--t3);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.co-icp{
+  font-family:'IBM Plex Mono',monospace;font-size:10px;font-weight:600;
+  color:var(--g);flex-shrink:0;
+}
+
+/* ── Center Panel ────────────────────────────────────────────── */
+#center{flex:1;overflow-y:auto;padding:0;background:var(--bg)}
+
+/* ── Company Detail Panel ────────────────────────────────────── */
+.co-panel{max-width:900px;margin:0 auto;padding:16px 20px}
+.co-header{display:flex;align-items:center;gap:12px;margin-bottom:16px}
+.co-header-av{
+  width:40px;height:40px;border-radius:2px;display:flex;align-items:center;
+  justify-content:center;font-family:'IBM Plex Mono',monospace;font-size:16px;
+  font-weight:600;color:#fff;flex-shrink:0;
+}
+.co-header-name{font-size:16px;font-weight:500}
+.co-header-close{
+  margin-left:auto;cursor:pointer;font-size:16px;color:var(--t3);
+  background:none;border:none;padding:4px 8px;
+}
+.co-header-close:hover{color:var(--t1)}
+
+/* ── Detail Section ──────────────────────────────────────────── */
+.ps{
+  background:var(--surf);border:1px solid var(--rule);border-radius:2px;
+  margin-bottom:10px;
+}
+.ps-head{
+  padding:8px 12px;display:flex;align-items:center;gap:8px;cursor:pointer;
+  font-family:'IBM Plex Mono',monospace;font-size:10px;font-weight:500;
+  text-transform:uppercase;letter-spacing:.05em;color:var(--t2);
+}
+.ps-head:hover{background:var(--surf2)}
+.ps-body{padding:0 12px 10px}
+.ps-body.closed{display:none}
+
+/* ── Info Table ───────────────────────────────────────────────── */
+.info-tbl{width:100%;border-collapse:collapse}
+.info-tbl td{
+  padding:3px 0;font-family:'IBM Plex Mono',monospace;font-size:11px;
+  border-bottom:1px solid var(--rule3);vertical-align:top;
+}
+.info-tbl td:first-child{
+  width:110px;color:var(--t3);font-size:10px;text-transform:uppercase;
+  letter-spacing:.04em;padding-right:8px;
+}
+
+/* ── Tags / Status Badges ────────────────────────────────────── */
+.tag{
+  font-family:'IBM Plex Mono',monospace;font-size:8px;font-weight:500;
+  text-transform:uppercase;letter-spacing:.06em;padding:1px 5px;
+  border-radius:2px;border:1px solid;white-space:nowrap;flex-shrink:0;
+  display:inline-block;
+}
+.tc {color:var(--cc);background:var(--cb);border-color:var(--cr)}
+.tp {color:var(--pc);background:var(--pb);border-color:var(--pr)}
+.tpr{color:var(--prc);background:var(--prb);border-color:var(--prr)}
+.tn {color:var(--nc);background:var(--nb);border-color:var(--nr)}
+.tpo{color:var(--poc);background:var(--pob);border-color:var(--por)}
+
+/* ── Buttons ─────────────────────────────────────────────────── */
+.btn{
+  height:26px;padding:0 10px;border:1px solid var(--rule);border-radius:2px;
+  font-family:'IBM Plex Mono',monospace;font-size:9px;font-weight:500;
+  text-transform:uppercase;letter-spacing:.06em;cursor:pointer;
+  background:var(--surf2);color:var(--t2);transition:all .15s;
+  display:inline-flex;align-items:center;justify-content:center;gap:4px;
+}
+.btn:hover{background:var(--surf3);color:var(--t1)}
+.btn.p{background:var(--g);color:#fff;border-color:var(--g)}
+.btn.p:hover{background:var(--gd)}
+.btn.sm{height:22px;padding:0 7px;font-size:8px}
+.btn.full{width:100%}
+
+/* ── Tech Stack Pills ────────────────────────────────────────── */
+.pill{
+  display:inline-block;font-family:'IBM Plex Mono',monospace;font-size:9px;
+  padding:1px 6px;border-radius:2px;background:var(--surf3);color:var(--t2);
+  border:1px solid var(--rule2);margin:1px 2px;
+}
+
+/* ── Empty State (QA Cards) ──────────────────────────────────── */
+.empty-state{
+  display:flex;align-items:center;justify-content:center;height:100%;
+  padding:40px;
+}
+.qa-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;max-width:520px}
+.qa-card{
+  padding:14px;background:var(--surf);border:1px solid var(--rule);border-radius:2px;
+  cursor:pointer;transition:all .15s;
+}
+.qa-card:hover{background:var(--surf2);border-color:var(--g)}
+.qa-card-icon{font-size:18px;margin-bottom:6px}
+.qa-card-title{
+  font-family:'IBM Plex Mono',monospace;font-size:10px;font-weight:500;
+  text-transform:uppercase;letter-spacing:.04em;color:var(--t1);margin-bottom:3px;
+}
+.qa-card-desc{font-size:11px;color:var(--t3);line-height:1.4}
+
+/* ── Contact Drawer ──────────────────────────────────────────── */
+#contactDrawer{
+  position:fixed;top:0;right:-380px;width:380px;height:100vh;
+  background:var(--surf);border-left:1px solid var(--rule);box-shadow:var(--sh);
+  z-index:900;transition:right .25s ease;display:flex;flex-direction:column;
+}
+#contactDrawer.open{right:0}
+#drawerOverlay{
+  display:none;position:fixed;inset:0;background:rgba(0,0,0,.3);z-index:899;
+}
+#drawerOverlay.vis{display:block}
+
+/* ── Context Menu ────────────────────────────────────────────── */
+#ctxMenu{
+  display:none;position:fixed;z-index:950;background:var(--surf);
+  border:1px solid var(--rule);border-radius:2px;box-shadow:var(--sh);
+  padding:4px 0;min-width:200px;
+}
+#ctxMenu .ctx-item{
+  padding:5px 12px;font-family:'IBM Plex Mono',monospace;font-size:10px;
+  cursor:pointer;display:flex;align-items:center;gap:8px;color:var(--t1);
+}
+#ctxMenu .ctx-item:hover{background:var(--surf2)}
+#ctxMenu .ctx-sep{height:1px;background:var(--rule2);margin:3px 0}
+
+/* ── Modals ──────────────────────────────────────────────────── */
+#overlay{
+  display:none;position:fixed;inset:0;background:rgba(0,0,0,.45);
+  z-index:1000;align-items:center;justify-content:center;backdrop-filter:blur(4px);
+}
+#overlay.vis{display:flex}
+.modal-box{
+  background:var(--surf);border:1px solid var(--rule);border-radius:4px;
+  padding:20px;max-width:480px;width:90%;box-shadow:var(--sh);
+}
+
+/* ── Panel Modal (iframe host) ───────────────────────────────── */
+#panelModal{
+  display:none;position:fixed;inset:0;background:rgba(0,0,0,.5);
+  z-index:9999;align-items:center;justify-content:center;
+}
+#panelModal .panel-frame{
+  width:780px;height:85vh;border-radius:4px;overflow:hidden;
+  border:1px solid var(--rule);box-shadow:var(--sh);
+}
+#panelModal .panel-frame iframe{width:100%;height:100%;border:none}
+
+/* ── Enricher Pane ───────────────────────────────────────────── */
+#pane-enricher{display:none;flex:1;flex-direction:column;overflow:hidden}
+.enr-bar{
+  padding:8px;border-bottom:1px solid var(--rule);flex-shrink:0;
+  display:flex;gap:6px;align-items:flex-start;
+}
+.enr-bar textarea{
+  flex:1;resize:none;padding:6px 8px;border:1px solid var(--rule);border-radius:2px;
+  font-family:'IBM Plex Mono',monospace;font-size:10px;background:var(--surf2);
+  color:var(--t1);outline:none;line-height:1.4;
+}
+.enr-select-bar{
+  padding:4px 8px;border-bottom:1px solid var(--rule2);display:flex;
+  align-items:center;gap:6px;flex-shrink:0;background:var(--surf2);
+}
+.enr-tag-cloud{
+  border-top:1px solid var(--rule);padding:6px 8px;flex-shrink:0;
+  max-height:130px;overflow-y:auto;background:var(--surf);
+}
+
+/* ── Meeseeks Modal ──────────────────────────────────────────── */
+#meeseeksModal{
+  display:none;position:fixed;inset:0;z-index:9998;
+  background:rgba(0,0,0,.5);align-items:center;justify-content:center;
+}
+#meeseeksModal.vis{display:flex}
+.meesBox{
+  background:var(--surf);border:1px solid var(--rule);border-radius:4px;
+  width:680px;max-height:88vh;display:flex;flex-direction:column;
+  box-shadow:var(--sh);overflow:hidden;
+}
