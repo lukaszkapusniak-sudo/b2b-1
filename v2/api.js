@@ -56,22 +56,36 @@ export async function anthropicFetch(body){
 /* ── Status ───────────────────────────────────────────────── */
 export function setStatus(live){const el=document.getElementById('dbStatus');if(live){el.textContent=`● Live · ${S.companies.length}`;el.className='nav-status live';}else{el.textContent=`○ Seed · ${S.companies.length}`;el.className='nav-status';}}
 
-/* ── Load from Supabase ───────────────────────────────────── */
+/* ── Load from Supabase (companies + contacts + relations in parallel) ── */
 export async function loadFromSupabase(renderStats,renderList,renderTagPanel){
   const ctrl=new AbortController(),timer=setTimeout(()=>ctrl.abort(),8000);
   try{
-    const[cr,ct]=await Promise.all([
+    const[cr,ct,rl]=await Promise.all([
       fetch(`${SB_URL}/rest/v1/companies?select=*&order=name.asc`,{headers:HDR,signal:ctrl.signal}),
-      fetch(`${SB_URL}/rest/v1/contacts?select=*&order=full_name.asc`,{headers:HDR,signal:ctrl.signal})
+      fetch(`${SB_URL}/rest/v1/contacts?select=*&order=full_name.asc`,{headers:HDR,signal:ctrl.signal}),
+      fetch(`${SB_URL}/rest/v1/company_relations?select=*`,{headers:HDR,signal:ctrl.signal}),
     ]);
     clearTimeout(timer);
     if(!cr.ok)throw new Error(cr.status);
     const dbc=await cr.json(),dbt=ct.ok?await ct.json():[];
+    const dbr=rl.ok?await rl.json():[];
     if(Array.isArray(dbc)&&dbc.length)S.companies=dbc.map(r=>({...r,type:r.type||classify(r.note||''),note:r.note||''}));
     if(Array.isArray(dbt))S.contacts=dbt;
+    if(Array.isArray(dbr))S.allRelations=dbr;
     setStatus(true);
-  }catch(e){clearTimeout(timer);console.warn('seed',e.message);setStatus(false);}
+    if(window.clog)window.clog('db',`Loaded <b>${S.companies.length}</b> companies + <b>${S.contacts.length}</b> contacts + <b>${S.allRelations.length}</b> relations`);
+  }catch(e){clearTimeout(timer);console.warn('seed',e.message);setStatus(false);if(window.clog)window.clog('db',`Seed mode — ${e.message}`);}
   renderStats();renderList();if(S.tagPanelOpen)renderTagPanel();
+}
+
+/* ── Refresh relations cache only ─────────────────────────── */
+export async function refreshRelationsCache(){
+  try{
+    const r=await fetch(`${SB_URL}/rest/v1/company_relations?select=*`,{headers:{apikey:SB_KEY,Authorization:`Bearer ${SB_KEY}`}});
+    const data=await r.json();
+    if(Array.isArray(data)){S.allRelations=data;if(window.clog)window.clog('db',`Relations refreshed: <b>${data.length}</b> rows`);}
+    return data;
+  }catch(e){console.warn('relations refresh',e);return S.allRelations;}
 }
 
 /* ── Save ─────────────────────────────────────────────────── */

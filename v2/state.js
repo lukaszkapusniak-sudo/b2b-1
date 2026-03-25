@@ -23,6 +23,8 @@ const S = {
   sortBy: 'recent', // recent | name | icp
   /* console */
   consoleLog: [], // {ts, type:'ai'|'db'|'enrich'|'info', msg}
+  /* relations cache — all 63 rows preloaded at boot */
+  allRelations: [],
   /* meeseeks */
   mcActivePId: 'steve',
   mcPayload: {},
