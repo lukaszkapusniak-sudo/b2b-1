@@ -50,7 +50,7 @@ Object.assign(window, {
   mcPickPersona, mcGenerate, mcCopy, mcHint, mcPickContact,
   /* TCF */
   renderTCFList, renderTCFCenter, tcfSelectRow, tcfClearSel,
-  doGVLMatch, promptGVLConfirm, closeGVLConfirm, executeGVLConfirm,
+  doGVLMatch, promptGVLConfirm, closeGVLConfirm, executeGVLConfirm, loadGVL,
   /* DB interface */
   oaDB: {
     saveCompany, saveContact,

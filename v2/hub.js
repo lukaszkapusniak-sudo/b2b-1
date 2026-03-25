@@ -71,7 +71,6 @@ export function openCompany(c){
     c.founded_year&&['Founded',c.founded_year],
     c.funding&&['Funding',c.funding],
     c.tcf_vendor_id&&['GVL/TCF',c.tcf_vendor_id],
-    c.privacy_risk_score&&['Privacy Risk',`${'█'.repeat(c.privacy_risk_score)}${'░'.repeat(5-c.privacy_risk_score)} (${c.privacy_risk_score}/5)`],
     c.website&&['Website',`<a href="https://${c.website}" target="_blank" style="color:var(--g);text-decoration:none">${c.website} ↗</a>`],
     c.dsps&&c.dsps.length&&['DSPs',(Array.isArray(c.dsps)?c.dsps:c.dsps.split(',')).join(', ')],
     c.updated_at&&['Updated',new Date(c.updated_at).toLocaleDateString('en-GB',{day:'numeric',month:'short',year:'2-digit'})]
@@ -98,16 +97,30 @@ export function openCompany(c){
 
   /* ── TCF / CCPA / Privacy compliance block ── */
   let privacyHtml='';
-  if(c.tcf_vendor_id||c.privacy_risk_score){
-    const parts=[];
-    if(c.tcf_vendor_id)parts.push(`<span class="tag tc" style="cursor:default">TCF GVL ${c.tcf_vendor_id}</span>`);
-    if(c.privacy_risk_score){
-      const cl=['','#4ADE80','#86EFAC','#FDE68A','#FBBF24','#F87171'];
-      const lb=['','Very Low','Low','Medium','High','Critical'];
-      let bar='';for(let i=1;i<=5;i++)bar+=`<span style="display:inline-block;width:10px;height:7px;border-radius:1px;margin-right:1px;background:${i<=c.privacy_risk_score?cl[c.privacy_risk_score]:'var(--rule)'}"></span>`;
-      parts.push(`<span style="display:inline-flex;align-items:center;gap:4px">${bar}<span style="font-size:8px;font-family:'IBM Plex Mono',monospace;color:var(--t2)">${lb[c.privacy_risk_score]}</span></span>`);
+  {
+    /* purpose squares — green=consent, red=LI, gray=not declared */
+    const gvl=window.gvlData;
+    const vendor=gvl&&c.tcf_vendor_id?gvl.vendors[String(c.tcf_vendor_id)]||null:null;
+    const pLabels=['','Store/access','Basic ads','Ad profiles','Use ad profiles','Content profiles','Use content profiles','Measure ads','Measure content','Audience stats','Develop/improve'];
+    let purposeGrid='';
+    if(c.tcf_vendor_id&&vendor){
+      const co=vendor.purposes||[],li=vendor.legIntPurposes||[];
+      purposeGrid='<div style="display:flex;gap:2px;flex-wrap:wrap;margin-bottom:8px">'+[1,2,3,4,5,6,7,8,9,10].map(id=>{
+        const inC=co.indexOf(id)!==-1,inLI=li.indexOf(id)!==-1;
+        const bg=inC?'#4ADE80':inLI?'#F87171':'var(--surf4)';
+        const label=inC?'Consent':inLI?'Leg.Int.':'—';
+        return`<span title="P${id}: ${pLabels[id]} (${label})" style="display:inline-flex;flex-direction:column;align-items:center;gap:1px;cursor:default"><span style="display:block;width:14px;height:10px;border-radius:1px;background:${bg}"></span><span style="font-family:'IBM Plex Mono',monospace;font-size:6px;color:var(--t3)">${id}</span></span>`;
+      }).join('')+'</div><div style="display:flex;gap:8px;margin-bottom:8px;font-family:\'IBM Plex Mono\',monospace;font-size:7px;color:var(--t3)"><span><span style="display:inline-block;width:8px;height:6px;border-radius:1px;background:#4ADE80;margin-right:2px"></span>Consent</span><span><span style="display:inline-block;width:8px;height:6px;border-radius:1px;background:#F87171;margin-right:2px"></span>Leg. Interest</span><span><span style="display:inline-block;width:8px;height:6px;border-radius:1px;background:var(--surf4);margin-right:2px"></span>Not declared</span></div>';
+    }else if(c.tcf_vendor_id&&!vendor&&gvl){
+      purposeGrid='<div style="font-size:10px;color:var(--t3);margin-bottom:8px">GVL ID '+c.tcf_vendor_id+' not found in vendor list</div>';
+    }else if(c.tcf_vendor_id&&!gvl){
+      purposeGrid='<div style="font-size:10px;color:var(--t3);margin-bottom:8px">GVL loading… <span style="cursor:pointer;color:var(--g)" onclick="loadGVL().then(()=>openCompany(currentCompany))">↺ retry</span></div>';
     }
-    privacyHtml=`<div class="ib-sec"><div class="ib-sh" style="cursor:pointer" onclick="ibToggle('ib-privacy-body')"><span id="ib-privacy-body-arrow" style="font-size:9px;color:var(--t3)">▾</span><span class="ib-sh-lbl">🛡️ Privacy / TCF / CCPA</span><span class="ib-sh-act" onclick="event.stopPropagation();switchTab('tcf')">Open TCF Analyser →</span></div><div class="ib-body" id="ib-privacy-body"><div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap;margin-bottom:8px">${parts.join('')}</div><table class="ib-facts">${c.tcf_vendor_id?`<tr><td>TCF v2.0</td><td>Vendor ID ${c.tcf_vendor_id} — registered in IAB GVL</td></tr>`:''}<tr><td>GDPR</td><td>${c.tcf_vendor_id?'TCF certified — consent-based processing':'No TCF registration found'}</td></tr><tr><td>CCPA</td><td>${c.website?`Check <a href="https://${c.website}/privacy" target="_blank" style="color:var(--g)">privacy policy ↗</a> for CCPA/CPRA disclosures`:'Unknown — no website stored'}</td></tr></table></div></div>`;
+
+    /* tags in privacy section */
+    const tagPills=semnTags.length?'<div style="margin-top:8px;padding-top:8px;border-top:1px solid var(--rule2)"><div style="font-family:\'IBM Plex Mono\',monospace;font-size:7px;font-weight:600;text-transform:uppercase;letter-spacing:.07em;color:var(--t3);margin-bottom:5px">Tags</div><div style="display:flex;flex-wrap:wrap;gap:3px">'+semnTags.map(t=>`<span class="ib-sig-tag">${t}</span>`).join('')+'</div></div>':'';
+
+    privacyHtml=`<div class="ib-sec"><div class="ib-sh" style="cursor:pointer" onclick="ibToggle('ib-privacy-body')"><span id="ib-privacy-body-arrow" style="font-size:9px;color:var(--t3)">▾</span><span class="ib-sh-lbl">🛡️ Privacy / TCF / CCPA</span>${c.tcf_vendor_id?`<span class="tag tc" style="cursor:default;margin-left:4px">GVL ${c.tcf_vendor_id}</span>`:'<span class="tag tn" style="cursor:default;margin-left:4px">No GVL</span>'}<span class="ib-sh-act" onclick="event.stopPropagation();switchTab('tcf')">TCF Analyser →</span></div><div class="ib-body" id="ib-privacy-body">${purposeGrid}<table class="ib-facts">${c.tcf_vendor_id?`<tr><td>TCF v2.0</td><td>Vendor ID ${c.tcf_vendor_id} — registered in IAB GVL</td></tr>`:''}<tr><td>GDPR</td><td>${c.tcf_vendor_id?'TCF certified — consent-based processing':'No TCF registration found'}</td></tr><tr><td>CCPA</td><td>${c.website?`Check <a href="https://${c.website}/privacy" target="_blank" style="color:var(--g)">privacy policy ↗</a> for CCPA/CPRA disclosures`:'Unknown — no website stored'}</td></tr></table>${tagPills}</div></div>`;
   }
 
   /* ── section helper ── */
