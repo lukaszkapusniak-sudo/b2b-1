@@ -130,7 +130,7 @@ export function renderList(){
 /* ═══ Company Detail Panel ═══════════════════════════════════ */
 
 /* fold toggle helper — used by onclick in section headers */
-function ibToggle(id){const b=document.getElementById(id);if(!b)return;const closed=b.style.display==='none';b.style.display=closed?'':'none';const arrow=document.getElementById(id+'-arrow');if(arrow)arrow.textContent=closed?'▾':'▸';}
+function ibToggle(id){const b=document.getElementById(id);if(!b)return;const closed=b.style.display==='none';b.style.display=closed?'':'none';const arrow=document.getElementById(id+'-arrow');if(arrow)arrow.textContent=closed?'▾':'▸';/* auto-load segment mapper on first open */if(closed&&id==='ib-segments-body'&&b.querySelector('#ib-seg-loading'))mapSegments();}
 /* expose for onclick */
 window.ibToggle=ibToggle;
 
