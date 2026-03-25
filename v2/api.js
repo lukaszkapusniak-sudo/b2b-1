@@ -1,47 +1,8 @@
-/* ═══ api.js — Supabase, status, stats, Google News, Anthropic ═══ */
+/* ═══ api.js — Supabase, status, stats, Google News ═══ */
 
 import { SB_URL, SB_KEY, HDR } from './config.js';
 import S from './state.js';
 import { classify, _slug } from './utils.js';
-
-/* ── Anthropic API key management ─────────────────────────── */
-export function getApiKey(){ return localStorage.getItem('oaAnthropicKey')||''; }
-export function setApiKey(k){ if(k)localStorage.setItem('oaAnthropicKey',k); else localStorage.removeItem('oaAnthropicKey'); }
-export function hasApiKey(){ return !!getApiKey(); }
-
-export function promptApiKey(){
-  const current=getApiKey();
-  const key=prompt('Enter your Anthropic API key (sk-ant-…).\nStored in localStorage only.',current?'sk-ant-•••••••'+current.slice(-6):'');
-  if(key===null)return false; // cancelled
-  if(key.startsWith('sk-ant-')){setApiKey(key);updateKeyBtn();return true;}
-  if(key===''){setApiKey('');updateKeyBtn();return false;}
-  alert('Key should start with sk-ant-');return false;
-}
-
-export function updateKeyBtn(){
-  const btn=document.getElementById('apiKeyBtn');
-  if(!btn)return;
-  if(hasApiKey()){btn.textContent='🔑';btn.className='btn sm';btn.style.color='var(--cc)';btn.title='API key set — click to change';}
-  else{btn.textContent='🔑';btn.className='btn sm';btn.style.color='var(--prc)';btn.title='Set Anthropic API key';}
-}
-
-/* ── Anthropic fetch helper ───────────────────────────────── */
-export async function anthropicFetch(body){
-  const key=getApiKey();
-  if(!key){if(!promptApiKey())throw new Error('API key required — click 🔑 in the nav bar');} 
-  const res=await fetch('https://api.anthropic.com/v1/messages',{
-    method:'POST',
-    headers:{
-      'Content-Type':'application/json',
-      'x-api-key':getApiKey(),
-      'anthropic-version':'2023-06-01',
-      'anthropic-dangerous-direct-browser-access':'true',
-    },
-    body:JSON.stringify(body),
-  });
-  if(!res.ok){const txt=await res.text().catch(()=>'');throw new Error(`API ${res.status}: ${txt.slice(0,120)}`);}
-  return res.json();
-}
 
 /* ── Status ───────────────────────────────────────────────── */
 export function setStatus(live){const el=document.getElementById('dbStatus');if(live){el.textContent=`● Live · ${S.companies.length}`;el.className='nav-status live';}else{el.textContent=`○ Seed · ${S.companies.length}`;el.className='nav-status';}}
