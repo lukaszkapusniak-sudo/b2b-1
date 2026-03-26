@@ -53,6 +53,7 @@ export async function sendOTP(email) {
     email,
     options: {
       shouldCreateUser: false,   // only existing users can log in
+      emailRedirectTo: null,     // suppress magic link — force 6-digit code only
     }
   });
   if (error) throw error;
