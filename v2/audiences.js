@@ -8,7 +8,8 @@
 import { SB_URL, SB_KEY, HDR } from './config.js';
 import S from './state.js';
 import { classify, _slug, getCoTags, getAv, ini, tClass, tLabel, esc } from './utils.js';
-import { anthropicFetch, clog } from './api.js';
+import { anthropicFetch } from './api.js';
+import { clog } from './hub.js';
 
 /* ─── Supabase ─────────────────────────────────────────────── */
 
