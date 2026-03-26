@@ -1,5 +1,5 @@
 // prospect.js — Prospect Finder feature for onAudience Hub v2
-import { anthropicFetch, clog } from './api.js';
+import { anthropicFetch } from './api.js';
 import { esc, _slug, tClass, tLabel, stars } from './utils.js';
 
 /* ─── Entry point ─────────────────────────────────────────── */
@@ -86,17 +86,17 @@ export async function runProspectFinder() {
       '<div class="prospect-loading-text" id="prospectLoadingText">Analysing your criteria&#8230;</div>' +
     '</div>';
 
-  clog('ai', 'Prospect Finder: "' + query + '"');
+  window.clog('ai', 'Prospect Finder: "' + query + '"');
 
   try {
     _setLoadingText('Loading database\u2026');
     const dbCompanies = await _loadAllCompanies();
-    clog('db', 'Loaded ' + dbCompanies.length + ' companies from DB');
+    window.clog('db', 'Loaded ' + dbCompanies.length + ' companies from DB');
 
     _setLoadingText('AI matching companies in database\u2026');
     const { criteria, dbMatches, suggestedNames } = await _aiMatch(query, dbCompanies);
 
-    clog('ai', 'DB matches: ' + dbMatches.length + ', suggested new: ' + suggestedNames.length);
+    window.clog('ai', 'DB matches: ' + dbMatches.length + ', suggested new: ' + suggestedNames.length);
 
     _renderResults(resultsEl, criteria, dbMatches, [], true);
 
@@ -105,7 +105,7 @@ export async function runProspectFinder() {
       _renderResults(resultsEl, criteria, dbMatches, webResults, false);
     }
 
-    clog('ai', 'Prospect Finder complete');
+    window.clog('ai', 'Prospect Finder complete');
   } catch (err) {
     console.error('Prospect Finder error:', err);
     resultsEl.innerHTML = '<div class="prospect-error">Error: ' + esc(String(err)) + '</div>';
@@ -358,7 +358,7 @@ export async function prospectAddToDB(jsonStr) {
     body: JSON.stringify(payload)
   });
   if (res.ok) {
-    clog('db', 'Added ' + c.name + ' to DB');
+    window.clog('db', 'Added ' + c.name + ' to DB');
     const btn = event?.target;
     if (btn) { btn.textContent = '\u2713 Added'; btn.disabled = true; }
     if (typeof window.oaDB?.reload === 'function') window.oaDB.reload();
