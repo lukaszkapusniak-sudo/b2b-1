@@ -75,6 +75,10 @@ function completeness(c){
   return Math.round(filled/fields.length*100);
 }
 
+/* ═══ Tech name/cat helpers (module-level — used in openCompany) ══ */
+const techName=(t)=>typeof t==='string'?t:(t&&t.tool)?String(t.tool):(t&&t.name)?String(t.name):typeof t==='object'?JSON.stringify(t):'?';
+const techCat=(t)=>typeof t==='object'&&t?t.category||'':'';
+
 /* ═══ List Rendering ═════════════════════════════════════════ */
 export function renderList(){
   const scroll=document.getElementById('listScroll'),meta=document.getElementById('metaTxt');
@@ -174,10 +178,6 @@ export function openCompany(c){
   /* ── products ── */
   const prods=c.products?.products||[];
   const prodsHtml=prods.length?prods.map(p=>`<div class="ib-prod-row"><div class="ib-prod-name">${p.name||''}</div><div class="ib-prod-desc">${p.description||''}${p.target_user?` <span style="color:var(--t3)">· ${p.target_user}</span>`:''}</div></div>`).join(''):'';
-
-  /* ── tech helpers ── */
-  const techName=(t)=>typeof t==='string'?t:(t&&t.tool)?String(t.tool):(t&&t.name)?String(t.name):typeof t==='object'?JSON.stringify(t):'?';
-  const techCat=(t)=>typeof t==='object'&&t?t.category||'':'';
 
   /* ── tech stack block (categorized, under outreach angle) ── */
   let techBlock='';
