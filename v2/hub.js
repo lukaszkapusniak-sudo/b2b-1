@@ -98,7 +98,6 @@ export function renderList(){
     const coTags=getCoTags(c);
     const pct=completeness(c);
 
-    /* detail line: city · headcount · category · icp */
     const details=[];
     if(c.hq_city||c.region)details.push(`<span class="c-detail-item">📍 <b>${esc(c.hq_city||c.region)}</b></span>`);
     if(c.size)details.push(`<span class="c-detail-item">👥 <b>${esc(c.size)}</b></span>`);
@@ -107,16 +106,9 @@ export function renderList(){
     if(c.website)details.push(`<a class="c-detail-item" href="https://${c.website}" target="_blank" onclick="event.stopPropagation()" style="color:var(--g);text-decoration:none">${c.website}</a>`);
     const detailHtml=details.length?`<div class="c-detail">${details.join('<span class="c-detail-sep"></span>')}</div>`:'';
 
-    /* note with bold keywords */
     const noteHtml=boldKw((c.note||'').length>60?(c.note||'').slice(0,58)+'…':(c.note||''));
-
-    /* tags row */
     const tagRow=coTags.length?`<div class="c-tags-row">${coTags.slice(0,6).map(t=>`<span class="c-tag-micro${S.activeTags.has(t)?' hit':''}" onclick="event.stopPropagation();toggleTag('${t}')">${t}</span>`).join('')}</div>`:'';
-
-    /* enrich button for incomplete records */
     const enrichBtn=pct<50?`<span class="c-enrich" onclick="event.stopPropagation();quickEnrich('${slug}')" title="${pct}% complete — click to research">✦ enrich</span>`:'';
-
-    /* updated_at relative */
     const updStr=c.updated_at?`<span class="c-detail-item" style="opacity:.7">${relTime(c.updated_at)}</span>`:'';
 
     return`<div class="c-row${sel}" data-slug="${slug}" onclick="openBySlug(this.dataset.slug)" oncontextmenu="showCtxSlug(event,this);return false;">
@@ -132,10 +124,7 @@ export function renderList(){
 }
 
 /* ═══ Company Detail Panel ═══════════════════════════════════ */
-
-/* fold toggle helper — used by onclick in section headers */
-function ibToggle(id){const b=document.getElementById(id);if(!b)return;const closed=b.style.display==='none';b.style.display=closed?'':'none';const arrow=document.getElementById(id+'-arrow');if(arrow)arrow.textContent=closed?'▾':'▸';/* auto-load segment mapper on first open */if(closed&&id==='ib-segments-body'&&b.querySelector('#ib-seg-loading'))mapSegments();}
-/* expose for onclick */
+function ibToggle(id){const b=document.getElementById(id);if(!b)return;const closed=b.style.display==='none';b.style.display=closed?'':'none';const arrow=document.getElementById(id+'-arrow');if(arrow)arrow.textContent=closed?'▾':'▸';if(closed&&id==='ib-segments-body'&&b.querySelector('#ib-seg-loading'))mapSegments();}
 window.ibToggle=ibToggle;
 
 export function openCompany(c){
@@ -144,7 +133,6 @@ export function openCompany(c){
   const panel=document.getElementById('coPanel');panel.style.display='block';
   const av=getAv(c.name),n=ini(c.name),tc=tClass(c.type),tl=tLabel(c.type),st=stars(c.icp);
 
-  /* ── facts table ── */
   const liSlug=c.linkedin_slug||_slug(c.name);
   const facts=[
     c.category&&['Category',esc(c.category)],
@@ -157,7 +145,6 @@ export function openCompany(c){
     c.updated_at&&['Updated',new Date(c.updated_at).toLocaleDateString('en-GB',{day:'numeric',month:'short',year:'2-digit'})]
   ].filter(Boolean);
 
-  /* ── links row (real links only) ── */
   const links=[];
   if(c.website)links.push(`<a href="https://${c.website}" target="_blank" class="ib-fact-link" title="${esc(c.website)}">🌐 ${esc(c.website)}</a>`);
   links.push(`<a href="https://www.linkedin.com/company/${liSlug}" target="_blank" class="ib-fact-link" title="LinkedIn company page">LI Company ↗</a>`);
@@ -167,19 +154,15 @@ export function openCompany(c){
   links.push(`<a href="https://news.google.com/search?q=${encodeURIComponent(c.name)}" target="_blank" class="ib-fact-link" title="Google News">News ↗</a>`);
   const linksHtml=`<div class="ib-fact-links">${links.join('')}</div>`;
 
-  /* ── signals bar ── */
   const semnTags=getCoTags(c);const techArr=Array.isArray(c.tech_stack)?c.tech_stack:[];
   const signalHtml=[semnTags.length?`<span class="ib-sig-lbl">Signals</span>${semnTags.map(t=>`<span class="ib-sig-tag">${t}</span>`).join('')}`:'',semnTags.length&&techArr.length?'<span class="ib-sig-div"></span>':'',techArr.length?`<span class="ib-sig-lbl">Tech</span>${techArr.slice(0,8).map(t=>`<span class="ib-tech-pill">${esc(techName(t))}</span>`).join('')}`:''].filter(Boolean).join('');
 
-  /* ── contacts grid ── */
   const coCts=S.contacts.filter(ct=>(ct.company_name||'').toLowerCase()===(c.name||"").toLowerCase());
   const ctGridHtml=coCts.length?`<div class="ib-cts-grid">${coCts.map(ct=>{const a2=getAv(ct.full_name||''),n2=ini(ct.full_name||'');const ctSlug=ct.id||_slug(ct.full_name||'');return`<div class="ib-ct" data-ctslug="${ctSlug}" onclick="openDrawer('${ctSlug}')"><div class="ib-ct-top"><div class="ib-ct-av" style="background:${a2.bg};color:${a2.fg}">${n2}</div><div><div class="ib-ct-name">${ct.full_name||'—'}</div><div class="ib-ct-title">${ct.title||''}</div></div></div>${ct.email?`<div class="ib-ct-email">${ct.email}</div>`:''}<div class="ib-ct-actions"><button class="ib-ct-btn" onclick="event.stopPropagation();ctAction('email','${ctSlug}')">✉ Email</button>${ct.linkedin_url?`<button class="ib-ct-btn" onclick="event.stopPropagation();window.open('${ct.linkedin_url}','_blank')">LI ↗</button>`:''}<button class="ib-ct-btn" onclick="event.stopPropagation();ctAction('research','${ctSlug}')">Research ↗</button></div></div>`;}).join('')}</div>`:`<div style="display:flex;align-items:center;gap:8px"><div style="font-size:11px;color:var(--t3)">No contacts stored</div><button class="ib-cta-btn" onclick="bgFindDMs()" style="margin-left:auto">✨ Find DMs</button></div>`;
 
-  /* ── products ── */
   const prods=c.products?.products||[];
   const prodsHtml=prods.length?prods.map(p=>`<div class="ib-prod-row"><div class="ib-prod-name">${p.name||''}</div><div class="ib-prod-desc">${p.description||''}${p.target_user?` <span style="color:var(--t3)">· ${p.target_user}</span>`:''}</div></div>`).join(''):'';
 
-  /* ── tech stack block (categorized, under outreach angle) ── */
   let techBlock='';
   if(techArr.length){
     const cats={};techArr.forEach(t=>{const c2=techCat(t)||'Other';if(!cats[c2])cats[c2]=[];cats[c2].push(t);});
@@ -195,14 +178,11 @@ export function openCompany(c){
     </div>`;
   }
 
-  /* ── integrations block ── */
   const integ=c.products?.integrations_advertised||[];
   const integBlock=integ.length?`<div style="margin-top:8px"><div style="font-family:'IBM Plex Mono',monospace;font-size:7px;font-weight:600;text-transform:uppercase;letter-spacing:.07em;color:var(--t3);margin-bottom:5px">Integrations</div><div style="display:flex;flex-wrap:wrap;gap:3px">${integ.map(i=>`<span class="ib-sig-tag">${esc(i)}</span>`).join('')}</div></div>`:'';
 
-  /* ── TCF / CCPA / Privacy compliance block ── */
   let privacyHtml='';
   {
-    /* purpose squares — green=consent, red=LI, gray=not declared */
     const gvl=window.gvlData;
     const vendor=gvl&&c.tcf_vendor_id?gvl.vendors[String(c.tcf_vendor_id)]||null:null;
     const pLabels=['','Store/access','Basic ads','Ad profiles','Use ad profiles','Content profiles','Use content profiles','Measure ads','Measure content','Audience stats','Develop/improve'];
@@ -220,21 +200,16 @@ export function openCompany(c){
     }else if(c.tcf_vendor_id&&!gvl){
       purposeGrid='<div style="font-size:10px;color:var(--t3);margin-bottom:8px">GVL loading… <span style="cursor:pointer;color:var(--g)" onclick="loadGVL().then(()=>openCompany(currentCompany))">↺ retry</span></div>';
     }
-
-    /* tags in privacy section */
     const tagPills=semnTags.length?'<div style="margin-top:8px;padding-top:8px;border-top:1px solid var(--rule2)"><div style="font-family:\'IBM Plex Mono\',monospace;font-size:7px;font-weight:600;text-transform:uppercase;letter-spacing:.07em;color:var(--t3);margin-bottom:5px">Tags</div><div style="display:flex;flex-wrap:wrap;gap:3px">'+semnTags.map(t=>`<span class="ib-sig-tag">${t}</span>`).join('')+'</div></div>':'';
-
     privacyHtml=`<div class="ib-sec"><div class="ib-sh" style="cursor:pointer" onclick="ibToggle('ib-privacy-body')"><span id="ib-privacy-body-arrow" style="font-size:9px;color:var(--t3)">▾</span><span class="ib-sh-lbl">🛡️ Privacy / TCF / CCPA</span>${c.tcf_vendor_id?`<span class="tag tc" style="cursor:default;margin-left:4px">GVL ${c.tcf_vendor_id}</span>`:'<span class="tag tn" style="cursor:default;margin-left:4px">No GVL</span>'}<span class="ib-sh-act" onclick="event.stopPropagation();switchTab('tcf')">TCF Analyser →</span></div><div class="ib-body" id="ib-privacy-body">${purposeGrid}<table class="ib-facts">${c.tcf_vendor_id?`<tr><td>TCF v2.0</td><td>Vendor ID ${c.tcf_vendor_id} — registered in IAB GVL</td></tr>`:''}<tr><td>GDPR</td><td>${c.tcf_vendor_id?'TCF certified — consent-based processing':'No TCF registration found'}</td></tr><tr><td>CCPA</td><td>${c.website?`Check <a href="https://${c.website}/privacy" target="_blank" style="color:var(--g)">privacy policy ↗</a> for CCPA/CPRA disclosures`:'Unknown — no website stored'}</td></tr></table>${tagPills}</div></div>`;
   }
 
-  /* ── section helper ── */
   const sec=(id,icon,label,body,extra,startOpen)=>{
     const arrow=startOpen!==false?'▾':'▸';
     const disp=startOpen!==false?'':'display:none';
     return`<div class="ib-sec"><div class="ib-sh" style="cursor:pointer" onclick="ibToggle('${id}')"><span id="${id}-arrow" style="font-size:9px;color:var(--t3)">${arrow}</span><span class="ib-sh-lbl">${icon} ${label}</span>${extra||''}</div><div class="ib-body" id="${id}" style="${disp}">${body}</div></div>`;
   };
 
-  /* ── assemble panel ── */
   panel.innerHTML=`<div class="ib">
 <div class="ib-head"><div class="ib-av${c.type==='nogo'?' nogo':''}">${n}</div><div class="ib-meta"><div class="ib-name">${c.name}</div><div class="ib-row2"><span class="tag ${tc}">${tl}</span>${st?`<span class="ib-icp">${st}</span>`:''}</div>${c.note?`<div class="ib-note">${c.note}</div>`:''}</div><div class="ib-close" onclick="closePanel()">✕</div></div>
 <div class="ib-cta"><button class="ib-cta-btn primary" onclick="coAction('email')">✉ Draft Email</button><button class="ib-cta-btn" onclick="bgFindDMs()">👤 Find DMs</button><button class="ib-cta-btn" onclick="bgGenerateAngle()">💡 Gen Angle</button><button class="ib-cta-btn" onclick="bgRefreshIntel()">📰 Refresh News</button><button class="ib-cta-btn" onclick="coAction('similar')">🔗 Find Similar</button><button class="ib-cta-btn" onclick="coAction('linkedin')" style="margin-left:auto">LinkedIn ↗</button></div>
@@ -321,150 +296,211 @@ export async function bgFindDMs(){
       tools:[{type:'web_search_20250305',name:'web_search',max_uses:8}],
       messages:[{role:'user',content:`Find 3–5 REAL decision makers AND outreach signals at ${c.name} (${c.category||'ad tech'}, ${c.website||'no website'}) relevant for data partnership discussions with onAudience.\nFocus: Head/VP/Director of Programmatic, Data Partnerships, Product, Revenue, or Platform.\nCompany context: ${c.note||'none'}\nCompany description: ${(c.description||'').slice(0,200)}\nSignals: ${tags||'none'}\n\nUse web search to find REAL people and signals. Return empty arrays if you can't verify anything.`}]
     });
-
-    /* extract text from multi-block response */
     const textBlocks=(data.content||[]).filter(b=>b.type==='text').map(b=>b.text).join('\n');
-
-    /* parse — try object format first, fall back to array (contacts only) */
     let dms=[],signals=[];
     const objMatch=textBlocks.match(/\{[\s\S]*"contacts"[\s\S]*\}/);
-    if(objMatch){
-      try{
-        const parsed=JSON.parse(objMatch[0].replace(/```json|```/g,'').trim());
-        dms=Array.isArray(parsed.contacts)?parsed.contacts:[];
-        signals=Array.isArray(parsed.signals)?parsed.signals:[];
-      }catch(e2){/* fall through to array parse */}
-    }
-    if(!dms.length){
-      const arrMatch=textBlocks.match(/\[[\s\S]*\]/);
-      if(arrMatch){
-        try{dms=JSON.parse(arrMatch[0].replace(/```json|```/g,'').trim());}catch(e3){}
-      }
-    }
-
-    /* tag contacts with source */
+    if(objMatch){try{const parsed=JSON.parse(objMatch[0].replace(/```json|```/g,'').trim());dms=Array.isArray(parsed.contacts)?parsed.contacts:[];signals=Array.isArray(parsed.signals)?parsed.signals:[];}catch(e2){}}
+    if(!dms.length){const arrMatch=textBlocks.match(/\[[\s\S]*\]/);if(arrMatch){try{dms=JSON.parse(arrMatch[0].replace(/```json|```/g,'').trim());}catch(e3){}}}
     dms.forEach(dm=>{dm.source=dm.confidence==='verified'?'web_verified':'ai_probable';});
     S.mcAiContacts=dms;
-
-    /* ── Store signals to Supabase ── */
     if(signals.length){
       const expiry={buying_signal:60,org_change:90,tech_change:180,event:30,competitive_intel:120,timing_signal:60};
-      const rows=signals.map(s=>({
-        company_id:slug,
-        signal_type:s.signal_type||'timing_signal',
-        title:(s.title||'').slice(0,200),
-        detail:s.detail||'',
-        source_url:s.source_url||'',
-        source:'web_search',
-        confidence:s.confidence||'probable',
-        relevance:Math.min(5,Math.max(1,s.relevance||3)),
-      }));
-      /* upsert each signal */
-      for(const r of rows){
-        const days=expiry[r.signal_type]||60;
-        fetch(`${SB_URL}/rest/v1/outreach_signals`,{
-          method:'POST',
-          headers:{...HDR,'Prefer':'resolution=merge-duplicates,return=minimal'},
-          body:JSON.stringify({...r,expires_at:new Date(Date.now()+days*86400000).toISOString()})
-        }).catch(()=>{});
-      }
+      const rows=signals.map(s=>({company_id:slug,signal_type:s.signal_type||'timing_signal',title:(s.title||'').slice(0,200),detail:s.detail||'',source_url:s.source_url||'',source:'web_search',confidence:s.confidence||'probable',relevance:Math.min(5,Math.max(1,s.relevance||3))}));
+      for(const r of rows){const days=expiry[r.signal_type]||60;fetch(`${SB_URL}/rest/v1/outreach_signals`,{method:'POST',headers:{...HDR,'Prefer':'resolution=merge-duplicates,return=minimal'},body:JSON.stringify({...r,expires_at:new Date(Date.now()+days*86400000).toISOString()})}).catch(()=>{});}
       clog('db',`Stored <b>${rows.length}</b> outreach signals for ${esc(c.name)}`);
     }
-
     clog('ai',`✓ Found <b>${dms.length}</b> contacts + <b>${signals.length}</b> signals at ${esc(c.name)} (${dms.filter(d=>d.confidence==='verified').length} verified)`);
-
-    /* ── Render contacts ── */
     const contactsHtml=dms.length?`
       <div style="font-family:'IBM Plex Mono',monospace;font-size:7px;font-weight:600;text-transform:uppercase;letter-spacing:.07em;margin-bottom:8px;display:flex;align-items:center;gap:5px">
-        <span style="color:var(--g)">✓ Web-verified</span>
-        <span style="color:var(--t4)">·</span>
+        <span style="color:var(--g)">✓ Web-verified</span><span style="color:var(--t4)">·</span>
         <span style="color:var(--t3);font-weight:400">Opus + search · ${dms.length} found</span>
       </div>
       <div class="ib-cts-grid">${dms.map(dm=>{
         const a2=getAv(dm.full_name||''),n2=ini(dm.full_name||'');
-        const confBadge=dm.confidence==='verified'
-          ?'<span style="font-family:\'IBM Plex Mono\',monospace;font-size:6px;color:var(--cc);border:1px solid var(--cr);background:var(--cb);border-radius:2px;padding:0 3px;margin-left:3px">VERIFIED</span>'
-          :'<span style="font-family:\'IBM Plex Mono\',monospace;font-size:6px;color:var(--prc);border:1px solid var(--prr);background:var(--prb);border-radius:2px;padding:0 3px;margin-left:3px">PROBABLE</span>';
+        const confBadge=dm.confidence==='verified'?'<span style="font-family:\'IBM Plex Mono\',monospace;font-size:6px;color:var(--cc);border:1px solid var(--cr);background:var(--cb);border-radius:2px;padding:0 3px;margin-left:3px">VERIFIED</span>':'<span style="font-family:\'IBM Plex Mono\',monospace;font-size:6px;color:var(--prc);border:1px solid var(--prr);background:var(--prb);border-radius:2px;padding:0 3px;margin-left:3px">PROBABLE</span>';
         const srcLink=dm.source_url?`<a href="${dm.source_url}" target="_blank" style="font-family:'IBM Plex Mono',monospace;font-size:7px;color:var(--g);text-decoration:none;display:block;margin-top:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">source ↗</a>`:'';
-        return`<div class="ib-ct">
-          <div class="ib-ct-top">
-            <div class="ib-ct-av" style="background:${a2.bg};color:${a2.fg};border:1px solid ${a2.fg}33">${n2}</div>
-            <div><div class="ib-ct-name">${esc(dm.full_name)}${confBadge}</div><div class="ib-ct-title">${esc(dm.title)}</div></div>
-          </div>
-          <div style="font-size:10px;color:var(--t3);margin:3px 0 4px;line-height:1.4">${esc(dm.reason||'')}</div>
-          ${srcLink}
-          <div class="ib-ct-actions">
-            <button class="ib-ct-btn" onclick="openComposer({company:'${c.name.replace(/'/g,'&apos;')}',contactName:'${(dm.full_name||'').replace(/'/g,'&apos;')}',contactTitle:'${(dm.title||'').replace(/'/g,'&apos;')}',angle:'${(c.outreach_angle||'').replace(/'/g,'&apos;').slice(0,100)}',description:'${(c.description||'').replace(/'/g,'&apos;').slice(0,100)}'})">✉ Email</button>
-            ${dm.linkedin_url?`<a class="ib-ct-btn" href="${dm.linkedin_url}" target="_blank">LI ↗</a>`:`<a class="ib-ct-btn" href="https://www.linkedin.com/search/results/people/?keywords=${encodeURIComponent(dm.full_name+' '+c.name)}" target="_blank">LI Search ↗</a>`}
-            <button class="ib-ct-btn" onclick="openClaude('Research ${esc(dm.full_name)} at ${esc(c.name)} — LinkedIn, background, outreach hooks')">Research ↗</button>
-          </div>
-        </div>`;
+        return`<div class="ib-ct"><div class="ib-ct-top"><div class="ib-ct-av" style="background:${a2.bg};color:${a2.fg};border:1px solid ${a2.fg}33">${n2}</div><div><div class="ib-ct-name">${esc(dm.full_name)}${confBadge}</div><div class="ib-ct-title">${esc(dm.title)}</div></div></div><div style="font-size:10px;color:var(--t3);margin:3px 0 4px;line-height:1.4">${esc(dm.reason||'')}</div>${srcLink}<div class="ib-ct-actions"><button class="ib-ct-btn" onclick="openComposer({company:'${c.name.replace(/'/g,'&apos;')}',contactName:'${(dm.full_name||'').replace(/'/g,'&apos;')}',contactTitle:'${(dm.title||'').replace(/'/g,'&apos;')}',angle:'${(c.outreach_angle||'').replace(/'/g,'&apos;').slice(0,100)}',description:'${(c.description||'').replace(/'/g,'&apos;').slice(0,100)}'})">✉ Email</button>${dm.linkedin_url?`<a class="ib-ct-btn" href="${dm.linkedin_url}" target="_blank">LI ↗</a>`:`<a class="ib-ct-btn" href="https://www.linkedin.com/search/results/people/?keywords=${encodeURIComponent(dm.full_name+' '+c.name)}" target="_blank">LI Search ↗</a>`}<button class="ib-ct-btn" onclick="openClaude('Research ${esc(dm.full_name)} at ${esc(c.name)} — LinkedIn, background, outreach hooks')">Research ↗</button></div></div>`;
       }).join('')}</div>`:'<div style="font-size:11px;color:var(--t3)">No contacts verified via web search</div>';
-
-    /* ── Render signals ── */
     const sigIcons={buying_signal:'🎯',org_change:'👤',tech_change:'⚙️',event:'🎤',competitive_intel:'🏁',timing_signal:'⏱️'};
     const sigLabels={buying_signal:'Buying Signal',org_change:'Org Change',tech_change:'Tech Change',event:'Event',competitive_intel:'Competitive',timing_signal:'Timing'};
-    const signalsHtml=signals.length?`
-      <div style="margin-top:12px;padding-top:10px;border-top:1px solid var(--rule2)">
-        <div style="font-family:'IBM Plex Mono',monospace;font-size:7px;font-weight:600;text-transform:uppercase;letter-spacing:.07em;color:var(--poc);margin-bottom:6px">⚡ Outreach Signals · ${signals.length}</div>
-        ${signals.map(s=>{
-          const icon=sigIcons[s.signal_type]||'📌';
-          const label=sigLabels[s.signal_type]||s.signal_type;
-          const relBar='█'.repeat(Math.min(5,s.relevance||3))+'░'.repeat(5-Math.min(5,s.relevance||3));
-          return`<div style="display:flex;gap:6px;padding:4px 0;border-bottom:1px solid var(--rule3);font-family:'IBM Plex Mono',monospace;font-size:9px">
-            <span style="flex-shrink:0">${icon}</span>
-            <div style="flex:1;min-width:0">
-              <div style="display:flex;align-items:center;gap:4px;margin-bottom:2px">
-                <span style="font-size:6px;text-transform:uppercase;letter-spacing:.05em;padding:1px 4px;border-radius:2px;background:var(--pob);color:var(--poc);border:1px solid var(--por)">${label}</span>
-                <span style="font-size:7px;color:var(--t4);letter-spacing:.05em">${relBar}</span>
-                ${s.confidence==='verified'?'<span style="font-size:6px;color:var(--cc);border:1px solid var(--cr);background:var(--cb);border-radius:2px;padding:0 3px">✓</span>':''}
-              </div>
-              <div style="color:var(--t1);font-weight:500">${esc(s.title)}</div>
-              ${s.detail?`<div style="color:var(--t3);font-size:8px;margin-top:1px">${esc(s.detail)}</div>`:''}
-              ${s.source_url?`<a href="${s.source_url}" target="_blank" style="color:var(--g);font-size:7px;text-decoration:none">source ↗</a>`:''}
-            </div>
-          </div>`;
-        }).join('')}
-      </div>`:'';
-
+    const signalsHtml=signals.length?`<div style="margin-top:12px;padding-top:10px;border-top:1px solid var(--rule2)"><div style="font-family:'IBM Plex Mono',monospace;font-size:7px;font-weight:600;text-transform:uppercase;letter-spacing:.07em;color:var(--poc);margin-bottom:6px">⚡ Outreach Signals · ${signals.length}</div>${signals.map(s=>{const icon=sigIcons[s.signal_type]||'📌';const label=sigLabels[s.signal_type]||s.signal_type;const relBar='█'.repeat(Math.min(5,s.relevance||3))+'░'.repeat(5-Math.min(5,s.relevance||3));return`<div style="display:flex;gap:6px;padding:4px 0;border-bottom:1px solid var(--rule3);font-family:'IBM Plex Mono',monospace;font-size:9px"><span style="flex-shrink:0">${icon}</span><div style="flex:1;min-width:0"><div style="display:flex;align-items:center;gap:4px;margin-bottom:2px"><span style="font-size:6px;text-transform:uppercase;letter-spacing:.05em;padding:1px 4px;border-radius:2px;background:var(--pob);color:var(--poc);border:1px solid var(--por)">${label}</span><span style="font-size:7px;color:var(--t4);letter-spacing:.05em">${relBar}</span>${s.confidence==='verified'?'<span style="font-size:6px;color:var(--cc);border:1px solid var(--cr);background:var(--cb);border-radius:2px;padding:0 3px">✓</span>':''}</div><div style="color:var(--t1);font-weight:500">${esc(s.title)}</div>${s.detail?`<div style="color:var(--t3);font-size:8px;margin-top:1px">${esc(s.detail)}</div>`:''}${s.source_url?`<a href="${s.source_url}" target="_blank" style="color:var(--g);font-size:7px;text-decoration:none">source ↗</a>`:''}</div></div>`;}).join('')}</div>`:'';
     body.innerHTML=contactsHtml+signalsHtml;
-
-    /* ── Also show signals in company panel if no contacts but signals exist ── */
-    if(!dms.length&&signals.length){
-      body.innerHTML=`<div style="font-size:11px;color:var(--t3);margin-bottom:8px">No contacts verified — <a href="https://www.linkedin.com/search/results/people/?keywords=${encodeURIComponent(c.name+' data partnerships')}" target="_blank" style="color:var(--g)">Manual LI search ↗</a></div>`+signalsHtml;
-    }
-
+    if(!dms.length&&signals.length){body.innerHTML=`<div style="font-size:11px;color:var(--t3);margin-bottom:8px">No contacts verified — <a href="https://www.linkedin.com/search/results/people/?keywords=${encodeURIComponent(c.name+' data partnerships')}" target="_blank" style="color:var(--g)">Manual LI search ↗</a></div>`+signalsHtml;}
   }catch(e){
     clog('ai',`✗ DM search failed for ${esc(c.name)}: ${esc(e.message)}`);
-    body.innerHTML=`<div style="font-size:11px;color:var(--t3)">
-      <span class="bg-err">Error</span> ${esc(e.message)}
-      <div style="margin-top:6px;display:flex;gap:4px">
-        <span style="cursor:pointer;color:var(--g);text-decoration:underline" onclick="bgFindDMs()">↺ retry with Opus</span>
-        <span style="color:var(--t4)">·</span>
-        <a href="https://www.linkedin.com/search/results/people/?keywords=${encodeURIComponent(c.name+' data partnerships')}" target="_blank" style="color:var(--g)">Manual LI search ↗</a>
-      </div>
-    </div>`;
+    body.innerHTML=`<div style="font-size:11px;color:var(--t3)"><span class="bg-err">Error</span> ${esc(e.message)}<div style="margin-top:6px;display:flex;gap:4px"><span style="cursor:pointer;color:var(--g);text-decoration:underline" onclick="bgFindDMs()">↺ retry with Opus</span><span style="color:var(--t4)">·</span><a href="https://www.linkedin.com/search/results/people/?keywords=${encodeURIComponent(c.name+' data partnerships')}" target="_blank" style="color:var(--g)">Manual LI search ↗</a></div></div>`;
+  }
+}
+
+/* ═══ Intelligence Extraction from News ═════════════════════
+   Fires after articles load. Sends titles to Claude Haiku,
+   extracts relations + products, writes to Supabase.
+   Uses enrich_cache to avoid re-processing same article set.
+   ═══════════════════════════════════════════════════════════ */
+export async function extractIntelRelations(slug, companyName, articles){
+  if(!articles||articles.length===0)return;
+
+  /* cache check — skip if already extracted from this many articles */
+  const cacheKey='intel_extraction';
+  const cached=await window.cacheGet?.(slug,cacheKey);
+  if(cached?.article_count>=articles.length){
+    clog('info',`Extraction cache HIT — ${esc(companyName)} (${cached.article_count} arts)`);
+    return;
+  }
+
+  clog('ai',`🔍 Extracting relations/products from ${articles.length} articles for <b>${esc(companyName)}</b>…`);
+
+  const articleLines=articles.slice(0,20).map((a,i)=>{
+    const title=a.title||'';const summary=a.summary||'';const source=a.source||'';const date=a.date||'';
+    return`${i+1}. [${source} ${date}] ${title}${summary?' — '+summary.slice(0,120):''}`;
+  }).join('\n');
+
+  const EXTRACT_SYS=`You are a data extraction engine for an AdTech CRM. Extract structured intelligence from news article titles.
+
+Return ONLY valid JSON with exactly two keys:
+{
+  "relations": [{"other_company":"exact name from article","relation_type":"acquired_by|data_partner|tech_integration|client_of|competes_with|marketplace_listed|dsp_integration|subsidiary_of","direction":"from_target|to_target|bidirectional","strength":"confirmed|probable","evidence":"short quote from title"}],
+  "products": [{"name":"named product/platform","description":"1 sentence","features":[],"target_user":"advertiser|publisher|agency|both"}]
+}
+
+RULES: Only extract EXPLICIT mentions. partnerships/integrations→bidirectional. acquisitions→acquired_by with direction. Only NAMED products. Empty arrays if nothing qualifies. Raw JSON only.`;
+
+  try{
+    const data=await anthropicFetch({
+      model:MODEL_CREATIVE,
+      max_tokens:1000,
+      system:EXTRACT_SYS,
+      messages:[{role:'user',content:`Target company: "${companyName}"\n\nArticles:\n${articleLines}\n\nExtract relations and products. JSON only.`}]
+    });
+    const text=(data.content||[]).filter(b=>b.type==='text').map(b=>b.text).join('');
+    let relations=[],products=[];
+    const cleaned=text.replace(/```json|```/g,'').trim();
+    const objMatch=cleaned.match(/\{[\s\S]*\}/);
+    if(objMatch){
+      try{const parsed=JSON.parse(objMatch[0]);relations=Array.isArray(parsed.relations)?parsed.relations:[];products=Array.isArray(parsed.products)?parsed.products:[];}
+      catch(e){clog('ai',`⚠️ JSON parse error for ${esc(companyName)}: ${esc(e.message)}`);return;}
+    }
+    clog('ai',`✓ Extracted: <b>${relations.length}</b> relations, <b>${products.length}</b> products from ${esc(companyName)} news`);
+
+    /* ── Upsert relations ── */
+    if(relations.length){
+      const coIndex={};
+      S.companies.forEach(c=>{const s=_slug(c.name);coIndex[s]=c;coIndex[c.id||s]=c;});
+      const existingKeys=new Set(S.allRelations.map(r=>`${r.from_company}|${r.to_company}|${r.relation_type}`));
+      const validTypes=new Set(['acquired_by','data_partner','tech_integration','client_of','competes_with','marketplace_listed','dsp_integration','subsidiary_of']);
+      let inserted=0;
+      for(const rel of relations){
+        const otherName=(rel.other_company||'').trim();
+        if(!otherName||otherName.toLowerCase()===companyName.toLowerCase())continue;
+        const relType=validTypes.has(rel.relation_type)?rel.relation_type:'data_partner';
+        const strength=['confirmed','probable','inferred'].includes(rel.strength)?rel.strength:'probable';
+        const otherSlug=_slug(otherName);
+        /* create stub if company not in DB */
+        if(!coIndex[otherSlug]){
+          await fetch(`${SB_URL}/rest/v1/companies`,{method:'POST',headers:{...HDR,'Prefer':'resolution=merge-duplicates,return=minimal'},body:JSON.stringify({id:otherSlug,name:otherName,type:'prospect',note:'auto-created by intel extraction'})}).catch(()=>{});
+          clog('db',`➕ Stub: <b>${esc(otherName)}</b>`);
+          S.companies.push({id:otherSlug,name:otherName,type:'prospect',note:'auto-created by intel extraction'});
+          coIndex[otherSlug]={id:otherSlug,name:otherName,type:'prospect'};
+        }
+        let fromSlug,toSlug,direction;
+        if(rel.direction==='bidirectional'){fromSlug=slug;toSlug=otherSlug;direction='bidirectional';}
+        else if(rel.direction==='from_target'){fromSlug=slug;toSlug=otherSlug;direction='unidirectional';}
+        else{fromSlug=otherSlug;toSlug=slug;direction='unidirectional';}
+        const key=`${fromSlug}|${toSlug}|${relType}`;
+        const keyRev=`${toSlug}|${fromSlug}|${relType}`;
+        if(existingKeys.has(key)||existingKeys.has(keyRev))continue;
+        const res=await fetch(`${SB_URL}/rest/v1/company_relations`,{method:'POST',headers:{...HDR,'Prefer':'resolution=merge-duplicates,return=minimal'},body:JSON.stringify({from_company:fromSlug,to_company:toSlug,relation_type:relType,direction,strength,source:'intelligence_extraction',notes:(rel.evidence||'').slice(0,300)||null})}).catch(()=>null);
+        if(res?.ok||res?.status===201||res?.status===409){
+          existingKeys.add(key);
+          S.allRelations.push({from_company:fromSlug,to_company:toSlug,relation_type:relType,direction,strength,source:'intelligence_extraction'});
+          inserted++;
+          clog('db',`✓ Relation: ${esc(fromSlug)} —[${relType}]→ ${esc(toSlug)}`);
+        }
+      }
+      if(inserted>0){
+        clog('db',`⚡ Saved <b>${inserted}</b> new relations from ${esc(companyName)} intel`);
+        /* refresh relations panel if open for this company */
+        if(S.currentCompany&&_slug(S.currentCompany.name)===slug){
+          const rb=document.getElementById('ib-rels-body');
+          if(rb&&!rb.innerHTML.includes('ib-loading'))setTimeout(()=>loadRelationsBrief(slug,false),200);
+        }
+      }
+    }
+
+    /* ── Upsert products ── */
+    if(products.length){
+      const coRow=S.companies.find(c=>(c.id||_slug(c.name))===slug);
+      const existingProds=coRow?.products?.products||[];
+      const existingNames=new Set(existingProds.map(p=>(p.name||'').toLowerCase()));
+      const newProds=products.filter(p=>p.name&&!existingNames.has(p.name.toLowerCase()));
+      if(newProds.length){
+        const merged=[...existingProds,...newProds];
+        const payload={products:{products:merged,inferred:false,extracted_from:'intelligence',extracted_at:new Date().toISOString().slice(0,10),positioning:coRow?.products?.positioning||[],integrations_advertised:coRow?.products?.integrations_advertised||[],pricing_model:coRow?.products?.pricing_model||'contact_us'}};
+        await fetch(`${SB_URL}/rest/v1/companies?id=eq.${slug}`,{method:'PATCH',headers:{...HDR,'Prefer':'return=minimal'},body:JSON.stringify(payload)}).catch(()=>{});
+        if(coRow)coRow.products=payload.products;
+        clog('db',`📦 Products: ${newProds.map(p=>esc(p.name)).join(', ')} → ${esc(companyName)}`);
+      }
+    }
+
+    /* cache result — 14 day TTL */
+    await window.cacheSet?.(slug,cacheKey,{article_count:articles.length,relations_found:relations.length,products_found:products.length,extracted_at:new Date().toISOString()},336);
+
+  }catch(e){
+    clog('ai',`✗ Intel extraction failed for ${esc(companyName)}: ${esc(e.message)}`);
+    console.error('extractIntelRelations',e);
   }
 }
 
 /* ═══ Intelligence ═══════════════════════════════════════════ */
 export function renderIntelBody(stored,live){const body=document.getElementById('ib-intel-body'),cnt=document.getElementById('ib-intel-cnt'),liveLabel=document.getElementById('ib-intel-live');if(!body)return;const storedItems=[];(Array.isArray(stored)?stored:[]).forEach(row=>{if(Array.isArray(row.content))storedItems.push(...row.content);else if(row.title||row.url)storedItems.push(row);});const total=storedItems.length+live.length;if(cnt)cnt.textContent=total||'';if(liveLabel)liveLabel.style.display=live.length?'flex':'none';if(!total){body.innerHTML=`<div style="display:flex;align-items:center;gap:8px"><span style="font-size:11px;color:var(--t3)">No intelligence yet</span><button class="ib-ct-btn" style="height:22px;padding:0 8px;font-size:7px;margin-left:auto" onclick="bgRefreshIntel()">↺ Fetch news</button></div>`;return;}const itemHtml=(items,dotColor)=>items.map(r=>{const url=r.url||r.link||'';const title=r.title||r.summary||'—';const src=r.source||r.type||'';const date=r.date||(r.created_at?new Date(r.created_at).toLocaleDateString('en-GB',{day:'numeric',month:'short',year:'2-digit'}):'');return`<div class="ib-news-item"><div class="ib-news-dot" style="background:${dotColor}"></div><div class="ib-news-body">${url?`<a class="ib-news-title" href="${url}" target="_blank">${title} ↗</a>`:`<div class="ib-news-title" style="cursor:default">${title}</div>`}<div class="ib-news-meta"><span class="ib-news-src">${src}</span><span class="ib-news-date">${date}</span></div></div></div>`;}).join('');let html='';if(live.length){html+=`<div style="display:flex;align-items:center;gap:5px;margin-bottom:6px"><span class="live-label"><span class="live-dot"></span>Live — Google News</span><span style="font-family:'IBM Plex Mono',monospace;font-size:7px;color:var(--t4)">${live.length} results</span></div>${itemHtml(live,'#E53935')}`;}if(storedItems.length){if(live.length)html+=`<div style="height:10px;border-top:1px solid var(--rule2);margin:8px 0"></div>`;html+=`<div style="font-family:'IBM Plex Mono',monospace;font-size:7px;font-weight:600;text-transform:uppercase;letter-spacing:.07em;color:var(--t3);margin-bottom:6px">📁 Stored</div>${itemHtml(storedItems,'var(--g)')}`;}body.innerHTML=html;}
-export async function bgRefreshIntel(){const c=S.currentCompany;if(!c)return;const body=document.getElementById('ib-intel-body'),btn=document.getElementById('ib-intel-refresh');if(body)body.innerHTML=`<div class="ib-loading" style="text-align:left">Fetching news…</div>`;if(btn)btn.textContent='↻ Loading…';const slug=_slug(c.name);const[storedRes,liveRes]=await Promise.allSettled([fetch(`${SB_URL}/rest/v1/intelligence?company_id=eq.${slug}&type=eq.press_links`,{headers:{apikey:SB_KEY,Authorization:`Bearer ${SB_KEY}`}}).then(r=>r.json()),fetchGoogleNews(c.name)]);const stored=storedRes.status==='fulfilled'&&Array.isArray(storedRes.value)?storedRes.value:[];const live=liveRes.status==='fulfilled'?liveRes.value:[];renderIntelBody(stored,live);if(live.length)saveIntelligence(slug,live);if(btn)btn.textContent='↺ Refresh';}
-export async function loadIntelligence(slug,name){const body=document.getElementById('ib-intel-body');if(!body)return;const[storedRes,liveRes]=await Promise.allSettled([fetch(`${SB_URL}/rest/v1/intelligence?company_id=eq.${slug}&type=eq.press_links`,{headers:{apikey:SB_KEY,Authorization:`Bearer ${SB_KEY}`}}).then(r=>r.json()),fetchGoogleNews(name)]);const stored=storedRes.status==='fulfilled'&&Array.isArray(storedRes.value)?storedRes.value:[];const live=liveRes.status==='fulfilled'?liveRes.value:[];renderIntelBody(stored,live);if(live.length)saveIntelligence(slug,live);}
+
+export async function bgRefreshIntel(){
+  const c=S.currentCompany;if(!c)return;
+  const body=document.getElementById('ib-intel-body'),btn=document.getElementById('ib-intel-refresh');
+  if(body)body.innerHTML=`<div class="ib-loading" style="text-align:left">Fetching news…</div>`;
+  if(btn)btn.textContent='↻ Loading…';
+  const slug=_slug(c.name);
+  const[storedRes,liveRes]=await Promise.allSettled([
+    fetch(`${SB_URL}/rest/v1/intelligence?company_id=eq.${slug}&type=eq.press_links`,{headers:{apikey:SB_KEY,Authorization:`Bearer ${SB_KEY}`}}).then(r=>r.json()),
+    fetchGoogleNews(c.name)
+  ]);
+  const stored=storedRes.status==='fulfilled'&&Array.isArray(storedRes.value)?storedRes.value:[];
+  const live=liveRes.status==='fulfilled'?liveRes.value:[];
+  renderIntelBody(stored,live);
+  if(live.length){
+    saveIntelligence(slug,live);
+    /* extract relations + products from combined article set in background */
+    const storedItems=[];stored.forEach(row=>{if(Array.isArray(row.content))storedItems.push(...row.content);});
+    const allArticles=[...storedItems,...live];
+    if(allArticles.length>=2)setTimeout(()=>extractIntelRelations(slug,c.name,allArticles),500);
+  }
+  if(btn)btn.textContent='↺ Refresh';
+}
+
+export async function loadIntelligence(slug,name){
+  const body=document.getElementById('ib-intel-body');if(!body)return;
+  const[storedRes,liveRes]=await Promise.allSettled([
+    fetch(`${SB_URL}/rest/v1/intelligence?company_id=eq.${slug}&type=eq.press_links`,{headers:{apikey:SB_KEY,Authorization:`Bearer ${SB_KEY}`}}).then(r=>r.json()),
+    fetchGoogleNews(name)
+  ]);
+  const stored=storedRes.status==='fulfilled'&&Array.isArray(storedRes.value)?storedRes.value:[];
+  const live=liveRes.status==='fulfilled'?liveRes.value:[];
+  renderIntelBody(stored,live);
+  if(live.length)saveIntelligence(slug,live);
+  /* extract on first open if stored articles exist + not yet cached */
+  const storedItems=[];stored.forEach(row=>{if(Array.isArray(row.content))storedItems.push(...row.content);});
+  const allArticles=[...storedItems,...live];
+  if(allArticles.length>=3)setTimeout(()=>extractIntelRelations(slug,name,allArticles),800);
+}
 
 /* ═══ Relations ══════════════════════════════════════════════ */
 let _relCache=[];let _relView='list';
 window.setRelView=function(v){_relView=v;const listEl=document.getElementById('ib-rels-list');const graphEl=document.getElementById('ib-rels-graph');const btnL=document.getElementById('ib-rel-btn-list');const btnG=document.getElementById('ib-rel-btn-graph');if(!listEl||!graphEl)return;listEl.style.display=v==='list'?'':'none';graphEl.style.display=v==='graph'?'':'none';if(btnL){btnL.className='ib-ct-btn'+(v==='list'?' active':'');}if(btnG){btnG.className='ib-ct-btn'+(v==='graph'?' active':'');}if(v==='graph'&&_relCache.length)renderRelGraph();};
 
-export async function loadRelationsBrief(slug, forceRefresh){
+export async function loadRelationsBrief(slug,forceRefresh){
   const body=document.getElementById('ib-rels-body'),cnt=document.getElementById('ib-rels-cnt');if(!body)return;
   try{
-    /* refresh the global cache if forced or empty */
-    if(forceRefresh||!S.allRelations.length){
-      body.innerHTML='<div class="ib-loading">Refreshing relations…</div>';
-      await refreshRelationsCache();
-    }
-    /* filter from cache */
+    if(forceRefresh||!S.allRelations.length){body.innerHTML='<div class="ib-loading">Refreshing relations…</div>';await refreshRelationsCache();}
     const rels=S.allRelations.filter(r=>r.from_company===slug||r.to_company===slug);
     _relCache=rels;
     if(!_relCache.length){body.innerHTML=`<div style="font-size:11px;color:var(--t3)">No relations recorded</div>`;if(cnt)cnt.textContent='';return;}
@@ -472,7 +508,6 @@ export async function loadRelationsBrief(slug, forceRefresh){
     clog('info',`Relations for <b>${slug}</b>: ${_relCache.length} (from cache of ${S.allRelations.length})`);
     const coMap={};S.companies.forEach(x=>{if(x.name)coMap[_slug(x.name)]=x;});
     const TL={data_partner:'Data Partner',dsp_integration:'DSP Integration',marketplace_listed:'Marketplace',tech_integration:'Tech Integration',client_of:'Client Of',acquired_by:'Acquired By',subsidiary_of:'Subsidiary Of',competes_with:'Competes With',co_sell:'Co-Sell',reseller:'Reseller'};
-    /* toggle bar + containers */
     const listHtml=_relCache.map(r=>{const isSrc=r.from_company===slug;const oid=isSrc?r.to_company:r.from_company;const co=coMap[oid];const arrow=r.direction==='bidirectional'?'⇄':(isSrc?'→':'←');const nameDisp=co?.name||oid;const type=TL[r.relation_type]||r.relation_type;return`<div class="ib-rel-item"><div class="ib-rel-arrow">${arrow}</div>${co?`<div class="ib-rel-name" data-slug="${oid}" onclick="openBySlug(this.dataset.slug)">${nameDisp}</div>`:`<div class="ib-rel-name no-link">${nameDisp}</div>`}<div class="ib-rel-type">${type}</div><span class="tag ${r.strength==='confirmed'?'tc':'tpr'}" style="flex-shrink:0">${r.strength||'—'}</span></div>${r.notes?`<div class="ib-rel-notes">${r.notes}</div>`:''}`;}).join('');
     body.innerHTML=`<div style="display:flex;gap:3px;margin-bottom:8px"><button id="ib-rel-btn-list" class="ib-ct-btn active" onclick="setRelView('list')" style="height:20px;padding:0 8px;font-size:7px">☰ List</button><button id="ib-rel-btn-graph" class="ib-ct-btn" onclick="setRelView('graph')" style="height:20px;padding:0 8px;font-size:7px">◎ Graph</button></div><div id="ib-rels-list">${listHtml}</div><div id="ib-rels-graph" style="display:none"></div>`;
     _relView='list';
@@ -484,137 +519,23 @@ function renderRelGraph(){
   const container=document.getElementById('ib-rels-graph');if(!container||!_relCache.length)return;
   const slug=_slug(S.currentCompany?.name||'');
   const coMap={};S.companies.forEach(x=>{if(x.name)coMap[_slug(x.name)]=x;});
-
-  /* build nodes + edges */
   const nodeSet=new Map();
   const addNode=(id)=>{if(!nodeSet.has(id)){const co=coMap[id];nodeSet.set(id,{id,name:co?.name||id,type:co?.type||'unknown',isCenter:id===slug,inDB:!!co});}};
   addNode(slug);
   const edges=[];
-  _relCache.forEach(r=>{
-    addNode(r.from_company);addNode(r.to_company);
-    edges.push({source:r.from_company,target:r.to_company,type:r.relation_type,strength:r.strength,direction:r.direction});
-  });
+  _relCache.forEach(r=>{addNode(r.from_company);addNode(r.to_company);edges.push({source:r.from_company,target:r.to_company,type:r.relation_type,strength:r.strength,direction:r.direction});});
   const nodes=[...nodeSet.values()];
-
-  /* layout dimensions */
   const W=620,H=Math.max(320,nodes.length*18);
   container.innerHTML=`<svg id="rel-svg" viewBox="0 0 ${W} ${H}" width="100%" style="max-height:440px;border:1px solid var(--rule);border-radius:2px;background:var(--surf2);cursor:grab"><defs><marker id="rel-arr" viewBox="0 0 10 10" refX="22" refY="5" markerWidth="4" markerHeight="4" orient="auto-start-reverse"><path d="M2 1L8 5L2 9" fill="none" stroke="var(--t3)" stroke-width="1.5" stroke-linecap="round"/></marker></defs></svg>`;
   const svg=document.getElementById('rel-svg');if(!svg)return;
-
-  /* color by relation type */
   const typeColors={data_partner:'var(--g)',dsp_integration:'var(--pc)',marketplace_listed:'var(--prc)',tech_integration:'var(--poc)',client_of:'var(--cc)',acquired_by:'var(--nc)',subsidiary_of:'var(--nc)',competes_with:'#F87171',co_sell:'var(--g)',reseller:'var(--prc)'};
-
-  /* init positions — center node in middle, others in circle */
   const cx=W/2,cy=H/2;
-  nodes.forEach((n,i)=>{
-    if(n.isCenter){n.x=cx;n.y=cy;n.fx=cx;n.fy=cy;}
-    else{const a=(2*Math.PI*i)/nodes.length;const r=Math.min(W,H)*0.35;n.x=cx+r*Math.cos(a)+Math.random()*20;n.y=cy+r*Math.sin(a)+Math.random()*20;}
-    n.vx=0;n.vy=0;
-  });
-
-  /* simple force sim */
+  nodes.forEach((n,i)=>{if(n.isCenter){n.x=cx;n.y=cy;n.fx=cx;n.fy=cy;}else{const a=(2*Math.PI*i)/nodes.length;const r=Math.min(W,H)*0.35;n.x=cx+r*Math.cos(a)+Math.random()*20;n.y=cy+r*Math.sin(a)+Math.random()*20;}n.vx=0;n.vy=0;});
   const nodeById=new Map(nodes.map(n=>[n.id,n]));
-  function tick(){
-    /* repulsion between all nodes */
-    for(let i=0;i<nodes.length;i++){
-      for(let j=i+1;j<nodes.length;j++){
-        let dx=nodes[j].x-nodes[i].x,dy=nodes[j].y-nodes[i].y;
-        let dist=Math.sqrt(dx*dx+dy*dy)||1;
-        let force=800/(dist*dist);
-        let fx=dx/dist*force,fy=dy/dist*force;
-        if(!nodes[i].fx){nodes[i].vx-=fx;nodes[i].vy-=fy;}
-        if(!nodes[j].fx){nodes[j].vx+=fx;nodes[j].vy+=fy;}
-      }
-    }
-    /* attraction along edges */
-    edges.forEach(e=>{
-      const s=nodeById.get(e.source),t=nodeById.get(e.target);if(!s||!t)return;
-      let dx=t.x-s.x,dy=t.y-s.y,dist=Math.sqrt(dx*dx+dy*dy)||1;
-      let force=(dist-120)*0.02;
-      let fx=dx/dist*force,fy=dy/dist*force;
-      if(!s.fx){s.vx+=fx;s.vy+=fy;}
-      if(!t.fx){t.vx-=fx;t.vy-=fy;}
-    });
-    /* gravity toward center */
-    nodes.forEach(n=>{
-      if(n.fx)return;
-      n.vx+=(cx-n.x)*0.003;n.vy+=(cy-n.y)*0.003;
-      n.vx*=0.85;n.vy*=0.85;
-      n.x+=n.vx;n.y+=n.vy;
-      n.x=Math.max(40,Math.min(W-40,n.x));n.y=Math.max(25,Math.min(H-25,n.y));
-    });
-  }
+  function tick(){for(let i=0;i<nodes.length;i++){for(let j=i+1;j<nodes.length;j++){let dx=nodes[j].x-nodes[i].x,dy=nodes[j].y-nodes[i].y;let dist=Math.sqrt(dx*dx+dy*dy)||1;let force=800/(dist*dist);let fx=dx/dist*force,fy=dy/dist*force;if(!nodes[i].fx){nodes[i].vx-=fx;nodes[i].vy-=fy;}if(!nodes[j].fx){nodes[j].vx+=fx;nodes[j].vy+=fy;}}}edges.forEach(e=>{const s=nodeById.get(e.source),t=nodeById.get(e.target);if(!s||!t)return;let dx=t.x-s.x,dy=t.y-s.y,dist=Math.sqrt(dx*dx+dy*dy)||1;let force=(dist-120)*0.02;let fx=dx/dist*force,fy=dy/dist*force;if(!s.fx){s.vx+=fx;s.vy+=fy;}if(!t.fx){t.vx-=fx;t.vy-=fy;}});nodes.forEach(n=>{if(n.fx)return;n.vx+=(cx-n.x)*0.003;n.vy+=(cy-n.y)*0.003;n.vx*=0.85;n.vy*=0.85;n.x+=n.vx;n.y+=n.vy;n.x=Math.max(40,Math.min(W-40,n.x));n.y=Math.max(25,Math.min(H-25,n.y));});}
   for(let i=0;i<120;i++)tick();
-
-  /* render edges */
-  edges.forEach(e=>{
-    const s=nodeById.get(e.source),t=nodeById.get(e.target);if(!s||!t)return;
-    const line=document.createElementNS('http://www.w3.org/2000/svg','line');
-    line.setAttribute('x1',s.x);line.setAttribute('y1',s.y);
-    line.setAttribute('x2',t.x);line.setAttribute('y2',t.y);
-    line.setAttribute('stroke',typeColors[e.type]||'var(--rule)');
-    line.setAttribute('stroke-width',e.strength==='confirmed'?'1.5':'1');
-    if(e.strength!=='confirmed')line.setAttribute('stroke-dasharray','4 3');
-    if(e.direction!=='bidirectional')line.setAttribute('marker-end','url(#rel-arr)');
-    svg.appendChild(line);
-    /* edge label */
-    const TL={data_partner:'partner',dsp_integration:'DSP',marketplace_listed:'mkt',tech_integration:'tech',client_of:'client',acquired_by:'acq',subsidiary_of:'sub',competes_with:'compete',co_sell:'co-sell',reseller:'resell'};
-    const lbl=document.createElementNS('http://www.w3.org/2000/svg','text');
-    lbl.setAttribute('x',(s.x+t.x)/2);lbl.setAttribute('y',(s.y+t.y)/2-4);
-    lbl.setAttribute('text-anchor','middle');lbl.setAttribute('font-family','IBM Plex Mono,monospace');
-    lbl.setAttribute('font-size','6');lbl.setAttribute('fill','var(--t3)');
-    lbl.textContent=TL[e.type]||e.type;
-    svg.appendChild(lbl);
-  });
-
-  /* render nodes */
-  nodes.forEach(n=>{
-    const g=document.createElementNS('http://www.w3.org/2000/svg','g');
-    g.style.cursor=n.inDB?'pointer':'default';
-    if(n.inDB)g.addEventListener('click',()=>openBySlug(n.id));
-
-    const r=n.isCenter?20:13;
-    const circle=document.createElementNS('http://www.w3.org/2000/svg','circle');
-    circle.setAttribute('cx',n.x);circle.setAttribute('cy',n.y);circle.setAttribute('r',r);
-    if(n.isCenter){circle.setAttribute('fill','var(--g)');circle.setAttribute('stroke','var(--gd)');circle.setAttribute('stroke-width','1.5');}
-    else{
-      const tc={client:'var(--cb)',partner:'var(--pb)',prospect:'var(--prb)',nogo:'var(--nb)',poc:'var(--pob)'};
-      const ts={client:'var(--cr)',partner:'var(--pr)',prospect:'var(--prr)',nogo:'var(--nr)',poc:'var(--por)'};
-      circle.setAttribute('fill',tc[n.type]||'var(--surf)');
-      circle.setAttribute('stroke',ts[n.type]||'var(--rule)');
-      circle.setAttribute('stroke-width','1');
-    }
-    g.appendChild(circle);
-
-    /* initials inside node */
-    const ini2=document.createElementNS('http://www.w3.org/2000/svg','text');
-    ini2.setAttribute('x',n.x);ini2.setAttribute('y',n.y+(n.isCenter?1:1));
-    ini2.setAttribute('text-anchor','middle');ini2.setAttribute('dominant-baseline','central');
-    ini2.setAttribute('font-family','IBM Plex Mono,monospace');
-    ini2.setAttribute('font-size',n.isCenter?'8':'7');
-    ini2.setAttribute('font-weight','600');
-    ini2.setAttribute('fill',n.isCenter?'#fff':'var(--t2)');
-    ini2.textContent=ini(n.name);
-    g.appendChild(ini2);
-
-    /* name label */
-    const lbl=document.createElementNS('http://www.w3.org/2000/svg','text');
-    lbl.setAttribute('x',n.x);lbl.setAttribute('y',n.y+r+10);
-    lbl.setAttribute('text-anchor','middle');
-    lbl.setAttribute('font-family','IBM Plex Mono,monospace');
-    lbl.setAttribute('font-size',n.isCenter?'9':'8');
-    lbl.setAttribute('font-weight',n.isCenter?'600':'400');
-    lbl.setAttribute('fill',n.isCenter?'var(--g)':'var(--t1)');
-    const dispName=n.name.length>16?n.name.slice(0,14)+'…':n.name;
-    lbl.textContent=dispName;
-    g.appendChild(lbl);
-
-    /* hover effects */
-    g.addEventListener('mouseenter',()=>{circle.setAttribute('stroke','var(--g)');circle.setAttribute('stroke-width','2');lbl.setAttribute('fill','var(--g)');});
-    g.addEventListener('mouseleave',()=>{if(!n.isCenter){circle.setAttribute('stroke',{client:'var(--cr)',partner:'var(--pr)',prospect:'var(--prr)',nogo:'var(--nr)',poc:'var(--por)'}[n.type]||'var(--rule)');circle.setAttribute('stroke-width','1');}else{circle.setAttribute('stroke','var(--gd)');circle.setAttribute('stroke-width','1.5');}lbl.setAttribute('fill',n.isCenter?'var(--g)':'var(--t1)');});
-
-    svg.appendChild(g);
-  });
+  edges.forEach(e=>{const s=nodeById.get(e.source),t=nodeById.get(e.target);if(!s||!t)return;const line=document.createElementNS('http://www.w3.org/2000/svg','line');line.setAttribute('x1',s.x);line.setAttribute('y1',s.y);line.setAttribute('x2',t.x);line.setAttribute('y2',t.y);line.setAttribute('stroke',typeColors[e.type]||'var(--rule)');line.setAttribute('stroke-width',e.strength==='confirmed'?'1.5':'1');if(e.strength!=='confirmed')line.setAttribute('stroke-dasharray','4 3');if(e.direction!=='bidirectional')line.setAttribute('marker-end','url(#rel-arr)');svg.appendChild(line);const TL={data_partner:'partner',dsp_integration:'DSP',marketplace_listed:'mkt',tech_integration:'tech',client_of:'client',acquired_by:'acq',subsidiary_of:'sub',competes_with:'compete',co_sell:'co-sell',reseller:'resell'};const lbl=document.createElementNS('http://www.w3.org/2000/svg','text');lbl.setAttribute('x',(s.x+t.x)/2);lbl.setAttribute('y',(s.y+t.y)/2-4);lbl.setAttribute('text-anchor','middle');lbl.setAttribute('font-family','IBM Plex Mono,monospace');lbl.setAttribute('font-size','6');lbl.setAttribute('fill','var(--t3)');lbl.textContent=TL[e.type]||e.type;svg.appendChild(lbl);});
+  nodes.forEach(n=>{const g=document.createElementNS('http://www.w3.org/2000/svg','g');g.style.cursor=n.inDB?'pointer':'default';if(n.inDB)g.addEventListener('click',()=>openBySlug(n.id));const r=n.isCenter?20:13;const circle=document.createElementNS('http://www.w3.org/2000/svg','circle');circle.setAttribute('cx',n.x);circle.setAttribute('cy',n.y);circle.setAttribute('r',r);if(n.isCenter){circle.setAttribute('fill','var(--g)');circle.setAttribute('stroke','var(--gd)');circle.setAttribute('stroke-width','1.5');}else{const tc={client:'var(--cb)',partner:'var(--pb)',prospect:'var(--prb)',nogo:'var(--nb)',poc:'var(--pob)'};const ts={client:'var(--cr)',partner:'var(--pr)',prospect:'var(--prr)',nogo:'var(--nr)',poc:'var(--por)'};circle.setAttribute('fill',tc[n.type]||'var(--surf)');circle.setAttribute('stroke',ts[n.type]||'var(--rule)');circle.setAttribute('stroke-width','1');}g.appendChild(circle);const ini2=document.createElementNS('http://www.w3.org/2000/svg','text');ini2.setAttribute('x',n.x);ini2.setAttribute('y',n.y+1);ini2.setAttribute('text-anchor','middle');ini2.setAttribute('dominant-baseline','central');ini2.setAttribute('font-family','IBM Plex Mono,monospace');ini2.setAttribute('font-size',n.isCenter?'8':'7');ini2.setAttribute('font-weight','600');ini2.setAttribute('fill',n.isCenter?'#fff':'var(--t2)');ini2.textContent=ini(n.name);g.appendChild(ini2);const lbl=document.createElementNS('http://www.w3.org/2000/svg','text');lbl.setAttribute('x',n.x);lbl.setAttribute('y',n.y+r+10);lbl.setAttribute('text-anchor','middle');lbl.setAttribute('font-family','IBM Plex Mono,monospace');lbl.setAttribute('font-size',n.isCenter?'9':'8');lbl.setAttribute('font-weight',n.isCenter?'600':'400');lbl.setAttribute('fill',n.isCenter?'var(--g)':'var(--t1)');lbl.textContent=n.name.length>16?n.name.slice(0,14)+'…':n.name;g.appendChild(lbl);g.addEventListener('mouseenter',()=>{circle.setAttribute('stroke','var(--g)');circle.setAttribute('stroke-width','2');lbl.setAttribute('fill','var(--g)');});g.addEventListener('mouseleave',()=>{if(!n.isCenter){circle.setAttribute('stroke',{client:'var(--cr)',partner:'var(--pr)',prospect:'var(--prr)',nogo:'var(--nr)',poc:'var(--por)'}[n.type]||'var(--rule)');circle.setAttribute('stroke-width','1');}else{circle.setAttribute('stroke','var(--gd)');circle.setAttribute('stroke-width','1.5');}lbl.setAttribute('fill',n.isCenter?'var(--g)':'var(--t1)');});svg.appendChild(g);});
 }
 
 /* ═══ Navigation helpers ═════════════════════════════════════ */
@@ -640,128 +561,59 @@ export function submitModal(){const v=document.getElementById('modalInput').valu
 export function openClaude(p){window.open('https://claude.ai/new?q='+encodeURIComponent(p),'_blank');}
 
 /* ═══ Segment Mapper ════════════════════════════════════════ */
-let _taxData=null; // flat array: [[depth, name, desc], ...]
+let _taxData=null;
 let _taxLoading=false;
 
 async function loadTaxonomy(){
   if(_taxData)return _taxData;
   if(_taxLoading)return null;
   _taxLoading=true;
-  try{
-    const res=await fetch('./taxonomy.json');
-    _taxData=await res.json();
-    clog('info',`Taxonomy loaded: <b>${_taxData.length}</b> segments`);
-  }catch(e){clog('info',`Taxonomy load failed: ${e.message}`);_taxData=[];}
+  try{const res=await fetch('./taxonomy.json');_taxData=await res.json();clog('info',`Taxonomy loaded: <b>${_taxData.length}</b> segments`);}
+  catch(e){clog('info',`Taxonomy load failed: ${e.message}`);_taxData=[];}
   _taxLoading=false;
   return _taxData;
 }
 
-/* keyword extraction from company context */
 function extractKeywords(c){
   const text=[c.name,c.category,c.description,c.note,(Array.isArray(c.dsps)?c.dsps:[]).join(' '),(Array.isArray(c.tech_stack)?c.tech_stack.map(t=>typeof t==='string'?t:t?.tool||'').join(' '):'')].filter(Boolean).join(' ').toLowerCase();
-  /* common stopwords */
   const stop=new Set(['the','and','for','with','that','this','from','our','are','has','its','will','can','all','about','into','over','also','they','their','been','who','which','more','other','than','each','but','not','data','company','users','user','provider']);
   const words=text.replace(/[^a-z0-9 ]/g,' ').split(/\s+/).filter(w=>w.length>2&&!stop.has(w));
-  /* dedupe, keep order */
   const seen=new Set();
   return words.filter(w=>{if(seen.has(w))return false;seen.add(w);return true;});
 }
 
-/* match segments against company context */
-function matchSegments(c, tax){
+function matchSegments(c,tax){
   const kw=extractKeywords(c);
   if(!kw.length||!tax.length)return[];
-
-  /* build full path strings with descriptions for matching */
   const results=[];
   let currentPath=[];
-
   for(const[depth,name,desc]of tax){
-    currentPath=currentPath.slice(0,depth);
-    currentPath.push(name);
-    const fullPath=currentPath.join(' > ');
-    const searchText=(fullPath+' '+desc).toLowerCase();
-
-    let score=0;
-    const matchedKw=[];
-    for(const w of kw){
-      if(searchText.includes(w)){
-        /* exact name match scores higher */
-        const inName=name.toLowerCase().includes(w);
-        const s=inName?3:1;
-        score+=s;
-        matchedKw.push(w);
-      }
-    }
-    if(score>=2){
-      results.push({path:currentPath.slice(),name,desc,depth,score,keywords:matchedKw.slice(0,5)});
-    }
+    currentPath=currentPath.slice(0,depth);currentPath.push(name);
+    const searchText=(currentPath.join(' > ')+' '+desc).toLowerCase();
+    let score=0;const matchedKw=[];
+    for(const w of kw){if(searchText.includes(w)){const s=name.toLowerCase().includes(w)?3:1;score+=s;matchedKw.push(w);}}
+    if(score>=2)results.push({path:currentPath.slice(),name,desc,depth,score,keywords:matchedKw.slice(0,5)});
   }
-
-  /* sort by score desc, dedupe leaves only */
   results.sort((a,b)=>b.score-a.score);
   return results.slice(0,50);
 }
 
-/* render segment tree from flat matches */
 function renderSegTree(matches){
   if(!matches.length)return'<div style="font-size:11px;color:var(--t3)">No matching segments. Add more company details to improve matching.</div>';
-
-  /* group by top-level taxonomy (Interest / Brands / CTV) */
   const groups={};
-  for(const m of matches){
-    const top=m.path[0]||'Other';
-    if(!groups[top])groups[top]=[];
-    groups[top].push(m);
-  }
-
+  for(const m of matches){const top=m.path[0]||'Other';if(!groups[top])groups[top]=[];groups[top].push(m);}
   const topIcons={'Interest':'📊','Brands':'🏷️','Connected TV (CTV)':'📺'};
-
   let html='';
   for(const[top,items]of Object.entries(groups)){
     const icon=topIcons[top]||'📁';
-    /* group by second level */
-    const subs={};
-    for(const m of items){
-      const sub=m.path.length>=2?m.path[1]:'General';
-      if(!subs[sub])subs[sub]=[];
-      subs[sub].push(m);
-    }
-    const subCount=Object.keys(subs).length;
-    const segCount=items.length;
+    const subs={};for(const m of items){const sub=m.path.length>=2?m.path[1]:'General';if(!subs[sub])subs[sub]=[];subs[sub].push(m);}
     const topId='seg-'+top.replace(/[^a-z0-9]/gi,'');
-
-    html+=`<div style="margin-bottom:8px">
-      <div style="display:flex;align-items:center;gap:4px;cursor:pointer;padding:3px 0" onclick="ibToggle('${topId}')">
-        <span id="${topId}-arrow" style="font-size:9px;color:var(--t3)">▾</span>
-        <span style="font-family:'IBM Plex Mono',monospace;font-size:8px;font-weight:600;color:var(--t1)">${icon} ${esc(top)}</span>
-        <span style="font-family:'IBM Plex Mono',monospace;font-size:7px;color:var(--t3)">${segCount} segments · ${subCount} categories</span>
-      </div>
-      <div id="${topId}" style="margin-left:12px">`;
-
+    html+=`<div style="margin-bottom:8px"><div style="display:flex;align-items:center;gap:4px;cursor:pointer;padding:3px 0" onclick="ibToggle('${topId}')"><span id="${topId}-arrow" style="font-size:9px;color:var(--t3)">▾</span><span style="font-family:'IBM Plex Mono',monospace;font-size:8px;font-weight:600;color:var(--t1)">${icon} ${esc(top)}</span><span style="font-family:'IBM Plex Mono',monospace;font-size:7px;color:var(--t3)">${items.length} segments · ${Object.keys(subs).length} categories</span></div><div id="${topId}" style="margin-left:12px">`;
     for(const[sub,segs]of Object.entries(subs).sort((a,b)=>b[1].reduce((s,m)=>s+m.score,0)-a[1].reduce((s,m)=>s+m.score,0))){
       const subId=topId+'-'+sub.replace(/[^a-z0-9]/gi,'');
-      const subScore=segs.reduce((s,m)=>s+m.score,0);
-      const barW=Math.min(100,Math.round(subScore/segs[0].score*20));
-
-      html+=`<div style="margin-bottom:4px">
-        <div style="display:flex;align-items:center;gap:4px;cursor:pointer;padding:2px 0" onclick="ibToggle('${subId}')">
-          <span id="${subId}-arrow" style="font-size:8px;color:var(--t4)">▸</span>
-          <span style="font-family:'IBM Plex Mono',monospace;font-size:8px;color:var(--t2)">${esc(sub)}</span>
-          <span style="font-family:'IBM Plex Mono',monospace;font-size:6px;color:var(--t4)">${segs.length}</span>
-          <span style="display:inline-block;width:${barW}px;height:3px;border-radius:1px;background:var(--g);opacity:.5;margin-left:auto"></span>
-        </div>
-        <div id="${subId}" style="display:none;margin-left:14px">`;
-
-      for(const seg of segs.slice(0,10)){
-        const leaf=seg.path[seg.path.length-1];
-        const kwHtml=seg.keywords.map(k=>`<span style="background:var(--gb);color:var(--g);padding:0 3px;border-radius:1px;font-size:6px">${k}</span>`).join(' ');
-        html+=`<div style="display:flex;align-items:baseline;gap:4px;padding:2px 0;border-bottom:1px solid var(--rule3)">
-          <span style="font-family:'IBM Plex Mono',monospace;font-size:8px;color:var(--t1)">${esc(leaf)}</span>
-          <span style="font-family:'IBM Plex Mono',monospace;font-size:6px;color:var(--t4);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:180px">${esc(seg.desc)}</span>
-          <div style="display:flex;gap:2px;margin-left:auto;flex-shrink:0">${kwHtml}</div>
-        </div>`;
-      }
+      const barW=Math.min(100,Math.round(segs.reduce((s,m)=>s+m.score,0)/segs[0].score*20));
+      html+=`<div style="margin-bottom:4px"><div style="display:flex;align-items:center;gap:4px;cursor:pointer;padding:2px 0" onclick="ibToggle('${subId}')"><span id="${subId}-arrow" style="font-size:8px;color:var(--t4)">▸</span><span style="font-family:'IBM Plex Mono',monospace;font-size:8px;color:var(--t2)">${esc(sub)}</span><span style="font-family:'IBM Plex Mono',monospace;font-size:6px;color:var(--t4)">${segs.length}</span><span style="display:inline-block;width:${barW}px;height:3px;border-radius:1px;background:var(--g);opacity:.5;margin-left:auto"></span></div><div id="${subId}" style="display:none;margin-left:14px">`;
+      for(const seg of segs.slice(0,10)){const leaf=seg.path[seg.path.length-1];const kwHtml=seg.keywords.map(k=>`<span style="background:var(--gb);color:var(--g);padding:0 3px;border-radius:1px;font-size:6px">${k}</span>`).join(' ');html+=`<div style="display:flex;align-items:baseline;gap:4px;padding:2px 0;border-bottom:1px solid var(--rule3)"><span style="font-family:'IBM Plex Mono',monospace;font-size:8px;color:var(--t1)">${esc(leaf)}</span><span style="font-family:'IBM Plex Mono',monospace;font-size:6px;color:var(--t4);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:180px">${esc(seg.desc)}</span><div style="display:flex;gap:2px;margin-left:auto;flex-shrink:0">${kwHtml}</div></div>`;}
       if(segs.length>10)html+=`<div style="font-size:7px;color:var(--t4);padding:2px 0">… and ${segs.length-10} more</div>`;
       html+=`</div></div>`;
     }
@@ -772,21 +624,12 @@ function renderSegTree(matches){
 
 export async function mapSegments(){
   const c=S.currentCompany;if(!c)return;
-  const body=document.getElementById('ib-segments-body');
-  const cnt=document.getElementById('ib-seg-cnt');
-  if(!body)return;
-
+  const body=document.getElementById('ib-segments-body'),cnt=document.getElementById('ib-seg-cnt');if(!body)return;
   body.innerHTML='<div class="ib-loading">Loading taxonomy…</div>';
-
   const tax=await loadTaxonomy();
-  if(!tax||!tax.length){
-    body.innerHTML='<div style="font-size:11px;color:var(--t3)">Taxonomy not available — check taxonomy.json</div>';
-    return;
-  }
-
+  if(!tax||!tax.length){body.innerHTML='<div style="font-size:11px;color:var(--t3)">Taxonomy not available — check taxonomy.json</div>';return;}
   const matches=matchSegments(c,tax);
   if(cnt)cnt.textContent=matches.length||'';
   clog('info',`Segment mapper: <b>${matches.length}</b> matches for ${esc(c.name)}`);
-
   body.innerHTML=renderSegTree(matches);
 }
