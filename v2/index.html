@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
 <title>onAudience — Sales Intelligence Hub</title>
 <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@300;400;500;600&family=IBM+Plex+Sans:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400;1,500&family=IBM+Plex+Serif:ital,wght@0,300;0,400;0,500;1,300;1,400&display=swap" rel="stylesheet"/>
-<link rel="stylesheet" href="style.css?v=20260326b"/>
+<link rel="stylesheet" href="style.css?v=20260326c"/>
 </head>
 <body>
 <div class="app">
@@ -36,9 +36,12 @@
     <div class="left-tabs">
       <div class="left-tab active" id="tabComp" onclick="switchTab('companies')">Companies</div>
       <div class="left-tab" id="tabCont" onclick="switchTab('contacts')">Contacts</div>
+      <div class="left-tab" id="tabAud" onclick="switchTab('audiences')">Audiences</div>
       <div class="left-tab" id="tab-tcf" onclick="switchTab('tcf')">TCF</div>
     </div>
-    <div class="left-search">
+
+    <!-- COMPANIES + CONTACTS shared search/filter row -->
+    <div class="left-search" id="leftSearch">
       <input type="text" id="searchInput" placeholder="Search&#8230;" oninput="onSearch()"/>
       <button class="btn sm" id="tagBtn" onclick="toggleTagPanel()" title="Tag filter">&#127991;</button>
       <button class="btn sm" onclick="promptResearch()" title="Research">&#8599;</button>
@@ -76,6 +79,10 @@
     </div>
     <div id="tcf-sel-bar" style="display:none;align-items:center;gap:5px;padding:5px 8px;border-bottom:1px solid var(--rule2);background:var(--surf2);flex-shrink:0;min-height:32px"></div>
     <div class="list-scroll" id="listScroll"></div>
+
+    <!-- AUDIENCES PANEL — shown when tab=audiences -->
+    <div id="audiencesPanel" style="display:none;flex-direction:column;flex:1;overflow:hidden;min-height:0"></div>
+
     <div class="ai-bar" id="aiBar">
       <div class="ai-bar-row">
         <span class="ai-badge">AI</span>
@@ -173,6 +180,9 @@
 </div>
 </div>
 
+<!-- AUDIENCE MODAL — outside .app -->
+<div id="audience-modal"></div>
+
 <div id="ctxMenu" class="ctx-menu"></div>
 <div id="ctDrawerOverlay" onclick="closeDrawer()"></div>
 <div id="ctDrawer">
@@ -253,26 +263,15 @@
 
 <script>
 (function(){
-  /* hardcoded passphrase hash */
   function hash(s){let h=0;for(let i=0;i<s.length;i++){h=((h<<5)-h)+s.charCodeAt(i);h|=0;}return'ph_'+Math.abs(h).toString(36);}
   const PASS_HASH=hash('Polskaguro2026');
-
   const lock=document.getElementById('pinLock');
   const app=document.querySelector('.app');
   const inp=document.getElementById('pinInput');
   const err=document.getElementById('pinErr');
-
   function unlock(){lock.style.display='none';app.style.display='';sessionStorage.setItem('oaUnlocked','1');}
-
-  /* skip if already unlocked this session */
-  if(sessionStorage.getItem('oaUnlocked')==='1'){
-    /* don't hide app, don't show lock */
-  }else{
-    app.style.display='none';
-    lock.style.display='flex';
-    setTimeout(()=>inp.focus(),100);
-  }
-
+  if(sessionStorage.getItem('oaUnlocked')==='1'){}
+  else{app.style.display='none';lock.style.display='flex';setTimeout(()=>inp.focus(),100);}
   inp.addEventListener('keydown',function(e){
     if(e.key!=='Enter')return;
     err.textContent='';
@@ -281,11 +280,10 @@
     if(hash(val)===PASS_HASH){unlock();return;}
     err.textContent='Incorrect passphrase';inp.value='';
   });
-
   window.oaPinLock=function(){sessionStorage.removeItem('oaUnlocked');app.style.display='none';lock.style.display='flex';inp.value='';setTimeout(()=>inp.focus(),100);};
 })();
 </script>
 
-<script type="module" src="app.js?v=20260326b"></script>
+<script type="module" src="app.js?v=20260326c"></script>
 </body>
 </html>
