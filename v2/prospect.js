@@ -1,7 +1,6 @@
 // prospect.js — Prospect Finder feature for onAudience Hub v2
 import { anthropicFetch, clog } from './api.js';
 import { esc, _slug, tClass, tLabel, stars } from './utils.js';
-import { S } from './state.js';
 
 /* ─── Entry point ─────────────────────────────────────────── */
 export async function openProspectFinder(prefillQuery = '') {
