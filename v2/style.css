@@ -228,3 +228,8 @@ textarea.mc-tf{width:100%;padding:8px 10px;border:1px solid var(--rule);border-r
 
 /* bold keywords in notes */
 .c-note b{font-weight:600;color:var(--t1)}
+
+/* ═══ Company fact links row ════════════════════════════════ */
+.ib-fact-links{display:flex;flex-wrap:wrap;gap:4px;margin-top:8px;padding-top:8px;border-top:1px solid var(--rule2)}
+.ib-fact-link{font-family:'IBM Plex Mono',monospace;font-size:8px;padding:3px 8px;border-radius:2px;border:1px solid var(--rule);background:var(--surf2);color:var(--g);text-decoration:none;white-space:nowrap;transition:all .12s}
+.ib-fact-link:hover{background:var(--g);color:#fff;border-color:var(--g)}

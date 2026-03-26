@@ -141,21 +141,27 @@ export function openCompany(c){
   const av=getAv(c.name),n=ini(c.name),tc=tClass(c.type),tl=tLabel(c.type),st=stars(c.icp);
 
   /* ── facts table ── */
+  const liSlug=c.linkedin_slug||_slug(c.name);
   const facts=[
-    c.category&&['Category',c.category],
-    (c.region||c.hq_city)&&['HQ',[c.region,c.hq_city].filter(Boolean).join(', ')],
-    c.size&&['Size',c.size],
-    c.founded_year&&['Founded',c.founded_year],
-    c.funding&&['Funding',c.funding],
-    c.tcf_vendor_id&&['GVL/TCF',c.tcf_vendor_id],
-    c.website&&['Website',`<a href="https://${c.website}" target="_blank" style="color:var(--g);text-decoration:none">${c.website} ↗</a>`],
-    c.dsps&&c.dsps.length&&['DSPs',(Array.isArray(c.dsps)?c.dsps:c.dsps.split(',')).join(', ')],
+    c.category&&['Category',esc(c.category)],
+    (c.region||c.hq_city)&&['HQ',esc([c.hq_city,c.region].filter(Boolean).join(', '))],
+    c.size&&['Size',esc(c.size)],
+    c.founded_year&&['Founded',esc(c.founded_year)],
+    c.funding&&['Funding',esc(c.funding)],
+    c.tcf_vendor_id&&['GVL/TCF',`<span style="color:var(--g)">${c.tcf_vendor_id}</span>`],
+    c.dsps&&c.dsps.length&&['DSPs',esc((Array.isArray(c.dsps)?c.dsps:c.dsps.split(',')).join(', '))],
     c.updated_at&&['Updated',new Date(c.updated_at).toLocaleDateString('en-GB',{day:'numeric',month:'short',year:'2-digit'})]
   ].filter(Boolean);
 
-  /* ── tech helpers ── */
-  const techName=(t)=>typeof t==='string'?t:(t&&t.tool)?String(t.tool):(t&&t.name)?String(t.name):typeof t==='object'?JSON.stringify(t):'?';
-  const techCat=(t)=>typeof t==='object'&&t?t.category||'':'';
+  /* ── links row (real links only) ── */
+  const links=[];
+  if(c.website)links.push(`<a href="https://${c.website}" target="_blank" class="ib-fact-link" title="${esc(c.website)}">🌐 ${esc(c.website)}</a>`);
+  links.push(`<a href="https://www.linkedin.com/company/${liSlug}" target="_blank" class="ib-fact-link" title="LinkedIn company page">LI Company ↗</a>`);
+  links.push(`<a href="https://www.linkedin.com/search/results/people/?keywords=${encodeURIComponent(c.name+' data partnerships')}" target="_blank" class="ib-fact-link" title="LinkedIn people search">LI People ↗</a>`);
+  if(c.website)links.push(`<a href="https://www.crunchbase.com/organization/${_slug(c.name)}" target="_blank" class="ib-fact-link" title="Crunchbase">Crunchbase ↗</a>`);
+  if(c.website)links.push(`<a href="https://${c.website}/privacy" target="_blank" class="ib-fact-link" title="Privacy policy">Privacy ↗</a>`);
+  links.push(`<a href="https://news.google.com/search?q=${encodeURIComponent(c.name)}" target="_blank" class="ib-fact-link" title="Google News">News ↗</a>`);
+  const linksHtml=`<div class="ib-fact-links">${links.join('')}</div>`;
 
   /* ── signals bar ── */
   const semnTags=getCoTags(c);const techArr=Array.isArray(c.tech_stack)?c.tech_stack:[];
@@ -168,6 +174,10 @@ export function openCompany(c){
   /* ── products ── */
   const prods=c.products?.products||[];
   const prodsHtml=prods.length?prods.map(p=>`<div class="ib-prod-row"><div class="ib-prod-name">${p.name||''}</div><div class="ib-prod-desc">${p.description||''}${p.target_user?` <span style="color:var(--t3)">· ${p.target_user}</span>`:''}</div></div>`).join(''):'';
+
+  /* ── tech helpers ── */
+  const techName=(t)=>typeof t==='string'?t:(t&&t.tool)?String(t.tool):(t&&t.name)?String(t.name):typeof t==='object'?JSON.stringify(t):'?';
+  const techCat=(t)=>typeof t==='object'&&t?t.category||'':'';
 
   /* ── tech stack block (categorized, under outreach angle) ── */
   let techBlock='';
@@ -230,7 +240,7 @@ export function openCompany(c){
 <div class="ib-cta"><button class="ib-cta-btn primary" onclick="coAction('email')">✉ Draft Email</button><button class="ib-cta-btn" onclick="bgFindDMs()">👤 Find DMs</button><button class="ib-cta-btn" onclick="bgGenerateAngle()">💡 Gen Angle</button><button class="ib-cta-btn" onclick="bgRefreshIntel()">📰 Refresh News</button><button class="ib-cta-btn" onclick="coAction('similar')">🔗 Find Similar</button><button class="ib-cta-btn" onclick="coAction('linkedin')" style="margin-left:auto">LinkedIn ↗</button></div>
 <div class="ib-top">
   ${sec('ib-company','🏢','Company',
-    (facts.length?`<table class="ib-facts">${facts.map(([k,v])=>`<tr><td>${k}</td><td>${v}</td></tr>`).join('')}</table>`:'<span style="font-size:11px;color:var(--t3)">No details stored</span>')+(c.description?`<div class="ib-desc">${c.description}</div>`:''),
+    (facts.length?`<table class="ib-facts">${facts.map(([k,v])=>`<tr><td>${k}</td><td>${v}</td></tr>`).join('')}</table>`:'<span style="font-size:11px;color:var(--t3)">No details stored</span>')+linksHtml+(c.description?`<div class="ib-desc">${c.description}</div>`:''),
     null,true)}
   <div class="ib-sec"><div class="ib-sh" style="cursor:pointer" onclick="ibToggle('ib-angle-wrap')"><span id="ib-angle-wrap-arrow" style="font-size:9px;color:var(--t3)">▾</span><span class="ib-sh-lbl">💡 Outreach Angle</span><span class="ib-sh-act" id="ib-angle-btn" onclick="event.stopPropagation();bgGenerateAngle()">${c.outreach_angle?'↺ Regen':'✨ Generate'}</span></div><div class="ib-body" id="ib-angle-wrap" style="padding:0"><div class="ib-angle${c.outreach_angle?'':' empty'}" id="ib-angle-card" style="border:none;border-radius:0;min-height:60px"><div class="ib-angle-lbl">${c.outreach_angle?'Recommended positioning':'No angle stored yet'}</div>${c.outreach_angle?`<div class="ib-angle-text">${c.outreach_angle}</div>`:`<div class="ib-angle-text" style="color:var(--t3);font-size:10px">Click "✨ Generate" to create a personalised positioning.</div>`}</div>${techBlock}${integBlock}</div></div>
 </div>
@@ -244,7 +254,7 @@ ${prodsHtml?sec('ib-prods-body','📦','Products',prodsHtml,`<span class="ib-sh-
 ${sec('ib-segments-body','🎯','Segment Mapper','<div class="ib-loading" id="ib-seg-loading">Loading taxonomy…</div>',
   `<span class="ib-sh-cnt" id="ib-seg-cnt"></span><span class="ib-sh-act" onclick="event.stopPropagation();mapSegments()">↺ Remap</span>`,false)}
 ${sec('ib-rels-body','🔗','Relations','<div class="ib-loading">Loading…</div>',
-  `<span class="ib-sh-cnt" id="ib-rels-cnt"></span><span class="ib-sh-act" id="ib-rels-refresh" onclick="event.stopPropagation();loadRelationsBrief(_slug('${c.name.replace(/'/g,"\\'")}'),true)">↺ Refresh</span><span class="ib-sh-act" onclick="event.stopPropagation();openAddRelation(_slug('${c.name}'))">+ Add</span>`,true)}
+  `<span class="ib-sh-cnt" id="ib-rels-cnt"></span><span class="ib-sh-act" id="ib-rels-refresh" onclick="event.stopPropagation();loadRelationsBrief(_slug('${c.name.replace(/'/g,"\\'")}'),true)">↺ Refresh</span>`,true)}
 <div class="ib-sec"><div class="ib-sh" style="cursor:pointer" onclick="ibToggle('ib-links-body')"><span id="ib-links-body-arrow" style="font-size:9px;color:var(--t3)">▾</span><span class="ib-sh-lbl">🔗 Quick Links</span></div><div class="ib-links" id="ib-links-body"><a class="ib-link" href="https://www.linkedin.com/search/results/people/?keywords=${encodeURIComponent(c.name+' data partnerships')}" target="_blank">LI People ↗</a><a class="ib-link" href="https://www.linkedin.com/search/results/companies/?keywords=${encodeURIComponent(c.name)}" target="_blank">LI Company ↗</a>${c.website?`<a class="ib-link" href="https://${c.website}" target="_blank">${c.website} ↗</a>`:''}<a class="ib-link" href="https://news.google.com/search?q=${encodeURIComponent(c.name)}" target="_blank">Google News ↗</a><span class="ib-link" onclick="coAction('gmail')">Gmail History</span></div></div>
 </div>`;
   renderList();document.getElementById('centerScroll').scrollTop=0;
@@ -457,7 +467,7 @@ export async function loadRelationsBrief(slug, forceRefresh){
     /* filter from cache */
     const rels=S.allRelations.filter(r=>r.from_company===slug||r.to_company===slug);
     _relCache=rels;
-    if(!_relCache.length){body.innerHTML=`<div style="font-size:11px;color:var(--t3)">No relations — <span style="cursor:pointer;color:var(--g)" onclick="openAddRelation('${slug}')">+ Add one</span></div>`;if(cnt)cnt.textContent='';return;}
+    if(!_relCache.length){body.innerHTML=`<div style="font-size:11px;color:var(--t3)">No relations recorded</div>`;if(cnt)cnt.textContent='';return;}
     if(cnt)cnt.textContent=_relCache.length;
     clog('info',`Relations for <b>${slug}</b>: ${_relCache.length} (from cache of ${S.allRelations.length})`);
     const coMap={};S.companies.forEach(x=>{if(x.name)coMap[_slug(x.name)]=x;});
@@ -477,38 +487,13 @@ function renderRelGraph(){
 
   /* build nodes + edges */
   const nodeSet=new Map();
-  const addNode=(id,overrides={})=>{
-    if(!nodeSet.has(id)){const co=coMap[id];nodeSet.set(id,{id,name:co?.name||id,type:co?.type||'unknown',isCenter:id===slug,inDB:!!co,...overrides});}
-  };
+  const addNode=(id)=>{if(!nodeSet.has(id)){const co=coMap[id];nodeSet.set(id,{id,name:co?.name||id,type:co?.type||'unknown',isCenter:id===slug,inDB:!!co});}};
   addNode(slug);
   const edges=[];
   _relCache.forEach(r=>{
     addNode(r.from_company);addNode(r.to_company);
     edges.push({source:r.from_company,target:r.to_company,type:r.relation_type,strength:r.strength,direction:r.direction});
   });
-
-  /* ── Integration nodes: inject DSP/platform integrations from current company's dsps[] ── */
-  const centerCo=S.companies.find(x=>_slug(x.name)===slug);
-  const dspList=Array.isArray(centerCo?.dsps)?centerCo.dsps:[];
-  dspList.forEach(dspName=>{
-    if(!dspName)return;
-    const dspId='integ-'+dspName.toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,'');
-    /* check if this DSP already exists as a company node — fuzzy match */
-    const existingId=Object.keys(coMap).find(k=>{
-      const n=coMap[k].name.toLowerCase();
-      return n.includes(dspName.toLowerCase())||dspName.toLowerCase().includes(n.split(' ')[0]);
-    });
-    const targetId=existingId||dspId;
-    if(!existingId)addNode(targetId,{name:dspName,type:'integration',isIntegration:true,inDB:false});
-    const linked=edges.some(e=>(e.source===slug&&e.target===targetId)||(e.source===targetId&&e.target===slug));
-    if(!linked)edges.push({source:slug,target:targetId,type:'dsp_integration',strength:'confirmed',direction:'unidirectional',synthetic:true});
-  });
-
-  /* ── Media house aggregators: mark parent nodes that have subsidiary children ── */
-  const subsidiaryCounts={};
-  edges.forEach(e=>{if(e.type==='subsidiary_of')subsidiaryCounts[e.target]=(subsidiaryCounts[e.target]||0)+1;});
-  nodeSet.forEach((n,id)=>{if(subsidiaryCounts[id]>=1)n.isAggregator=true;});
-
   const nodes=[...nodeSet.values()];
 
   /* layout dimensions */
@@ -585,132 +570,50 @@ function renderRelGraph(){
   /* render nodes */
   nodes.forEach(n=>{
     const g=document.createElementNS('http://www.w3.org/2000/svg','g');
-    g.style.cursor=(n.inDB||n.isIntegration)?'pointer':'default';
+    g.style.cursor=n.inDB?'pointer':'default';
     if(n.inDB)g.addEventListener('click',()=>openBySlug(n.id));
 
-    /* ── Node radius & shape by kind ── */
-    const r=n.isCenter?20:n.isAggregator?18:n.isIntegration?10:13;
-    let shape;
-
-    if(n.isIntegration){
-      /* Diamond shape for integration/DSP nodes */
-      const d=r*1.3;
-      shape=document.createElementNS('http://www.w3.org/2000/svg','polygon');
-      shape.setAttribute('points',`${n.x},${n.y-d} ${n.x+d},${n.y} ${n.x},${n.y+d} ${n.x-d},${n.y}`);
-      shape.setAttribute('fill','#1A4F8A18');
-      shape.setAttribute('stroke','var(--pc)');
-      shape.setAttribute('stroke-width','1.5');
-    } else if(n.isAggregator&&!n.isCenter){
-      /* Larger ring for media house / holding company aggregators */
-      /* Outer glow ring */
-      const ring=document.createElementNS('http://www.w3.org/2000/svg','circle');
-      ring.setAttribute('cx',n.x);ring.setAttribute('cy',n.y);ring.setAttribute('r',r+5);
-      ring.setAttribute('fill','none');ring.setAttribute('stroke','var(--nc)');
-      ring.setAttribute('stroke-width','1');ring.setAttribute('stroke-dasharray','3 3');ring.setAttribute('opacity','0.5');
-      g.appendChild(ring);
-      shape=document.createElementNS('http://www.w3.org/2000/svg','circle');
-      shape.setAttribute('cx',n.x);shape.setAttribute('cy',n.y);shape.setAttribute('r',r);
-      shape.setAttribute('fill','var(--nb)');shape.setAttribute('stroke','var(--nc)');shape.setAttribute('stroke-width','1.5');
-    } else {
-      shape=document.createElementNS('http://www.w3.org/2000/svg','circle');
-      shape.setAttribute('cx',n.x);shape.setAttribute('cy',n.y);shape.setAttribute('r',r);
-      if(n.isCenter){shape.setAttribute('fill','var(--g)');shape.setAttribute('stroke','var(--gd)');shape.setAttribute('stroke-width','1.5');}
-      else{
-        const tc={client:'var(--cb)',partner:'var(--pb)',prospect:'var(--prb)',nogo:'var(--nb)',poc:'var(--pob)'};
-        const ts={client:'var(--cr)',partner:'var(--pr)',prospect:'var(--prr)',nogo:'var(--nr)',poc:'var(--por)'};
-        shape.setAttribute('fill',tc[n.type]||'var(--surf)');
-        shape.setAttribute('stroke',ts[n.type]||'var(--rule)');
-        shape.setAttribute('stroke-width','1');
-      }
+    const r=n.isCenter?20:13;
+    const circle=document.createElementNS('http://www.w3.org/2000/svg','circle');
+    circle.setAttribute('cx',n.x);circle.setAttribute('cy',n.y);circle.setAttribute('r',r);
+    if(n.isCenter){circle.setAttribute('fill','var(--g)');circle.setAttribute('stroke','var(--gd)');circle.setAttribute('stroke-width','1.5');}
+    else{
+      const tc={client:'var(--cb)',partner:'var(--pb)',prospect:'var(--prb)',nogo:'var(--nb)',poc:'var(--pob)'};
+      const ts={client:'var(--cr)',partner:'var(--pr)',prospect:'var(--prr)',nogo:'var(--nr)',poc:'var(--por)'};
+      circle.setAttribute('fill',tc[n.type]||'var(--surf)');
+      circle.setAttribute('stroke',ts[n.type]||'var(--rule)');
+      circle.setAttribute('stroke-width','1');
     }
-    g.appendChild(shape);
-
-    /* Aggregator label badge */
-    if(n.isAggregator&&!n.isCenter){
-      const badge=document.createElementNS('http://www.w3.org/2000/svg','text');
-      badge.setAttribute('x',n.x+r+2);badge.setAttribute('y',n.y-r+2);
-      badge.setAttribute('font-family','IBM Plex Mono,monospace');badge.setAttribute('font-size','5');
-      badge.setAttribute('fill','var(--nc)');badge.textContent='⬡';
-      g.appendChild(badge);
-    }
-
-    /* Integration platform badge */
-    if(n.isIntegration){
-      const badge=document.createElementNS('http://www.w3.org/2000/svg','text');
-      badge.setAttribute('x',n.x);badge.setAttribute('y',n.y-r*1.3-4);
-      badge.setAttribute('text-anchor','middle');badge.setAttribute('font-family','IBM Plex Mono,monospace');
-      badge.setAttribute('font-size','5');badge.setAttribute('fill','var(--pc)');badge.textContent='DSP';
-      g.appendChild(badge);
-    }
+    g.appendChild(circle);
 
     /* initials inside node */
     const ini2=document.createElementNS('http://www.w3.org/2000/svg','text');
-    ini2.setAttribute('x',n.x);ini2.setAttribute('y',n.y+1);
+    ini2.setAttribute('x',n.x);ini2.setAttribute('y',n.y+(n.isCenter?1:1));
     ini2.setAttribute('text-anchor','middle');ini2.setAttribute('dominant-baseline','central');
     ini2.setAttribute('font-family','IBM Plex Mono,monospace');
-    ini2.setAttribute('font-size',n.isCenter?'8':n.isAggregator?'8':'7');
+    ini2.setAttribute('font-size',n.isCenter?'8':'7');
     ini2.setAttribute('font-weight','600');
-    ini2.setAttribute('fill',n.isCenter?'#fff':n.isIntegration?'var(--pc)':'var(--t2)');
+    ini2.setAttribute('fill',n.isCenter?'#fff':'var(--t2)');
     ini2.textContent=ini(n.name);
     g.appendChild(ini2);
 
     /* name label */
     const lbl=document.createElementNS('http://www.w3.org/2000/svg','text');
-    const lblY=n.isIntegration?n.y+r*1.3+10:n.y+r+10;
-    lbl.setAttribute('x',n.x);lbl.setAttribute('y',lblY);
+    lbl.setAttribute('x',n.x);lbl.setAttribute('y',n.y+r+10);
     lbl.setAttribute('text-anchor','middle');
     lbl.setAttribute('font-family','IBM Plex Mono,monospace');
-    lbl.setAttribute('font-size',n.isCenter?'9':n.isAggregator?'8':'8');
-    lbl.setAttribute('font-weight',n.isCenter||n.isAggregator?'600':'400');
-    lbl.setAttribute('fill',n.isCenter?'var(--g)':n.isIntegration?'var(--pc)':n.isAggregator?'var(--nc)':'var(--t1)');
+    lbl.setAttribute('font-size',n.isCenter?'9':'8');
+    lbl.setAttribute('font-weight',n.isCenter?'600':'400');
+    lbl.setAttribute('fill',n.isCenter?'var(--g)':'var(--t1)');
     const dispName=n.name.length>16?n.name.slice(0,14)+'…':n.name;
     lbl.textContent=dispName;
     g.appendChild(lbl);
 
-    /* hover */
-    g.addEventListener('mouseenter',()=>{
-      shape.setAttribute('stroke','var(--g)');shape.setAttribute('stroke-width','2');lbl.setAttribute('fill','var(--g)');
-    });
-    g.addEventListener('mouseleave',()=>{
-      if(n.isCenter){shape.setAttribute('stroke','var(--gd)');shape.setAttribute('stroke-width','1.5');}
-      else if(n.isIntegration){shape.setAttribute('stroke','var(--pc)');shape.setAttribute('stroke-width','1.5');}
-      else if(n.isAggregator){shape.setAttribute('stroke','var(--nc)');shape.setAttribute('stroke-width','1.5');}
-      else{shape.setAttribute('stroke',{client:'var(--cr)',partner:'var(--pr)',prospect:'var(--prr)',nogo:'var(--nr)',poc:'var(--por)'}[n.type]||'var(--rule)');shape.setAttribute('stroke-width','1');}
-      lbl.setAttribute('fill',n.isCenter?'var(--g)':n.isIntegration?'var(--pc)':n.isAggregator?'var(--nc)':'var(--t1)');
-    });
+    /* hover effects */
+    g.addEventListener('mouseenter',()=>{circle.setAttribute('stroke','var(--g)');circle.setAttribute('stroke-width','2');lbl.setAttribute('fill','var(--g)');});
+    g.addEventListener('mouseleave',()=>{if(!n.isCenter){circle.setAttribute('stroke',{client:'var(--cr)',partner:'var(--pr)',prospect:'var(--prr)',nogo:'var(--nr)',poc:'var(--por)'}[n.type]||'var(--rule)');circle.setAttribute('stroke-width','1');}else{circle.setAttribute('stroke','var(--gd)');circle.setAttribute('stroke-width','1.5');}lbl.setAttribute('fill',n.isCenter?'var(--g)':'var(--t1)');});
 
     svg.appendChild(g);
-  });
-
-  /* ── Legend ── */
-  const legendItems=[
-    {color:'var(--g)',label:'Center'},
-    {color:'var(--pc)',label:'DSP/Platform',shape:'diamond'},
-    {color:'var(--nc)',label:'Media House / Holding'},
-    {color:'var(--cb)',label:'Client'},
-    {color:'var(--pb)',label:'Partner'},
-    {color:'var(--prb)',label:'Prospect'},
-  ];
-  const lgX=8,lgY=H-legendItems.length*12-4;
-  legendItems.forEach((item,i)=>{
-    const ly=lgY+i*12;
-    if(item.shape==='diamond'){
-      const d=4;
-      const poly=document.createElementNS('http://www.w3.org/2000/svg','polygon');
-      poly.setAttribute('points',`${lgX+4},${ly-d} ${lgX+8},${ly} ${lgX+4},${ly+d} ${lgX},${ly}`);
-      poly.setAttribute('fill',item.color+'30');poly.setAttribute('stroke',item.color);poly.setAttribute('stroke-width','1');
-      svg.appendChild(poly);
-    }else{
-      const dot=document.createElementNS('http://www.w3.org/2000/svg','circle');
-      dot.setAttribute('cx',lgX+4);dot.setAttribute('cy',ly);dot.setAttribute('r','4');
-      dot.setAttribute('fill',item.color+'40');dot.setAttribute('stroke',item.color);dot.setAttribute('stroke-width','1');
-      svg.appendChild(dot);
-    }
-    const ltxt=document.createElementNS('http://www.w3.org/2000/svg','text');
-    ltxt.setAttribute('x',lgX+13);ltxt.setAttribute('y',ly+3);
-    ltxt.setAttribute('font-family','IBM Plex Mono,monospace');ltxt.setAttribute('font-size','6');ltxt.setAttribute('fill','var(--t3)');
-    ltxt.textContent=item.label;
-    svg.appendChild(ltxt);
   });
 }
 
@@ -886,49 +789,4 @@ export async function mapSegments(){
   clog('info',`Segment mapper: <b>${matches.length}</b> matches for ${esc(c.name)}`);
 
   body.innerHTML=renderSegTree(matches);
-}
-
-/* ═══ Add Relation Modal ═════════════════════════════════════ */
-export function openAddRelation(fromSlug=''){
-  const overlay=document.getElementById('addRelOverlay');if(!overlay)return;
-  const opts=[...S.companies].sort((a,b)=>(a.name||'').localeCompare(b.name||'')).map(c=>`<option value="${_slug(c.name)}">${esc(c.name)}</option>`).join('');
-  const blank='<option value="">— select company —</option>';
-  const frEl=document.getElementById('arFrom');const toEl=document.getElementById('arTo');
-  if(frEl){frEl.innerHTML=blank+opts;if(fromSlug)frEl.value=fromSlug;}
-  if(toEl)toEl.innerHTML=blank+opts;
-  overlay.style.display='flex';
-  clog('info',`Open Add Relation from <b>${fromSlug||'—'}</b>`);
-}
-
-export function closeAddRelation(){
-  const overlay=document.getElementById('addRelOverlay');
-  if(overlay)overlay.style.display='none';
-}
-
-export async function submitAddRelation(){
-  const from=document.getElementById('arFrom').value;
-  const to=document.getElementById('arTo').value;
-  const type=document.getElementById('arType').value;
-  const dir=document.getElementById('arDir').value;
-  const str=document.getElementById('arStrength').value;
-  const src2=document.getElementById('arSource').value;
-  const notes=document.getElementById('arNotes').value.trim();
-  const btn=document.getElementById('arSubmitBtn');
-  if(!from||!to){alert('Select both companies.');return;}
-  if(from===to){alert('Cannot link a company to itself.');return;}
-  btn.textContent='Saving…';btn.disabled=true;
-  try{
-    const res=await fetch(`${SB_URL}/rest/v1/company_relations`,{
-      method:'POST',
-      headers:{...HDR,'Prefer':'resolution=merge-duplicates,return=minimal'},
-      body:JSON.stringify({from_company:from,to_company:to,relation_type:type,direction:dir,strength:str,source:src2||'manual',notes:notes||null}),
-    });
-    if(!res.ok)throw new Error(`HTTP ${res.status}`);
-    clog('db',`Relation saved: <b>${from}</b> → <b>${to}</b> [${type}]`);
-    closeAddRelation();
-    await refreshRelationsCache();
-    const cur=S.currentCompany;
-    if(cur)loadRelationsBrief(_slug(cur.name),false);
-  }catch(e){alert('Save failed: '+e.message);}
-  btn.textContent='+ Add Relation';btn.disabled=false;
 }
