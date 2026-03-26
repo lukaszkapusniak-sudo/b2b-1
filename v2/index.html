@@ -5,31 +5,31 @@
 <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
 <title>onAudience — Sales Intelligence Hub</title>
 <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@300;400;500;600&family=IBM+Plex+Sans:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400;1,500&family=IBM+Plex+Serif:ital,wght@0,300;0,400;0,500;1,300;1,400&display=swap" rel="stylesheet"/>
-<link rel="stylesheet" href="style.css?v=20260326a"/>
+<link rel="stylesheet" href="style.css?v=20260326b"/>
 </head>
 <body>
 <div class="app">
 <nav class="nav">
   <div class="nav-logo">oA</div>
   <span class="nav-title">Sales Intelligence Hub <span class="nav-sub">/ onAudience</span></span>
-  <span class="nav-status" id="dbStatus">○ Loading…</span>
+  <span class="nav-status" id="dbStatus">&#9675; Loading&#8230;</span>
   <div class="nav-right">
-    <button class="btn sm" onclick="window.oaDB&&window.oaDB.reload()">↺ Sync</button>
-    <button class="btn sm" id="apiKeyBtn" onclick="window.promptApiKey&&window.promptApiKey()" title="Set Anthropic API key">🔑</button>
-    <button class="btn sm" onclick="openComposer(null)">✉ Compose</button>
+    <button class="btn sm" onclick="promptApiKey()" id="keyBtn">&#128273;</button>
+    <button class="btn sm" onclick="openProspectFinder('')" title="Find Companies by criteria">&#8853; Find</button>
+    <button class="btn sm" onclick="openComposer(null)">&#9993; Compose</button>
     <button class="btn sm p" onclick="promptResearch()">+ Research</button>
-    <button class="btn sm" onclick="toggleTheme()" id="themeBtn">🌙</button>
-    <button class="btn sm" onclick="window.oaPinLock()" title="Lock hub">🔒</button>
+    <button class="btn sm" onclick="toggleTheme()" id="themeBtn">&#127769;</button>
+    <button class="btn sm" onclick="window.oaPinLock()" title="Lock hub">&#128274;</button>
   </div>
 </nav>
 <div class="stats-bar">
-  <div class="sb-col active" id="sbAll" onclick="setFilter('all',this)"><div class="sb-num" id="stAll">—</div><div class="sb-lbl">All</div></div>
-  <div class="sb-col" id="sbClient" onclick="setFilter('client',this)"><div class="sb-num" id="stClient">—</div><div class="sb-lbl">Clients</div></div>
-  <div class="sb-col" id="sbPoc" onclick="setFilter('poc',this)"><div class="sb-num" id="stPoc">—</div><div class="sb-lbl">POC</div></div>
-  <div class="sb-col" id="sbPartner" onclick="setFilter('partner',this)"><div class="sb-num" id="stPartner">—</div><div class="sb-lbl">Partners</div></div>
-  <div class="sb-col" id="sbProspect" onclick="setFilter('prospect',this)"><div class="sb-num" id="stProspect">—</div><div class="sb-lbl">Prospects</div></div>
-  <div class="sb-col" id="sbNogo" onclick="setFilter('nogo',this)"><div class="sb-num" id="stNogo">—</div><div class="sb-lbl">No Outreach</div></div>
-  <div class="sb-col" id="sbFresh" onclick="setFilter('fresh',this)"><div class="sb-num" id="stFresh">—</div><div class="sb-lbl">Fresh 🥩</div></div>
+  <div class="sb-col active" id="sbAll" onclick="setFilter('all',this)"><div class="sb-num" id="stAll">&#8212;</div><div class="sb-lbl">All</div></div>
+  <div class="sb-col" id="sbClient" onclick="setFilter('client',this)"><div class="sb-num" id="stClient">&#8212;</div><div class="sb-lbl">Clients</div></div>
+  <div class="sb-col" id="sbPoc" onclick="setFilter('poc',this)"><div class="sb-num" id="stPoc">&#8212;</div><div class="sb-lbl">POC</div></div>
+  <div class="sb-col" id="sbPartner" onclick="setFilter('partner',this)"><div class="sb-num" id="stPartner">&#8212;</div><div class="sb-lbl">Partners</div></div>
+  <div class="sb-col" id="sbProspect" onclick="setFilter('prospect',this)"><div class="sb-num" id="stProspect">&#8212;</div><div class="sb-lbl">Prospects</div></div>
+  <div class="sb-col" id="sbNogo" onclick="setFilter('nogo',this)"><div class="sb-num" id="stNogo">&#8212;</div><div class="sb-lbl">No Outreach</div></div>
+  <div class="sb-col" id="sbFresh" onclick="setFilter('fresh',this)"><div class="sb-num" id="stFresh">&#8212;</div><div class="sb-lbl">Fresh &#129385;</div></div>
 </div>
 <div class="main">
   <div class="left">
@@ -39,9 +39,9 @@
       <div class="left-tab" id="tab-tcf" onclick="switchTab('tcf')">TCF</div>
     </div>
     <div class="left-search">
-      <input type="text" id="searchInput" placeholder="Search…" oninput="onSearch()"/>
-      <button class="btn sm" id="tagBtn" onclick="toggleTagPanel()" title="Tag filter">🏷</button>
-      <button class="btn sm" onclick="promptResearch()" title="Research">↗</button>
+      <input type="text" id="searchInput" placeholder="Search&#8230;" oninput="onSearch()"/>
+      <button class="btn sm" id="tagBtn" onclick="toggleTagPanel()" title="Tag filter">&#127991;</button>
+      <button class="btn sm" onclick="promptResearch()" title="Research">&#8599;</button>
     </div>
     <div class="left-filters" id="filtersRow">
       <span class="f-chip active" data-f="all" onclick="setFilter('all',this)">All</span>
@@ -63,15 +63,15 @@
       <div class="tp-body" id="tpBody"></div>
     </div>
     <div class="list-meta" id="listMeta">
-      <span id="metaTxt">Loading…</span>
+      <span id="metaTxt">Loading&#8230;</span>
       <div id="metaPills" style="display:flex;gap:3px;flex-wrap:wrap;margin-left:auto"></div>
     </div>
     <div class="sort-bar" id="sortBar">
       <label>Sort</label>
       <select class="sort-sel" id="sortSel" onchange="setSort(this.value)">
         <option value="recent" selected>Recently updated</option>
-        <option value="name">Name A→Z</option>
-        <option value="icp">ICP score ↓</option>
+        <option value="name">Name A&#8594;Z</option>
+        <option value="icp">ICP score &#8595;</option>
       </select>
     </div>
     <div id="tcf-sel-bar" style="display:none;align-items:center;gap:5px;padding:5px 8px;border-bottom:1px solid var(--rule2);background:var(--surf2);flex-shrink:0;min-height:32px"></div>
@@ -79,15 +79,16 @@
     <div class="ai-bar" id="aiBar">
       <div class="ai-bar-row">
         <span class="ai-badge">AI</span>
-        <input class="ai-inp" id="aiInp" placeholder="e.g. EU DSPs with cookieless…" onkeydown="if(event.key==='Enter')runAI()"/>
-        <button class="btn sm p" onclick="runAI()" id="aiBtn">→</button>
+        <input class="ai-inp" id="aiInp" placeholder="e.g. EU DSPs with cookieless&#8230;" onkeydown="if(event.key==='Enter')runAI()"/>
+        <button class="btn sm p" onclick="runAI()" id="aiBtn">&#8594;</button>
       </div>
       <div class="ai-stat" id="aiStat">
         <div class="ai-dot" id="aiDot"></div>
         <span id="aiTxt"></span>
-        <span class="ai-clr" onclick="clearAI()">✕ clear</span>
+        <span class="ai-clr" onclick="clearAI()">&#10005; clear</span>
       </div>
       <div class="ai-quick">
+        <span class="ai-qchip on" onclick="openProspectFinder('')">&#8853; Find Companies</span>
         <span class="ai-qchip" onclick="aiQuick('EU DSPs not yet contacted')">EU DSPs</span>
         <span class="ai-qchip" onclick="aiQuick('companies with CTV capabilities')">CTV</span>
         <span class="ai-qchip" onclick="aiQuick('cookieless identity partners')">Cookieless</span>
@@ -98,7 +99,7 @@
     <!-- Console -->
     <div class="console-panel" id="consolePanel">
       <div class="console-head" onclick="toggleConsole()">
-        <span class="console-head-lbl">⚡ Console</span>
+        <span class="console-head-lbl">&#9889; Console</span>
         <span class="console-cnt" id="consoleCnt">0</span>
         <span class="console-clear" onclick="event.stopPropagation();clearConsole()">clear</span>
       </div>
@@ -119,14 +120,49 @@
 (function(){
   var actions=[
     {label:'Research',sub:'contact report',angle:-90,fn:'promptResearch()'},
-    {label:'Prospects',sub:'find by criteria',angle:-30,fn:"openClaude('Find new DSP, SSP prospects for onAudience in EMEA — ranked by ICP fit')"},
+    {label:'Find Companies',sub:'by criteria',angle:-30,fn:"openProspectFinder('')"},
     {label:'Top picks',sub:'this week',angle:30,fn:"openClaude('Top 5 highest-priority prospects to contact this week?')"},
     {label:'Draft email',sub:'AI composer',angle:90,fn:'openComposer(null)'},
     {label:'Re-engage',sub:'warm cold leads',angle:150,fn:"openClaude('Companies not contacted in 30+ days worth re-engaging?')"},
     {label:'Find similar',sub:'lookalikes',angle:210,fn:'promptSimilar()'},
   ];
-  var cx=210,cy=190,r=105,nr=8;var g=document.getElementById('sp-spokes');
-  actions.forEach(function(a){var rad=a.angle*Math.PI/180;var x=cx+r*Math.cos(rad),y=cy+r*Math.sin(rad);var lx=cx+(r+38)*Math.cos(rad),ly=cy+(r+38)*Math.sin(rad);var anchor=Math.cos(rad)>0.15?'start':Math.cos(rad)<-0.15?'end':'middle';var line=document.createElementNS('http://www.w3.org/2000/svg','line');line.setAttribute('x1',cx+31*Math.cos(rad));line.setAttribute('y1',cy+31*Math.sin(rad));line.setAttribute('x2',x-nr*Math.cos(rad));line.setAttribute('y2',y-nr*Math.sin(rad));line.setAttribute('stroke','var(--rule)');line.setAttribute('stroke-width','1');line.setAttribute('marker-end','url(#sp-a)');var node=document.createElementNS('http://www.w3.org/2000/svg','g');node.setAttribute('cursor','pointer');node.setAttribute('onclick',a.fn);var circ=document.createElementNS('http://www.w3.org/2000/svg','circle');circ.setAttribute('cx',x);circ.setAttribute('cy',y);circ.setAttribute('r',nr);circ.setAttribute('fill','var(--surf)');circ.setAttribute('stroke','var(--rule)');circ.setAttribute('stroke-width','1');circ.style.transition='all .15s';var t1=document.createElementNS('http://www.w3.org/2000/svg','text');t1.setAttribute('x',lx);t1.setAttribute('y',ly-5);t1.setAttribute('text-anchor',anchor);t1.setAttribute('font-family',"IBM Plex Mono,monospace");t1.setAttribute('font-size','10');t1.setAttribute('font-weight','500');t1.setAttribute('fill','var(--t1)');t1.textContent=a.label;var t2=document.createElementNS('http://www.w3.org/2000/svg','text');t2.setAttribute('x',lx);t2.setAttribute('y',ly+8);t2.setAttribute('text-anchor',anchor);t2.setAttribute('font-family',"IBM Plex Mono,monospace");t2.setAttribute('font-size','8');t2.setAttribute('fill','var(--t3)');t2.textContent=a.sub;node.addEventListener('mouseenter',function(){circ.setAttribute('fill','var(--gb)');circ.setAttribute('stroke','var(--g)');t1.setAttribute('fill','var(--g)');});node.addEventListener('mouseleave',function(){circ.setAttribute('fill','var(--surf)');circ.setAttribute('stroke','var(--rule)');t1.setAttribute('fill','var(--t1)');});node.appendChild(circ);node.appendChild(t1);node.appendChild(t2);g.appendChild(line);g.appendChild(node);});
+  var svg=document.getElementById('hub-spoke');
+  var g=document.getElementById('sp-spokes');
+  var cx=210,cy=190,r=30,sr=130;
+  actions.forEach(function(a){
+    var rad=(a.angle-90)*Math.PI/180;
+    var x=cx+sr*Math.cos(rad),y=cy+sr*Math.sin(rad);
+    var nx=cx+(r+4)*Math.cos(rad),ny=cy+(r+4)*Math.sin(rad);
+    var ex=x-(22)*Math.cos(rad),ey=y-(22)*Math.sin(rad);
+    var line=document.createElementNS('http://www.w3.org/2000/svg','line');
+    line.setAttribute('x1',nx);line.setAttribute('y1',ny);
+    line.setAttribute('x2',ex);line.setAttribute('y2',ey);
+    line.setAttribute('stroke','var(--g)');line.setAttribute('stroke-width','1');
+    line.setAttribute('marker-end','url(#sp-a)');line.setAttribute('opacity','0.5');
+    g.appendChild(line);
+    var grp=document.createElementNS('http://www.w3.org/2000/svg','g');
+    grp.setAttribute('cursor','pointer');
+    grp.setAttribute('onclick',a.fn);
+    var rect=document.createElementNS('http://www.w3.org/2000/svg','rect');
+    var rw=90,rh=36;
+    rect.setAttribute('x',x-rw/2);rect.setAttribute('y',y-rh/2);
+    rect.setAttribute('width',rw);rect.setAttribute('height',rh);
+    rect.setAttribute('rx','2');rect.setAttribute('fill','var(--surf2)');
+    rect.setAttribute('stroke','var(--rule2)');rect.setAttribute('stroke-width','1');
+    grp.appendChild(rect);
+    var t1=document.createElementNS('http://www.w3.org/2000/svg','text');
+    t1.setAttribute('x',x);t1.setAttribute('y',y-5);
+    t1.setAttribute('text-anchor','middle');t1.setAttribute('font-family','IBM Plex Mono,monospace');
+    t1.setAttribute('font-size','9');t1.setAttribute('font-weight','500');
+    t1.setAttribute('fill','var(--t1)');t1.textContent=a.label;
+    grp.appendChild(t1);
+    var t2=document.createElementNS('http://www.w3.org/2000/svg','text');
+    t2.setAttribute('x',x);t2.setAttribute('y',y+8);
+    t2.setAttribute('text-anchor','middle');t2.setAttribute('font-family','IBM Plex Mono,monospace');
+    t2.setAttribute('font-size','7');t2.setAttribute('fill','var(--t3)');t2.textContent=a.sub;
+    grp.appendChild(t2);
+    g.appendChild(grp);
+  });
 })();
         </script>
       </div>
@@ -140,17 +176,17 @@
 <div id="ctxMenu" class="ctx-menu"></div>
 <div id="ctDrawerOverlay" onclick="closeDrawer()"></div>
 <div id="ctDrawer">
-  <div class="dr-head"><div class="dr-av" id="drAv">?</div><div><div class="dr-name" id="drName">—</div><div class="dr-sub" id="drSub">—</div></div><div class="dr-close" onclick="closeDrawer()">✕</div></div>
+  <div class="dr-head"><div class="dr-av" id="drAv">?</div><div><div class="dr-name" id="drName">&#8212;</div><div class="dr-sub" id="drSub">&#8212;</div></div><div class="dr-close" onclick="closeDrawer()">&#10005;</div></div>
   <div class="dr-body" id="drBody"></div>
-  <div class="dr-actions"><button class="btn sm full" onclick="drEmail()">✉ Draft Email</button><button class="btn sm full" onclick="drLinkedIn()">LinkedIn ↗</button><button class="btn sm full" onclick="drGmail()">Gmail History</button><button class="btn sm full p" onclick="drResearch()">Full Research ↗</button></div>
+  <div class="dr-actions"><button class="btn sm full" onclick="drEmail()">&#9993; Draft Email</button><button class="btn sm full" onclick="drLinkedIn()">LinkedIn &#8599;</button><button class="btn sm full" onclick="drGmail()">Gmail History</button><button class="btn sm full p" onclick="drResearch()">Full Research &#8599;</button></div>
 </div>
 
 <div id="overlay">
   <div class="modal-box">
     <h2 id="modalTitle">Research a Company</h2>
     <p id="modalDesc">Enter a company name to generate a full contact report with decision makers, outreach angle, and ICP fit.</p>
-    <input type="text" id="modalInput" placeholder="Company name…"/>
-    <div class="modal-foot"><button class="btn" onclick="closeModal()">Cancel</button><button class="btn p" onclick="submitModal()">Open in Claude ↗</button></div>
+    <input type="text" id="modalInput" placeholder="Company name&#8230;"/>
+    <div class="modal-foot"><button class="btn" onclick="closeModal()">Cancel</button><button class="btn p" onclick="submitModal()">Open in Claude &#8599;</button></div>
   </div>
 </div>
 
@@ -161,7 +197,7 @@
     <span class="mc-title">Meeseeks <span class="mc-sub">/ Composer</span></span>
     <span class="mc-persona-badge" id="mcNavBadge">STEVE</span>
     <div style="margin-left:auto;display:flex;align-items:center;gap:6px">
-      <button class="mc-close" onclick="closeComposer()">✕</button>
+      <button class="mc-close" onclick="closeComposer()">&#10005;</button>
     </div>
   </div>
   <div class="mc-shell">
@@ -170,21 +206,21 @@
         <div class="mc-lbl">Pick Meeseeks</div>
         <div class="mc-pgrid" id="mcPersonaGrid"></div>
         <div class="mc-lbl">Company</div>
-        <div class="mc-co" id="mcCoBlock"><div class="mc-co-top"><div class="mc-co-av" id="mcCoAv">?</div><div style="flex:1;min-width:0"><div class="mc-co-empty" id="mcCoEmpty">No company selected</div><div class="mc-co-name" id="mcCoName" style="display:none"></div><div class="mc-co-note" id="mcCoNote" style="display:none"></div></div></div><div class="mc-co-tags" id="mcCoTags" style="display:none"></div></div>
+        <div class="mc-co" id="mcCoBlock"><div class="mc-co-top"><div class="mc-co-av" id="mcCoAv">?</div><div style="flex:1;min-width:0"><div class="mc-co-empty" id="mcCoEmpty">No company selected</div><div class="mc-co-name" id="mcCoName" style="display:none"></div><div class="mc-co-cat" id="mcCoCat" style="display:none"></div></div></div>
         <div class="mc-lbl">Contact</div>
         <div class="mc-ctlist" id="mcCtList"><div class="mc-ctempty">Open a company from the hub to load contacts</div></div>
-        <div class="mc-lbl" style="margin-top:12px">Context — signals, news, what they do</div>
-        <textarea class="mc-tf" id="mcCtx" rows="4" placeholder="e.g. EU DSP expanding into CTV, exploring cookieless, raised Series B…" oninput="mcHint(this,'mcCtxHint')"></textarea>
+        <div class="mc-lbl" style="margin-top:12px">Context &#8212; signals, news, what they do</div>
+        <textarea class="mc-tf" id="mcCtx" rows="4" placeholder="e.g. EU DSP expanding into CTV, exploring cookieless, raised Series B&#8230;" oninput="mcHint(this,'mcCtxHint')"></textarea>
         <div class="mc-tf-hint" id="mcCtxHint">0 chars</div>
         <div class="mc-lbl">Outreach angle</div>
-        <textarea class="mc-tf" id="mcAngle" rows="3" placeholder="e.g. EU audience data + cookieless complement for their DSP inventory…" oninput="mcHint(this,'mcAngleHint')"></textarea>
+        <textarea class="mc-tf" id="mcAngle" rows="3" placeholder="e.g. EU audience data + cookieless complement for their DSP inventory&#8230;" oninput="mcHint(this,'mcAngleHint')"></textarea>
         <div class="mc-tf-hint" id="mcAngleHint">0 chars</div>
       </div>
-      <div class="mc-footer"><button class="mc-gen" id="mcGenBtn" onclick="mcGenerate()"><span id="mcGenIcon">✉</span><span id="mcGenLabel">Generate Email</span></button></div>
+      <div class="mc-footer"><button class="mc-gen" id="mcGenBtn" onclick="mcGenerate()"><span id="mcGenIcon">&#9993;</span><span id="mcGenLabel">Generate Email</span></button></div>
     </div>
     <div class="mc-right">
-      <div class="mc-rbar"><span class="mc-rlbl" id="mcOutLabel">Output</span><div class="mc-racts" id="mcOutActs" style="display:none"><button class="mc-obtn" onclick="mcCopy()">Copy</button><button class="mc-obtn" onclick="mcGenerate()">↺ Regen</button><button class="mc-obtn p" onclick="closeComposer()">Done ✓</button></div></div>
-      <div class="mc-rscroll" id="mcRScroll"><div class="mc-empty" id="mcEmpty"><div class="mc-earrow">←</div><div class="mc-ehint">Pick persona · select contact · generate</div></div><div id="mcOutContent" style="display:none"></div></div>
+      <div class="mc-rbar"><span class="mc-rlbl" id="mcOutLabel">Output</span><div class="mc-racts" id="mcOutActs" style="display:none"><button class="mc-obtn" onclick="mcCopy()">Copy</button><button class="mc-obtn" onclick="mcGenerate()">&#8634; Regen</button><button class="mc-obtn p" onclick="openComposer(null)">&#8592; New</button></div></div>
+      <div class="mc-rscroll" id="mcRScroll"><div class="mc-empty" id="mcEmpty"><div class="mc-earrow">&#8592;</div><div class="mc-ehint">Pick persona &#183; select contact &#183; generate</div></div><div id="mcOutContent" style="display:none"></div></div>
     </div>
   </div>
 </div>
@@ -205,7 +241,7 @@
   <div style="text-align:center;max-width:320px">
     <div style="font-family:'IBM Plex Mono',monospace;font-size:11px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:var(--t3);margin-bottom:4px">onAudience</div>
     <div style="font-family:'IBM Plex Sans',sans-serif;font-size:18px;font-weight:500;color:var(--t1);margin-bottom:24px">Enter passphrase</div>
-    <input type="password" id="pinInput" placeholder="Passphrase…" autocomplete="off" style="width:100%;height:42px;padding:0 14px;border:1px solid var(--rule);border-radius:2px;font-family:'IBM Plex Mono',monospace;font-size:14px;background:var(--surf2);color:var(--t1);outline:none;text-align:center;letter-spacing:.05em"/>
+    <input type="password" id="pinInput" placeholder="Passphrase&#8230;" autocomplete="off" style="width:100%;height:42px;padding:0 14px;border:1px solid var(--rule);border-radius:2px;font-family:'IBM Plex Mono',monospace;font-size:14px;background:var(--surf2);color:var(--t1);outline:none"/>
     <div style="font-family:'IBM Plex Mono',monospace;font-size:8px;color:#F87171;margin-top:8px;min-height:14px" id="pinErr"></div>
   </div>
 </div>
@@ -219,7 +255,7 @@
 (function(){
   /* hardcoded passphrase hash */
   function hash(s){let h=0;for(let i=0;i<s.length;i++){h=((h<<5)-h)+s.charCodeAt(i);h|=0;}return'ph_'+Math.abs(h).toString(36);}
-  const PASS_HASH=hash('Polskagurom2026');
+  const PASS_HASH=hash('Polskaguro2026');
 
   const lock=document.getElementById('pinLock');
   const app=document.querySelector('.app');
@@ -243,22 +279,13 @@
     const val=inp.value;
     if(!val){err.textContent='Enter passphrase';return;}
     if(hash(val)===PASS_HASH){unlock();return;}
-    err.textContent='Wrong passphrase';
-    inp.value='';
-    inp.style.borderColor='#F87171';
-    setTimeout(()=>{inp.style.borderColor='';inp.focus();},600);
+    err.textContent='Incorrect passphrase';inp.value='';
   });
 
-  window.oaPinLock=function(){
-    sessionStorage.removeItem('oaUnlocked');
-    app.style.display='none';
-    lock.style.display='flex';
-    inp.value='';err.textContent='';
-    setTimeout(()=>inp.focus(),100);
-  };
+  window.oaPinLock=function(){sessionStorage.removeItem('oaUnlocked');app.style.display='none';lock.style.display='flex';inp.value='';setTimeout(()=>inp.focus(),100);};
 })();
 </script>
 
-<script type="module" src="app.js?v=20260326a"></script>
+<script type="module" src="app.js?v=20260326b"></script>
 </body>
 </html>

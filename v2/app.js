@@ -6,6 +6,7 @@ import { renderStats, loadFromSupabase, setStatus, saveCompany, saveContact, pro
 import { renderList, switchTab as _switchTab, setFilter, onSearch, renderTagPanel, toggleTagPanel, toggleTag, toggleTagEl, clearTags, setTagLogic, matchTags, runAI, clearAI, aiQuick, openCompany, closePanel, coAction, ctAction, bgGenerateAngle, bgFindDMs, bgRefreshIntel, loadRelationsBrief, openBySlug, showCtxSlug, showCtx, openDrawer, closeDrawer, drEmail, drLinkedIn, drGmail, drResearch, promptResearch, promptSimilar, closeModal, submitModal, openClaude, clog, toggleConsole, clearConsole, setSort, quickEnrich, mapSegments } from './hub.js';
 import { openComposer, closeComposer, openPanel, mcRenderPersonas, mcPickPersona, mcGenerate, mcCopy, mcHint, mcPickContact, mcRenderPicker } from './meeseeks.js';
 import { extendSwitchTab, renderTCFList, renderTCFCenter, tcfSelectRow, tcfClearSel, updateTCFSelBar, loadGVL, doGVLMatch, promptGVLConfirm, closeGVLConfirm, executeGVLConfirm } from './tcf.js';
+import { openProspectFinder, runProspectFinder, prospectChip, prospectAddToDB, prospectLinkedIn, closeProspectFinder } from './prospect.js';
 
 /* ── Theme ────────────────────────────────────────────────── */
 let theme = localStorage.getItem('oaTheme') || 'light';
@@ -16,7 +17,6 @@ function toggleTheme() {
   localStorage.setItem('oaTheme', theme);
   document.getElementById('themeBtn').textContent = theme === 'dark' ? '☀️' : '🌙';
 }
-document.getElementById('themeBtn').textContent = theme === 'dark' ? '☀️' : '🌙';
 
 /* ── Wrap switchTab with TCF extension ───────────────────── */
 const switchTab = extendSwitchTab(_switchTab);
@@ -53,10 +53,12 @@ Object.assign(window, {
   /* TCF */
   renderTCFList, renderTCFCenter, tcfSelectRow, tcfClearSel,
   doGVLMatch, promptGVLConfirm, closeGVLConfirm, executeGVLConfirm, loadGVL,
+  /* prospect finder */
+  openProspectFinder, runProspectFinder, prospectChip, prospectAddToDB, prospectLinkedIn, closeProspectFinder,
   /* DB interface */
   oaDB: {
     saveCompany, saveContact,
-    reload: () => { document.getElementById('dbStatus').textContent = '○ Syncing…'; loadFromSupabase(renderStats, renderList, renderTagPanel); },
+    reload: () => { document.getElementById('dbStatus').textContent = '○ Syncing\u2026'; loadFromSupabase(renderStats, renderList, renderTagPanel); },
   },
 });
 
@@ -65,7 +67,7 @@ document.addEventListener('click', () => document.getElementById('ctxMenu').styl
 document.getElementById('mcOverlay').addEventListener('click', closeComposer);
 document.getElementById('overlay').addEventListener('click', e => { if (e.target === document.getElementById('overlay')) closeModal(); });
 document.addEventListener('keydown', e => {
-  if (e.key === 'Escape') { closeComposer(); closeModal(); }
+  if (e.key === 'Escape') { closeComposer(); closeModal(); closeProspectFinder(); }
   if ((e.metaKey || e.ctrlKey) && e.key === 'Enter') {
     if (document.getElementById('mcDrawer').classList.contains('open')) mcGenerate();
   }
