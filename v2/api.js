@@ -25,29 +25,10 @@ export function updateKeyBtn(){
   else{btn.textContent='🔑';btn.className='btn sm';btn.style.color='var(--prc)';btn.title='Set Anthropic API key';}
 }
 
-/* ── Model selector ───────────────────────────────────────── */
-export function getModel(){
-  return localStorage.getItem('oaUseOpus')==='1'
-    ? 'claude-opus-4-5'
-    : 'claude-sonnet-4-6'; // default
-}
-export function toggleModel(){
-  const isOpus=getModel()==='claude-opus-4-5';
-  localStorage.setItem('oaUseOpus',isOpus?'0':'1');
-  const btn=document.getElementById('modelToggleBtn');
-  if(btn){
-    const nowOpus=!isOpus;
-    btn.textContent=nowOpus?'◆ OPUS':'◇ SONNET';
-    btn.style.color=nowOpus?'var(--g)':'var(--t3)';
-    btn.style.borderColor=nowOpus?'var(--gb)':'var(--rule2)';
-  }
-}
-
 /* ── Anthropic fetch helper (retries on 429/529) ──────────── */
 export async function anthropicFetch(body){
   const key=getApiKey();
   if(!key){if(!promptApiKey())throw new Error('API key required — click 🔑 in the nav bar');}
-  const payload={...body,model:body.model??getModel()};
   const maxRetries=3;
   for(let attempt=0;attempt<maxRetries;attempt++){
     const res=await fetch('https://api.anthropic.com/v1/messages',{
@@ -58,7 +39,7 @@ export async function anthropicFetch(body){
         'anthropic-version':'2023-06-01',
         'anthropic-dangerous-direct-browser-access':'true',
       },
-      body:JSON.stringify(payload),
+      body:JSON.stringify(body),
     });
     if(res.status===529||res.status===429){
       const wait=Math.min(2000*Math.pow(2,attempt),10000);
@@ -91,11 +72,13 @@ export function setStatus(live){const el=document.getElementById('dbStatus');if(
 
 /* ── Load from Supabase (companies + contacts + relations in parallel) ── */
 export async function loadFromSupabase(renderStats,renderList,renderTagPanel){
-  const ctrl=new AbortController(),timer=setTimeout(()=>ctrl.abort(),8000);
+  const ctrl=new AbortController(),timer=setTimeout(()=>ctrl.abort(),12000);
+  /* Range header to get up to 5000 rows (default is 1000) */
+  const hdrRange={...HDR,'Range':'0-4999','Prefer':'count=exact'};
   try{
     const[cr,ct,rl]=await Promise.all([
-      fetch(`${SB_URL}/rest/v1/companies?select=*&order=name.asc`,{headers:HDR,signal:ctrl.signal}),
-      fetch(`${SB_URL}/rest/v1/contacts?select=*&order=full_name.asc`,{headers:HDR,signal:ctrl.signal}),
+      fetch(`${SB_URL}/rest/v1/companies?select=*&order=updated_at.desc.nullslast`,{headers:hdrRange,signal:ctrl.signal}),
+      fetch(`${SB_URL}/rest/v1/contacts?select=*&order=full_name.asc`,{headers:hdrRange,signal:ctrl.signal}),
       fetch(`${SB_URL}/rest/v1/company_relations?select=*`,{headers:HDR,signal:ctrl.signal}),
     ]);
     clearTimeout(timer);
@@ -105,8 +88,13 @@ export async function loadFromSupabase(renderStats,renderList,renderTagPanel){
     if(Array.isArray(dbc)&&dbc.length)S.companies=dbc.map(r=>({...r,type:r.type||classify(r.note||''),note:r.note||''}));
     if(Array.isArray(dbt))S.contacts=dbt;
     if(Array.isArray(dbr))S.allRelations=dbr;
+    /* check if we got truncated */
+    const contentRange=cr.headers.get('content-range');
+    const totalMatch=contentRange&&contentRange.match(/\/(\d+)/);
+    const totalInDb=totalMatch?parseInt(totalMatch[1]):S.companies.length;
     setStatus(true);
-    if(window.clog)window.clog('db',`Loaded <b>${S.companies.length}</b> companies + <b>${S.contacts.length}</b> contacts + <b>${S.allRelations.length}</b> relations`);
+    if(window.clog)window.clog('db',`Loaded <b>${S.companies.length}</b> of ${totalInDb} companies + <b>${S.contacts.length}</b> contacts + <b>${S.allRelations.length}</b> relations`);
+    if(totalInDb>S.companies.length&&window.clog)window.clog('db',`⚠️ Truncated: DB has ${totalInDb} companies but loaded ${S.companies.length}. Consider pagination.`);
   }catch(e){clearTimeout(timer);console.warn('seed',e.message);setStatus(false);if(window.clog)window.clog('db',`Seed mode — ${e.message}`);}
   renderStats();renderList();if(S.tagPanelOpen)renderTagPanel();
 }
