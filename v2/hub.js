@@ -654,23 +654,77 @@ function renderRelGraph(){
     edgeSet.push({source:r.from_company,target:r.to_company,type:r.relation_type,strength:r.strength,direction:r.direction,hop:1,onPath:false});
   });
 
-  /* ── Always inject onAudience node + its connecting edges ──
-     If center IS onAudience this is a no-op (already covered by hop-1).
-     Otherwise: find OA relations that touch any already-known node and
-     add OA + those edges. Guarantees OA is always visible when reachable,
-     without flooding the graph with all 74 OA edges. */
+  /* ── Inject onAudience + all logical sell paths ─────────────
+     Two mechanisms:
+
+     A) DIRECT: OA has an explicit relation to a node already in graph
+        → add OA node + that edge (hop:'oa')
+
+     B) ACTIVATION PATH: center (or its hop-1 neighbor) uses a platform
+        that OA is listed on (TTD, DV360, Amazon DSP, Adform, LiveRamp…)
+        → add OA node + a computed "activation_path" edge through that platform
+        This represents "you can buy onAudience data when you use TTD"
+
+     Result: onAudience always appears when there is ANY logical sell path,
+     not just when an explicit relation record exists.
+  ── */
   if(centerSlug!==OA){
+    /* Platforms onAudience is activated through — built from S.allRelations */
+    const oaPlatforms=new Set(
+      S.allRelations
+        .filter(r=>r.from_company===OA&&
+          ['marketplace_listed','dsp_integration','data_partner'].includes(r.relation_type))
+        .map(r=>r.to_company)
+    );
+
     const knownIds=new Set(nodeSet.keys());
-    const oaEdges=S.allRelations.filter(r=>
+
+    /* A) Direct OA edges to known nodes */
+    const oaDirectEdges=S.allRelations.filter(r=>
       (r.from_company===OA&&knownIds.has(r.to_company))||
       (r.to_company===OA&&knownIds.has(r.from_company))
     );
-    if(oaEdges.length){
+
+    /* B) Activation paths: known node uses a platform OA is on */
+    /* e.g. center uses TTD → OA is on TTD → draw center→TTD→OA path */
+    const activationEdges=[];
+    const alreadyLinkedToOA=new Set([
+      ...oaDirectEdges.map(r=>r.from_company===OA?r.to_company:r.from_company)
+    ]);
+    S.allRelations.forEach(r=>{
+      /* a known node (not OA itself) uses an OA platform */
+      const knownNode=knownIds.has(r.from_company)&&r.from_company!==OA?r.from_company
+                     :knownIds.has(r.to_company)&&r.to_company!==OA?r.to_company:null;
+      const platform=r.from_company===knownNode?r.to_company:r.from_company;
+      if(!knownNode)return;
+      if(!oaPlatforms.has(platform))return;
+      if(alreadyLinkedToOA.has(knownNode))return; /* already has direct OA link */
+      if(platform===centerSlug)return;
+      /* find the platform node name for label */
+      activationEdges.push({via:platform,from:knownNode});
+      alreadyLinkedToOA.add(knownNode); /* one activation path per node is enough */
+    });
+
+    if(oaDirectEdges.length||activationEdges.length){
       addNode(OA,1);
-      oaEdges.forEach(r=>{
-        edgeSet.push({source:r.from_company,target:r.to_company,type:r.relation_type,strength:r.strength,direction:r.direction,hop:'oa',onPath:false});
+
+      /* add direct edges */
+      oaDirectEdges.forEach(r=>{
+        edgeSet.push({source:r.from_company,target:r.to_company,type:r.relation_type,
+          strength:r.strength,direction:r.direction,hop:'oa',onPath:false});
       });
-      clog('info',`Graph: injected onAudience + ${oaEdges.length} edges`);
+
+      /* add activation path edges — drawn as dashed green from known node to OA
+         with the platform name as edge label */
+      activationEdges.forEach(({via,from})=>{
+        /* make sure the platform node is in the graph */
+        if(!nodeSet.has(via))addNode(via,1);
+        edgeSet.push({source:from,target:OA,type:'activation_path',
+          strength:'probable',direction:'unidirectional',
+          hop:'oa',onPath:false,viaLabel:via});
+      });
+
+      clog('info',`Graph: OA injected — ${oaDirectEdges.length} direct + ${activationEdges.length} activation paths`);
     }
   }
 
@@ -838,8 +892,14 @@ function renderRelGraph(){
     if(isPath){
       line.setAttribute('stroke','var(--g)');
       line.setAttribute('stroke-width','2');
+    } else if(e.hop==='oa'&&e.type==='activation_path'){
+      /* activation path edge — can sell via shared platform — dotted green */
+      line.setAttribute('stroke','var(--g)');
+      line.setAttribute('stroke-width','1');
+      line.setAttribute('opacity','0.4');
+      line.setAttribute('stroke-dasharray','2 5');
     } else if(e.hop==='oa'){
-      /* OA-connecting edges — green tint, slightly thinner than path */
+      /* direct OA relation edge — green tint */
       line.setAttribute('stroke','var(--g)');
       line.setAttribute('stroke-width','1');
       line.setAttribute('opacity','0.55');
@@ -854,6 +914,15 @@ function renderRelGraph(){
     layer.appendChild(line);
     /* edge label — only for hop-1, oa and path edges */
     if(e.hop===1||e.hop==='oa'||isPath){
+      if(e.type==='activation_path'&&e.viaLabel){
+        const co2=coMap[e.viaLabel];const viaName=(co2?.name||e.viaLabel);
+        const shortVia=viaName.length>10?viaName.slice(0,9)+'…':viaName;
+        const lbl2=document.createElementNS('http://www.w3.org/2000/svg','text');
+        lbl2.setAttribute('x',(s.x+t.x)/2);lbl2.setAttribute('y',(s.y+t.y)/2-4);
+        lbl2.setAttribute('text-anchor','middle');lbl2.setAttribute('font-family','IBM Plex Mono,monospace');
+        lbl2.setAttribute('font-size','6');lbl2.setAttribute('fill','var(--g)');lbl2.setAttribute('opacity','0.7');
+        lbl2.textContent='via '+shortVia;layer.appendChild(lbl2);
+      } else if(e.hop===1||isPath){
       const lbl=document.createElementNS('http://www.w3.org/2000/svg','text');
       lbl.setAttribute('x',(s.x+t.x)/2);lbl.setAttribute('y',(s.y+t.y)/2-4);
       lbl.setAttribute('text-anchor','middle');lbl.setAttribute('font-family','IBM Plex Mono,monospace');
@@ -861,6 +930,7 @@ function renderRelGraph(){
       lbl.setAttribute('fill',isPath?'var(--g)':'var(--t4)');
       lbl.textContent=TL[e.type]||e.type;
       layer.appendChild(lbl);
+      } /* end else-if hop-1/path */
     }
   });
 
@@ -950,19 +1020,19 @@ function renderRelGraph(){
 
   /* ── legend ── */
   const leg=document.createElementNS('http://www.w3.org/2000/svg','g');
-  const legendItems=[
-    {color:'var(--g)',label:'onAudience path'},
-    {color:'var(--rule2)',label:'2-hop (indirect)',dash:true},
-  ];
+  const legendItems=[];
   if(nodeSet.has(OA)&&centerSlug!==OA){
-    legendItems.unshift({color:'var(--g)',label:'Path to oA',bold:true});
+    legendItems.push({color:'var(--g)',label:'→ onAudience (direct)',bold:true});
+    legendItems.push({color:'var(--g)',label:'→ onAudience (via platform)',dash:'2 5',opacity:'0.5'});
   }
+  if(_relDepth===2)legendItems.push({color:'var(--rule2)',label:'2-hop indirect',dash:'3 3'});
   legendItems.forEach((item,i)=>{
     const ly=H-14-(legendItems.length-1-i)*13;
     const line=document.createElementNS('http://www.w3.org/2000/svg','line');
     line.setAttribute('x1',8);line.setAttribute('y1',ly);line.setAttribute('x2',20);line.setAttribute('y2',ly);
     line.setAttribute('stroke',item.color);line.setAttribute('stroke-width',item.bold?'2':'1.5');
-    if(item.dash)line.setAttribute('stroke-dasharray','3 3');
+    if(item.dash)line.setAttribute('stroke-dasharray',item.dash);
+    if(item.opacity)line.setAttribute('opacity',item.opacity);
     leg.appendChild(line);
     const t=document.createElementNS('http://www.w3.org/2000/svg','text');
     t.setAttribute('x',24);t.setAttribute('y',ly+3);
