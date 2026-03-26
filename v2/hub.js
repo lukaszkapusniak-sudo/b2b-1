@@ -332,10 +332,64 @@ export async function bgFindDMs(){
   }
 }
 
+/* ═══ Company Resolver — 4-tier fuzzy matching ══════════════
+   Resolves a raw company name string to an existing companies.id.
+   Tiers (in order, returns first hit):
+     1. Exact slug match            "The Trade Desk" → "the-trade-desk" ✓
+     2. Normalized token match      strip legal suffixes, punctuation
+     3. Prefix match (≥5 chars)     "Amazon Ads" tokens ∋ "amazon" → amazon
+     4. Contained-in match          "IPG Mediabrands" ⊃ "ipg" in existing slug
+   Returns null if no match found (caller creates stub).
+   ═══════════════════════════════════════════════════════════ */
+function resolveCompany(rawName, coIndex){
+  if(!rawName)return null;
+
+  /* strip common suffixes for normalization */
+  const norm = s => s
+    .replace(/\s+(Ltd|Inc|LLC|S\.A\.|GmbH|Corp|B\.V\.|AG|PLC|SAS|Group|Media|Advertising|Digital|Technologies|Solutions|Platform|Networks?|Labs?)\.?$/gi,'')
+    .toLowerCase().trim()
+    .replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,'');
+
+  const rawSlug  = _slug(rawName);
+  const normSlug = norm(rawName);
+
+  /* tier 1 — exact slug */
+  if(coIndex[rawSlug])return coIndex[rawSlug].id||rawSlug;
+
+  /* tier 2 — normalized slug */
+  if(normSlug!==rawSlug&&coIndex[normSlug])return coIndex[normSlug].id||normSlug;
+
+  /* build token set from raw name for tiers 3+4 */
+  const tokens = normSlug.split('-').filter(t=>t.length>=4);
+
+  /* tier 3 — any significant token is a prefix of an existing slug */
+  for(const tok of tokens){
+    for(const key of Object.keys(coIndex)){
+      if(key.startsWith(tok)&&Math.abs(key.length-normSlug.length)<12){
+        return coIndex[key].id||key;
+      }
+    }
+  }
+
+  /* tier 4 — existing slug is fully contained in raw tokens OR vice versa */
+  for(const tok of tokens){
+    if(coIndex[tok])return coIndex[tok].id||tok;
+  }
+  for(const key of Object.keys(coIndex)){
+    const keyTokens=key.split('-').filter(t=>t.length>=4);
+    if(keyTokens.length>=1&&keyTokens.every(kt=>normSlug.includes(kt))&&key.length>=5){
+      return coIndex[key].id||key;
+    }
+  }
+
+  return null; /* no match — caller creates stub */
+}
+
 /* ═══ Intelligence Extraction from News ═════════════════════
    Fires after articles load. Sends titles to Claude Haiku,
    extracts relations + products, writes to Supabase.
    Uses enrich_cache to avoid re-processing same article set.
+   Uses 4-tier resolver to maximise matches to existing records.
    ═══════════════════════════════════════════════════════════ */
 export async function extractIntelRelations(slug, companyName, articles){
   if(!articles||articles.length===0)return;
@@ -384,42 +438,68 @@ RULES: Only extract EXPLICIT mentions. partnerships/integrations→bidirectional
 
     /* ── Upsert relations ── */
     if(relations.length){
+      /* build coIndex from ALL companies in state — id + name slug → company */
       const coIndex={};
-      S.companies.forEach(c=>{const s=_slug(c.name);coIndex[s]=c;coIndex[c.id||s]=c;});
+      S.companies.forEach(c=>{
+        const s=_slug(c.name);
+        coIndex[s]=c;
+        if(c.id&&c.id!==s)coIndex[c.id]=c;
+      });
+
       const existingKeys=new Set(S.allRelations.map(r=>`${r.from_company}|${r.to_company}|${r.relation_type}`));
       const validTypes=new Set(['acquired_by','data_partner','tech_integration','client_of','competes_with','marketplace_listed','dsp_integration','subsidiary_of']);
-      let inserted=0;
+      let inserted=0,matched=0,stubbed=0;
+
       for(const rel of relations){
         const otherName=(rel.other_company||'').trim();
         if(!otherName||otherName.toLowerCase()===companyName.toLowerCase())continue;
         const relType=validTypes.has(rel.relation_type)?rel.relation_type:'data_partner';
         const strength=['confirmed','probable','inferred'].includes(rel.strength)?rel.strength:'probable';
-        const otherSlug=_slug(otherName);
-        /* create stub if company not in DB */
-        if(!coIndex[otherSlug]){
-          await fetch(`${SB_URL}/rest/v1/companies`,{method:'POST',headers:{...HDR,'Prefer':'resolution=merge-duplicates,return=minimal'},body:JSON.stringify({id:otherSlug,name:otherName,type:'prospect',note:'auto-created by intel extraction'})}).catch(()=>{});
-          clog('db',`➕ Stub: <b>${esc(otherName)}</b>`);
-          S.companies.push({id:otherSlug,name:otherName,type:'prospect',note:'auto-created by intel extraction'});
-          coIndex[otherSlug]={id:otherSlug,name:otherName,type:'prospect'};
+
+        /* ── 4-tier resolve ── */
+        let resolvedId=resolveCompany(otherName,coIndex);
+        if(resolvedId){
+          matched++;
+          clog('info',`  ↳ Resolved "${esc(otherName)}" → <b>${esc(resolvedId)}</b>`);
+        } else {
+          /* create stub only if no match found */
+          const stubId=_slug(otherName);
+          await fetch(`${SB_URL}/rest/v1/companies`,{
+            method:'POST',
+            headers:{...HDR,'Prefer':'resolution=merge-duplicates,return=minimal'},
+            body:JSON.stringify({id:stubId,name:otherName,type:'prospect',note:'auto-created by intel extraction'})
+          }).catch(()=>{});
+          resolvedId=stubId;
+          stubbed++;
+          clog('db',`➕ Stub: <b>${esc(otherName)}</b> (${stubId})`);
+          S.companies.push({id:stubId,name:otherName,type:'prospect',note:'auto-created by intel extraction'});
+          coIndex[stubId]={id:stubId,name:otherName,type:'prospect'};
         }
+
         let fromSlug,toSlug,direction;
-        if(rel.direction==='bidirectional'){fromSlug=slug;toSlug=otherSlug;direction='bidirectional';}
-        else if(rel.direction==='from_target'){fromSlug=slug;toSlug=otherSlug;direction='unidirectional';}
-        else{fromSlug=otherSlug;toSlug=slug;direction='unidirectional';}
+        if(rel.direction==='bidirectional'){fromSlug=slug;toSlug=resolvedId;direction='bidirectional';}
+        else if(rel.direction==='from_target'){fromSlug=slug;toSlug=resolvedId;direction='unidirectional';}
+        else{fromSlug=resolvedId;toSlug=slug;direction='unidirectional';}
+
         const key=`${fromSlug}|${toSlug}|${relType}`;
         const keyRev=`${toSlug}|${fromSlug}|${relType}`;
         if(existingKeys.has(key)||existingKeys.has(keyRev))continue;
-        const res=await fetch(`${SB_URL}/rest/v1/company_relations`,{method:'POST',headers:{...HDR,'Prefer':'resolution=merge-duplicates,return=minimal'},body:JSON.stringify({from_company:fromSlug,to_company:toSlug,relation_type:relType,direction,strength,source:'intelligence_extraction',notes:(rel.evidence||'').slice(0,300)||null})}).catch(()=>null);
+
+        const res=await fetch(`${SB_URL}/rest/v1/company_relations`,{
+          method:'POST',
+          headers:{...HDR,'Prefer':'resolution=merge-duplicates,return=minimal'},
+          body:JSON.stringify({from_company:fromSlug,to_company:toSlug,relation_type:relType,direction,strength,source:'intelligence_extraction',notes:(rel.evidence||'').slice(0,300)||null})
+        }).catch(()=>null);
+
         if(res?.ok||res?.status===201||res?.status===409){
           existingKeys.add(key);
           S.allRelations.push({from_company:fromSlug,to_company:toSlug,relation_type:relType,direction,strength,source:'intelligence_extraction'});
           inserted++;
-          clog('db',`✓ Relation: ${esc(fromSlug)} —[${relType}]→ ${esc(toSlug)}`);
         }
       }
-      if(inserted>0){
-        clog('db',`⚡ Saved <b>${inserted}</b> new relations from ${esc(companyName)} intel`);
-        /* refresh relations panel if open for this company */
+
+      if(inserted>0||matched>0){
+        clog('db',`⚡ Relations: <b>${inserted}</b> saved · ${matched} matched existing · ${stubbed} stubs created`);
         if(S.currentCompany&&_slug(S.currentCompany.name)===slug){
           const rb=document.getElementById('ib-rels-body');
           if(rb&&!rb.innerHTML.includes('ib-loading'))setTimeout(()=>loadRelationsBrief(slug,false),200);
