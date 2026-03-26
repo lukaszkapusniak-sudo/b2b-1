@@ -2,90 +2,123 @@
 
 import S from './state.js';
 import { _slug } from './utils.js';
-import { renderStats, loadFromSupabase, setStatus, saveCompany, saveContact, promptApiKey, updateKeyBtn } from './api.js';
+import { renderStats, loadFromSupabase, setStatus, saveCompany, saveContact, promptApiKey, updateKeyBtn, cacheGet, cacheSet, cacheInvalidate, withCache } from './api.js';
 import { renderList, switchTab as _switchTab, setFilter, onSearch, renderTagPanel, toggleTagPanel, toggleTag, toggleTagEl, clearTags, setTagLogic, matchTags, runAI, clearAI, aiQuick, openCompany, closePanel, coAction, ctAction, bgGenerateAngle, bgFindDMs, bgRefreshIntel, loadRelationsBrief, openBySlug, showCtxSlug, showCtx, openDrawer, closeDrawer, drEmail, drLinkedIn, drGmail, drResearch, promptResearch, promptSimilar, closeModal, submitModal, openClaude, clog, toggleConsole, clearConsole, setSort, quickEnrich, mapSegments } from './hub.js';
-import { openComposer, closeComposer, openPanel, mcRenderPersonas, mcPickPersona, mcGenerate, mcCopy, mcHint, mcPickContact, mcRenderPicker } from './meeseeks.js';
-import { extendSwitchTab, renderTCFList, renderTCFCenter, tcfSelectRow, tcfClearSel, updateTCFSelBar, loadGVL, doGVLMatch, promptGVLConfirm, closeGVLConfirm, executeGVLConfirm } from './tcf.js';
-import { openProspectFinder, runProspectFinder, prospectChip, prospectAddToDB, prospectLinkedIn, closeProspectFinder } from './prospect.js';
+import { openComposer, closeComposer, openPanel as mcOpenPanel, pickPersona as mcPickPersona, generate as mcGenerate, copy as mcCopy, hint as mcHint, pickContact as mcPickContact } from './meeseeks.js';
+import { renderTCFList, renderTCFCenter, tcfSelectRow, tcfClearSel, doGVLMatch, promptGVLConfirm, closeGVLConfirm, executeGVLConfirm, loadGVL } from './tcf.js';
+import { openProspectFinder, runProspectFinder, prospectChosen, closeProspectFinder } from './hub.js';
 
-/* ── Theme ────────────────────────────────────────────────── */
-let theme = localStorage.getItem('oaTheme') || 'light';
-document.documentElement.setAttribute('data-theme', theme);
-function toggleTheme() {
-  theme = theme === 'light' ? 'dark' : 'light';
-  document.documentElement.setAttribute('data-theme', theme);
-  localStorage.setItem('oaTheme', theme);
-  document.getElementById('themeBtn').textContent = theme === 'dark' ? '☀️' : '🌙';
-}
+/* ── Theme ─────────────────────────────────────────────────── */
+function applyTheme(t){ document.documentElement.setAttribute('data-theme', t); localStorage.setItem('oaTheme', t); }
+function toggleTheme(){ applyTheme(document.documentElement.getAttribute('data-theme') === 'dark' ? 'light' : 'dark'); }
+applyTheme(localStorage.getItem('oaTheme') || 'dark');
 
-/* ── Wrap switchTab with TCF extension ───────────────────── */
-const switchTab = extendSwitchTab(_switchTab);
+/* ── Tab switch shim ───────────────────────────────────────── */
+function switchTab(t){ _switchTab(t); }
 
-/* ── Window exports (for onclick handlers in HTML) ───────── */
+/* ── window exports — all functions callable from HTML onclick ── */
 Object.assign(window, {
   /* state access */
-  get currentCompany() { return S.currentCompany; },
-  set currentCompany(v) { S.currentCompany = v; },
+  getCurrentCompany: () => S.selected,
+  setTheme: v => applyTheme(v),
+
   /* theme */
   toggleTheme,
+
   /* nav */
-  switchTab, setFilter, onSearch,
+  switchTab,
+  setFilter,
+  onSearch,
+
   /* tags */
-  toggleTagPanel, toggleTag, toggleTagEl, clearTags, setTagLogic, renderTagPanel,
+  toggleTagPanel,
+  toggleTag,
+  toggleTagEl,
+  clearTags,
+  setTagLogic,
+  renderTagPanel,
+
   /* AI */
-  runAI, clearAI, aiQuick,
-  /* sort / enrich / console */
-  setSort, quickEnrich, clog, toggleConsole, clearConsole, mapSegments,
+  runAI,
+  clearAI,
+  aiQuick,
+
+  /* sort + enrich + console */
+  setSort,
+  quickEnrich,
+  clog,
+  toggleConsole,
+  clearConsole,
+  mapSegments,
+
   /* company detail */
-  openCompany, closePanel, coAction, ctAction,
-  openBySlug, showCtxSlug, showCtx,
-  bgGenerateAngle, bgFindDMs, bgRefreshIntel, loadRelationsBrief, _slug,
+  openCompany,
+  closePanel,
+  coAction,
+  ctAction,
+  openBySlug,
+  showCtxSlug,
+  showCtx,
+  bgGenerateAngle,
+  bgFindDMs,
+  bgRefreshIntel,
+  loadRelationsBrief,
+  _slug,
+
   /* drawer */
-  openDrawer, closeDrawer, drEmail, drLinkedIn, drGmail, drResearch,
+  openDrawer,
+  closeDrawer,
+  drEmail,
+  drLinkedIn,
+  drGmail,
+  drResearch,
+
   /* modals */
-  promptResearch, promptSimilar, closeModal, submitModal,
+  promptResearch,
+  promptSimilar,
+  closeModal,
+  submitModal,
   openClaude,
+
   /* API key */
   promptApiKey,
-  /* composer */
-  openComposer, closeComposer, openPanel,
-  mcPickPersona, mcGenerate, mcCopy, mcHint, mcPickContact,
+
+  /* composer / Meeseeks */
+  openComposer,
+  closeComposer,
+  mcOpenPanel,
+  mcPickPersona,
+  mcGenerate,
+  mcCopy,
+  mcHint,
+  mcPickContact,
+
   /* TCF */
-  renderTCFList, renderTCFCenter, tcfSelectRow, tcfClearSel,
-  doGVLMatch, promptGVLConfirm, closeGVLConfirm, executeGVLConfirm, loadGVL,
+  renderTCFList,
+  renderTCFCenter,
+  tcfSelectRow,
+  tcfClearSel,
+  doGVLMatch,
+  promptGVLConfirm,
+  closeGVLConfirm,
+  executeGVLConfirm,
+  loadGVL,
+
   /* prospect finder */
-  openProspectFinder, runProspectFinder, prospectChip, prospectAddToDB, prospectLinkedIn, closeProspectFinder,
-  /* DB interface */
-  oaDB: {
-    saveCompany, saveContact,
-    reload: () => { document.getElementById('dbStatus').textContent = '○ Syncing\u2026'; loadFromSupabase(renderStats, renderList, renderTagPanel); },
-  },
+  openProspectFinder,
+  runProspectFinder,
+  prospectChosen,
+  closeProspectFinder,
+
+  /* ── cache API — exposed for hub.js, skills, console debugging ── */
+  cacheGet,
+  cacheSet,
+  cacheInvalidate,
+  withCache,
 });
 
-/* ── Event listeners ─────────────────────────────────────── */
-document.addEventListener('click', () => document.getElementById('ctxMenu').style.display = 'none');
-document.getElementById('mcOverlay').addEventListener('click', closeComposer);
-document.getElementById('overlay').addEventListener('click', e => { if (e.target === document.getElementById('overlay')) closeModal(); });
-document.addEventListener('keydown', e => {
-  if (e.key === 'Escape') { closeComposer(); closeModal(); closeProspectFinder(); }
-  if ((e.metaKey || e.ctrlKey) && e.key === 'Enter') {
-    if (document.getElementById('mcDrawer').classList.contains('open')) mcGenerate();
-  }
+/* ── Boot ──────────────────────────────────────────────────── */
+document.addEventListener('DOMContentLoaded', async () => {
+  updateKeyBtn();
+  await loadFromSupabase(renderStats, renderList, renderTagPanel);
 });
-document.addEventListener('DOMContentLoaded', () => {
-  const mi = document.getElementById('modalInput');
-  if (mi) mi.addEventListener('keydown', e => { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); submitModal(); } });
-  const ai = document.getElementById('aiInp');
-  if (ai) ai.addEventListener('keydown', e => { if (e.key === 'Enter') runAI(); });
-  const ov2 = document.getElementById('gvl-confirm-overlay');
-  if (ov2) ov2.addEventListener('click', e => { if (e.target === ov2) closeGVLConfirm(); });
-  setTimeout(() => loadGVL(), 800);
-});
-
-/* ── Init ─────────────────────────────────────────────────── */
-setStatus(false);
-renderStats();
-renderList();
-updateKeyBtn();
-loadFromSupabase(renderStats, renderList, renderTagPanel);
-mcRenderPersonas();

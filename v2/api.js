@@ -12,7 +12,7 @@ export function hasApiKey(){ return !!getApiKey(); }
 export function promptApiKey(){
   const current=getApiKey();
   const key=prompt('Enter your Anthropic API key (sk-ant-…).\nStored in localStorage only.',current?'sk-ant-•••••••'+current.slice(-6):'');
-  if(key===null)return false; // cancelled
+  if(key===null)return false;
   if(key.startsWith('sk-ant-')){setApiKey(key);updateKeyBtn();return true;}
   if(key===''){setApiKey('');updateKeyBtn();return false;}
   alert('Key should start with sk-ant-');return false;
@@ -62,9 +62,124 @@ export async function researchFetch(system, userPrompt){
     tools: [{ type: 'web_search_20250305', name: 'web_search' }],
     messages: [{ role: 'user', content: userPrompt }],
   });
-  /* Opus + web_search returns mixed blocks: text, tool_use, tool_result, etc. */
   const textParts = (data.content || []).filter(b => b.type === 'text').map(b => b.text);
   return { raw: data, text: textParts.join('\n').trim(), content: data.content };
+}
+
+/* ══════════════════════════════════════════════════════════════
+   ── enrich_cache — read/write/invalidate ────────────────────
+   
+   TTL guide (ttl_hours):
+     contact_report   168  (7 days)
+     web_research      72  (3 days)
+     press_links      336  (14 days)
+     tech_stack       720  (30 days)
+     gmail_history     24  (1 day)
+     outreach_angle   336  (14 days)
+   ══════════════════════════════════════════════════════════════ */
+
+/**
+ * cacheGet — returns parsed data if a fresh cache entry exists, else null.
+ * @param {string} companyId  — companies.id slug
+ * @param {string} source     — cache key, e.g. 'contact_report'
+ * @returns {object|null}
+ */
+export async function cacheGet(companyId, source){
+  try {
+    const url = `${SB_URL}/rest/v1/enrich_cache`
+      + `?company_id=eq.${encodeURIComponent(companyId)}`
+      + `&source=eq.${encodeURIComponent(source)}`
+      + `&order=fetched_at.desc&limit=1`;
+    const res = await fetch(url, { headers: { apikey: SB_KEY, Authorization: `Bearer ${SB_KEY}` } });
+    if (!res.ok) return null;
+    const rows = await res.json();
+    if (!rows.length) return null;
+    const row = rows[0];
+    /* TTL check — fetched_at + ttl_hours > now */
+    const fetchedMs = new Date(row.fetched_at).getTime();
+    const ttlMs = (row.ttl_hours || 168) * 3600 * 1000;
+    if (Date.now() > fetchedMs + ttlMs) {
+      if (window.clog) window.clog('db', `Cache STALE — ${companyId}:${source}`);
+      return null;
+    }
+    if (window.clog) window.clog('db', `Cache HIT ✅ — ${companyId}:${source} (saved ~tokens)`);
+    return row.data;
+  } catch(e) {
+    console.warn('cacheGet error', e);
+    return null;
+  }
+}
+
+/**
+ * cacheSet — upserts a cache entry. Replaces existing same company+source row.
+ * @param {string} companyId
+ * @param {string} source
+ * @param {object} data       — any JSON-serialisable payload
+ * @param {number} ttlHours   — default 168 (7 days)
+ */
+export async function cacheSet(companyId, source, data, ttlHours = 168){
+  try {
+    /* Delete existing entry for same company+source first (clean upsert) */
+    await fetch(
+      `${SB_URL}/rest/v1/enrich_cache?company_id=eq.${encodeURIComponent(companyId)}&source=eq.${encodeURIComponent(source)}`,
+      { method: 'DELETE', headers: { apikey: SB_KEY, Authorization: `Bearer ${SB_KEY}` } }
+    );
+    const res = await fetch(`${SB_URL}/rest/v1/enrich_cache`, {
+      method: 'POST',
+      headers: { ...HDR, 'Prefer': 'resolution=merge-duplicates,return=minimal' },
+      body: JSON.stringify({ company_id: companyId, source, data, ttl_hours: ttlHours, fetched_at: new Date().toISOString() }),
+    });
+    if (!res.ok) {
+      const txt = await res.text().catch(() => '');
+      console.warn('cacheSet failed', res.status, txt.slice(0, 200));
+      return false;
+    }
+    if (window.clog) window.clog('db', `Cache SET — ${companyId}:${source} TTL=${ttlHours}h`);
+    return true;
+  } catch(e) {
+    console.warn('cacheSet error', e);
+    return false;
+  }
+}
+
+/**
+ * cacheInvalidate — force-clears one or all sources for a company.
+ * Pass source=null to wipe everything for that company.
+ * @param {string} companyId
+ * @param {string|null} source
+ */
+export async function cacheInvalidate(companyId, source = null){
+  try {
+    let url = `${SB_URL}/rest/v1/enrich_cache?company_id=eq.${encodeURIComponent(companyId)}`;
+    if (source) url += `&source=eq.${encodeURIComponent(source)}`;
+    await fetch(url, { method: 'DELETE', headers: { apikey: SB_KEY, Authorization: `Bearer ${SB_KEY}` } });
+    if (window.clog) window.clog('db', `Cache INVALIDATED — ${companyId}${source ? ':'+source : ' (all)'}`);
+  } catch(e) {
+    console.warn('cacheInvalidate error', e);
+  }
+}
+
+/**
+ * withCache — convenience wrapper: returns cached data or runs fn(), stores result.
+ * Usage:
+ *   const result = await withCache(companyId, 'outreach_angle', 336, async () => {
+ *     return await generateAngle(company);
+ *   });
+ *
+ * @param {string}   companyId
+ * @param {string}   source
+ * @param {number}   ttlHours
+ * @param {Function} fn        — async function that returns the data to cache
+ * @returns {object}
+ */
+export async function withCache(companyId, source, ttlHours, fn){
+  const hit = await cacheGet(companyId, source);
+  if (hit !== null) return hit;
+  const result = await fn();
+  if (result !== null && result !== undefined) {
+    await cacheSet(companyId, source, result, ttlHours);
+  }
+  return result;
 }
 
 /* ── Status ───────────────────────────────────────────────── */
@@ -73,7 +188,6 @@ export function setStatus(live){const el=document.getElementById('dbStatus');if(
 /* ── Load from Supabase (companies + contacts + relations in parallel) ── */
 export async function loadFromSupabase(renderStats,renderList,renderTagPanel){
   const ctrl=new AbortController(),timer=setTimeout(()=>ctrl.abort(),12000);
-  /* Range header to get up to 5000 rows (default is 1000) */
   const hdrRange={...HDR,'Range':'0-4999','Prefer':'count=exact'};
   try{
     const[cr,ct,rl]=await Promise.all([
@@ -88,7 +202,6 @@ export async function loadFromSupabase(renderStats,renderList,renderTagPanel){
     if(Array.isArray(dbc)&&dbc.length)S.companies=dbc.map(r=>({...r,type:r.type||classify(r.note||''),note:r.note||''}));
     if(Array.isArray(dbt))S.contacts=dbt;
     if(Array.isArray(dbr))S.allRelations=dbr;
-    /* check if we got truncated */
     const contentRange=cr.headers.get('content-range');
     const totalMatch=contentRange&&contentRange.match(/\/(\d+)/);
     const totalInDb=totalMatch?parseInt(totalMatch[1]):S.companies.length;
