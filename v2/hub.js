@@ -574,7 +574,21 @@ export async function loadIntelligence(slug,name){
 }
 
 /* ═══ Relations ══════════════════════════════════════════════ */
-let _relCache=[];let _relView='list';let _relDepth=1; /* 1=direct only, 2=2-hop */
+let _relCache=[];let _relView='list';let _relDepth=1;
+
+/* Graph filter state — which node/edge categories to show */
+let _relFilters={
+  data_partner:     true,   /* data + tech partnerships — SIGNIFICANT */
+  tech_integration: true,
+  marketplace_listed:true,
+  dsp_integration:  true,
+  activation_path:  true,   /* computed via-platform paths to OA */
+  client_of:        true,
+  acquired_by:      true,
+  subsidiary_of:    false,  /* off by default — very noisy */
+  competes_with:    false,  /* off by default */
+  hop2:             false,  /* 2-hop nodes off by default */
+};
 
 window.setRelView=function(v){
   _relView=v;
@@ -587,7 +601,15 @@ window.setRelView=function(v){
   graphEl.style.display=v==='graph'?'':'none';
   if(btnL)btnL.className='ib-ct-btn'+(v==='list'?' active':'');
   if(btnG)btnG.className='ib-ct-btn'+(v==='graph'?' active':'');
-  if(v==='graph'&&_relCache.length)renderRelGraph();
+  if(v==='graph'){
+    const ctrl=document.getElementById('ib-rels-controls');
+    if(ctrl)ctrl.style.display='flex';
+    _renderGraphControls();
+    renderRelGraph();
+  } else {
+    const ctrl=document.getElementById('ib-rels-controls');
+    if(ctrl)ctrl.style.display='none';
+  }
 };
 
 window.setRelDepth=function(d){
@@ -596,8 +618,52 @@ window.setRelDepth=function(d){
   const btn2=document.getElementById('ib-rel-d2');
   if(btn1)btn1.className='ib-ct-btn'+(d===1?' active':'');
   if(btn2)btn2.className='ib-ct-btn'+(d===2?' active':'');
+  /* sync hop2 filter with depth button */
+  _relFilters.hop2=d===2;
+  _renderGraphControls();
   renderRelGraph();
 };
+
+window.toggleRelFilter=function(key){
+  _relFilters[key]=!_relFilters[key];
+  /* keep depth button in sync if hop2 toggled */
+  if(key==='hop2'){
+    _relDepth=_relFilters.hop2?2:1;
+    const btn1=document.getElementById('ib-rel-d1');
+    const btn2=document.getElementById('ib-rel-d2');
+    if(btn1)btn1.className='ib-ct-btn'+(_relDepth===1?' active':'');
+    if(btn2)btn2.className='ib-ct-btn'+(_relDepth===2?' active':'');
+  }
+  _renderGraphControls();
+  renderRelGraph();
+};
+
+/* Render the filter pill row inside #ib-rels-controls */
+function _renderGraphControls(){
+  const el=document.getElementById('ib-rels-controls');if(!el)return;
+  /* filter groups */
+  const groups=[
+    {label:'Partnerships',keys:['data_partner','tech_integration','marketplace_listed','dsp_integration'],
+     labels:['Data','Tech','Marketplace','DSP']},
+    {label:'Relationships',keys:['client_of','acquired_by','subsidiary_of','competes_with'],
+     labels:['Client','M&A','Subsidiary','Compete']},
+    {label:'Graph',keys:['activation_path','hop2'],
+     labels:['Activate paths','2-hop nodes']},
+  ];
+  el.innerHTML=groups.map(g=>`
+    <div style="display:flex;align-items:center;gap:3px;flex-wrap:wrap">
+      <span style="font-family:'IBM Plex Mono',monospace;font-size:6px;text-transform:uppercase;letter-spacing:.06em;color:var(--t4);margin-right:2px">${g.label}</span>
+      ${g.keys.map((k,i)=>{
+        const on=_relFilters[k];
+        /* colour coding: partnerships = green tint, relationships = neutral, graph = purple tint */
+        const grp=g.label==='Partnerships'?'var(--gb)':'var(--surf3)';
+        const grpOn=g.label==='Partnerships'?'var(--gb)':g.label==='Graph'?'var(--pob)':'var(--surf3)';
+        const txtOn=g.label==='Partnerships'?'var(--g)':g.label==='Graph'?'var(--poc)':'var(--t1)';
+        const bdrOn=g.label==='Partnerships'?'var(--gr)':g.label==='Graph'?'var(--por)':'var(--rule2)';
+        return`<span onclick="toggleRelFilter('${k}')" style="cursor:pointer;font-family:'IBM Plex Mono',monospace;font-size:7px;padding:2px 6px;border-radius:2px;border:1px solid ${on?bdrOn:'var(--rule)'};background:${on?grpOn:'var(--surf2)'};color:${on?txtOn:'var(--t4)'};user-select:none;transition:all .1s">${g.labels[i]}</span>`;
+      }).join('')}
+    </div>`).join('');
+}
 
 export async function loadRelationsBrief(slug,forceRefresh){
   const body=document.getElementById('ib-rels-body'),cnt=document.getElementById('ib-rels-cnt');if(!body)return;
@@ -611,13 +677,14 @@ export async function loadRelationsBrief(slug,forceRefresh){
     const coMap={};S.companies.forEach(x=>{if(x.name)coMap[_slug(x.name)]=x;});
     const TL={data_partner:'Data Partner',dsp_integration:'DSP Integration',marketplace_listed:'Marketplace',tech_integration:'Tech Integration',client_of:'Client Of',acquired_by:'Acquired By',subsidiary_of:'Subsidiary Of',competes_with:'Competes With',co_sell:'Co-Sell',reseller:'Reseller'};
     const listHtml=_relCache.map(r=>{const isSrc=r.from_company===slug;const oid=isSrc?r.to_company:r.from_company;const co=coMap[oid];const arrow=r.direction==='bidirectional'?'⇄':(isSrc?'→':'←');const nameDisp=co?.name||oid;const type=TL[r.relation_type]||r.relation_type;return`<div class="ib-rel-item"><div class="ib-rel-arrow">${arrow}</div>${co?`<div class="ib-rel-name" data-slug="${oid}" onclick="openBySlug(this.dataset.slug)">${nameDisp}</div>`:`<div class="ib-rel-name no-link">${nameDisp}</div>`}<div class="ib-rel-type">${type}</div><span class="tag ${r.strength==='confirmed'?'tc':'tpr'}" style="flex-shrink:0">${r.strength||'—'}</span></div>${r.notes?`<div class="ib-rel-notes">${r.notes}</div>`:''}`;}).join('');
-    body.innerHTML=`<div style="display:flex;gap:3px;margin-bottom:8px;flex-wrap:wrap">
+    body.innerHTML=`<div style="display:flex;gap:3px;margin-bottom:6px;flex-wrap:wrap;align-items:center">
       <button id="ib-rel-btn-list" class="ib-ct-btn active" onclick="setRelView('list')" style="height:20px;padding:0 8px;font-size:7px">☰ List</button>
       <button id="ib-rel-btn-graph" class="ib-ct-btn" onclick="setRelView('graph')" style="height:20px;padding:0 8px;font-size:7px">◎ Graph</button>
-      <span style="display:inline-block;width:1px;background:var(--rule);margin:2px 2px"></span>
+      <span style="display:inline-block;width:1px;height:16px;background:var(--rule);margin:0 2px"></span>
       <button id="ib-rel-d1" class="ib-ct-btn active" onclick="setRelDepth(1)" style="height:20px;padding:0 8px;font-size:7px">1-hop</button>
       <button id="ib-rel-d2" class="ib-ct-btn" onclick="setRelDepth(2)" style="height:20px;padding:0 8px;font-size:7px">2-hop</button>
     </div>
+    <div id="ib-rels-controls" style="display:none;flex-direction:column;gap:5px;padding:6px 0 8px;border-bottom:1px solid var(--rule2);margin-bottom:6px"></div>
     <div id="ib-rels-list">${listHtml}</div>
     <div id="ib-rels-graph" style="display:none"></div>`;
     _relView='list';_relDepth=1;
@@ -763,6 +830,34 @@ function renderRelGraph(){
     for(let i=edgeSet.length-1;i>=0;i--){
       if(!nodeSet.has(edgeSet[i].source)||!nodeSet.has(edgeSet[i].target))edgeSet.splice(i,1);
     }
+  }
+
+  /* ── Apply _relFilters: remove edges/nodes for hidden categories ── */
+  {
+    /* remove edges whose type is filtered off */
+    const ALWAYS_KEEP_TYPES=new Set(['activation_path']); /* handled via activation_path filter */
+    for(let i=edgeSet.length-1;i>=0;i--){
+      const e=edgeSet[i];
+      const key=e.type==='activation_path'?'activation_path':e.type;
+      if(key in _relFilters&&!_relFilters[key]){
+        edgeSet.splice(i,1);continue;
+      }
+      /* filter hop-2 edges if hop2 is off */
+      if(e.hop===2&&!_relFilters.hop2){edgeSet.splice(i,1);continue;}
+    }
+    /* remove nodes that have no remaining edges AND are not center/OA */
+    const connectedIds=new Set([centerSlug,OA]);
+    edgeSet.forEach(e=>{connectedIds.add(e.source);connectedIds.add(e.target);});
+    [...nodeSet.keys()].forEach(id=>{
+      if(!connectedIds.has(id))nodeSet.delete(id);
+    });
+    /* tag nodes by their MOST SIGNIFICANT edge type for sizing */
+    const sigTypes=new Set(['data_partner','tech_integration','marketplace_listed','dsp_integration','activation_path','client_of']);
+    nodeSet.forEach(n=>{
+      if(n.isCenter||n.isOA)return;
+      const myEdges=edgeSet.filter(e=>e.source===n.id||e.target===n.id);
+      n.significant=myEdges.some(e=>sigTypes.has(e.type));
+    });
   }
 
   /* ── Find shortest path from centerSlug to OA ── */
@@ -940,7 +1035,7 @@ function renderRelGraph(){
     g.style.cursor=n.inDB?'pointer':'default';
     if(n.inDB)g.addEventListener('click',()=>openBySlug(n.id));
 
-    const r=n.isCenter?20:n.isOA?17:n.hop===2?9:13;
+    const r=n.isCenter?20:n.isOA?17:n.hop===2?9:n.significant!==false?14:11;
     const circle=document.createElementNS('http://www.w3.org/2000/svg','circle');
     circle.setAttribute('cx',n.x);circle.setAttribute('cy',n.y);circle.setAttribute('r',r);
 
@@ -968,7 +1063,7 @@ function renderRelGraph(){
       ini2.setAttribute('x',n.x);ini2.setAttribute('y',n.y+1);
       ini2.setAttribute('text-anchor','middle');ini2.setAttribute('dominant-baseline','central');
       ini2.setAttribute('font-family','IBM Plex Mono,monospace');
-      ini2.setAttribute('font-size',n.isCenter||n.isOA?'8':n.hop===2?'5':'7');
+      ini2.setAttribute('font-size',n.isCenter||n.isOA?'8':n.hop===2?'5':n.significant!==false?'7':'6');
       ini2.setAttribute('font-weight','600');
       ini2.setAttribute('fill',(n.isCenter||n.isOA)?'#fff':'var(--t2)');
       ini2.textContent=ini(n.name);
