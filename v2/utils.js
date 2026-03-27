@@ -1,6 +1,6 @@
 /* ═══ utils.js — pure utility functions ═══ */
 
-import { TAG_RULES, PAL } from './config.js';
+import { TAG_RULES, PAL, SB_KEY } from './config.js';
 
 export function classify(n){const s=(n||'').toLowerCase();if(s.includes('no outreach')||s.includes('no fit')||s.includes('no business')||s.includes('internal')||s.includes('closed')||s.includes('unwanted'))return'nogo';if(s.includes('poc client'))return'poc';if(s.includes('client'))return'client';if(s.includes('partner'))return'partner';if(s.includes('prospect')||s.includes('to check')||s.includes('to continue'))return'prospect';return'partner';}
 
@@ -15,3 +15,19 @@ export function tLabel(t){return{client:'Client',partner:'Partner',prospect:'Pro
 export function stars(n){if(!n)return'';return'★'.repeat(Math.min(n,5))+'☆'.repeat(Math.max(0,5-n));}
 export function esc(s){if(s===null||s===undefined)return'';if(typeof s!=='string')s=String(s);return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
 export function relTime(iso){if(!iso)return'—';const d=new Date(iso);const diff=Date.now()-d.getTime();const m=Math.floor(diff/60000);if(m<60)return m+'m ago';const h=Math.floor(m/60);if(h<24)return h+'h ago';const dy=Math.floor(h/24);if(dy<30)return dy+'d ago';return d.toLocaleDateString('en-GB',{day:'numeric',month:'short',year:'2-digit'});}
+
+/* ── authHdr — live JWT header for every Supabase REST call ─────
+   Single source of truth. Uses window._oaToken (JWT, set by
+   bootHub) and falls back to the anon key so reads always work
+   even before login completes. Import in every module — never
+   construct Supabase headers inline.
+   ─────────────────────────────────────────────────────────────── */
+export function authHdr(extra) {
+  const token = window._oaToken;
+  const base = {
+    apikey:        SB_KEY,
+    Authorization: `Bearer ${token || SB_KEY}`,
+    'Content-Type': 'application/json',
+  };
+  return extra ? { ...base, ...extra } : base;
+}

@@ -1,8 +1,8 @@
 /* ═══ hub.js — main hub logic ═══ */
 
-import { SB_URL, SB_KEY, HDR, TAG_RULES, MODEL_CREATIVE, MODEL_RESEARCH } from './config.js';
+import { SB_URL, TAG_RULES, MODEL_CREATIVE, MODEL_RESEARCH } from './config.js';
 import S from './state.js';
-import { classify, _slug, getCoTags, getAv, ini, tClass, tLabel, stars, esc, relTime } from './utils.js';
+import { classify, _slug, getCoTags, getAv, ini, tClass, tLabel, stars, esc, relTime, authHdr } from './utils.js';
 import { renderStats, fetchGoogleNews, saveIntelligence, anthropicFetch, researchFetch, refreshRelationsCache } from './api.js';
 
 /* ═══ Tag helpers ════════════════════════════════════════════ */
@@ -260,7 +260,7 @@ export function ctAction(action,ctSlug){
 }
 
 /* ═══ BG Generate Angle ══════════════════════════════════════ */
-export async function bgGenerateAngle(){const c=S.currentCompany;if(!c)return;const card=document.getElementById('ib-angle-card'),btn=document.getElementById('ib-angle-btn');if(card){card.className='ib-angle';card.innerHTML=`<div class="ib-angle-lbl"><span class="bg-running">✦ Generating…</span></div>`;}if(btn)btn.style.display='none';const tags=getCoTags(c).join(', ');const techArr2=(Array.isArray(c.tech_stack)?c.tech_stack:[]).slice(0,6).map(t=>typeof t==='string'?t:(t&&t.tool)?String(t.tool):'?').join(', ');try{const data=await anthropicFetch({model:MODEL_CREATIVE,max_tokens:350,system:'You are a senior B2B data partnership sales specialist at onAudience, a European first-party audience data company. Write a concise, specific outreach angle (3–5 sentences) for approaching this company. Focus on what onAudience data solves for their business model, timing signals, and clearest value hook. No bullet points. Flowing prose only.',messages:[{role:'user',content:`Company: ${c.name}\nType: ${c.type}\nCategory: ${c.category||'unknown'}\nNote: ${c.note||''}\nDescription: ${c.description||''}\nTech: ${techArr2}\nDSPs: ${JSON.stringify(c.dsps||[])}\nSignals: ${tags}`}]});const angle=(data.content||[]).filter(b=>b.type==='text').map(b=>b.text).join('').trim();if(!angle)throw new Error('empty');S.currentCompany.outreach_angle=angle;S.companies.forEach(co=>{if(co.name===c.name)co.outreach_angle=angle;});if(card){card.className='ib-angle';card.innerHTML=`<div class="ib-angle-lbl">Recommended positioning <span class="bg-done">✓ generated</span></div><div class="ib-angle-text">${angle}</div>`;}if(btn){btn.textContent='↺ Regen';btn.style.display='';}await fetch(`${SB_URL}/rest/v1/companies?name=eq.${encodeURIComponent(c.name)}`,{method:'PATCH',headers:{...HDR,'Prefer':'return=minimal'},body:JSON.stringify({outreach_angle:angle})}).catch(()=>{});}catch(e){if(card)card.innerHTML=`<div class="ib-angle-lbl"><span class="bg-err">Error — ${e.message}</span></div>`;if(btn){btn.textContent='↺ Retry';btn.style.display='';}}}
+export async function bgGenerateAngle(){const c=S.currentCompany;if(!c)return;const card=document.getElementById('ib-angle-card'),btn=document.getElementById('ib-angle-btn');if(card){card.className='ib-angle';card.innerHTML=`<div class="ib-angle-lbl"><span class="bg-running">✦ Generating…</span></div>`;}if(btn)btn.style.display='none';const tags=getCoTags(c).join(', ');const techArr2=(Array.isArray(c.tech_stack)?c.tech_stack:[]).slice(0,6).map(t=>typeof t==='string'?t:(t&&t.tool)?String(t.tool):'?').join(', ');try{const data=await anthropicFetch({model:MODEL_CREATIVE,max_tokens:350,system:'You are a senior B2B data partnership sales specialist at onAudience, a European first-party audience data company. Write a concise, specific outreach angle (3–5 sentences) for approaching this company. Focus on what onAudience data solves for their business model, timing signals, and clearest value hook. No bullet points. Flowing prose only.',messages:[{role:'user',content:`Company: ${c.name}\nType: ${c.type}\nCategory: ${c.category||'unknown'}\nNote: ${c.note||''}\nDescription: ${c.description||''}\nTech: ${techArr2}\nDSPs: ${JSON.stringify(c.dsps||[])}\nSignals: ${tags}`}]});const angle=(data.content||[]).filter(b=>b.type==='text').map(b=>b.text).join('').trim();if(!angle)throw new Error('empty');S.currentCompany.outreach_angle=angle;S.companies.forEach(co=>{if(co.name===c.name)co.outreach_angle=angle;});if(card){card.className='ib-angle';card.innerHTML=`<div class="ib-angle-lbl">Recommended positioning <span class="bg-done">✓ generated</span></div><div class="ib-angle-text">${angle}</div>`;}if(btn){btn.textContent='↺ Regen';btn.style.display='';}await fetch(`${SB_URL}/rest/v1/companies?name=eq.${encodeURIComponent(c.name)}`,{method:'PATCH',headers:authHdr({'Prefer':'return=minimal'}),body:JSON.stringify({outreach_angle:angle})}).catch(()=>{});}catch(e){if(card)card.innerHTML=`<div class="ib-angle-lbl"><span class="bg-err">Error — ${e.message}</span></div>`;if(btn){btn.textContent='↺ Retry';btn.style.display='';}}}
 
 /* ═══ BG Find DMs (Opus + web_search — zero hallucination) ═══ */
 const FIND_DMS_SYSTEM=`You are a B2B sales researcher finding REAL decision makers and outreach signals for data partnership outreach.
@@ -324,7 +324,7 @@ export async function bgFindDMs(){
     if(signals.length){
       const expiry={buying_signal:60,org_change:90,tech_change:180,event:30,competitive_intel:120,timing_signal:60};
       const rows=signals.map(s=>({company_id:slug,signal_type:s.signal_type||'timing_signal',title:(s.title||'').slice(0,200),detail:s.detail||'',source_url:s.source_url||'',source:'web_search',confidence:s.confidence||'probable',relevance:Math.min(5,Math.max(1,s.relevance||3))}));
-      for(const r of rows){const days=expiry[r.signal_type]||60;fetch(`${SB_URL}/rest/v1/outreach_signals`,{method:'POST',headers:{...HDR,'Prefer':'resolution=merge-duplicates,return=minimal'},body:JSON.stringify({...r,expires_at:new Date(Date.now()+days*86400000).toISOString()})}).catch(()=>{});}
+      for(const r of rows){const days=expiry[r.signal_type]||60;fetch(`${SB_URL}/rest/v1/outreach_signals`,{method:'POST',headers:authHdr({'Prefer':'resolution=merge-duplicates,return=minimal'}),body:JSON.stringify({...r,expires_at:new Date(Date.now()+days*86400000).toISOString()})}).catch(()=>{});}
       clog('db',`Stored <b>${rows.length}</b> outreach signals for ${esc(c.name)}`);
     }
     clog('ai',`✓ Found <b>${dms.length}</b> contacts + <b>${signals.length}</b> signals at ${esc(c.name)} (${dms.filter(d=>d.confidence==='verified').length} verified)`);
@@ -484,7 +484,7 @@ RULES: Only extract EXPLICIT mentions. partnerships/integrations→bidirectional
           const stubId=_slug(otherName);
           await fetch(`${SB_URL}/rest/v1/companies`,{
             method:'POST',
-            headers:{...HDR,'Prefer':'resolution=merge-duplicates,return=minimal'},
+            headers:authHdr({'Prefer':'resolution=merge-duplicates,return=minimal'}),
             body:JSON.stringify({id:stubId,name:otherName,type:'prospect',note:'auto-created by intel extraction'})
           }).catch(()=>{});
           resolvedId=stubId;
@@ -505,7 +505,7 @@ RULES: Only extract EXPLICIT mentions. partnerships/integrations→bidirectional
 
         const res=await fetch(`${SB_URL}/rest/v1/company_relations`,{
           method:'POST',
-          headers:{...HDR,'Prefer':'resolution=merge-duplicates,return=minimal'},
+          headers:authHdr({'Prefer':'resolution=merge-duplicates,return=minimal'}),
           body:JSON.stringify({from_company:fromSlug,to_company:toSlug,relation_type:relType,direction,strength,source:'intelligence_extraction',notes:(rel.evidence||'').slice(0,300)||null})
         }).catch(()=>null);
 
@@ -534,7 +534,7 @@ RULES: Only extract EXPLICIT mentions. partnerships/integrations→bidirectional
       if(newProds.length){
         const merged=[...existingProds,...newProds];
         const payload={products:{products:merged,inferred:false,extracted_from:'intelligence',extracted_at:new Date().toISOString().slice(0,10),positioning:coRow?.products?.positioning||[],integrations_advertised:coRow?.products?.integrations_advertised||[],pricing_model:coRow?.products?.pricing_model||'contact_us'}};
-        await fetch(`${SB_URL}/rest/v1/companies?id=eq.${slug}`,{method:'PATCH',headers:{...HDR,'Prefer':'return=minimal'},body:JSON.stringify(payload)}).catch(()=>{});
+        await fetch(`${SB_URL}/rest/v1/companies?id=eq.${slug}`,{method:'PATCH',headers:authHdr({'Prefer':'return=minimal'}),body:JSON.stringify(payload)}).catch(()=>{});
         if(coRow)coRow.products=payload.products;
         clog('db',`📦 Products: ${newProds.map(p=>esc(p.name)).join(', ')} → ${esc(companyName)}`);
       }
@@ -559,7 +559,7 @@ export async function bgRefreshIntel(){
   if(btn)btn.textContent='↻ Loading…';
   const slug=_slug(c.name);
   const[storedRes,liveRes]=await Promise.allSettled([
-    fetch(`${SB_URL}/rest/v1/intelligence?company_id=eq.${slug}&type=eq.press_links`,{headers:{apikey:SB_KEY,Authorization:`Bearer ${SB_KEY}`}}).then(r=>r.json()),
+    fetch(`${SB_URL}/rest/v1/intelligence?company_id=eq.${slug}&type=eq.press_links`,{headers:authHdr()}).then(r=>r.json()),
     fetchGoogleNews(c.name)
   ]);
   const stored=storedRes.status==='fulfilled'&&Array.isArray(storedRes.value)?storedRes.value:[];
@@ -578,7 +578,7 @@ export async function bgRefreshIntel(){
 export async function loadIntelligence(slug,name){
   const body=document.getElementById('ib-intel-body');if(!body)return;
   const[storedRes,liveRes]=await Promise.allSettled([
-    fetch(`${SB_URL}/rest/v1/intelligence?company_id=eq.${slug}&type=eq.press_links`,{headers:{apikey:SB_KEY,Authorization:`Bearer ${SB_KEY}`}}).then(r=>r.json()),
+    fetch(`${SB_URL}/rest/v1/intelligence?company_id=eq.${slug}&type=eq.press_links`,{headers:authHdr()}).then(r=>r.json()),
     fetchGoogleNews(name)
   ]);
   const stored=storedRes.status==='fulfilled'&&Array.isArray(storedRes.value)?storedRes.value:[];

@@ -4,6 +4,7 @@
    ════════════════════════════════════════════════════ */
 
 import { SB_URL, SB_KEY } from './config.js';
+import { authHdr } from './utils.js';
 
 /* ── JS mutex — replaces navigator.locks to avoid the
    "lock:oaHubSession was released because another request stole it"
@@ -76,7 +77,7 @@ export async function getUserProfile(userId) {
   if (!token) return null;
   const res = await fetch(
     `${SB_URL}/rest/v1/user_profiles?id=eq.${userId}&select=*`,
-    { headers: { apikey: SB_KEY, Authorization: `Bearer ${token}` } }
+    { headers: authHdr() }
   );
   if (!res.ok) return null;
   const rows = await res.json();
@@ -94,9 +95,7 @@ export async function logActivity({ action, entity_type, entity_id, entity_name,
     await fetch(`${SB_URL}/rest/v1/activity_log`, {
       method: 'POST',
       headers: {
-        apikey: SB_KEY,
-        Authorization: `Bearer ${token}`,
-        'Content-Type': 'application/json',
+        ...authHdr(),
         Prefer: 'return=minimal',
       },
       body: JSON.stringify({

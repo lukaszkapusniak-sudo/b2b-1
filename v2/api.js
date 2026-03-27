@@ -1,20 +1,10 @@
 /* ═══ api.js — Supabase, status, stats, Google News, Anthropic ═══ */
 
-import { SB_URL, SB_KEY, HDR, MODEL_RESEARCH } from './config.js';
+import { SB_URL, MODEL_RESEARCH } from './config.js';
 import S from './state.js';
-import { classify, _slug } from './utils.js';
+import { classify, _slug, authHdr } from './utils.js';
 
-/* ── Auth header helper ─────────────────────────────────────────
-   Reads window._oaToken (set by app.js bootHub) to inject the JWT
-   into Supabase REST calls. Falls back to anon key if not available.
-   No async needed — avoids the fetch re-entry deadlock entirely.
-   ─────────────────────────────────────────────────────────────── */
-function authHdr() {
-  const token = window._oaToken;
-  return token
-    ? { apikey: SB_KEY, Authorization: `Bearer ${token}`, 'Content-Type': 'application/json' }
-    : { ...HDR };
-}
+
 
 /* ── clog — console logger proxy ─────────────────────────────
    clog lives in hub.js but other modules (audiences.js, prospect.js)
@@ -29,25 +19,85 @@ export function clog(type, msg){
   }
 }
 
-/* ── Anthropic API key management ─────────────────────────── */
+/* ── Anthropic API key management ─────────────────────────────
+   Key stored in localStorage under 'oaAnthropicKey'.
+   UI: clicking the 🔑 nav button toggles an inline panel —
+   no browser prompt(), no page disruption.
+   ─────────────────────────────────────────────────────────── */
 export function getApiKey(){ return localStorage.getItem('oaAnthropicKey')||''; }
 export function setApiKey(k){ if(k)localStorage.setItem('oaAnthropicKey',k); else localStorage.removeItem('oaAnthropicKey'); }
 export function hasApiKey(){ return !!getApiKey(); }
 
-export function promptApiKey(){
-  const current=getApiKey();
-  const key=prompt('Enter your Anthropic API key (sk-ant-…).\nStored in localStorage only.',current?'sk-ant-•••••••'+current.slice(-6):'');
-  if(key===null)return false;
-  if(key.startsWith('sk-ant-')){setApiKey(key);updateKeyBtn();return true;}
-  if(key===''){setApiKey('');updateKeyBtn();return false;}
-  alert('Key should start with sk-ant-');return false;
-}
-
 export function updateKeyBtn(){
   const btn=document.getElementById('apiKeyBtn');
   if(!btn)return;
-  if(hasApiKey()){btn.textContent='🔑';btn.className='btn sm';btn.style.color='var(--cc)';btn.title='API key set — click to change';}
-  else{btn.textContent='🔑';btn.className='btn sm';btn.style.color='var(--prc)';btn.title='Set Anthropic API key';}
+  const has=hasApiKey();
+  btn.style.color=has?'var(--cc)':'var(--prc)';
+  btn.title=has?'Anthropic key set — click to change':'Set Anthropic API key';
+}
+
+export function promptApiKey(){
+  // Open the inline panel instead of browser prompt
+  toggleKeyPanel(true);
+  return false; // caller should await panel, not prompt
+}
+
+export function toggleKeyPanel(forceOpen){
+  let panel=document.getElementById('keyPanel');
+  if(!panel){
+    panel=document.createElement('div');
+    panel.id='keyPanel';
+    panel.innerHTML=`
+<div id="keyPanelInner">
+  <div class="kp-head">
+    <span class="kp-title">🔑 Anthropic API Key</span>
+    <button class="btn sm" onclick="toggleKeyPanel(false)" style="margin-left:auto">✕</button>
+  </div>
+  <div class="kp-body">
+    <div class="kp-desc">Used for AI features (Find DMs, Gen Angle, AI filter). Stored in your browser only — never sent to any server except Anthropic.</div>
+    <div class="kp-row">
+      <input id="keyPanelInp" class="kp-inp" type="password" placeholder="sk-ant-api03-…" autocomplete="off" spellcheck="false"/>
+      <button class="btn sm p" onclick="saveKeyPanel()">Save</button>
+      <button class="btn sm" onclick="clearKeyPanel()" title="Remove key" style="color:var(--prc)">✕</button>
+    </div>
+    <div id="keyPanelStatus" class="kp-status"></div>
+  </div>
+</div>`;
+    document.body.appendChild(panel);
+    panel.addEventListener('click', e => { if(e.target===panel) toggleKeyPanel(false); });
+    document.getElementById('keyPanelInp').addEventListener('keydown', e => {
+      if(e.key==='Enter') saveKeyPanel();
+      if(e.key==='Escape') toggleKeyPanel(false);
+    });
+  }
+  const inp=document.getElementById('keyPanelInp');
+  const current=getApiKey();
+  if(current) inp.placeholder='sk-ant-•••••••'+current.slice(-6);
+  inp.value='';
+  document.getElementById('keyPanelStatus').textContent='';
+  const open=forceOpen===true||(forceOpen===undefined&&panel.style.display==='none');
+  panel.style.display=open?'flex':'none';
+  if(open) setTimeout(()=>inp.focus(),60);
+}
+
+export function saveKeyPanel(){
+  const v=(document.getElementById('keyPanelInp')?.value||'').trim();
+  const st=document.getElementById('keyPanelStatus');
+  if(!v){if(st)st.textContent='Enter a key first.';return;}
+  if(!v.startsWith('sk-ant-')){if(st){st.textContent='Key should start with sk-ant-';st.style.color='var(--prc)';}return;}
+  setApiKey(v);
+  updateKeyBtn();
+  if(st){st.textContent='✓ Key saved';st.style.color='var(--cc)';}
+  setTimeout(()=>toggleKeyPanel(false),800);
+}
+
+export function clearKeyPanel(){
+  setApiKey('');
+  updateKeyBtn();
+  const inp=document.getElementById('keyPanelInp');
+  if(inp){inp.value='';inp.placeholder='sk-ant-api03-…';}
+  const st=document.getElementById('keyPanelStatus');
+  if(st){st.textContent='Key removed';st.style.color='var(--t3)';}
 }
 
 /* ── Anthropic fetch helper (retries on 429/529) ──────────── */
@@ -147,11 +197,11 @@ export async function cacheSet(companyId, source, data, ttlHours = 168){
     /* Delete existing entry for same company+source first (clean upsert) */
     await fetch(
       `${SB_URL}/rest/v1/enrich_cache?company_id=eq.${encodeURIComponent(companyId)}&source=eq.${encodeURIComponent(source)}`,
-      { method: 'DELETE', headers: { apikey: SB_KEY, Authorization: `Bearer ${SB_KEY}` } }
+      { method: 'DELETE', headers: authHdr() }
     );
     const res = await fetch(`${SB_URL}/rest/v1/enrich_cache`, {
       method: 'POST',
-      headers: { ...HDR, 'Prefer': 'resolution=merge-duplicates,return=minimal' },
+      headers: authHdr({'Prefer':'resolution=merge-duplicates,return=minimal'}),
       body: JSON.stringify({ company_id: companyId, source, data, ttl_hours: ttlHours, fetched_at: new Date().toISOString() }),
     });
     if (!res.ok) {
@@ -213,10 +263,9 @@ export function setStatus(live){const el=document.getElementById('dbStatus');if(
 /* ── Load from Supabase (companies + contacts + relations in parallel) ── */
 export async function loadFromSupabase(renderStats,renderList,renderTagPanel){
   const ctrl=new AbortController(),timer=setTimeout(()=>ctrl.abort(),12000);
-  const hdrRange={...HDR,'Range':'0-4999','Prefer':'count=exact'};
+  /* hdrRange built via authHdr() — see hdrRangeLive below */
   try{
-    const liveHdr = authHdr();
-    const hdrRangeLive = {...liveHdr,'Range':'0-4999','Prefer':'count=exact'};
+    const hdrRangeLive = authHdr({'Range':'0-4999','Prefer':'count=exact'});
     const[cr,ct,rl]=await Promise.all([
       fetch(`${SB_URL}/rest/v1/companies?select=*&order=updated_at.desc.nullslast`,{headers:hdrRangeLive,signal:ctrl.signal}),
       fetch(`${SB_URL}/rest/v1/contacts?select=*&order=full_name.asc`,{headers:hdrRangeLive,signal:ctrl.signal}),
@@ -250,8 +299,8 @@ export async function refreshRelationsCache(){
 }
 
 /* ── Save ─────────────────────────────────────────────────── */
-export async function saveCompany(r){return fetch(`${SB_URL}/rest/v1/companies`,{method:'POST',headers:{...HDR,'Prefer':'resolution=merge-duplicates,return=minimal'},body:JSON.stringify(r)});}
-export async function saveContact(r){return fetch(`${SB_URL}/rest/v1/contacts`,{method:'POST',headers:{...HDR,'Prefer':'resolution=merge-duplicates,return=minimal'},body:JSON.stringify(r)});}
+export async function saveCompany(r){return fetch(`${SB_URL}/rest/v1/companies`,{method:'POST',headers:authHdr({'Prefer':'resolution=merge-duplicates,return=minimal'}),body:JSON.stringify(r)});}
+export async function saveContact(r){return fetch(`${SB_URL}/rest/v1/contacts`,{method:'POST',headers:authHdr({'Prefer':'resolution=merge-duplicates,return=minimal'}),body:JSON.stringify(r)});}
 
 /* ── Stats ────────────────────────────────────────────────── */
 export function renderStats(){
@@ -293,14 +342,14 @@ export async function fetchGoogleNews(name){
 export async function saveIntelligence(slug,items){
   if(!items.length)return;
   try{
-    const ex=await fetch(`${SB_URL}/rest/v1/intelligence?company_id=eq.${slug}&type=eq.press_links`,{headers:{apikey:SB_KEY,Authorization:`Bearer ${SB_KEY}`}}).then(r=>r.json());
+    const ex=await fetch(`${SB_URL}/rest/v1/intelligence?company_id=eq.${slug}&type=eq.press_links`,{headers:authHdr()}).then(r=>r.json());
     const existing=Array.isArray(ex)&&ex[0]?.content||[];
     const seen=new Set(existing.map(l=>l.url));
     const merged=[...existing,...items.filter(i=>!seen.has(i.url))];
     if(ex&&ex[0]){
-      await fetch(`${SB_URL}/rest/v1/intelligence?company_id=eq.${slug}&type=eq.press_links`,{method:'PATCH',headers:{...HDR,'Prefer':'return=minimal'},body:JSON.stringify({content:merged})});
+      await fetch(`${SB_URL}/rest/v1/intelligence?company_id=eq.${slug}&type=eq.press_links`,{method:'PATCH',headers:authHdr({'Prefer':'return=minimal'}),body:JSON.stringify({content:merged})});
     }else{
-      await fetch(`${SB_URL}/rest/v1/intelligence`,{method:'POST',headers:{...HDR,'Prefer':'resolution=merge-duplicates,return=minimal'},body:JSON.stringify({company_id:slug,type:'press_links',content:merged})});
+      await fetch(`${SB_URL}/rest/v1/intelligence`,{method:'POST',headers:authHdr({'Prefer':'resolution=merge-duplicates,return=minimal'}),body:JSON.stringify({company_id:slug,type:'press_links',content:merged})});
     }
   }catch(e){console.warn('Intel save',e);}
 }

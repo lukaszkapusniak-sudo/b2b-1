@@ -290,3 +290,15 @@ textarea.mc-tf{width:100%;padding:8px 10px;border:1px solid var(--rule);border-r
 .aud-preview-row{display:flex;align-items:center;gap:7px;padding:3px 0;border-bottom:1px solid var(--rule3);font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--t1)}
 .aud-preview-row:last-of-type{border-bottom:none}
 .aud-preview-more{font-family:'IBM Plex Mono',monospace;font-size:8px;color:var(--t3);padding-top:4px;letter-spacing:.06em}
+
+/* ── Key panel ──────────────────────────────────────────────── */
+#keyPanel{display:none;position:fixed;inset:0;z-index:99997;background:rgba(0,0,0,.45);align-items:flex-start;justify-content:flex-end;padding:52px 14px 0}
+#keyPanelInner{background:var(--surf);border:1px solid var(--rule);border-radius:4px;width:340px;box-shadow:var(--sh);overflow:hidden}
+.kp-head{display:flex;align-items:center;padding:10px 12px 10px 14px;border-bottom:1px solid var(--rule);gap:6px}
+.kp-title{font-family:'IBM Plex Mono',monospace;font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:.07em;color:var(--t1)}
+.kp-body{padding:14px}
+.kp-desc{font-family:'IBM Plex Sans',sans-serif;font-size:10px;color:var(--t3);line-height:1.5;margin-bottom:10px}
+.kp-row{display:flex;gap:5px;align-items:center}
+.kp-inp{flex:1;height:28px;padding:0 8px;border:1px solid var(--rule);border-radius:2px;font-family:'IBM Plex Mono',monospace;font-size:10px;background:var(--surf2);color:var(--t1);outline:none;min-width:0}
+.kp-inp:focus{border-color:var(--g)}
+.kp-status{font-family:'IBM Plex Mono',monospace;font-size:9px;margin-top:7px;min-height:14px;color:var(--t3)}

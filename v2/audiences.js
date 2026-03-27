@@ -5,7 +5,8 @@
    Lemlist export: CSV today, MCP connector stub ready.
    ════════════════════════════════════════════════════════ */
 
-import { SB_URL, SB_KEY, HDR } from './config.js';
+import { SB_URL } from './config.js';
+import { authHdr } from './utils.js';
 import S from './state.js';
 import { classify, _slug, getCoTags, getAv, ini, tClass, tLabel, esc } from './utils.js';
 import { anthropicFetch } from './api.js';
@@ -16,7 +17,7 @@ import { clog } from './hub.js';
 async function sbLoadAudiences() {
   try {
     const res = await fetch(`${SB_URL}/rest/v1/audiences?order=updated_at.desc`, {
-      headers: { apikey: SB_KEY, Authorization: 'Bearer ' + SB_KEY }
+      headers: authHdr()
     });
     if (!res.ok) throw new Error(await res.text());
     return await res.json();
@@ -30,7 +31,7 @@ async function sbSaveAudience(aud) {
   const body = { ...aud, updated_at: new Date().toISOString() };
   const res = await fetch(`${SB_URL}/rest/v1/audiences`, {
     method: 'POST',
-    headers: { ...HDR, Prefer: 'resolution=merge-duplicates,return=representation' },
+    headers: authHdr({'Prefer':'resolution=merge-duplicates,return=representation'}),
     body: JSON.stringify(body)
   });
   if (!res.ok) throw new Error(await res.text());
@@ -40,7 +41,7 @@ async function sbSaveAudience(aud) {
 async function sbDeleteAudience(id) {
   const res = await fetch(`${SB_URL}/rest/v1/audiences?id=eq.${encodeURIComponent(id)}`, {
     method: 'DELETE',
-    headers: { apikey: SB_KEY, Authorization: 'Bearer ' + SB_KEY }
+    headers: authHdr()
   });
   if (!res.ok) throw new Error(await res.text());
 }
