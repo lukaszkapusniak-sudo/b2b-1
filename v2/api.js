@@ -4,6 +4,18 @@ import { SB_URL, SB_KEY, HDR, MODEL_RESEARCH } from './config.js';
 import S from './state.js';
 import { classify, _slug } from './utils.js';
 
+/* ── Auth header helper ─────────────────────────────────────────
+   Reads window._oaToken (set by app.js bootHub) to inject the JWT
+   into Supabase REST calls. Falls back to anon key if not available.
+   No async needed — avoids the fetch re-entry deadlock entirely.
+   ─────────────────────────────────────────────────────────────── */
+function authHdr() {
+  const token = window._oaToken;
+  return token
+    ? { apikey: SB_KEY, Authorization: `Bearer ${token}`, 'Content-Type': 'application/json' }
+    : { ...HDR };
+}
+
 /* ── clog — console logger proxy ─────────────────────────────
    clog lives in hub.js but other modules (audiences.js, prospect.js)
    import it from here. We proxy through window.clog which hub.js
@@ -103,7 +115,7 @@ export async function cacheGet(companyId, source){
       + `?company_id=eq.${encodeURIComponent(companyId)}`
       + `&source=eq.${encodeURIComponent(source)}`
       + `&order=fetched_at.desc&limit=1`;
-    const res = await fetch(url, { headers: { apikey: SB_KEY, Authorization: `Bearer ${SB_KEY}` } });
+    const res = await fetch(url, { headers: authHdr() });
     if (!res.ok) return null;
     const rows = await res.json();
     if (!rows.length) return null;
@@ -165,7 +177,7 @@ export async function cacheInvalidate(companyId, source = null){
   try {
     let url = `${SB_URL}/rest/v1/enrich_cache?company_id=eq.${encodeURIComponent(companyId)}`;
     if (source) url += `&source=eq.${encodeURIComponent(source)}`;
-    await fetch(url, { method: 'DELETE', headers: { apikey: SB_KEY, Authorization: `Bearer ${SB_KEY}` } });
+    await fetch(url, { method: 'DELETE', headers: authHdr() });
     if (window.clog) window.clog('db', `Cache INVALIDATED — ${companyId}${source ? ':'+source : ' (all)'}`);
   } catch(e) {
     console.warn('cacheInvalidate error', e);
@@ -203,10 +215,12 @@ export async function loadFromSupabase(renderStats,renderList,renderTagPanel){
   const ctrl=new AbortController(),timer=setTimeout(()=>ctrl.abort(),12000);
   const hdrRange={...HDR,'Range':'0-4999','Prefer':'count=exact'};
   try{
+    const liveHdr = authHdr();
+    const hdrRangeLive = {...liveHdr,'Range':'0-4999','Prefer':'count=exact'};
     const[cr,ct,rl]=await Promise.all([
-      fetch(`${SB_URL}/rest/v1/companies?select=*&order=updated_at.desc.nullslast`,{headers:hdrRange,signal:ctrl.signal}),
-      fetch(`${SB_URL}/rest/v1/contacts?select=*&order=full_name.asc`,{headers:hdrRange,signal:ctrl.signal}),
-      fetch(`${SB_URL}/rest/v1/company_relations?select=*`,{headers:HDR,signal:ctrl.signal}),
+      fetch(`${SB_URL}/rest/v1/companies?select=*&order=updated_at.desc.nullslast`,{headers:hdrRangeLive,signal:ctrl.signal}),
+      fetch(`${SB_URL}/rest/v1/contacts?select=*&order=full_name.asc`,{headers:hdrRangeLive,signal:ctrl.signal}),
+      fetch(`${SB_URL}/rest/v1/company_relations?select=*`,{headers:liveHdr,signal:ctrl.signal}),
     ]);
     clearTimeout(timer);
     if(!cr.ok)throw new Error(cr.status);
@@ -228,7 +242,7 @@ export async function loadFromSupabase(renderStats,renderList,renderTagPanel){
 /* ── Refresh relations cache only ─────────────────────────── */
 export async function refreshRelationsCache(){
   try{
-    const r=await fetch(`${SB_URL}/rest/v1/company_relations?select=*`,{headers:{apikey:SB_KEY,Authorization:`Bearer ${SB_KEY}`}});
+    const r=await fetch(`${SB_URL}/rest/v1/company_relations?select=*`,{headers:authHdr()});
     const data=await r.json();
     if(Array.isArray(data)){S.allRelations=data;if(window.clog)window.clog('db',`Relations refreshed: <b>${data.length}</b> rows`);}
     return data;

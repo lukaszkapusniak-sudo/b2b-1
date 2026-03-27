@@ -21,22 +21,12 @@ function applyTheme(t){ document.documentElement.setAttribute('data-theme',t); l
 function toggleTheme(){ applyTheme(document.documentElement.getAttribute('data-theme')==='dark'?'light':'dark'); }
 applyTheme(localStorage.getItem('oaTheme')||'dark');
 
-/* ── Auth token injection ───────────────────────────────────────
-   Intercept all Supabase REST fetches and inject the live session
-   JWT instead of the static anon key. Anon key stays in headers as
-   apikey (required by PostgREST), but Authorization carries the JWT
-   so RLS sees the authenticated user.
+/* ── Auth token store ───────────────────────────────────────────
+   api.js reads window._oaToken directly on each request — a simple
+   shared variable avoids the ES-module fetch-interception deadlock.
+   bootHub() primes it from the session; auth.js refreshes it.
    ─────────────────────────────────────────────────────────────── */
-const _origFetch = window.fetch.bind(window);
-window.fetch = async function(url, opts={}) {
-  if (typeof url==='string' && url.includes('nyzkkqqjnkctcmxoirdj.supabase.co')) {
-    const token = await getAuthToken();
-    if (token) {
-      opts = { ...opts, headers: { ...(opts.headers||{}), Authorization: `Bearer ${token}` } };
-    }
-  }
-  return _origFetch(url, opts);
-};
+window._oaToken = null;
 
 /* ── Audit trail helpers ────────────────────────────────────────
    Thin wrappers that add context then call logActivity().
@@ -234,6 +224,10 @@ let _hubBooted = false;
 async function bootHub(session) {
   if (_hubBooted) return;
   _hubBooted = true;
+  /* Prime the shared token store from the session we already hold */
+  if (session?.access_token) {
+    window._oaToken = session.access_token;
+  }
   hideLoginScreen();
   updateKeyBtn();
   const profile = await getUserProfile(session.user.id).catch(() => null);
@@ -259,6 +253,7 @@ document.addEventListener('DOMContentLoaded', async () => {
       await bootHub(session);
     } else if (event === 'SIGNED_OUT') {
       _hubBooted = false;
+      window._oaToken = null;
       S.currentUserProfile = null;
       renderLoginScreen();
     }
