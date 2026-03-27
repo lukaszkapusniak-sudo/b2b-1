@@ -9,10 +9,10 @@ import { renderAudiencesPanel, openAudienceModal, audCloseModal, audNew, audEdit
 import {
   getSession, getAuthToken, getCurrentUser,
   signOut, onAuthStateChange,
-  getUserProfile, getAllProfiles,
+  getUserProfile,
   logActivity,
   renderLoginScreen, hideLoginScreen,
-  doSendOTP, doVerifyOTP, doBackToEmail,
+  doSignIn,
   renderUserBadge,
 } from './auth.js';
 
@@ -129,9 +129,7 @@ Object.assign(window, {
   toggleTheme,
 
   /* auth */
-  oaSendOTP:    doSendOTP,
-  oaVerifyOTP:  doVerifyOTP,
-  oaBackToEmail: doBackToEmail,
+  oaSignIn: doSignIn,
   oaSignOut,
 
   /* audit (callable from hub.js, api.js, meeseeks etc.) */
