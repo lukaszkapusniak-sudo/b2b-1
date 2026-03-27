@@ -4,6 +4,19 @@ import { SB_URL, SB_KEY, HDR, MODEL_RESEARCH } from './config.js';
 import S from './state.js';
 import { classify, _slug } from './utils.js';
 
+/* ── clog — console logger proxy ─────────────────────────────
+   clog lives in hub.js but other modules (audiences.js, prospect.js)
+   import it from here. We proxy through window.clog which hub.js
+   sets up via app.js. Falls back to console.log if not yet available.
+   ─────────────────────────────────────────────────────────── */
+export function clog(type, msg){
+  if(typeof window.clog === 'function'){
+    window.clog(type, msg);
+  } else {
+    console.log(`[${type}]`, msg);
+  }
+}
+
 /* ── Anthropic API key management ─────────────────────────── */
 export function getApiKey(){ return localStorage.getItem('oaAnthropicKey')||''; }
 export function setApiKey(k){ if(k)localStorage.setItem('oaAnthropicKey',k); else localStorage.removeItem('oaAnthropicKey'); }
@@ -248,7 +261,7 @@ export async function fetchGoogleNews(name){
     if(!res.ok)throw new Error('proxy '+res.status);
     const xml=await res.text();
     const doc=new DOMParser().parseFromString(xml,'application/xml');
-    if(doc.querySelector('parsererror'))throw new Error('parse error');
+    if(doc.querySelector('parseerror'))throw new Error('parse error');
     return[...doc.querySelectorAll('item')].slice(0,10).map(item=>{
       const linkNode=item.querySelector('link');
       const url=linkNode?.nextSibling?.nodeValue?.trim()||item.querySelector('link')?.textContent?.trim()||'';
