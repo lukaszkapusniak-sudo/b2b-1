@@ -16,7 +16,7 @@
 <nav class="nav">
   <div class="nav-logo">oA</div>
   <span class="nav-title">Sales Intelligence Hub <span class="nav-sub">/ onAudience</span></span>
-  <span class="nav-status" id="dbStatus">&#9675; Loading&#8230;</span>
+  <span class="nav-status" id="dbStatus" onclick="refreshData()" title="Click to sync" style="cursor:pointer">&#9675; Loading&#8230;</span>
   <div class="nav-right">
     <span id="nav-user-badge" style="display:flex;align-items:center"></span>
     <button class="btn sm" onclick="promptApiKey()" id="keyBtn">&#128273;</button>

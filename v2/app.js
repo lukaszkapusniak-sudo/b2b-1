@@ -121,6 +121,48 @@ async function oaSignOut() {
   await signOut();
 }
 
+/* ── Manual DB sync ─────────────────────────────────────────────
+   Callable from the nav status badge (click) and auto-triggered
+   on tab refocus if data is >5 min stale.
+   ─────────────────────────────────────────────────────────────── */
+let _lastSync = 0;
+let _syncing  = false;
+
+async function refreshData(force = false) {
+  if (_syncing) return;
+  const el = document.getElementById('dbStatus');
+
+  // Throttle: skip if synced <60s ago and not forced
+  if (!force && Date.now() - _lastSync < 60_000) {
+    if (el) {
+      el.classList.add('synced');
+      setTimeout(() => el.classList.remove('synced'), 600);
+    }
+    return;
+  }
+
+  _syncing = true;
+  if (el) { el.classList.add('syncing'); el.title = 'Syncing…'; }
+
+  try {
+    await loadFromSupabase(renderStats, renderList, renderTagPanel);
+    _lastSync = Date.now();
+    clog('db', `↺ Synced — ${S.companies.length} companies · ${S.contacts.length} contacts`);
+  } catch(e) {
+    clog('db', `↺ Sync failed: ${e.message}`);
+  } finally {
+    _syncing = false;
+    if (el) { el.classList.remove('syncing'); el.title = 'Click to sync'; }
+  }
+}
+
+/* Auto-sync on tab refocus if data is >5 min stale */
+document.addEventListener('visibilitychange', () => {
+  if (document.visibilityState === 'visible' && Date.now() - _lastSync > 300_000) {
+    refreshData();
+  }
+});
+
 /* ── window exports ─────────────────────────────────────────── */
 Object.assign(window, {
   /* theme */
@@ -161,6 +203,9 @@ Object.assign(window, {
   closeModal, submitModal,
   openClaude, openProspectFinder,
 
+  /* sync */
+  refreshData,
+
   /* API key */
   promptApiKey,
 
@@ -182,30 +227,50 @@ Object.assign(window, {
 });
 
 /* ── Boot ───────────────────────────────────────────────────── */
+
+/* bootHub — idempotent, called from both INITIAL_SESSION and the
+   explicit getSession() check below. Guard prevents double-boot. */
+let _hubBooted = false;
+async function bootHub(session) {
+  if (_hubBooted) return;
+  _hubBooted = true;
+  hideLoginScreen();
+  updateKeyBtn();
+  const profile = await getUserProfile(session.user.id).catch(() => null);
+  if (profile) {
+    S.currentUserProfile = profile;
+    renderUserBadge(profile);
+    clog('info', `Signed in as <b>${profile.full_name || session.user.email}</b> · ${profile.active_role}`);
+  }
+  await loadFromSupabase(renderStats, renderList, renderTagPanel);
+  _lastSync = Date.now();
+}
+
 document.addEventListener('DOMContentLoaded', async () => {
 
-  // Auth state machine
+  /* 1. Subscribe to future auth changes (SIGNED_IN after login, SIGNED_OUT) */
   onAuthStateChange(async (event, session) => {
-    if ((event==='SIGNED_IN'||event==='INITIAL_SESSION') && session) {
-      hideLoginScreen();
-      // Load profile → nav badge
-      const profile = await getUserProfile(session.user.id).catch(()=>null);
-      if (profile) {
-        S.currentUserProfile = profile;
-        renderUserBadge(profile);
-        clog('info', `Signed in as <b>${profile.full_name||session.user.email}</b> · ${profile.active_role}`);
-      }
-      // Boot hub
-      updateKeyBtn();
-      await loadFromSupabase(renderStats, renderList, renderTagPanel);
-    } else if (event==='SIGNED_OUT') {
+    if (event === 'SIGNED_IN' && session) {
+      /* Fresh login — reset boot guard so hub re-initialises cleanly */
+      _hubBooted = false;
+      await bootHub(session);
+    } else if (event === 'INITIAL_SESSION' && session && !_hubBooted) {
+      /* Caught the initial session event — boot if not already done */
+      await bootHub(session);
+    } else if (event === 'SIGNED_OUT') {
+      _hubBooted = false;
       S.currentUserProfile = null;
       renderLoginScreen();
     }
   });
 
-  // Check for existing session
+  /* 2. Explicitly check for an existing session.
+        INITIAL_SESSION may have already fired before the callback above
+        was registered (race on page reload). This is the reliable fallback. */
   const session = await getSession();
-  if (!session) renderLoginScreen();
-  // If session exists, INITIAL_SESSION fires above ↑
+  if (session) {
+    await bootHub(session);   // no-op if INITIAL_SESSION already triggered it
+  } else {
+    renderLoginScreen();
+  }
 });
