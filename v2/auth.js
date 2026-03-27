@@ -5,6 +5,22 @@
 
 import { SB_URL, SB_KEY } from './config.js';
 
+/* ── JS mutex — replaces navigator.locks to avoid the
+   "lock:oaHubSession was released because another request stole it"
+   error, while still serializing concurrent auth calls correctly.
+   navigator.locks has a bug in Supabase JS v2 when multiple async
+   auth operations overlap in a single tab.
+   ────────────────────────────────────────────────────────────── */
+function makeMutex() {
+  let _queue = Promise.resolve();
+  return (_name, _timeout, fn) => {
+    const result = _queue.then(() => fn());
+    _queue = result.catch(() => {});
+    return result;
+  };
+}
+const _lock = makeMutex();
+
 /* ── Supabase JS client ─────────────────────────────── */
 let _sb = null;
 function sb() {
@@ -16,11 +32,7 @@ function sb() {
       storageKey:         'oaHubSession',
       autoRefreshToken:   true,
       detectSessionInUrl: false,
-      /* Bypass Web Locks (navigator.locks) — eliminates the
-         "lock:oaHubSession was released because another request stole it"
-         error that fires when multiple concurrent auth calls compete.
-         Safe here: hub runs in a single tab, single user session. */
-      lock: (name, acquireTimeout, fn) => fn(),
+      lock:               _lock,   // JS mutex — safe serialization without navigator.locks
     }
   });
   return _sb;

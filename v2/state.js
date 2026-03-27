@@ -21,6 +21,9 @@ const S = {
   _modalMode:     'research',
   mcAiContacts:   [],
 
+  /* ── TCF analyser ──────────────────────────────────── */
+  tcfSelected:    new Set(),   // slugs selected for comparison (max 4)
+
   /* ── audiences ─────────────────────────────────────── */
   audiences:            [],
   activeAudience:       null,
