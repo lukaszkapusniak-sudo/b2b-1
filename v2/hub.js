@@ -64,8 +64,9 @@ function boldKw(text){
 /* ═══ One-click enrich ═══════════════════════════════════════ */
 export async function quickEnrich(slug){
   const c=S.companies.find(x=>(x.id||_slug(x.name))===slug);if(!c)return;
-  clog('enrich',`Starting lookup for <b>${c.name}</b>…`);
-  openClaude(`Research ${c.name} — full contact report with decision makers, outreach angle, ICP fit, tech stack, and activation path for onAudience`);
+  clog('enrich',`Opening research panel for <b>${c.name}</b>…`);
+  openCompany(c);
+  setTimeout(promptResearch,60);
 }
 
 /* ═══ Completeness indicator ═════════════════════════════════ */
@@ -75,9 +76,12 @@ function completeness(c){
   return Math.round(filled/fields.length*100);
 }
 
-/* ═══ Tech name/cat helpers (module-level — used in openCompany) ══ */
+/* ═══ Tech name/cat helpers (module-level — used in openCompany) ══
+   NOTE: declared with var to avoid Temporal Dead Zone errors when
+   referenced inside openCompany before the const would be initialized.
+   ═══════════════════════════════════════════════════════════════════ */
 var techName=(t)=>typeof t==='string'?t:(t&&t.tool)?String(t.tool):(t&&t.name)?String(t.name):typeof t==='object'?JSON.stringify(t):'?';
-const techCat=(t)=>typeof t==='object'&&t?t.category||'':'';
+var techCat=(t)=>typeof t==='object'&&t?t.category||'':'';
 
 /* ═══ List Rendering ═════════════════════════════════════════ */
 export function renderList(){
@@ -238,8 +242,22 @@ ${sec('ib-rels-body','🔗','Relations','<div class="ib-loading">Loading…</div
 export function closePanel(){S.currentCompany=null;window.currentCompany=null;document.getElementById('coPanel').style.display='none';document.getElementById('emptyState').style.display='flex';renderList();}
 
 /* ═══ Actions ════════════════════════════════════════════════ */
-export function coAction(a){const c=S.currentCompany;if(!c)return;const n=c.name;if(a==='report')openClaude(`Full contact report for ${n} — decision makers, outreach angle, ICP fit`);if(a==='dms')openClaude(`Find Head of Data Partnerships or Programmatic at ${n} — LinkedIn, email, background`);if(a==='email')window.openComposer({company:n,note:c.note,status:c.type,icp:c.icp||null,description:c.description||'',angle:c.outreach_angle||'',category:c.category||'',region:c.region||''});if(a==='linkedin')window.open('https://linkedin.com/search/results/companies/?keywords='+encodeURIComponent(n),'_blank');if(a==='similar')openClaude(`Find companies similar to ${n} for onAudience data partnerships — top 10 by ICP fit`);if(a==='gmail')openClaude(`Check Gmail for previous contact history with ${n}`);if(a==='angle')bgGenerateAngle();if(a==='find-contacts')bgFindDMs();}
-export function ctAction(action,ctSlug){const ct=S.contacts.find(c=>c.id===ctSlug||(c.full_name&&_slug(c.full_name)===ctSlug));if(!ct)return;if(action==='email')window.openComposer({company:ct.company_name,contactName:ct.full_name,contactTitle:ct.title,linkedin:ct.linkedin_url});if(action==='research')openClaude(`Full research on ${ct.full_name}, ${ct.title||''} at ${ct.company_name||''} — background, LinkedIn activity, outreach hooks`);}
+export function coAction(a){
+  const c=S.currentCompany;if(!c)return;const n=c.name;
+  if(a==='report'){promptResearch();}
+  if(a==='dms')bgFindDMs();
+  if(a==='email')window.openComposer({company:n,note:c.note,status:c.type,icp:c.icp||null,description:c.description||'',angle:c.outreach_angle||'',category:c.category||'',region:c.region||''});
+  if(a==='linkedin')window.open('https://linkedin.com/search/results/companies/?keywords='+encodeURIComponent(n),'_blank');
+  if(a==='similar')promptSimilar();
+  if(a==='gmail'){const ib=document.getElementById('ib-intel-body');if(ib)ib.scrollIntoView({behavior:'smooth',block:'nearest'});bgRefreshIntel();}
+  if(a==='angle')bgGenerateAngle();
+  if(a==='find-contacts')bgFindDMs();
+}
+export function ctAction(action,ctSlug){
+  const ct=S.contacts.find(c=>c.id===ctSlug||(c.full_name&&_slug(c.full_name)===ctSlug));if(!ct)return;
+  if(action==='email')window.openComposer({company:ct.company_name,contactName:ct.full_name,contactTitle:ct.title,linkedin:ct.linkedin_url});
+  if(action==='research')openDrawer(ctSlug);
+}
 
 /* ═══ BG Generate Angle ══════════════════════════════════════ */
 export async function bgGenerateAngle(){const c=S.currentCompany;if(!c)return;const card=document.getElementById('ib-angle-card'),btn=document.getElementById('ib-angle-btn');if(card){card.className='ib-angle';card.innerHTML=`<div class="ib-angle-lbl"><span class="bg-running">✦ Generating…</span></div>`;}if(btn)btn.style.display='none';const tags=getCoTags(c).join(', ');const techArr2=(Array.isArray(c.tech_stack)?c.tech_stack:[]).slice(0,6).map(t=>typeof t==='string'?t:(t&&t.tool)?String(t.tool):'?').join(', ');try{const data=await anthropicFetch({model:MODEL_CREATIVE,max_tokens:350,system:'You are a senior B2B data partnership sales specialist at onAudience, a European first-party audience data company. Write a concise, specific outreach angle (3–5 sentences) for approaching this company. Focus on what onAudience data solves for their business model, timing signals, and clearest value hook. No bullet points. Flowing prose only.',messages:[{role:'user',content:`Company: ${c.name}\nType: ${c.type}\nCategory: ${c.category||'unknown'}\nNote: ${c.note||''}\nDescription: ${c.description||''}\nTech: ${techArr2}\nDSPs: ${JSON.stringify(c.dsps||[])}\nSignals: ${tags}`}]});const angle=(data.content||[]).filter(b=>b.type==='text').map(b=>b.text).join('').trim();if(!angle)throw new Error('empty');S.currentCompany.outreach_angle=angle;S.companies.forEach(co=>{if(co.name===c.name)co.outreach_angle=angle;});if(card){card.className='ib-angle';card.innerHTML=`<div class="ib-angle-lbl">Recommended positioning <span class="bg-done">✓ generated</span></div><div class="ib-angle-text">${angle}</div>`;}if(btn){btn.textContent='↺ Regen';btn.style.display='';}await fetch(`${SB_URL}/rest/v1/companies?name=eq.${encodeURIComponent(c.name)}`,{method:'PATCH',headers:{...HDR,'Prefer':'return=minimal'},body:JSON.stringify({outreach_angle:angle})}).catch(()=>{});}catch(e){if(card)card.innerHTML=`<div class="ib-angle-lbl"><span class="bg-err">Error — ${e.message}</span></div>`;if(btn){btn.textContent='↺ Retry';btn.style.display='';}}}
@@ -319,7 +337,7 @@ export async function bgFindDMs(){
         const a2=getAv(dm.full_name||''),n2=ini(dm.full_name||'');
         const confBadge=dm.confidence==='verified'?'<span style="font-family:\'IBM Plex Mono\',monospace;font-size:6px;color:var(--cc);border:1px solid var(--cr);background:var(--cb);border-radius:2px;padding:0 3px;margin-left:3px">VERIFIED</span>':'<span style="font-family:\'IBM Plex Mono\',monospace;font-size:6px;color:var(--prc);border:1px solid var(--prr);background:var(--prb);border-radius:2px;padding:0 3px;margin-left:3px">PROBABLE</span>';
         const srcLink=dm.source_url?`<a href="${dm.source_url}" target="_blank" style="font-family:'IBM Plex Mono',monospace;font-size:7px;color:var(--g);text-decoration:none;display:block;margin-top:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">source ↗</a>`:'';
-        return`<div class="ib-ct"><div class="ib-ct-top"><div class="ib-ct-av" style="background:${a2.bg};color:${a2.fg};border:1px solid ${a2.fg}33">${n2}</div><div><div class="ib-ct-name">${esc(dm.full_name)}${confBadge}</div><div class="ib-ct-title">${esc(dm.title)}</div></div></div><div style="font-size:10px;color:var(--t3);margin:3px 0 4px;line-height:1.4">${esc(dm.reason||'')}</div>${srcLink}<div class="ib-ct-actions"><button class="ib-ct-btn" onclick="openComposer({company:'${c.name.replace(/'/g,'&apos;')}',contactName:'${(dm.full_name||'').replace(/'/g,'&apos;')}',contactTitle:'${(dm.title||'').replace(/'/g,'&apos;')}',angle:'${(c.outreach_angle||'').replace(/'/g,'&apos;').slice(0,100)}',description:'${(c.description||'').replace(/'/g,'&apos;').slice(0,100)}'})">✉ Email</button>${dm.linkedin_url?`<a class="ib-ct-btn" href="${dm.linkedin_url}" target="_blank">LI ↗</a>`:`<a class="ib-ct-btn" href="https://www.linkedin.com/search/results/people/?keywords=${encodeURIComponent(dm.full_name+' '+c.name)}" target="_blank">LI Search ↗</a>`}<button class="ib-ct-btn" onclick="openClaude('Research ${esc(dm.full_name)} at ${esc(c.name)} — LinkedIn, background, outreach hooks')">Research ↗</button></div></div>`;
+        return`<div class="ib-ct"><div class="ib-ct-top"><div class="ib-ct-av" style="background:${a2.bg};color:${a2.fg};border:1px solid ${a2.fg}33">${n2}</div><div><div class="ib-ct-name">${esc(dm.full_name)}${confBadge}</div><div class="ib-ct-title">${esc(dm.title)}</div></div></div><div style="font-size:10px;color:var(--t3);margin:3px 0 4px;line-height:1.4">${esc(dm.reason||'')}</div>${srcLink}<div class="ib-ct-actions"><button class="ib-ct-btn" onclick="openComposer({company:'${c.name.replace(/'/g,'&apos;')}',contactName:'${(dm.full_name||'').replace(/'/g,'&apos;')}',contactTitle:'${(dm.title||'').replace(/'/g,'&apos;')}',angle:'${(c.outreach_angle||'').replace(/'/g,'&apos;').slice(0,100)}',description:'${(c.description||'').replace(/'/g,'&apos;').slice(0,100)}'})">✉ Email</button>${dm.linkedin_url?`<a class="ib-ct-btn" href="${dm.linkedin_url}" target="_blank">LI ↗</a>`:`<a class="ib-ct-btn" href="https://www.linkedin.com/search/results/people/?keywords=${encodeURIComponent(dm.full_name+' '+c.name)}" target="_blank">LI Search ↗</a>`}<button class="ib-ct-btn" onclick="aiQuick('${esc(dm.full_name)} ${esc(c.name)}')">Research ↗</button></div></div>`;
       }).join('')}</div>`:'<div style="font-size:11px;color:var(--t3)">No contacts verified via web search</div>';
     const sigIcons={buying_signal:'🎯',org_change:'👤',tech_change:'⚙️',event:'🎤',competitive_intel:'🏁',timing_signal:'⏱️'};
     const sigLabels={buying_signal:'Buying Signal',org_change:'Org Change',tech_change:'Tech Change',event:'Event',competitive_intel:'Competitive',timing_signal:'Timing'};
@@ -1143,21 +1161,69 @@ export function openBySlug(s){const c=S.companies.find(x=>_slug(x.name)===s);if(
 export function showCtxSlug(e,el){e.preventDefault();e.stopPropagation();showCtx(e,el.dataset.slug);}
 
 /* ═══ Context Menu ═══════════════════════════════════════════ */
-export function showCtx(e,slugOrName){e.preventDefault();e.stopPropagation();const co=S.companies.find(x=>_slug(x.name)===slugOrName)||S.companies.find(x=>x.name===slugOrName);const name=co?.name||slugOrName;const menu=document.getElementById('ctxMenu');const actions=[{icon:'🔍',text:'Full contact report',fn:()=>openClaude(`Research ${name} — full contact report`)},{icon:'👤',text:'Find decision makers',fn:()=>{openCompany(co);setTimeout(bgFindDMs,200);}},{icon:'✉',text:'Draft outreach email',fn:()=>window.openComposer({company:name,note:co?.note,status:co?.type,description:co?.description||'',angle:co?.outreach_angle||''})},{icon:'💬',text:'LinkedIn message',fn:()=>openClaude(`Draft LinkedIn message for ${name}`)},{icon:'🔗',text:'Find similar',fn:()=>openClaude(`Find companies similar to ${name}`)},{icon:'📧',text:'Email history',fn:()=>openClaude(`Check Gmail history with ${name}`)},];if(co?.type==='nogo')actions.push({icon:'⚠️',text:'Why no outreach?',fn:()=>openClaude(`Why is ${name} marked no-outreach?`)});if(co?.type==='prospect')actions.push({icon:'🚀',text:'Prioritize',fn:()=>openClaude(`Priority outreach plan for ${name}`)});menu.innerHTML=`<div class="ctx-label">${name}</div><div class="ctx-sep"></div>`+actions.map((a,i)=>`<div class="ctx-item" data-i="${i}"><span class="ctx-ico">${a.icon}</span>${a.text}</div>`).join('');menu.querySelectorAll('.ctx-item').forEach((el,i)=>{el.addEventListener('click',()=>{menu.style.display='none';actions[i].fn();});});const x=Math.min(e.clientX,window.innerWidth-230),y=Math.min(e.clientY,window.innerHeight-actions.length*34-20);menu.style.left=x+'px';menu.style.top=y+'px';menu.style.display='block';}
+export function showCtx(e,slugOrName){
+  e.preventDefault();e.stopPropagation();
+  const co=S.companies.find(x=>_slug(x.name)===slugOrName)||S.companies.find(x=>x.name===slugOrName);
+  const name=co?.name||slugOrName;
+  const menu=document.getElementById('ctxMenu');
+  const actions=[
+    {icon:'🔍',text:'Full contact report',fn:()=>{if(co)openCompany(co);promptResearch();}},
+    {icon:'👤',text:'Find decision makers',fn:()=>{openCompany(co);setTimeout(bgFindDMs,200);}},
+    {icon:'✉',text:'Draft outreach email',fn:()=>window.openComposer({company:name,note:co?.note,status:co?.type,description:co?.description||'',angle:co?.outreach_angle||''})},
+    {icon:'💬',text:'LinkedIn message',fn:()=>window.openComposer({company:name,note:co?.note,status:co?.type,description:co?.description||'',angle:co?.outreach_angle||''})},
+    {icon:'🔗',text:'Find similar',fn:()=>promptSimilar()},
+    {icon:'📧',text:'Email history',fn:()=>{if(co)openCompany(co);setTimeout(()=>{const ib=document.getElementById('ib-intel-body');if(ib)ib.scrollIntoView({behavior:'smooth',block:'nearest'});bgRefreshIntel();},100);}},
+  ];
+  if(co?.type==='nogo')actions.push({icon:'⚠️',text:'Why no outreach?',fn:()=>{aiQuick(`no outreach "${name}"`);document.getElementById('aiInp').scrollIntoView({behavior:'smooth',block:'nearest'});}});
+  if(co?.type==='prospect')actions.push({icon:'🚀',text:'Prioritize',fn:()=>{aiQuick(`priority ${name}`);document.getElementById('aiInp').scrollIntoView({behavior:'smooth',block:'nearest'});}});
+  menu.innerHTML=`<div class="ctx-label">${name}</div><div class="ctx-sep"></div>`+actions.map((a,i)=>`<div class="ctx-item" data-i="${i}"><span class="ctx-ico">${a.icon}</span>${a.text}</div>`).join('');
+  menu.querySelectorAll('.ctx-item').forEach((el,i)=>{el.addEventListener('click',()=>{menu.style.display='none';actions[i].fn();});});
+  const x=Math.min(e.clientX,window.innerWidth-230),y=Math.min(e.clientY,window.innerHeight-actions.length*34-20);
+  menu.style.left=x+'px';menu.style.top=y+'px';menu.style.display='block';
+}
 
 /* ═══ Contact Drawer ═════════════════════════════════════════ */
 export function openDrawer(ctId){const ct=S.contacts.find(c=>c.id===ctId||(c.full_name&&_slug(c.full_name)===ctId));if(!ct)return;S.currentContact=ct;const av=getAv(ct.full_name||''),n=ini(ct.full_name||'');const el=document.getElementById('drAv');el.textContent=n;el.style.background=av.bg;el.style.color=av.fg;document.getElementById('drName').textContent=ct.full_name||'—';document.getElementById('drSub').textContent=(ct.title||'')+(ct.company_name?' · '+ct.company_name:'');const flds=[[ct.email,'Email',`<a href="mailto:${ct.email}" style="color:var(--g);font-family:'IBM Plex Mono',monospace;font-size:9px">${ct.email}</a>`],[ct.linkedin_url,'LinkedIn',`<a href="${ct.linkedin_url}" target="_blank" style="color:var(--g);font-family:'IBM Plex Mono',monospace;font-size:9px">${ct.linkedin_url}</a>`],[ct.notes,'Notes',ct.notes]].filter(f=>f[0]);document.getElementById('drBody').innerHTML=flds.map(([,l,v])=>`<div class="dr-field"><label>${l}</label><p>${v}</p></div>`).join('');document.getElementById('ctDrawer').classList.add('open');document.getElementById('ctDrawerOverlay').classList.add('vis');}
 export function closeDrawer(){document.getElementById('ctDrawer').classList.remove('open');document.getElementById('ctDrawerOverlay').classList.remove('vis');S.currentContact=null;}
 export function drEmail(){if(S.currentContact)window.openComposer({company:S.currentContact.company_name,contactName:S.currentContact.full_name,contactTitle:S.currentContact.title,linkedin:S.currentContact.linkedin_url});}
 export function drLinkedIn(){if(S.currentContact?.linkedin_url)window.open(S.currentContact.linkedin_url,'_blank');}
-export function drGmail(){if(S.currentContact)openClaude(`Gmail history with ${S.currentContact.full_name} at ${S.currentContact.company_name||''}`);}
-export function drResearch(){if(S.currentContact)openClaude(`Full research on ${S.currentContact.full_name} at ${S.currentContact.company_name||''}`);}
+export function drGmail(){
+  if(!S.currentContact)return;
+  const co=S.companies.find(c=>(c.name||'').toLowerCase()===(S.currentContact.company_name||'').toLowerCase());
+  if(co){openCompany(co);}
+  closeDrawer();
+  setTimeout(()=>{
+    const ib=document.getElementById('ib-intel-body');
+    if(ib)ib.scrollIntoView({behavior:'smooth',block:'nearest'});
+    bgRefreshIntel();
+  },150);
+}
+export function drResearch(){
+  if(!S.currentContact)return;
+  aiQuick(`"${S.currentContact.full_name}" ${S.currentContact.company_name||''}`);
+  const aiInp=document.getElementById('aiInp');
+  if(aiInp)aiInp.scrollIntoView({behavior:'smooth',block:'nearest'});
+  closeDrawer();
+}
 
 /* ═══ Modals ═════════════════════════════════════════════════ */
 export function promptResearch(){S._modalMode='research';document.getElementById('modalTitle').textContent='Research a Company';document.getElementById('modalDesc').textContent='Enter company name to generate a full contact report.';document.getElementById('modalInput').value='';document.getElementById('overlay').classList.add('vis');setTimeout(()=>document.getElementById('modalInput').focus(),60);}
 export function promptSimilar(){S._modalMode='similar';document.getElementById('modalTitle').textContent='Find Similar Companies';document.getElementById('modalDesc').textContent='Enter a reference company to find lookalikes.';document.getElementById('modalInput').value='';document.getElementById('overlay').classList.add('vis');setTimeout(()=>document.getElementById('modalInput').focus(),60);}
 export function closeModal(){document.getElementById('overlay').classList.remove('vis');}
-export function submitModal(){const v=document.getElementById('modalInput').value.trim();if(!v)return;closeModal();if(S._modalMode==='similar')openClaude(`Find companies similar to ${v} for onAudience data partnerships`);else openClaude(`Research ${v} — full contact report with decision makers, outreach angle, and ICP fit score`);}
+export function submitModal(){
+  const v=document.getElementById('modalInput').value.trim();if(!v)return;closeModal();
+  if(S._modalMode==='similar'){
+    document.getElementById('aiInp').value=`similar to ${v}`;
+    runAI();
+  } else {
+    /* try to find existing company first and open it */
+    const found=S.companies.find(x=>(x.name||'').toLowerCase().includes(v.toLowerCase()));
+    if(found){openCompany(found);}
+    else{document.getElementById('aiInp').value=v;runAI();}
+  }
+}
+
+/** Legacy escape hatch — only for truly unroutable actions that have no hub-native equivalent. */
 export function openClaude(p){window.open('https://claude.ai/new?q='+encodeURIComponent(p),'_blank');}
 
 /* ═══ Segment Mapper ════════════════════════════════════════ */
