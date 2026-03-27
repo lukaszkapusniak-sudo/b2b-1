@@ -16,6 +16,11 @@ function sb() {
       storageKey:         'oaHubSession',
       autoRefreshToken:   true,
       detectSessionInUrl: false,
+      /* Bypass Web Locks (navigator.locks) — eliminates the
+         "lock:oaHubSession was released because another request stole it"
+         error that fires when multiple concurrent auth calls compete.
+         Safe here: hub runs in a single tab, single user session. */
+      lock: (name, acquireTimeout, fn) => fn(),
     }
   });
   return _sb;
