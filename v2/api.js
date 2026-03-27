@@ -263,13 +263,12 @@ export function setStatus(live){const el=document.getElementById('dbStatus');if(
 /* ── Load from Supabase (companies + contacts + relations in parallel) ── */
 export async function loadFromSupabase(renderStats,renderList,renderTagPanel){
   const ctrl=new AbortController(),timer=setTimeout(()=>ctrl.abort(),12000);
-  /* hdrRange built via authHdr() — see hdrRangeLive below */
   try{
-    const hdrRangeLive = authHdr({'Range':'0-4999','Prefer':'count=exact'});
+    const hdrRange = authHdr({'Range':'0-4999','Prefer':'count=exact'});
     const[cr,ct,rl]=await Promise.all([
-      fetch(`${SB_URL}/rest/v1/companies?select=*&order=updated_at.desc.nullslast`,{headers:hdrRangeLive,signal:ctrl.signal}),
-      fetch(`${SB_URL}/rest/v1/contacts?select=*&order=full_name.asc`,{headers:hdrRangeLive,signal:ctrl.signal}),
-      fetch(`${SB_URL}/rest/v1/company_relations?select=*`,{headers:liveHdr,signal:ctrl.signal}),
+      fetch(`${SB_URL}/rest/v1/companies?select=*&order=updated_at.desc.nullslast`,{headers:hdrRange,signal:ctrl.signal}),
+      fetch(`${SB_URL}/rest/v1/contacts?select=*&order=full_name.asc`,{headers:hdrRange,signal:ctrl.signal}),
+      fetch(`${SB_URL}/rest/v1/company_relations?select=*`,{headers:authHdr(),signal:ctrl.signal}),
     ]);
     clearTimeout(timer);
     if(!cr.ok)throw new Error(cr.status);
