@@ -280,7 +280,7 @@ export async function loadFromSupabase(renderStats,renderList,renderTagPanel){
     const contentRange=cr.headers.get('content-range');
     const totalMatch=contentRange&&contentRange.match(/\/(\d+)/);
     const totalInDb=totalMatch?parseInt(totalMatch[1]):S.companies.length;
-    setStatus(true);
+    setStatus(S.companies.length>0);  // live if we have data
     if(window.clog)window.clog('db',`Loaded <b>${S.companies.length}</b> of ${totalInDb} companies + <b>${S.contacts.length}</b> contacts + <b>${S.allRelations.length}</b> relations`);
     if(totalInDb>S.companies.length&&window.clog)window.clog('db',`⚠️ Truncated: DB has ${totalInDb} companies but loaded ${S.companies.length}. Consider pagination.`);
   }catch(e){clearTimeout(timer);console.warn('seed',e.message);setStatus(false);if(window.clog)window.clog('db',`Seed mode — ${e.message}`);}
