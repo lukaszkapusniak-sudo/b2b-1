@@ -240,12 +240,29 @@ export function renderUserBadge(profile) {
   if (!el || !profile) return;
   const initials = (profile.full_name || profile.email || '?')
     .split(' ').map(w => w[0]).join('').toUpperCase().slice(0, 2);
-  el.innerHTML = `<span
-    style="font-family:'IBM Plex Mono',monospace;font-size:8px;font-weight:600;
-           background:${profile.avatar_color||'var(--g)'};color:#fff;
-           width:24px;height:24px;border-radius:2px;
-           display:inline-flex;align-items:center;justify-content:center;
-           cursor:pointer;flex-shrink:0;letter-spacing:.04em"
-    title="${profile.full_name||profile.email} · ${profile.active_role} · click to sign out"
-    onclick="oaSignOut()">${initials}</span>`;
+  const displayName = profile.full_name
+    ? profile.full_name.split(' ')[0]          // first name only
+    : (profile.email || '').split('@')[0];
+  const role = (profile.active_role || 'user').toUpperCase();
+  const color = profile.avatar_color || 'var(--g)';
+
+  el.innerHTML = `
+    <span style="display:inline-block;width:1px;height:20px;background:var(--rule);margin-right:4px;flex-shrink:0"></span>
+    <div style="display:flex;align-items:center;gap:6px;padding:3px 6px 3px 3px;border:1px solid var(--rule);border-radius:2px;background:var(--surf2);cursor:default">
+      <span style="font-family:'IBM Plex Mono',monospace;font-size:8px;font-weight:600;
+                   background:${color};color:#fff;width:22px;height:22px;border-radius:2px;
+                   display:inline-flex;align-items:center;justify-content:center;
+                   flex-shrink:0;letter-spacing:.04em">${initials}</span>
+      <div style="display:flex;flex-direction:column;gap:0px;line-height:1.1">
+        <span style="font-family:'IBM Plex Mono',monospace;font-size:9px;font-weight:500;color:var(--t1);white-space:nowrap">${displayName}</span>
+        <span style="font-family:'IBM Plex Mono',monospace;font-size:6px;font-weight:600;color:${color};letter-spacing:.06em;text-transform:uppercase">${role}</span>
+      </div>
+      <button onclick="oaSignOut()"
+        style="margin-left:2px;background:none;border:none;cursor:pointer;padding:2px 4px;
+               border-radius:2px;font-family:'IBM Plex Mono',monospace;font-size:8px;
+               color:var(--t3);line-height:1;transition:color .15s,background .15s"
+        onmouseover="this.style.color='var(--t1)';this.style.background='var(--surf3)'"
+        onmouseout="this.style.color='var(--t3)';this.style.background='none'"
+        title="Sign out">↪</button>
+    </div>`;
 }
